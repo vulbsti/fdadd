@@ -28,8 +28,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body
+        suppressHydrationWarning // Moved here from <html> to fix hydration error
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
           fontSans.variable,
