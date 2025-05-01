@@ -4,58 +4,93 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%; /* Lighter off-white/grey */
-    --foreground: 222.2 84% 4.9%; /* Dark grey/black for text */
-    --card: 0 0% 100%; /* White cards */
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 145 63% 49%; /* Emerald Green Accent */
-    --primary-foreground: 0 0% 98%; /* White/Light text on accent */
-    --secondary: 210 40% 96.1%; /* Soft grey */
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%; /* Same as secondary for muted */
-    --muted-foreground: 215 20.2% 65.1%; /* Lighter grey text */
-    --accent: 210 40% 96.1%; /* Using secondary as accent base */
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Warm Cream/Beige Background */
+    --background: 40 30% 97%;
+    /* Dark Muted Brown/Charcoal Foreground */
+    --foreground: 30 15% 15%;
+    /* Slightly Off-White Cards */
+    --card: 40 30% 99%;
+    --card-foreground: 30 15% 15%;
+    /* Popover same as card */
+    --popover: 40 30% 99%;
+    --popover-foreground: 30 15% 15%;
+    /* Primary: Deep Navy */
+    --primary: 220 35% 30%;
+    /* Primary Foreground: Warm Light Cream */
+    --primary-foreground: 40 50% 95%;
+    /* Secondary: Soft Beige/Light Taupe */
+    --secondary: 35 25% 94%;
+    --secondary-foreground: 30 15% 30%; /* Darker Taupe/Brown */
+    /* Muted: Same as secondary */
+    --muted: 35 25% 94%;
+    /* Muted Foreground: Medium Grey/Taupe */
+    --muted-foreground: 30 10% 55%;
+    /* Accent: Lighter version of secondary */
+    --accent: 35 25% 96%;
+    /* Accent Foreground: Same as secondary-foreground */
+    --accent-foreground: 30 15% 30%;
+    /* Destructive: Keep standard or adjust slightly if needed */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214.3 31.8% 91.4%; /* Slightly muted border */
-    --input: 214.3 31.8% 91.4%; /* Input border */
-    --ring: 145 63% 49%; /* Emerald Green for focus rings */
+    /* Border: Soft Grey/Beige border */
+    --border: 35 20% 90%;
+    /* Input: Same as border */
+    --input: 35 20% 90%;
+    /* Ring: Primary color */
+    --ring: 220 35% 30%;
     --radius: 0.5rem;
-    --chart-1: 145 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 175 65% 40%;
-    --chart-4: 190 70% 35%;
-    --chart-5: 205 75% 40%;
+
+    /* Chart colors - Adjust to fit the new palette */
+    --chart-1: 220 40% 50%; /* Navy variant */
+    --chart-2: 35 30% 60%;  /* Beige variant */
+    --chart-3: 140 25% 45%; /* Muted Green variant (if needed) */
+    --chart-4: 0 30% 50%;   /* Muted Burgundy variant (if needed) */
+    --chart-5: 30 20% 70%;  /* Lighter Taupe variant */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%; /* Dark background */
-    --foreground: 210 40% 98%; /* Light text */
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 145 63% 49%; /* Emerald Green Accent */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 217.2 32.6% 17.5%; /* Darker secondary */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 145 63% 49%; /* Emerald Green for focus rings */
-     --chart-1: 145 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 175 65% 40%;
-    --chart-4: 190 70% 35%;
-    --chart-5: 205 75% 40%;
+    /* Background: Very Dark Navy/Charcoal */
+    --background: 220 20% 12%;
+    /* Foreground: Warm Off-White/Light Beige */
+    --foreground: 40 30% 90%;
+    /* Card: Slightly lighter dark shade */
+    --card: 220 20% 15%;
+    --card-foreground: 40 30% 90%;
+    /* Popover: same as card */
+    --popover: 220 20% 15%;
+    --popover-foreground: 40 30% 90%;
+    /* Primary: Muted Gold/Ochre */
+    --primary: 40 60% 60%;
+    /* Primary Foreground: Dark Background color */
+    --primary-foreground: 220 20% 12%;
+     /* Secondary: Dark Grey/Brown */
+    --secondary: 220 15% 25%;
+    /* Secondary Foreground: Light Grey/Beige */
+    --secondary-foreground: 40 20% 80%;
+     /* Muted: Similar to secondary */
+    --muted: 220 15% 25%;
+    /* Muted Foreground: Medium Grey */
+    --muted-foreground: 220 10% 55%;
+    /* Accent: Darker Grey */
+    --accent: 220 15% 20%;
+    /* Accent Foreground: Lighter text */
+    --accent-foreground: 40 30% 90%;
+    /* Destructive: Adjust for dark mode */
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    /* Border: Medium Dark Grey */
+    --border: 220 15% 30%;
+    /* Input: Same as border */
+    --input: 220 15% 30%;
+     /* Ring: Primary color (Muted Gold) */
+    --ring: 40 60% 60%;
+
+    /* Chart colors - Adjust for dark mode */
+    --chart-1: 40 70% 70%;  /* Gold variant */
+    --chart-2: 220 30% 60%; /* Navy variant (lighter) */
+    --chart-3: 140 30% 55%; /* Muted Green variant (lighter) */
+    --chart-4: 0 40% 60%;   /* Muted Burgundy variant (lighter) */
+    --chart-5: 40 20% 75%;  /* Lighter Beige variant */
   }
 }
 

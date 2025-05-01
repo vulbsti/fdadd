@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, User, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Menu, User, LogOut, LogIn, UserPlus, Palette } from 'lucide-react'; // Added Palette icon
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import AuthModal from '@/components/auth/AuthModal';
@@ -11,6 +11,7 @@ import AuthModal from '@/components/auth/AuthModal';
 const NAV_LINKS = [
   { href: '/fashiondaddy', label: 'FashionDaddy' },
   { href: '/dateplanner', label: 'DatePlanner' },
+  { href: '/aesthetic-quiz', label: 'Aesthetic Quiz' }, // Added Quiz link
   { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'About' },
   { href: '/help', label: 'Help' },
@@ -65,7 +66,8 @@ export default function Header() {
              <div className="h-8 w-20 animate-pulse rounded-md bg-muted"></div>
           ) : user ? (
             <div className="hidden items-center gap-2 md:flex">
-              <Button variant="ghost" size="sm">
+              {/* Placeholder Profile Button */}
+              <Button variant="ghost" size="sm" disabled>
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </Button>
@@ -99,9 +101,10 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="block px-2 py-1 text-lg font-medium text-foreground hover:bg-accent rounded-md"
+                    className="block rounded-md px-2 py-1 text-lg font-medium text-foreground hover:bg-accent"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    {link.label === 'Aesthetic Quiz' && <Palette className="mr-2 inline h-5 w-5" />} {/* Icon for Quiz */}
                     {link.label}
                   </Link>
                 ))}
@@ -110,7 +113,8 @@ export default function Header() {
                     <div className="h-10 w-full animate-pulse rounded-md bg-muted"></div>
                  ) : user ? (
                    <>
-                      <Button variant="ghost" className="justify-start text-lg">
+                      {/* Placeholder Profile Button */}
+                      <Button variant="ghost" className="justify-start text-lg" disabled>
                         <User className="mr-2 h-5 w-5" />
                         Profile
                       </Button>
