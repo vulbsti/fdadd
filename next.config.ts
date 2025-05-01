@@ -3,7 +3,8 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
-    ignoreBuildErrors: true,
+    // Temporarily removing this to surface build errors
+    // ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
