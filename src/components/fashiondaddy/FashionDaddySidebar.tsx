@@ -36,48 +36,55 @@ const FashionDaddySidebar: React.FC<FashionDaddySidebarProps> = ({
   onToggle,
 }) => {
   return (
+      // Use absolute positioning on mobile, relative on desktop.
+      // Control visibility and width with `cn` based on `isOpen`.
       <div className={cn(
-          "absolute left-0 top-0 z-10 flex h-full flex-col border-r bg-secondary/50 transition-all duration-300 md:relative",
-           isOpen ? 'w-full md:w-80' : 'w-0 overflow-hidden border-none'
+          "absolute left-0 top-0 z-30 flex h-full flex-col border-r bg-secondary/50 transition-transform duration-300 ease-in-out md:relative md:transition-all",
+           isOpen ? 'translate-x-0 w-full md:w-80' : '-translate-x-full w-full md:w-0 md:-translate-x-0 md:border-none' // Slide out on mobile, shrink on desktop
       )}>
-        <div className="flex items-center justify-between p-2 border-b">
-            <Button variant="ghost" size="sm" onClick={onNewChat} className="flex items-center gap-1">
-                <PlusCircle size={16} /> New Chat
-            </Button>
-            <Button variant="ghost" size="icon" onClick={onToggle} className="h-7 w-7">
-                {isOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
-                <span className="sr-only">Toggle Sidebar</span>
-            </Button>
+         {/* Ensure content inside sidebar is hidden when collapsed on desktop */}
+        <div className={cn("flex flex-col h-full", { 'md:hidden': !isOpen && window.innerWidth >= 768 })}>
+            <div className="flex items-center justify-between p-2 border-b">
+                <Button variant="ghost" size="sm" onClick={onNewChat} className="flex items-center gap-1 shrink-0">
+                    <PlusCircle size={16} /> New Chat
+                </Button>
+                <Button variant="ghost" size="icon" onClick={onToggle} className="h-7 w-7 shrink-0">
+                    {/* Show Close icon only when open */}
+                    {isOpen ? <PanelLeftClose size={18} /> : null }
+                    {/* This button is primarily for closing. Opening is handled by the button in FashionDaddyApp */}
+                    <span className="sr-only">Toggle Sidebar</span>
+                </Button>
+            </div>
+
+            <Tabs defaultValue="history" className="flex flex-1 flex-col overflow-hidden">
+                <TabsList className="grid w-full grid-cols-2 rounded-none border-b shrink-0">
+                    <TabsTrigger value="history" className="rounded-none data-[state=active]:shadow-none">
+                         <MessageSquare className="mr-2 h-4 w-4" /> History
+                     </TabsTrigger>
+                    <TabsTrigger value="wardrobe" className="rounded-none data-[state=active]:shadow-none">
+                        <Shirt className="mr-2 h-4 w-4" /> Wardrobe
+                     </TabsTrigger>
+                </TabsList>
+
+                 <ScrollArea className="flex-1">
+                    <TabsContent value="history" className="mt-0 p-2">
+                        <ChatHistoryList
+                            sessions={chatHistory}
+                            onSelectChat={onSelectChat}
+                            isLoading={isLoadingHistory}
+                            currentChatId={currentChatId}
+                        />
+                    </TabsContent>
+                    <TabsContent value="wardrobe" className="mt-0 p-2">
+                        <WardrobeCollection
+                            items={wardrobeItems}
+                            onReferenceItem={onReferenceItem}
+                            isLoading={isLoadingWardrobe}
+                        />
+                    </TabsContent>
+                 </ScrollArea>
+            </Tabs>
         </div>
-
-        <Tabs defaultValue="history" className="flex flex-1 flex-col overflow-hidden">
-            <TabsList className="grid w-full grid-cols-2 rounded-none border-b">
-                <TabsTrigger value="history" className="rounded-none data-[state=active]:shadow-none">
-                     <MessageSquare className="mr-2 h-4 w-4" /> History
-                 </TabsTrigger>
-                <TabsTrigger value="wardrobe" className="rounded-none data-[state=active]:shadow-none">
-                    <Shirt className="mr-2 h-4 w-4" /> Wardrobe
-                 </TabsTrigger>
-            </TabsList>
-
-             <ScrollArea className="flex-1">
-                <TabsContent value="history" className="mt-0 p-2">
-                    <ChatHistoryList
-                        sessions={chatHistory}
-                        onSelectChat={onSelectChat}
-                        isLoading={isLoadingHistory}
-                        currentChatId={currentChatId}
-                    />
-                </TabsContent>
-                <TabsContent value="wardrobe" className="mt-0 p-2">
-                    <WardrobeCollection
-                        items={wardrobeItems}
-                        onReferenceItem={onReferenceItem}
-                        isLoading={isLoadingWardrobe}
-                    />
-                </TabsContent>
-             </ScrollArea>
-        </Tabs>
     </div>
   );
 };

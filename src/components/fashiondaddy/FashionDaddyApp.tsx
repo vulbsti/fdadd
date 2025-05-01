@@ -5,6 +5,9 @@ import { Card } from '@/components/ui/card';
 import ChatInterface from './ChatInterface';
 import FashionDaddySidebar from './FashionDaddySidebar';
 import { WardrobeItem } from './WardrobeCollection'; // Import WardrobeItem type
+import { Button } from '@/components/ui/button';
+import { PanelLeftOpen } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // Mock data types
 export interface ChatMessage {
@@ -50,7 +53,7 @@ const FashionDaddyApp: React.FC = () => {
   const [currentChat, setCurrentChat] = useState<ChatSession | null>(null);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isLoadingWardrobe, setIsLoadingWardrobe] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Default to open on desktop
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Default to open
 
   useEffect(() => {
     const loadData = async () => {
@@ -81,10 +84,13 @@ const FashionDaddyApp: React.FC = () => {
   const handleSelectChat = (sessionId: string) => {
     const selected = chatHistory.find(session => session.id === sessionId);
     setCurrentChat(selected || null);
+    // Close sidebar on mobile when a chat is selected
+    if (window.innerWidth < 768) {
+        setIsSidebarOpen(false);
+    }
   };
 
   const handleNewChat = () => {
-     // Placeholder for creating a new chat session logic
      console.log("Creating new chat...");
      const newSession: ChatSession = {
          id: `session${Date.now()}`, // Simple unique ID
@@ -94,6 +100,10 @@ const FashionDaddyApp: React.FC = () => {
      };
      setChatHistory([newSession, ...chatHistory]);
      setCurrentChat(newSession);
+     // Close sidebar on mobile when new chat is created
+     if (window.innerWidth < 768) {
+        setIsSidebarOpen(false);
+    }
   };
 
   const handleSendMessage = async (messageText: string): Promise<void> => {
@@ -148,20 +158,22 @@ const FashionDaddyApp: React.FC = () => {
 
   const handleReferenceItem = (item: WardrobeItem) => {
       console.log("Referencing item:", item.name);
-      // Potentially pre-fill chat input or send a specific message
       const messageText = `Tell me more about styling my ${item.name}.`;
        if (!currentChat) {
          handleNewChat(); // Create a new chat if none exists
-         // Need to wait for state update or pass message differently
-         setTimeout(() => handleSendMessage(messageText), 100); // Quick hack, better state management needed
+         setTimeout(() => handleSendMessage(messageText), 100); // Needs refinement
        } else {
            handleSendMessage(messageText);
+       }
+       // Close sidebar on mobile when item is referenced
+       if (window.innerWidth < 768) {
+          setIsSidebarOpen(false);
        }
   };
 
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] max-h-[800px] w-full overflow-hidden rounded-lg border bg-card shadow-lg">
+    <div className="relative flex h-[calc(100vh-12rem)] max-h-[800px] w-full overflow-hidden rounded-lg border bg-card shadow-lg">
        {/* Sidebar */}
        <FashionDaddySidebar
           chatHistory={chatHistory}
@@ -177,7 +189,35 @@ const FashionDaddyApp: React.FC = () => {
         />
 
       {/* Main Chat Area */}
-       <div className={`flex flex-1 flex-col transition-all duration-300 ${isSidebarOpen ? 'md:ml-80' : 'ml-0'}`}>
+       <div className={cn(
+           "flex flex-1 flex-col transition-all duration-300 ease-in-out",
+           isSidebarOpen ? "ml-0 md:ml-80" : "ml-0" // Adjust margin based on sidebar state
+       )}>
+            {/* Open Sidebar Button (visible when closed) */}
+            {!isSidebarOpen && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="absolute left-2 top-2 z-20 h-8 w-8 md:hidden" // Show on mobile when closed
+                    aria-label="Open sidebar"
+                >
+                    <PanelLeftOpen size={18} />
+                </Button>
+            )}
+             {!isSidebarOpen && (
+                 <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="absolute left-2 top-2 z-20 hidden h-8 w-8 md:block" // Show on desktop when closed
+                    aria-label="Open sidebar"
+                 >
+                     <PanelLeftOpen size={18} />
+                 </Button>
+             )}
+
+
           {currentChat ? (
             <ChatInterface
               messages={currentChat.messages}
@@ -185,8 +225,8 @@ const FashionDaddyApp: React.FC = () => {
               isLoading={false} // Add loading state if AI response is pending
             />
           ) : (
-            <div className="flex h-full flex-1 items-center justify-center bg-muted/30">
-              <p className="text-muted-foreground">Select a chat or start a new one.</p>
+            <div className="flex h-full flex-1 items-center justify-center bg-muted/30 p-4 text-center">
+              <p className="text-muted-foreground">Select a chat from the sidebar or start a new one.</p>
             </div>
           )}
       </div>
