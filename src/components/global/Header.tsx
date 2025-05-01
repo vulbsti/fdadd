@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -7,6 +8,7 @@ import { Menu, User, LogOut, LogIn, UserPlus, Palette } from 'lucide-react'; // 
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import AuthModal from '@/components/auth/AuthModal';
+import { cn } from '@/lib/utils'; // Import cn utility
 
 const NAV_LINKS = [
   { href: '/fashiondaddy', label: 'FashionDaddy' },
@@ -48,12 +50,15 @@ export default function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center space-x-6 md:flex">
+        <nav className="hidden items-center space-x-8 md:flex"> {/* Increased space */}
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className={cn(
+                "relative text-sm font-medium text-muted-foreground transition-colors duration-300 ease-in-out hover:text-foreground",
+                "after:absolute after:bottom-[-2px] after:left-0 after:h-[1px] after:w-0 after:bg-primary after:transition-all after:duration-300 after:ease-in-out hover:after:w-full" // Underline animation
+              )}
             >
               {link.label}
             </Link>
@@ -101,7 +106,7 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="block rounded-md px-2 py-1 text-lg font-medium text-foreground hover:bg-accent"
+                    className="block rounded-md px-2 py-1 text-lg font-medium text-foreground hover:bg-accent" // Kept mobile simple
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.label === 'Aesthetic Quiz' && <Palette className="mr-2 inline h-5 w-5" />} {/* Icon for Quiz */}
