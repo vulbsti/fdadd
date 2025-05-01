@@ -189,28 +189,25 @@ const FashionDaddyApp: React.FC = () => {
         />
 
       {/* Main Chat Area */}
-       <div className={cn(
-           "flex flex-1 flex-col transition-all duration-300 ease-in-out",
-           isSidebarOpen ? "ml-0 md:ml-80" : "ml-0" // Adjust margin based on sidebar state
-       )}>
-            {/* Open Sidebar Button (visible when closed) */}
-            {!isSidebarOpen && (
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsSidebarOpen(true)}
-                    className="absolute left-2 top-2 z-20 h-8 w-8 md:hidden" // Show on mobile when closed
-                    aria-label="Open sidebar"
-                >
-                    <PanelLeftOpen size={18} />
-                </Button>
-            )}
+       <div className="flex flex-1 flex-col overflow-hidden transition-all duration-300 ease-in-out">
+            {/* Open Sidebar Button (visible when closed on desktop or mobile) */}
              {!isSidebarOpen && (
                  <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsSidebarOpen(true)}
-                    className="absolute left-2 top-2 z-20 hidden h-8 w-8 md:block" // Show on desktop when closed
+                    className="absolute left-2 top-2 z-20 h-8 w-8 md:hidden" // Specific to mobile
+                    aria-label="Open sidebar"
+                 >
+                     <PanelLeftOpen size={18} />
+                 </Button>
+             )}
+             {!isSidebarOpen && (
+                 <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="absolute left-2 top-2 z-20 hidden h-8 w-8 md:block" // Specific to desktop
                     aria-label="Open sidebar"
                  >
                      <PanelLeftOpen size={18} />

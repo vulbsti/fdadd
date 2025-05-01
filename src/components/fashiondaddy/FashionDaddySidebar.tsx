@@ -4,7 +4,8 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { PanelLeftClose, PanelLeftOpen, MessageSquare, Shirt, PlusCircle } from 'lucide-react';
+import { PanelLeftClose } from 'lucide-react'; // Keep PanelLeftOpen in the parent
+import { MessageSquare, Shirt, PlusCircle } from 'lucide-react';
 import { ChatSession } from './FashionDaddyApp'; // Assuming type is defined here
 import ChatHistoryList from './ChatHistoryList';
 import WardrobeCollection, { WardrobeItem } from './WardrobeCollection';
@@ -38,21 +39,21 @@ const FashionDaddySidebar: React.FC<FashionDaddySidebarProps> = ({
   return (
       // Use absolute positioning on mobile, relative on desktop.
       // Control visibility and width with `cn` based on `isOpen`.
+      // Added flex-shrink-0 to prevent shrinking issues.
       <div className={cn(
-          "absolute left-0 top-0 z-30 flex h-full flex-col border-r bg-secondary/50 transition-transform duration-300 ease-in-out md:relative md:transition-all",
+          "absolute left-0 top-0 z-30 flex h-full flex-col border-r bg-secondary/50 transition-transform duration-300 ease-in-out md:relative md:flex-shrink-0",
            isOpen ? 'translate-x-0 w-full md:w-80' : '-translate-x-full w-full md:w-0 md:-translate-x-0 md:border-none' // Slide out on mobile, shrink on desktop
       )}>
-         {/* Ensure content inside sidebar is hidden when collapsed on desktop */}
-        <div className={cn("flex flex-col h-full", { 'md:hidden': !isOpen && window.innerWidth >= 768 })}>
+         {/* Ensure content inside sidebar is visible/hidden based on isOpen state */}
+        <div className={cn("flex h-full flex-col overflow-hidden", !isOpen && 'hidden md:hidden')}>
             <div className="flex items-center justify-between p-2 border-b">
                 <Button variant="ghost" size="sm" onClick={onNewChat} className="flex items-center gap-1 shrink-0">
                     <PlusCircle size={16} /> New Chat
                 </Button>
+                {/* Toggle Button always visible when sidebar is open */}
                 <Button variant="ghost" size="icon" onClick={onToggle} className="h-7 w-7 shrink-0">
-                    {/* Show Close icon only when open */}
-                    {isOpen ? <PanelLeftClose size={18} /> : null }
-                    {/* This button is primarily for closing. Opening is handled by the button in FashionDaddyApp */}
-                    <span className="sr-only">Toggle Sidebar</span>
+                    <PanelLeftClose size={18} />
+                    <span className="sr-only">Close Sidebar</span>
                 </Button>
             </div>
 
