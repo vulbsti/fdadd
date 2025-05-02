@@ -121,4 +121,4 @@ Vercel is the recommended platform for deploying this Next.js application.
 
 *   **Linting:** `npm run lint` - Runs the Next.js linter.
 *   **Type Checking:** `npm run typecheck` - Checks TypeScript types.
-```
+```                                                               
