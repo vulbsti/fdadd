@@ -29,8 +29,21 @@ export interface BlogPost {
   /**
    * URL of the featured image.
    */
-  imageUrl: string;
+  imageUrl?: string;
+  /**
+   * Source of the blog post (internal, rss, etc.)
+   */
+  source?: string;
 }
+
+/**
+ * Service for managing blog content from multiple sources:
+ * - Local static data
+ * - CMS API (to be implemented)
+ * - RSS feeds (implemented partially)
+ */
+
+import { fetchRssFeeds, rssToBlogPost, RssFeedItem } from './rss';
 
 // Use a consistent seed for predictability if desired, or remove for randomness
 const blogPostsData: BlogPost[] = [
@@ -42,6 +55,7 @@ const blogPostsData: BlogPost[] = [
       date: '2024-05-15',
       author: 'Style Savant',
       imageUrl: 'https://picsum.photos/seed/blog1/600/400',
+      source: 'internal',
     },
     {
       id: '2',
@@ -74,27 +88,61 @@ const blogPostsData: BlogPost[] = [
 
 
 /**
- * Asynchronously retrieves a list of blog posts.
- * Simulates an API call.
+ * Asynchronously retrieves a list of blog posts from multiple sources.
+ * Combines internal blog posts with RSS feed items.
  *
+ * @param includeRss Whether to include RSS feed items (default: true)
  * @returns A promise that resolves to an array of BlogPost objects.
  */
-export async function getBlogPosts(): Promise<BlogPost[]> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return blogPostsData;
+export async function getBlogPosts(includeRss: boolean = true): Promise<BlogPost[]> {
+  try {
+    // Start with internal blog posts
+    let allPosts = [...blogPostsData];
+    
+    // Add RSS feed items if enabled
+    if (includeRss) {
+      const rssItems = await fetchRssFeeds();
+      const rssPosts = rssItems.map(item => rssToBlogPost(item) as BlogPost);
+      allPosts = [...allPosts, ...rssPosts];
+    }
+    
+    // Sort by date (newest first)
+    allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    return allPosts;
+  } catch (error) {
+    console.error('Error fetching blog posts:', error);
+    return blogPostsData; // Fallback to static data
+  }
 }
 
 /**
- * Asynchronously retrieves a single blog post by its ID.
- * Simulates an API call.
+ * Asynchronously retrieves a single blog post by its ID from any source.
+ * Handles both internal posts and RSS-sourced content.
  *
  * @param id The ID of the blog post to retrieve.
  * @returns A promise that resolves to a BlogPost object, or null if not found.
  */
 export async function getBlogPost(id: string): Promise<BlogPost | null> {
-  // Simulate API delay
-   await new Promise(resolve => setTimeout(resolve, 200));
-  const blogPost = blogPostsData.find((post) => post.id === id);
-  return blogPost || null;
+  try {
+    // Check internal posts first
+    const internalPost = blogPostsData.find((post) => post.id === id);
+    if (internalPost) return internalPost;
+    
+    // Check if it's an RSS post (starts with 'rss-')
+    if (id.startsWith('rss-')) {
+      const rssItems = await fetchRssFeeds();
+      const rssId = id.replace('rss-', '');
+      const rssItem = rssItems.find(item => item.id === rssId);
+      
+      if (rssItem) {
+        return rssToBlogPost(rssItem) as BlogPost;
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error fetching blog post:', error);
+    return null;
+  }
 }

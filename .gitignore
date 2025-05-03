@@ -22,6 +22,7 @@
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
 
 # debug
@@ -33,9 +34,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# editor directories
+.vscode/
+.idea/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
 .genkit/*
 .env*
+.env.local
