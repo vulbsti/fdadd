@@ -45,3 +45,4 @@ next-env.d.ts
 .genkit/*
 .env*
 .env.local
+.env
