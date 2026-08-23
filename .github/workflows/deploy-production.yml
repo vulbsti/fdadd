@@ -40,7 +40,7 @@ jobs:
         run: npm run typecheck
 
       - name: Load Vercel production settings
-        run: npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN" --debug
+        run: npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build with Vercel
         run: npx --yes vercel@latest build --prod --token="$VERCEL_TOKEN"
