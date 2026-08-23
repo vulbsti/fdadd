@@ -1,171 +1,215 @@
 'use client';
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-// Import Supabase types if you have them, otherwise use placeholder types
-// import { User } from '@supabase/supabase-js';
-type User = { id: string; email?: string; user_metadata: { name?: string } } | null; // Placeholder user type
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+import type { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
+
+type AuthActionResult = {
+  ok: boolean;
+  message?: string;
+};
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  configured: boolean;
   error: string | null;
-  signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string, name: string) => Promise<void>;
-  signInWithGithub: () => Promise<void>; // Add other providers as needed
-  signOut: () => Promise<void>;
+  notice: string | null;
+  clearFeedback: () => void;
+  signInWithEmail: (email: string, password: string) => Promise<AuthActionResult>;
+  signUpWithEmail: (
+    email: string,
+    password: string,
+    name: string
+  ) => Promise<AuthActionResult>;
+  signInWithGoogle: () => Promise<AuthActionResult>;
+  signOut: () => Promise<AuthActionResult>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const configured = isSupabaseConfigured();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // Start loading until initial check is done
+  const [loading, setLoading] = useState(configured);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
-  // --- Placeholder Logic ---
-  // In a real app, this useEffect would interact with the Supabase client
-  // to check the initial auth state and subscribe to auth changes.
-
-  useEffect(() => {
-    // Simulate checking initial auth state
-    setLoading(true);
-    const timer = setTimeout(() => {
-      // To test logged-in state:
-      // setUser({ id: '123', email: 'test@example.com', user_metadata: { name: 'Test User'} });
-      // To test logged-out state:
-       setUser(null);
-      setLoading(false);
-    }, 1000); // Simulate network delay
-
-    return () => clearTimeout(timer); // Cleanup timer
-
-    /* --- Real Supabase Logic Example ---
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      setLoading(false);
-    };
-    checkUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false); // Stop loading on auth change too
-        setError(null); // Clear error on successful auth change
-      }
-    );
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-    */
+  const clearFeedback = useCallback(() => {
+    setError(null);
+    setNotice(null);
   }, []);
 
-
-  // --- Placeholder Auth Functions ---
-
-  const signInWithEmail = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
-    console.log('Attempting sign in:', email);
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
-    // Simulate success/failure
-    if (email === 'test@example.com' && password === 'password') {
-      setUser({ id: '123', email: 'test@example.com', user_metadata: { name: 'Test User'} });
-       setLoading(false);
-    } else {
-      setError('Invalid email or password.');
+  useEffect(() => {
+    if (!configured) {
       setLoading(false);
+      return;
     }
-     /* --- Real Supabase Logic ---
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) setError(signInError.message);
-      // Auth state change handled by listener
-      setLoading(false); // Listener might set loading false too
-     */
-  };
 
-  const signUpWithEmail = async (email: string, password: string, name: string) => {
-    setLoading(true);
-    setError(null);
-    console.log('Attempting sign up:', email, name);
-     await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
-     // Simulate success (in real Supabase, might require email confirmation)
-     setUser({ id: Date.now().toString(), email: email, user_metadata: { name: name } }); // Simulate immediate login
-     console.log("Simulated signup successful, user set.");
-     setLoading(false);
-    /* --- Real Supabase Logic ---
-      const { error: signUpError } = await supabase.auth.signUp({
+    const supabase = createClient();
+    let mounted = true;
+
+    void supabase.auth.getUser().then(({ data, error: userError }) => {
+      if (!mounted) return;
+      setUser(data.user ?? null);
+      setError(userError?.message ?? null);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      setUser(session?.user ?? null);
+      setLoading(false);
+      if (session?.user) setError(null);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [configured]);
+
+  const unavailable = useCallback((): AuthActionResult => {
+    const message = 'Authentication is not configured yet.';
+    setError(message);
+    return { ok: false, message };
+  }, []);
+
+  const signInWithEmail = useCallback(
+    async (email: string, password: string): Promise<AuthActionResult> => {
+      if (!configured) return unavailable();
+      clearFeedback();
+      setLoading(true);
+
+      const { error: signInError } = await createClient().auth.signInWithPassword({
         email,
         password,
-        options: { data: { full_name: name } } // Example adding metadata
       });
-      if (signUpError) setError(signUpError.message);
-       // Check if email confirmation is required. State change might happen after confirmation.
+
       setLoading(false);
-    */
-  };
+      if (signInError) {
+        setError(signInError.message);
+        return { ok: false, message: signInError.message };
+      }
 
-   const signInWithGithub = async () => {
+      return { ok: true };
+    },
+    [clearFeedback, configured, unavailable]
+  );
+
+  const signUpWithEmail = useCallback(
+    async (email: string, password: string, name: string): Promise<AuthActionResult> => {
+      if (!configured) return unavailable();
+      clearFeedback();
+      setLoading(true);
+
+      const { data, error: signUpError } = await createClient().auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: name.trim() },
+        },
+      });
+
+      setLoading(false);
+      if (signUpError) {
+        setError(signUpError.message);
+        return { ok: false, message: signUpError.message };
+      }
+
+      if (!data.session) {
+        const message = 'Check your email to confirm your account, then sign in.';
+        setNotice(message);
+        return { ok: true, message };
+      }
+
+      return { ok: true };
+    },
+    [clearFeedback, configured, unavailable]
+  );
+
+  const signInWithGoogle = useCallback(async (): Promise<AuthActionResult> => {
+    if (!configured) return unavailable();
+    clearFeedback();
     setLoading(true);
-    setError(null);
-    console.log('Attempting GitHub sign in...');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-     // Simulate immediate redirect or successful callback handling
-     // In reality, Supabase handles the redirect and callback.
-     // For testing, we can manually set a user after a delay.
-      setUser({ id: 'gh-456', email: 'github_user@example.com', user_metadata: { name: 'GitHub User'} });
-     setLoading(false);
 
-    /* --- Real Supabase Logic ---
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      // options: { redirectTo: 'your-callback-url' } // Optional
+    const redirectTo = `${window.location.origin}/auth/callback?next=/profile`;
+    const { error: oauthError } = await createClient().auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo },
     });
+
     if (oauthError) {
-        setError(oauthError.message);
-        setLoading(false);
+      setLoading(false);
+      setError(oauthError.message);
+      return { ok: false, message: oauthError.message };
     }
-    // Supabase handles redirect, listener handles state change on callback
-    */
-  };
 
-  const signOut = async () => {
+    return { ok: true };
+  }, [clearFeedback, configured, unavailable]);
+
+  const signOut = useCallback(async (): Promise<AuthActionResult> => {
+    if (!configured) return unavailable();
+    clearFeedback();
     setLoading(true);
-    setError(null);
-    console.log('Attempting sign out...');
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-    setUser(null);
-    setLoading(false);
-    /* --- Real Supabase Logic ---
-     const { error: signOutError } = await supabase.auth.signOut();
-     if (signOutError) setError(signOutError.message);
-     // State change handled by listener
-     setLoading(false);
-    */
-  };
 
-  const value = {
-    user,
-    loading,
-    error,
-    signInWithEmail,
-    signUpWithEmail,
-    signInWithGithub,
-    signOut,
-  };
+    const { error: signOutError } = await createClient().auth.signOut();
+    setLoading(false);
+
+    if (signOutError) {
+      setError(signOutError.message);
+      return { ok: false, message: signOutError.message };
+    }
+
+    setUser(null);
+    return { ok: true };
+  }, [clearFeedback, configured, unavailable]);
+
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      configured,
+      error,
+      notice,
+      clearFeedback,
+      signInWithEmail,
+      signUpWithEmail,
+      signInWithGoogle,
+      signOut,
+    }),
+    [
+      user,
+      loading,
+      configured,
+      error,
+      notice,
+      clearFeedback,
+      signInWithEmail,
+      signUpWithEmail,
+      signInWithGoogle,
+      signOut,
+    ]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+}
 
-export const useAuth = (): AuthContextType => {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
