@@ -119,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
         options: {
           data: { full_name: name.trim() },
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/profile`,
         },
       });
 

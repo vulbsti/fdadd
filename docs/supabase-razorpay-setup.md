@@ -1,6 +1,7 @@
 # Supabase Auth + Google + Razorpay Setup
 
-Status: code foundation implemented; external accounts and secrets still need configuration.
+Status: Supabase project, schema, auth URLs, and Vercel integration are connected.
+Google OAuth credentials and Razorpay account settings are still required.
 
 ## System map
 
@@ -42,14 +43,13 @@ captured webhook is the payment source of truth.
 
 ## 1. Supabase project
 
-1. Create one Supabase project in an India-adjacent region appropriate for the
-   expected users.
-2. In Project Settings → API, copy:
+1. The dedicated `aidoraa` project is deployed in Mumbai (`ap-south-1`).
+2. In Project Settings → API, the application uses:
    - Project URL
    - Publishable key (`sb_publishable_...`)
-   - Service role key (server-only)
-3. Run `supabase/migrations/202608230001_auth_and_payments.sql` in the SQL Editor.
-4. In Authentication → URL Configuration:
+   - Secret key (`sb_secret_...`, server-only)
+3. `supabase/migrations/202608230001_auth_and_payments.sql` has been applied.
+4. Authentication → URL Configuration is managed by `supabase/config.toml`:
    - Site URL: `https://www.aidoraa.com`
    - Redirect URLs:
      - `https://www.aidoraa.com/auth/callback`
@@ -57,13 +57,13 @@ captured webhook is the payment source of truth.
      - `http://localhost:9002/auth/callback`
      - `http://localhost:9002/auth/confirm`
 5. Keep email confirmation enabled for production.
-6. Change the Confirm signup email template link to:
+6. The signup call supplies `/auth/callback?next=/profile` as its
+   `emailRedirectTo`. The default hosted email template therefore returns with
+   a PKCE code that the callback exchanges for a cookie-backed session.
 
-   ```html
-   <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">
-     Confirm email address
-   </a>
-   ```
+On the Free plan, Supabase does not allow editing email templates while using
+its default email provider. If custom SMTP is added later, the existing
+`/auth/confirm` route also supports a token-hash template.
 
 Do not use `aidoraa.com` as the primary Site URL. It redirects to `www`, which
 adds another hop to sensitive callback traffic.
@@ -93,7 +93,7 @@ Vercel Project → Settings → Environment Variables.
 |---|---:|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | yes | Production, Preview, Development |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes | Production, Preview, Development |
-| `SUPABASE_SERVICE_ROLE_KEY` | no | Production, Preview, Development |
+| `SUPABASE_SECRET_KEY` | no | Production and Preview; `.env.local` for local development |
 | `RAZORPAY_KEY_ID` | returned for checkout | Test key outside Production; Live key in Production |
 | `RAZORPAY_KEY_SECRET` | no | Match the Key ID's mode |
 | `RAZORPAY_WEBHOOK_SECRET` | no | Separate test/live values |
@@ -164,7 +164,7 @@ browser verification route.
 
 ## Rollout
 
-1. Configure Supabase and apply the migration.
+1. Configure Supabase and apply the migration. **Complete.**
 2. Test email and Google auth locally.
 3. Add Supabase variables to Vercel and verify production auth.
 4. Configure Razorpay Test Mode and an approved test price.
