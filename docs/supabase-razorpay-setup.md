@@ -89,6 +89,10 @@ The Google client secret belongs in Supabase, not Vercel and not this repo.
 Copy `.env.example` to `.env.local` for development. Add the same variables in
 Vercel Project → Settings → Environment Variables.
 
+The Vercel project is connected to `vulbsti/fdadd`: feature branches create
+Preview deployments, while changes merged to `main` create Production
+deployments for `www.aidoraa.com`.
+
 | Variable | Browser visible | Environments |
 |---|---:|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | yes | Production, Preview, Development |
