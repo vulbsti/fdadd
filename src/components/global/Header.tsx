@@ -51,8 +51,9 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-serif font-bold text-primary">
+        <Link href="/" className="flex items-baseline gap-1 font-serif text-2xl font-bold text-primary">
           aidoraa
+          <span className="text-sm text-gold" aria-hidden="true">✦</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -63,7 +64,7 @@ export default function Header() {
               href={link.href}
               className={cn(
                 "relative text-sm font-medium text-muted-foreground transition-colors duration-300 ease-in-out hover:text-foreground",
-                "after:absolute after:bottom-[-2px] after:left-0 after:h-[1px] after:w-0 after:bg-primary after:transition-all after:duration-300 after:ease-in-out hover:after:w-full" // Underline animation
+                "after:absolute after:bottom-[-2px] after:left-0 after:h-[1px] after:w-0 after:bg-gold after:transition-all after:duration-300 after:ease-in-out hover:after:w-full" // Underline animation
               )}
             >
               {link.label}
