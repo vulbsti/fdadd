@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, User, LogOut, LogIn, UserPlus, Palette } from 'lucide-react'; // Added Palette icon
@@ -20,6 +21,7 @@ const NAV_LINKS = [
 ];
 
 export default function Header() {
+  const router = useRouter();
   const { user, loading, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -35,7 +37,11 @@ export default function Header() {
   };
 
   const handleSignOut = async () => {
-      await signOut();
+      const result = await signOut();
+      if (result.ok) {
+        router.push('/');
+        router.refresh();
+      }
        if (isMobileMenuOpen) {
           setIsMobileMenuOpen(false);
        }
@@ -71,10 +77,11 @@ export default function Header() {
              <div className="h-8 w-20 animate-pulse rounded-md bg-muted"></div>
           ) : user ? (
             <div className="hidden items-center gap-2 md:flex">
-              {/* Placeholder Profile Button */}
-              <Button variant="ghost" size="sm" disabled>
-                <User className="mr-2 h-4 w-4" />
-                Profile
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/profile">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </Link>
               </Button>
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" />
@@ -118,10 +125,11 @@ export default function Header() {
                     <div className="h-10 w-full animate-pulse rounded-md bg-muted"></div>
                  ) : user ? (
                    <>
-                      {/* Placeholder Profile Button */}
-                      <Button variant="ghost" className="justify-start text-lg" disabled>
-                        <User className="mr-2 h-5 w-5" />
-                        Profile
+                      <Button variant="ghost" className="justify-start text-lg" asChild>
+                        <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                          <User className="mr-2 h-5 w-5" />
+                          Profile
+                        </Link>
                       </Button>
                       <Button variant="outline" className="justify-start text-lg" onClick={handleSignOut}>
                         <LogOut className="mr-2 h-5 w-5" />

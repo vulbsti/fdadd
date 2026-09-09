@@ -26,7 +26,7 @@ Follow these instructions to set up and run the project on your local machine.
 
 ### Prerequisites
 
-*   **Node.js:** Version 18.x (as specified in `package.json`). You can use [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versions.
+*   **Node.js:** Version 22.x (as specified in `package.json`). You can use [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versions.
 *   **npm:** Should be installed with Node.js.
 *   **Git:** To clone the repository.
 *   **Google AI API Key:** You need an API key for the Gemini models used by Genkit. Get one from [Google AI Studio](https://aistudio.google.com/app/apikey).
@@ -45,12 +45,10 @@ Follow these instructions to set up and run the project on your local machine.
     ```
 
 3.  **Set up environment variables:**
-    Create a `.env.local` file in the root of the project and add your Google AI API key:
-    ```plaintext
-    # .env.local
-    GOOGLE_GENAI_API_KEY=YOUR_GOOGLE_AI_API_KEY
-    ```
-    Replace `YOUR_GOOGLE_AI_API_KEY` with your actual key.
+    Copy `.env.example` to `.env.local` and populate the services you want to
+    enable. `GOOGLE_GENAI_API_KEY` powers AI features; Supabase and Razorpay
+    variables enable authentication and payments. See
+    `docs/supabase-razorpay-setup.md` for the provider-side configuration.
 
 ### Running the Application
 
@@ -99,7 +97,7 @@ Vercel is the recommended platform for deploying this Next.js application.
 
 ### Steps
 
-1.  **Push your code:** Ensure your latest code, including the `package.json` specifying Node.js 18, is pushed to your Git repository.
+1.  **Push your code:** Ensure your latest code, including the `package.json` specifying Node.js 22, is pushed to your Git repository.
 
 2.  **Import Project on Vercel:**
     *   Go to your Vercel Dashboard.
@@ -108,7 +106,7 @@ Vercel is the recommended platform for deploying this Next.js application.
 
 3.  **Configure Project:**
     *   **Framework Preset:** Vercel should automatically detect Next.js.
-    *   **Build & Development Settings:** Usually, Vercel's defaults for Next.js are sufficient (`npm run build`, `.next` output directory). Ensure the Node.js version is set to 18.x in the project settings if not automatically inferred.
+    *   **Build & Development Settings:** The repository pins Node.js 22 and the GitHub Actions workflow runs the Vercel build and production deploy.
     *   **Environment Variables:**
         *   Navigate to your project's "Settings" tab, then "Environment Variables".
         *   Add `GOOGLE_GENAI_API_KEY` with your actual Google AI API key as the value. Ensure it's available for all environments (Production, Preview, Development).
@@ -121,4 +119,3 @@ Vercel is the recommended platform for deploying this Next.js application.
 
 *   **Linting:** `npm run lint` - Runs the Next.js linter.
 *   **Type Checking:** `npm run typecheck` - Checks TypeScript types.
-```                                                               
