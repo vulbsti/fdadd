@@ -4,8 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 9002",
-    "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
-    "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -15,8 +13,6 @@
     "node": "22.x"
   },
   "dependencies": {
-    "@genkit-ai/googleai": "^1.6.2",
-    "@genkit-ai/next": "^1.6.2",
     "@hookform/resolvers": "^4.1.3",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
@@ -41,10 +37,10 @@
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "@tanstack/react-query": "^5.66.0",
+    "@vercel/sandbox": "^3.2.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
-    "genkit": "^1.6.2",
     "glob": "^11.0.2",
     "lucide-react": "^0.475.0",
     "next": "15.5.23",
@@ -57,6 +53,7 @@
     "rimraf": "^6.0.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.185.1",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -64,7 +61,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "genkit-cli": "^1.6.1",
+    "@types/three": "^0.185.4",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
