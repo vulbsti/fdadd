@@ -12,6 +12,7 @@ import AuthModal from '@/components/auth/AuthModal';
 import { cn } from '@/lib/utils'; // Import cn utility
 
 const NAV_LINKS = [
+  { href: '/astrologer', label: 'Astrologer' },
   { href: '/fashiondaddy', label: 'FashionDaddy' },
   { href: '/dateplanner', label: 'DatePlanner' },
   { href: '/aesthetic-quiz', label: 'Aesthetic Quiz' }, // Added Quiz link

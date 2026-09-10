@@ -1,6 +1,6 @@
 # Aidoraa Fashion
 
-Aidoraa is a sophisticated AI-powered fashion assistance application designed to provide personalized styling advice, date planning, and help users discover their unique fashion aesthetic. Built with Next.js and leveraging Google's Gemini models via Genkit.
+Aidoraa is a sophisticated AI-powered fashion assistance application designed to provide personalized styling advice, date planning, and help users discover their unique fashion aesthetic. Built with Next.js, with model calls via OpenRouter (OpenAI-compatible chat completions) and Opencode as the dev-time agent CLI.
 
 ## Features
 
@@ -15,8 +15,7 @@ Aidoraa is a sophisticated AI-powered fashion assistance application designed to
 *   **Framework:** Next.js 15 (App Router)
 *   **Language:** TypeScript
 *   **Styling:** Tailwind CSS, ShadCN UI
-*   **AI Toolkit:** Genkit
-*   **AI Model Provider:** Google AI (Gemini)
+*   **AI Model Provider:** OpenRouter (OpenAI-compatible chat completions; see `src/lib/ai/openrouter.ts`)
 *   **UI Components:** ShadCN UI, Lucide React Icons
 *   **Deployment:** Vercel (recommended)
 
@@ -29,7 +28,7 @@ Follow these instructions to set up and run the project on your local machine.
 *   **Node.js:** Version 22.x (as specified in `package.json`). You can use [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versions.
 *   **npm:** Should be installed with Node.js.
 *   **Git:** To clone the repository.
-*   **Google AI API Key:** You need an API key for the Gemini models used by Genkit. Get one from [Google AI Studio](https://aistudio.google.com/app/apikey).
+*   **OpenRouter API Key:** You need an API key for the models used by the app. Get one from [OpenRouter](https://openrouter.ai/keys).
 
 ### Setup
 
@@ -46,7 +45,7 @@ Follow these instructions to set up and run the project on your local machine.
 
 3.  **Set up environment variables:**
     Copy `.env.example` to `.env.local` and populate the services you want to
-    enable. `GOOGLE_GENAI_API_KEY` powers AI features; Supabase and Razorpay
+    enable. `OPENROUTER_API_KEY` (+ `OPENROUTER_MODEL`) powers AI features; Supabase and Razorpay
     variables enable authentication and payments. See
     `docs/supabase-razorpay-setup.md` for the provider-side configuration.
 
@@ -61,16 +60,13 @@ Follow these instructions to set up and run the project on your local machine.
 2.  **Access the application:**
     Open your browser and navigate to [http://localhost:9002](http://localhost:9002).
 
-### Optional: Running Genkit Dev UI
+### Dev-time agent CLI (Opencode)
 
-Genkit flows are integrated into the Next.js server environment. However, you can run the Genkit developer UI separately to inspect and debug flows if needed:
+Opencode is a local dev CLI pinned to the same OpenRouter model string (`opencode.json`):
 
 ```bash
-npm run genkit:dev
-# or for watching changes
-# npm run genkit:watch
+opencode run "help me debug the astrologer chat route"
 ```
-This typically starts the Genkit UI on `http://localhost:4000`.
 
 ## Building for Production
 
@@ -109,7 +105,7 @@ Vercel is the recommended platform for deploying this Next.js application.
     *   **Build & Development Settings:** The repository pins Node.js 22 and the GitHub Actions workflow runs the Vercel build and production deploy.
     *   **Environment Variables:**
         *   Navigate to your project's "Settings" tab, then "Environment Variables".
-        *   Add `GOOGLE_GENAI_API_KEY` with your actual Google AI API key as the value. Ensure it's available for all environments (Production, Preview, Development).
+        *   Add `OPENROUTER_API_KEY` (and `OPENROUTER_MODEL`, e.g. `anthropic/claude-sonnet-4`) with your actual values. Ensure they're available for all environments (Production, Preview, Development).
 
 4.  **Deploy:**
     *   Click the "Deploy" button. Vercel will build and deploy your application.
