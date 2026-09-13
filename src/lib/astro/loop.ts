@@ -9,7 +9,7 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { chatCompletion, type ChatMessage } from '../ai/openrouter';
+import { chatCompletion, type ChatMessage } from '../ai/provider';
 import {
   astroProfileInit,
   astroProfileGet,
@@ -398,7 +398,7 @@ export async function runAstrologerTurn({
 
   let toolCalls = 0;
   for (let turn = 0; turn < MAX_TURNS; turn++) {
-    const completion = await chatCompletion({ messages, tools: TOOLS });
+    const completion = await chatCompletion({ messages, tools: TOOLS, sessionId });
     const choice = completion.choices?.[0]?.message as
       | { content?: string | null; tool_calls?: Array<{ id: string; function: { name: string; arguments: string } }> }
       | undefined;

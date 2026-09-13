@@ -137,6 +137,7 @@ export function parseBirthData(raw: unknown): BirthDataInput {
 }
 
 const ATROS_DIR = '/tmp/atros-src';
+const VENV_BIN = '/tmp/atros-venv/bin';
 const TOOL_TIMEOUT_MS = 25_000;
 
 async function collectVendorFiles(): Promise<{ path: string; content: string }[]> {
@@ -149,7 +150,7 @@ async function collectVendorFiles(): Promise<{ path: string; content: string }[]
       const relPath = rel ? `${rel}/${entry.name}` : entry.name;
       if (entry.isDirectory()) {
         await walk(full, relPath);
-      } else if (/\.py$|^pyproject\.toml$|^\.py$/i.test(entry.name) || entry.name === 'pyproject.toml') {
+      } else if (/\.py$/.test(entry.name) || entry.name === 'pyproject.toml' || entry.name === 'README.md') {
         files.push({
           path: `${ATROS_DIR}/${relPath}`,
           content: await fs.readFile(full, 'utf8'),
@@ -160,15 +161,57 @@ async function collectVendorFiles(): Promise<{ path: string; content: string }[]
   await walk(root, '');
   return files;
 }
-
 async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
-  const probe = await sandbox.runCommand('pip', ['show', 'atros']);
-  if (probe.exitCode === 0) return;
+  let installed = false;
+  try {
+    const probe = await sandbox.runCommand(`${VENV_BIN}/pip`, ['show', 'atros']);
+    installed = probe.exitCode === 0;
+  } catch {
+    installed = false;
+  }
+  if (installed) return;
+
+  // Debian's PEP 668 lock forbids system-wide pip installs; atros lives in a venv.
+  const mkvenv = await sandbox.runCommand('python3', ['-m', 'venv', '/tmp/atros-venv'], {
+    timeoutMs: 120_000,
+  });
+  if (mkvenv.exitCode !== 0) {
+    // Minimal images lack ensurepip: install python3-venv, then retry once.
+    await sandbox.runCommand('sudo', ['apt-get', 'update', '-qq'], { timeoutMs: 300_000 });
+    await sandbox.runCommand('sudo', ['apt-get', 'install', '-y', '-qq', 'python3-venv'], {
+      timeoutMs: 300_000,
+    });
+    const retry = await sandbox.runCommand('python3', ['-m', 'venv', '/tmp/atros-venv'], {
+      timeoutMs: 120_000,
+    });
+    if (retry.exitCode !== 0) {
+      throw new Error(`venv creation failed: ${await retry.stderr()}`);
+    }
+  }
+  // pyswisseph (via kerykeion) ships no wheel for the sandbox Python, so the
+  // toolchain must exist before pip runs. Passwordless sudo is available.
+  const sysdeps = await sandbox.runCommand(
+    'sudo',
+    ['apt-get', 'install', '-y', '-qq', 'build-essential', 'pkg-config', 'python3-dev'],
+    { timeoutMs: 300_000 },
+  );
+  if (sysdeps.exitCode !== 0) {
+    // Package lists may be stale on a fresh image; refresh once and retry.
+    await sandbox.runCommand('sudo', ['apt-get', 'update', '-qq'], { timeoutMs: 300_000 });
+    const retry = await sandbox.runCommand(
+      'sudo',
+      ['apt-get', 'install', '-y', '-qq', 'build-essential', 'pkg-config', 'python3-dev'],
+      { timeoutMs: 300_000 },
+    );
+    if (retry.exitCode !== 0) {
+      throw new Error(`system deps install failed: ${await retry.stderr()}`);
+    }
+  }
 
   const files = await collectVendorFiles();
   await sandbox.writeFiles(files.map((f) => ({ path: f.path, content: f.content })));
   const install = await sandbox.runCommand(
-    'pip',
+    `${VENV_BIN}/pip`,
     ['install', '--quiet', ATROS_DIR],
     { timeoutMs: 120_000 },
   );
@@ -177,7 +220,7 @@ async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
   }
   // Pre-warm ephemeris data at sandbox setup so per-turn calls stay in budget.
   await sandbox.runCommand(
-    'atros',
+    `${VENV_BIN}/atros`,
     chartArgs({
       name: 'Warmup',
       date: '2000-04-22',
@@ -221,7 +264,7 @@ export async function runAtros(
   let lastError = 'unknown error';
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const result = await sandbox.runCommand('atros', argv, { timeoutMs });
+      const result = await sandbox.runCommand(`${VENV_BIN}/atros`, argv, { timeoutMs });
       const stdout = await result.stdout();
       if (result.exitCode !== 0) {
         const stderr = await result.stderr().catch(() => '');

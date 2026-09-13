@@ -1,6 +1,6 @@
 # Aidoraa Fashion
 
-Aidoraa is a sophisticated AI-powered fashion assistance application designed to provide personalized styling advice, date planning, and help users discover their unique fashion aesthetic. Built with Next.js, with model calls via OpenRouter (OpenAI-compatible chat completions) and Opencode as the dev-time agent CLI.
+Aidoraa is a sophisticated AI-powered fashion assistance application designed to provide personalized styling advice, date planning, and help users discover their unique fashion aesthetic. Built with Next.js, with model calls via OpenCode Go (OpenAI-compatible chat completions; see `src/lib/ai/provider.ts`, OpenRouter fallback) and Opencode as the dev-time agent CLI.
 
 ## Features
 
@@ -15,7 +15,7 @@ Aidoraa is a sophisticated AI-powered fashion assistance application designed to
 *   **Framework:** Next.js 15 (App Router)
 *   **Language:** TypeScript
 *   **Styling:** Tailwind CSS, ShadCN UI
-*   **AI Model Provider:** OpenRouter (OpenAI-compatible chat completions; see `src/lib/ai/openrouter.ts`)
+*   **AI Model Provider:** OpenCode Go (`muse-spark-1.3-contributor`, OpenAI-compatible; see `src/lib/ai/provider.ts`)
 *   **UI Components:** ShadCN UI, Lucide React Icons
 *   **Deployment:** Vercel (recommended)
 
@@ -28,7 +28,7 @@ Follow these instructions to set up and run the project on your local machine.
 *   **Node.js:** Version 22.x (as specified in `package.json`). You can use [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versions.
 *   **npm:** Should be installed with Node.js.
 *   **Git:** To clone the repository.
-*   **OpenRouter API Key:** You need an API key for the models used by the app. Get one from [OpenRouter](https://openrouter.ai/keys).
+*   **OpenCode Go API Key:** You need a Go API key from [OpenCode Zen](https://opencode.ai/auth). Set it as `OPENGO_API` (or `OPENCODE_API_KEY`).
 
 ### Setup
 
@@ -43,9 +43,9 @@ Follow these instructions to set up and run the project on your local machine.
     npm install
     ```
 
-3.  **Set up environment variables:**
     Copy `.env.example` to `.env.local` and populate the services you want to
-    enable. `OPENROUTER_API_KEY` (+ `OPENROUTER_MODEL`) powers AI features; Supabase and Razorpay
+    enable. `OPENGO_API` (OpenCode Go key) powers AI features — `OPENROUTER_API_KEY`
+    works as a fallback; `ASTROLOGER_MODEL` overrides the default model. Supabase and Razorpay
     variables enable authentication and payments. See
     `docs/supabase-razorpay-setup.md` for the provider-side configuration.
 
@@ -105,7 +105,7 @@ Vercel is the recommended platform for deploying this Next.js application.
     *   **Build & Development Settings:** The repository pins Node.js 22 and the GitHub Actions workflow runs the Vercel build and production deploy.
     *   **Environment Variables:**
         *   Navigate to your project's "Settings" tab, then "Environment Variables".
-        *   Add `OPENROUTER_API_KEY` (and `OPENROUTER_MODEL`, e.g. `anthropic/claude-sonnet-4`) with your actual values. Ensure they're available for all environments (Production, Preview, Development).
+        *   Add `OPENGO_API` with your OpenCode Go key (Production + Preview at minimum). Optional: `ASTROLOGER_MODEL` to override the default `muse-spark-1.3-contributor`.
 
 4.  **Deploy:**
     *   Click the "Deploy" button. Vercel will build and deploy your application.
