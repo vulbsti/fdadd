@@ -221,6 +221,8 @@ async function persist(
     user_id: userId,
     session_id: sessionId,
     role: row.role,
+    content: row.content,
+    tool_name: row.tool_name ?? null,
     tool_payload: (row.tool_payload ?? null) as unknown as SupabaseJson,
   });
 }

@@ -187,7 +187,9 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     ...(options.sessionId ? { 'x-opencode-session': options.sessionId } : {}),
   };
 
-  if (provider.name === 'opencode-go') {
+  // Responses is Spark-only on Go (qwen/kimi 200 on chat, 401 on responses).
+  // Route by model so overrides keep working on their proven protocol.
+  if (provider.name === 'opencode-go' && model.startsWith('muse-spark')) {
     const response = await fetch(`${provider.baseUrl}/responses`, {
       method: 'POST',
       headers,
