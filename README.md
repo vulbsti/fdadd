@@ -43,6 +43,7 @@ Follow these instructions to set up and run the project on your local machine.
     npm install
     ```
 
+3.  **Set up environment variables:**
     Copy `.env.example` to `.env.local` and populate the services you want to
     enable. `OPENGO_API` (OpenCode Go key) powers AI features — `OPENROUTER_API_KEY`
     works as a fallback; `ASTROLOGER_MODEL` overrides the default model. Supabase and Razorpay
