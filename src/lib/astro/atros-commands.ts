@@ -233,6 +233,29 @@ async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
   );
 }
 
+const TEMPLATE_NAME = 'atros-template';
+
+/**
+ * Provision a fresh per-session sandbox. Preferred path: fork the prebuilt
+ * template snapshot (venv + atros + warm ephemeris), so cold sessions skip
+ * the ~70s compiler/pip setup. The template builds itself on first use;
+ * any failure falls back to a fresh sandbox with full setup.
+ */
+async function freshSessionSandbox(name: string): Promise<Sandbox> {
+  try {
+    const template = await Sandbox.getOrCreate({ name: TEMPLATE_NAME });
+    await ensureAtrosInstalled(template);
+    try {
+      await template.snapshot({ expiration: 0 });
+    } catch {
+      // Persistent sandboxes auto-snapshot on stop; explicit snapshot is a bonus.
+    }
+    return await Sandbox.fork({ sourceSandbox: TEMPLATE_NAME, name });
+  } catch {
+    return await Sandbox.getOrCreate({ name });
+  }
+}
+
 export interface RunAtrosOptions {
   sessionId: string;
   timeoutMs?: number;
@@ -246,7 +269,13 @@ export async function runAtros(
   argv: string[],
   { sessionId, timeoutMs = TOOL_TIMEOUT_MS }: RunAtrosOptions,
 ): Promise<AtrosResult> {
-  const sandbox = await Sandbox.getOrCreate({ name: `atros-${sessionId}` });
+  const name = `atros-${sessionId}`;
+  let sandbox: Sandbox;
+  try {
+    sandbox = await Sandbox.get({ name });
+  } catch {
+    sandbox = await freshSessionSandbox(name);
+  }
 
   try {
     await ensureAtrosInstalled(sandbox);
