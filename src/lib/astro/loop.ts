@@ -9,7 +9,9 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { chatCompletion, type ChatMessage } from '../ai/provider';
+type SupabaseJson = string | number | boolean | null | SupabaseJson[] | { [key: string]: SupabaseJson };
+import { z } from 'zod';
+import { chatCompletion, type ChatMessage, type ToolCallRequest } from '../ai/provider';
 import {
   astroProfileInit,
   astroProfileGet,
@@ -203,7 +205,7 @@ interface StoredMessage {
   content: string;
   tool_name: string | null;
   tool_payload: {
-    tool_calls?: Array<{ id: string; function: { name: string; arguments: string } }>;
+    tool_calls?: ToolCallRequest[];
     tool_call_id?: string;
     result?: unknown;
   } | null;
@@ -219,14 +221,45 @@ async function persist(
     user_id: userId,
     session_id: sessionId,
     role: row.role,
-    content: row.content,
-    tool_name: row.tool_name ?? null,
-    tool_payload: (row.tool_payload ?? null) as never,
+    tool_payload: (row.tool_payload ?? null) as unknown as SupabaseJson,
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ToolArgs = Record<string, any>;
+const ToolArgsSchema = z.record(z.string(), z.unknown());
+type ToolArgs = z.infer<typeof ToolArgsSchema>;
+
+function parseToolArgs(raw: string): ToolArgs {
+  let parsed: unknown = {};
+  try {
+    parsed = raw ? (JSON.parse(raw) as unknown) : {};
+  } catch {
+    parsed = {};
+  }
+  const checked = ToolArgsSchema.safeParse(parsed);
+  return checked.success ? checked.data : {};
+}
+
+function strArg(args: ToolArgs, key: string): string | undefined {
+  const value: unknown = args[key];
+  return typeof value === 'string' ? value : undefined;
+}
+
+function reqStr(args: ToolArgs, key: string): string {
+  const value = strArg(args, key);
+  if (!value) throw new Error(`missing required argument: ${key}`);
+  return value;
+}
+
+function numArg(args: ToolArgs, key: string): number | undefined {
+  const value: unknown = args[key];
+  return typeof value === 'number' ? value : undefined;
+}
+
+function strArrayArg(args: ToolArgs, key: string): string[] {
+  const value: unknown = args[key];
+  if (!Array.isArray(value)) return [];
+  return value.filter((entry: unknown): entry is string => typeof entry === 'string');
+}
 
 async function dispatch(
   client: SupabaseClient,
@@ -238,16 +271,21 @@ async function dispatch(
 ): Promise<{ result: unknown; profileId: string | null }> {
   switch (name) {
     case 'astro_profile_init': {
+      const latitude: unknown = args.latitude;
+      const longitude: unknown = args.longitude;
+      if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+        throw new Error('latitude and longitude must be numbers');
+      }
       const profile = await astroProfileInit(client, userId, sessionId, {
-        name: args.name,
-        date: args.date,
-        time: args.time,
-        latitude: args.latitude,
-        longitude: args.longitude,
-        timezone: args.timezone,
-        place_name: args.place_name,
-        time_source: args.time_source,
-        time_confidence: args.time_confidence,
+        name: reqStr(args, 'name'),
+        date: reqStr(args, 'date'),
+        time: reqStr(args, 'time'),
+        latitude,
+        longitude,
+        timezone: reqStr(args, 'timezone'),
+        place_name: strArg(args, 'place_name'),
+        time_source: strArg(args, 'time_source'),
+        time_confidence: strArg(args, 'time_confidence'),
       });
       await client
         .from('astro_sessions')
@@ -280,56 +318,71 @@ async function dispatch(
       return { result: { error: `unknown tool ${name}` }, profileId };
   }
 
+  if (!profileId) return { result: { error: 'no profile yet — call astro_profile_init first' }, profileId };
+
   switch (name) {
     case 'atros_chart':
-      return { result: await atrosChart(client, userId, sessionId, profileId as string), profileId };
+      return { result: await atrosChart(client, userId, sessionId, profileId), profileId };
     case 'atros_sensitivity':
-      return { result: await atrosSensitivity(client, userId, sessionId, profileId as string), profileId };
-    case 'atros_timeline':
+      return { result: await atrosSensitivity(client, userId, sessionId, profileId), profileId };
+    case 'atros_timeline': {
+      const level = strArg(args, 'level');
       return {
-        result: await atrosTimeline(client, userId, sessionId, profileId as string, args.from, args.to, args.level),
+        result: await atrosTimeline(
+          client, userId, sessionId, profileId,
+          reqStr(args, 'from'), reqStr(args, 'to'),
+          level === 'maha' || level === 'antar' || level === 'pratyantar' || level === 'sookshma' ? level : 'pratyantar',
+        ),
         profileId,
       };
+    }
     case 'atros_transit':
       return {
-        result: await atrosTransit(client, userId, sessionId, profileId as string, args.as_of),
+        result: await atrosTransit(client, userId, sessionId, profileId, reqStr(args, 'as_of')),
         profileId,
       };
     case 'atros_current_dasha':
-      return { result: await atrosCurrentDasha(client, userId, sessionId, profileId as string), profileId };
+      return { result: await atrosCurrentDasha(client, userId, sessionId, profileId), profileId };
     case 'atros_dasha':
       return {
-        result: await atrosDasha(client, userId, sessionId, profileId as string, args.years),
+        result: await atrosDasha(client, userId, sessionId, profileId, numArg(args, 'years')),
         profileId,
       };
     case 'astro_event_add':
       return {
-        result: await astroEventAdd(client, userId, sessionId, profileId as string, {
-          on_date: args.on_date,
-          title: args.title,
-          detail: args.detail,
-          fit: args.fit,
+        result: await astroEventAdd(client, userId, sessionId, profileId, {
+          on_date: reqStr(args, 'on_date'),
+          title: reqStr(args, 'title'),
+          detail: strArg(args, 'detail'),
+          fit: strArg(args, 'fit'),
         }),
         profileId,
       };
-    case 'astro_hypothesis_upsert':
+    case 'astro_hypothesis_upsert': {
+      const status = strArg(args, 'status');
       return {
-        result: await astroHypothesisUpsert(client, userId, profileId as string, {
-          hid: args.hid,
-          claim: args.claim,
-          predictions: args.predictions ?? [],
-          tests: args.tests ?? [],
-          status: args.status,
+        result: await astroHypothesisUpsert(client, userId, profileId, {
+          hid: reqStr(args, 'hid'),
+          claim: reqStr(args, 'claim'),
+          predictions: strArrayArg(args, 'predictions'),
+          tests: strArrayArg(args, 'tests'),
+          status: status === 'open' || status === 'confirmed' || status === 'eliminated' || status === 'ambiguous' ? status : undefined,
         }),
         profileId,
       };
-    case 'astro_hypothesis_status':
+    }
+    case 'astro_hypothesis_status': {
+      const status = strArg(args, 'status');
+      if (status !== 'open' && status !== 'confirmed' && status !== 'eliminated' && status !== 'ambiguous') {
+        throw new Error('status must be open | confirmed | eliminated | ambiguous');
+      }
       return {
-        result: await astroHypothesisStatus(client, userId, profileId as string, args.hid, args.status),
+        result: await astroHypothesisStatus(client, userId, profileId, reqStr(args, 'hid'), status),
         profileId,
       };
+    }
     case 'astro_elimination_table':
-      return { result: await astroEliminationTable(client, userId, profileId as string), profileId };
+      return { result: await astroEliminationTable(client, userId, profileId), profileId };
     default:
       return { result: { error: `unknown tool ${name}` }, profileId };
   }
@@ -399,9 +452,7 @@ export async function runAstrologerTurn({
   let toolCalls = 0;
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     const completion = await chatCompletion({ messages, tools: TOOLS, sessionId });
-    const choice = completion.choices?.[0]?.message as
-      | { content?: string | null; tool_calls?: Array<{ id: string; function: { name: string; arguments: string } }> }
-      | undefined;
+    const choice = completion.choices[0]?.message;
     const toolCallsRequested = choice?.tool_calls ?? [];
 
     if (toolCallsRequested.length === 0) {
@@ -423,12 +474,7 @@ export async function runAstrologerTurn({
 
     for (const call of toolCallsRequested) {
       toolCalls += 1;
-      let parsed: ToolArgs = {};
-      try {
-        parsed = call.function.arguments ? JSON.parse(call.function.arguments) : {};
-      } catch {
-        parsed = {};
-      }
+      const parsed = parseToolArgs(call.function.arguments);
       let outcome: unknown;
       try {
         const dispatched = await dispatch(client, userId, sessionId, profileId, call.function.name, parsed);

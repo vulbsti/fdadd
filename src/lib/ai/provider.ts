@@ -1,11 +1,12 @@
 /**
  * Model provider for the astrologer agent loop.
  *
- * Primary: OpenCode Go (`https://opencode.ai/zen/go/v1`, OpenAI-compatible
- * chat completions, `muse-spark-1.3-contributor`). Key resolution order:
- * `OPENCODE_API_KEY` (catalog-canonical name), then `OPENGO_API`, then
- * `OPENROUTER_API_KEY` as an OpenRouter fallback. Model override:
- * `ASTROLOGER_MODEL`, then `OPENROUTER_MODEL`.
+ * Primary: OpenCode Go (`https://opencode.ai/zen/go/v1`, `muse-spark-1.3-contributor`).
+ * muse-spark is served over the Responses API (`/responses`); Chat Completions
+ * 500s for it, so the Go path translates to/from Chat Completions shape and the
+ * agent loop stays unchanged. Key resolution: `OPENCODE_API_KEY`, then
+ * `OPENGO_API`, then `OPENROUTER_API_KEY` (OpenRouter Chat Completions fallback).
+ * Model override: `ASTROLOGER_MODEL`, then `OPENROUTER_MODEL`.
  */
 
 export class ProviderError extends Error {
@@ -20,26 +21,43 @@ export class ProviderError extends Error {
   }
 }
 
+export interface ToolCallRequest {
+  id: string;
+  type: 'function';
+  function: { name: string; arguments: string };
+}
+export interface FunctionToolDefinition {
+  type: 'function';
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
+
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant' | 'tool';
   content: string | null;
   name?: string;
   tool_call_id?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tool_calls?: any[];
+  tool_calls?: ToolCallRequest[];
 }
 
 export interface ChatCompletionOptions {
   model?: string;
   messages: ChatMessage[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tools?: any[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toolChoice?: any;
+  tools?: FunctionToolDefinition[];
+  toolChoice?: string | Record<string, unknown>;
   temperature?: number;
   maxTokens?: number;
   /** Forwarded as `x-opencode-session` so Go can route + cache per conversation. */
   sessionId?: string;
+}
+
+export interface ChatCompletionResult {
+  choices: Array<{
+    message: { content: string | null; tool_calls: ToolCallRequest[] };
+  }>;
 }
 
 interface ResolvedProvider {
@@ -73,8 +91,86 @@ function resolveProvider(): ResolvedProvider {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function chatCompletion(options: ChatCompletionOptions): Promise<any> {
+type ResponsesInputItem =
+  | { type: 'function_call_output'; call_id: string; output: string }
+  | { type: 'function_call'; call_id: string; name: string; arguments: string }
+  | { role: 'system' | 'user' | 'assistant'; content: string | Array<{ type: 'output_text'; text: string }> };
+
+function toResponsesTools(tools: FunctionToolDefinition[]): Array<{
+  type: 'function';
+  name: string;
+  description: string;
+  parameters: Record<string, unknown>;
+}> {
+  return tools.map((tool) => ({
+    type: 'function' as const,
+    name: tool.function.name,
+    description: tool.function.description,
+    parameters: tool.function.parameters,
+  }));
+}
+
+function toResponsesInput(messages: ChatMessage[]): ResponsesInputItem[] {
+  const input: ResponsesInputItem[] = [];
+  for (const message of messages) {
+    if (message.role === 'tool') {
+      input.push({
+        type: 'function_call_output',
+        call_id: message.tool_call_id ?? '',
+        output: message.content ?? '',
+      });
+    } else if (message.role === 'assistant' && message.tool_calls?.length) {
+      input.push({
+        role: 'assistant',
+        content: message.content ? [{ type: 'output_text', text: message.content }] : [],
+      });
+      for (const call of message.tool_calls) {
+        input.push({
+          type: 'function_call',
+          call_id: call.id,
+          name: call.function.name,
+          arguments: call.function.arguments || '{}',
+        });
+      }
+    } else {
+      input.push({ role: message.role, content: message.content ?? '' });
+    }
+  }
+  return input;
+}
+
+interface ResponsesOutputItem {
+  type: string;
+  call_id?: string;
+  name?: string;
+  arguments?: string;
+  content?: Array<{ type?: string; text?: string }>;
+}
+
+interface ResponsesResponse {
+  output?: ResponsesOutputItem[];
+}
+
+function fromResponsesOutput(response: ResponsesResponse): ChatCompletionResult {
+  let text = '';
+  const toolCalls: ToolCallRequest[] = [];
+  for (const item of response.output ?? []) {
+    if (item.type === 'function_call' && item.call_id && item.name) {
+      toolCalls.push({
+        id: item.call_id,
+        type: 'function',
+        function: { name: item.name, arguments: item.arguments ?? '{}' },
+      });
+    } else if (item.type === 'message') {
+      for (const part of item.content ?? []) {
+        if (part.type === 'output_text' && part.text) text += part.text;
+      }
+    }
+  }
+  return { choices: [{ message: { content: text || null, tool_calls: toolCalls } }] };
+}
+
+export async function chatCompletion(options: ChatCompletionOptions): Promise<ChatCompletionResult> {
   const provider = resolveProvider();
   const model =
     options.model ??
@@ -82,16 +178,39 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<an
     process.env.OPENROUTER_MODEL?.trim() ??
     provider.defaultModel;
 
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${provider.apiKey}`,
+    'HTTP-Referer': `https://${process.env.VERCEL_URL ?? 'localhost:9002'}`,
+    'X-Title': 'Aidoraa Astrologer',
+    'User-Agent': 'aidoraa-astrologer/1.0',
+    ...(options.sessionId ? { 'x-opencode-session': options.sessionId } : {}),
+  };
+
+  if (provider.name === 'opencode-go') {
+    const response = await fetch(`${provider.baseUrl}/responses`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model,
+        input: toResponsesInput(options.messages),
+        ...(options.tools ? { tools: toResponsesTools(options.tools) } : {}),
+        ...(options.toolChoice ? { tool_choice: options.toolChoice } : {}),
+        ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+        // Reasoning models burn budget before emitting: default generously.
+        max_output_tokens: options.maxTokens ?? 4096,
+      }),
+    });
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      throw new ProviderError(provider.name, response.status, body);
+    }
+    return fromResponsesOutput((await response.json()) as ResponsesResponse);
+  }
+
   const response = await fetch(`${provider.baseUrl}/chat/completions`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${provider.apiKey}`,
-      'HTTP-Referer': `https://${process.env.VERCEL_URL ?? 'localhost:9002'}`,
-      'X-Title': 'Aidoraa Astrologer',
-      'User-Agent': 'aidoraa-astrologer/1.0',
-      ...(options.sessionId ? { 'x-opencode-session': options.sessionId } : {}),
-    },
+    headers,
     body: JSON.stringify({
       model,
       messages: options.messages,
@@ -107,5 +226,5 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<an
     throw new ProviderError(provider.name, response.status, body);
   }
 
-  return response.json();
+  return (await response.json()) as ChatCompletionResult;
 }
