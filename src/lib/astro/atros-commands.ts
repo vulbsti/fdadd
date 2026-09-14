@@ -18,6 +18,11 @@ import path from 'node:path';
 import { z } from 'zod';
 import { Sandbox } from '@vercel/sandbox';
 
+/**
+ * Bump on any vendored Atros behavior change: it keys the calculation cache.
+ */
+export const ATROS_ENGINE_VERSION = '0.1.0+aidoraa.20260914';
+
 export const BirthDataSchema = z.object({
   name: z.string().min(1).max(200),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD'),
@@ -141,12 +146,15 @@ const VENV_BIN = '/tmp/atros-venv/bin';
 const TOOL_TIMEOUT_MS = 25_000;
 
 async function collectVendorFiles(): Promise<{ path: string; content: string }[]> {
-  const root = path.join(process.cwd(), 'vendor', 'atros');
+  // Static string, not path.join(process.cwd(), ...): Turbopack's workflow
+  // loader lints dynamic `path.join(process.cwd(), x ? y : z)` calls as
+  // TP1006 errors, which fail every dev request.
+  const root = `${process.cwd()}/vendor/atros`;
   const files: { path: string; content: string }[] = [];
   async function walk(dir: string, rel: string): Promise<void> {
     for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
       if (entry.name === '__pycache__') continue;
-      const full = path.join(dir, entry.name);
+      const full = `${dir}/${entry.name}`;
       const relPath = rel ? `${rel}/${entry.name}` : entry.name;
       if (entry.isDirectory()) {
         await walk(full, relPath);

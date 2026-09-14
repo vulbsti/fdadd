@@ -9,6 +9,8 @@
  * Model override: `ASTROLOGER_MODEL`, then `OPENROUTER_MODEL`.
  */
 
+import { z } from 'zod';
+
 export class ProviderError extends Error {
   readonly status: number;
   readonly body: string;
@@ -43,15 +45,19 @@ export interface ChatMessage {
   tool_calls?: ToolCallRequest[];
 }
 
+export type ToolChoice = 'auto' | 'required' | 'none' | { name: string };
+
 export interface ChatCompletionOptions {
   model?: string;
   messages: ChatMessage[];
   tools?: FunctionToolDefinition[];
-  toolChoice?: string | Record<string, unknown>;
+  toolChoice?: ToolChoice;
   temperature?: number;
   maxTokens?: number;
   /** Forwarded as `x-opencode-session` so Go can route + cache per conversation. */
   sessionId?: string;
+  /** Bounded fetch timeout in milliseconds. */
+  timeoutMs?: number;
 }
 
 export interface ChatCompletionResult {
@@ -170,6 +176,38 @@ function fromResponsesOutput(response: ResponsesResponse): ChatCompletionResult 
   return { choices: [{ message: { content: text || null, tool_calls: toolCalls } }] };
 }
 
+/** Map the neutral ToolChoice to each provider's wire shape. */
+function toResponsesToolChoice(choice: ToolChoice): unknown {
+  if (typeof choice === 'string') return choice;
+  return { type: 'function', name: choice.name };
+}
+
+function toChatCompletionsToolChoice(choice: ToolChoice): unknown {
+  if (typeof choice === 'string') return choice;
+  return { type: 'function', function: { name: choice.name } };
+}
+
+const ResultSchema = z.object({
+  choices: z.array(
+    z.object({
+      message: z.object({
+        content: z.string().nullable(),
+        tool_calls: z
+          .array(
+            z.object({
+              id: z.string(),
+              type: z.literal('function'),
+              function: z.object({ name: z.string(), arguments: z.string() }),
+            }),
+          )
+          .default([]),
+      }),
+    }),
+  ),
+});
+
+const FETCH_TIMEOUT_MS = 120_000;
+
 export async function chatCompletion(options: ChatCompletionOptions): Promise<ChatCompletionResult> {
   const provider = resolveProvider();
   const model =
@@ -186,18 +224,23 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     'User-Agent': 'aidoraa-astrologer/1.0',
     ...(options.sessionId ? { 'x-opencode-session': options.sessionId } : {}),
   };
+  const timeoutMs = options.timeoutMs ?? FETCH_TIMEOUT_MS;
+  const fetchWithTimeout = (url: string, init: RequestInit): Promise<Response> =>
+    fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
 
   // Responses is Spark-only on Go (qwen/kimi 200 on chat, 401 on responses).
   // Route by model so overrides keep working on their proven protocol.
   if (provider.name === 'opencode-go' && model.startsWith('muse-spark')) {
-    const response = await fetch(`${provider.baseUrl}/responses`, {
+    const response = await fetchWithTimeout(`${provider.baseUrl}/responses`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
         model,
         input: toResponsesInput(options.messages),
         ...(options.tools ? { tools: toResponsesTools(options.tools) } : {}),
-        ...(options.toolChoice ? { tool_choice: options.toolChoice } : {}),
+        ...(options.toolChoice
+          ? { tool_choice: toResponsesToolChoice(options.toolChoice) }
+          : {}),
         ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
         // Reasoning models burn budget before emitting: default generously.
         max_output_tokens: options.maxTokens ?? 4096,
@@ -210,14 +253,16 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     return fromResponsesOutput((await response.json()) as ResponsesResponse);
   }
 
-  const response = await fetch(`${provider.baseUrl}/chat/completions`, {
+  const response = await fetchWithTimeout(`${provider.baseUrl}/chat/completions`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
       model,
       messages: options.messages,
       ...(options.tools ? { tools: options.tools } : {}),
-      ...(options.toolChoice ? { tool_choice: options.toolChoice } : {}),
+      ...(options.toolChoice
+        ? { tool_choice: toChatCompletionsToolChoice(options.toolChoice) }
+        : {}),
       ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
       ...(options.maxTokens !== undefined ? { max_tokens: options.maxTokens } : {}),
     }),
@@ -228,5 +273,9 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     throw new ProviderError(provider.name, response.status, body);
   }
 
-  return (await response.json()) as ChatCompletionResult;
+  const parsed = ResultSchema.safeParse(await response.json());
+  if (!parsed.success) {
+    throw new ProviderError(provider.name, 502, `unparseable provider response: ${parsed.error.message}`);
+  }
+  return parsed.data;
 }

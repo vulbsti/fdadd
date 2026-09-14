@@ -40,11 +40,15 @@ export default function BirthIntakeForm({ onSessionOpened }: BirthIntakeFormProp
     const response = await fetch('/api/astrologer/sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ birth: values }),
+      body: JSON.stringify({
+        mode: 'new_profile',
+        clientRequestId: crypto.randomUUID(),
+        birth: values,
+      }),
     });
     const payload = await response.json().catch(() => null);
     if (!response.ok || !payload?.sessionId) {
-      setServerError(payload?.error ?? 'Could not open a session. Please try again.');
+      setServerError(payload?.message ?? 'Could not open a session. Please try again.');
       return;
     }
     onSessionOpened(payload.sessionId as string);

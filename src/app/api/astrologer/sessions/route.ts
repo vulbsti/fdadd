@@ -1,107 +1,115 @@
+/**
+ * Astrologer sessions: durable run starts instead of synchronous chat.
+ *
+ * POST is a discriminated union:
+ *  - {mode:'new_profile', clientRequestId, birth} → intake RPC + intake workflow, 202.
+ *  - {mode:'existing_profile', profileId} → create_astro_session, 201 (no recalc).
+ * GET returns camelCase session summaries ordered by server activity.
+ */
+
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
-import { astroProfileInit } from '@/lib/astro/tools';
+import { errorResponse, requireAuth, startAndAttach, unconfigured } from '@/lib/astro/api-helpers';
+import { AgentStoreError } from '@/lib/astro/agent-store';
+import {
+  AstrologerSessionSummarySchema,
+  BirthInputSchema,
+  type AstrologerSessionSummary,
+} from '@/lib/astro/contracts';
+import { astrologerIntakeWorkflow } from '@/workflows/astrologer-intake';
 
 export const runtime = 'nodejs';
 
-const birthSchema = z.object({
-  name: z.string().min(1).max(200),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
-  timezone: z.string().min(1).max(100),
-  place_name: z.string().max(300).optional(),
-  time_source: z.string().max(50).optional(),
-  time_confidence: z.string().max(50).optional(),
-});
+const postSchema = z.discriminatedUnion('mode', [
+  z.object({
+    mode: z.literal('new_profile'),
+    clientRequestId: z.string().uuid(),
+    birth: BirthInputSchema,
+  }),
+  z.object({
+    mode: z.literal('existing_profile'),
+    profileId: z.string().uuid(),
+  }),
+]);
 
-const createSchema = z.object({
-  profile_id: z.string().uuid().optional(),
-  birth: birthSchema.optional(),
-});
-
-/** List the caller's astrologer sessions, newest first. */
-export async function GET() {
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Astrologer is not configured.' }, { status: 503 });
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
-  }
-
-  const { data, error } = await supabase
-    .from('astro_sessions')
-    .select('id, profile_id, created_at, updated_at')
-    .eq('user_id', user.id)
-    .order('updated_at', { ascending: false })
-    .limit(50);
-  if (error) {
-    return NextResponse.json({ error: 'Could not list sessions.' }, { status: 500 });
-  }
-  return NextResponse.json({ sessions: data });
+function toSummary(row: Record<string, unknown>): AstrologerSessionSummary {
+  const profile = (row.profile ?? null) as { name?: string } | null;
+  return AstrologerSessionSummarySchema.parse({
+    id: row.id,
+    profileId: row.profile_id ?? null,
+    profileName: profile?.name ?? null,
+    title: row.title ?? 'New reading',
+    status: row.status ?? 'complete',
+    currentQuestion: row.current_question ?? null,
+    nextAction: row.next_action ?? null,
+    lastMessagePreview: row.last_message_preview ?? null,
+    latestRun: null,
+    updatedAt: row.updated_at,
+  });
 }
 
-/**
- * Open a session. With `birth`, runs the intake turn inline
- * (`astroProfileInit` → chart+sensitivity → frozen facts) and links the profile.
- */
+/** List the caller's astrologer sessions, newest server activity first. */
+export async function GET() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return unconfigured();
+  const auth = await requireAuth();
+  if (!auth) {
+    return NextResponse.json({ code: 'forbidden', message: 'unauthenticated' }, { status: 401 });
+  }
+  try {
+    const rows = await auth.store.listSessions(auth.userId);
+    const sessions = rows.map(toSummary);
+    return NextResponse.json({ sessions });
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
 export async function POST(request: Request) {
-  const parsed = createSchema.safeParse(await request.json().catch(() => null));
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return unconfigured();
+  const auth = await requireAuth();
+  if (!auth) {
+    return NextResponse.json({ code: 'forbidden', message: 'unauthenticated' }, { status: 401 });
+  }
+
+  const parsed = postSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid session request.' }, { status: 400 });
-  }
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Astrologer is not configured.' }, { status: 503 });
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+    return NextResponse.json(
+      { code: 'invalid_request', message: 'Invalid session request.' },
+      { status: 400 },
+    );
   }
 
-  const { data: session, error } = await supabase
-    .from('astro_sessions')
-    .insert({ user_id: user.id, profile_id: parsed.data.profile_id ?? null })
-    .select('id')
-    .single();
-  if (error || !session) {
-    return NextResponse.json({ error: 'Could not open session.' }, { status: 500 });
-  }
-  const sessionId = session.id as string;
-
-  if (parsed.data.birth) {
-    try {
-      const profile = await astroProfileInit(supabase, user.id, sessionId, parsed.data.birth);
-      await supabase
-        .from('astro_sessions')
-        .update({ profile_id: profile.id })
-        .eq('id', sessionId)
-        .eq('user_id', user.id);
-      await supabase.from('astro_messages').insert({
-        user_id: user.id,
-        session_id: sessionId,
-        role: 'assistant',
-        content: `Your chart is calculated and frozen. Ask me about timing, transits, or the patterns shaping this period — or tell me a life event with its date so I can test it against your dasha chain.`,
-      });
-      return NextResponse.json({ sessionId, profileId: profile.id });
-    } catch (e) {
+  try {
+    if (parsed.data.mode === 'new_profile') {
+      const intake = await auth.store.beginProfileIntake(
+        parsed.data.birth,
+        parsed.data.clientRequestId,
+      );
+      if (!intake.replayed) {
+        await startAndAttach(astrologerIntakeWorkflow, intake.runId, auth.store);
+      }
       return NextResponse.json(
-        { error: e instanceof Error ? e.message : 'Intake failed.' },
-        { status: 422 },
+        {
+          sessionId: intake.sessionId,
+          profileId: intake.profileId,
+          runId: intake.runId,
+          status: intake.status,
+          eventsUrl: `/api/astrologer/runs/${intake.runId}/events`,
+          replayed: intake.replayed,
+        },
+        { status: 202 },
       );
     }
-  }
 
-  return NextResponse.json({ sessionId, profileId: parsed.data.profile_id ?? null });
+    const created = await auth.store.createSession(parsed.data.profileId);
+    return NextResponse.json(
+      { sessionId: created.sessionId, profileId: created.profileId },
+      { status: 201 },
+    );
+  } catch (error) {
+    if (error instanceof AgentStoreError && error.code === 'conflict') {
+      return errorResponse(error, 409);
+    }
+    return errorResponse(error);
+  }
 }
