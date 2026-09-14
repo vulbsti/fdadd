@@ -103,36 +103,42 @@ grant select, insert on table public.astro_messages to authenticated;
 grant select, insert, update on table public.astro_quotas to authenticated;
 
 -- One owner policy set per table: users touch only rows whose user_id is them.
+drop policy if exists "Users manage their own astro profiles" on public.astro_profiles;
 create policy "Users manage their own astro profiles"
   on public.astro_profiles for all
   to authenticated
   using ((select auth.uid()) = user_id)
   with check ((select auth.uid()) = user_id);
 
+drop policy if exists "Users manage their own astro events" on public.astro_events;
 create policy "Users manage their own astro events"
   on public.astro_events for all
   to authenticated
   using ((select auth.uid()) = user_id)
   with check ((select auth.uid()) = user_id);
 
+drop policy if exists "Users manage their own astro hypotheses" on public.astro_hypotheses;
 create policy "Users manage their own astro hypotheses"
   on public.astro_hypotheses for all
   to authenticated
   using ((select auth.uid()) = user_id)
   with check ((select auth.uid()) = user_id);
 
+drop policy if exists "Users manage their own astro sessions" on public.astro_sessions;
 create policy "Users manage their own astro sessions"
   on public.astro_sessions for all
   to authenticated
   using ((select auth.uid()) = user_id)
   with check ((select auth.uid()) = user_id);
 
+drop policy if exists "Users read and write their own astro messages" on public.astro_messages;
 create policy "Users read and write their own astro messages"
   on public.astro_messages for all
   to authenticated
   using ((select auth.uid()) = user_id)
   with check ((select auth.uid()) = user_id);
 
+drop policy if exists "Users manage their own astro quotas" on public.astro_quotas;
 create policy "Users manage their own astro quotas"
   on public.astro_quotas for all
   to authenticated
