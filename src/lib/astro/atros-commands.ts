@@ -144,6 +144,12 @@ export function parseBirthData(raw: unknown): BirthDataInput {
 const ATROS_DIR = '/tmp/atros-src';
 const VENV_BIN = '/tmp/atros-venv/bin';
 const TOOL_TIMEOUT_MS = 25_000;
+const TEMPLATE_NAME = 'atros-template';
+const SETUP_MARKER = `/tmp/atros-ready-${ATROS_ENGINE_VERSION.replace(/[^a-zA-Z0-9]/g, '-')}`;
+const SETUP_LOCK = `${SETUP_MARKER}.lock`;
+const SANDBOX_TIMEOUT_MS = 15 * 60 * 1000;
+
+let sharedSandbox: Sandbox | null = null;
 
 async function collectVendorFiles(): Promise<{ path: string; content: string }[]> {
   // Static string, not path.join(process.cwd(), ...): Turbopack's workflow
@@ -170,111 +176,132 @@ async function collectVendorFiles(): Promise<{ path: string; content: string }[]
   return files;
 }
 async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
-  let installed = false;
-  try {
-    const probe = await sandbox.runCommand(`${VENV_BIN}/pip`, ['show', 'atros']);
-    installed = probe.exitCode === 0;
-  } catch {
-    installed = false;
-  }
-  if (installed) return;
+  const ready = await sandbox.runCommand('bash', [
+    '-lc',
+    `${VENV_BIN}/pip show atros >/dev/null 2>&1 && test -f '${SETUP_MARKER}'`,
+  ]);
+  if (ready.exitCode === 0) return;
 
-  // Debian's PEP 668 lock forbids system-wide pip installs; atros lives in a venv.
-  const mkvenv = await sandbox.runCommand('python3', ['-m', 'venv', '/tmp/atros-venv'], {
-    timeoutMs: 120_000,
-  });
-  if (mkvenv.exitCode !== 0) {
-    // Minimal images lack ensurepip: install python3-venv, then retry once.
-    await sandbox.runCommand('sudo', ['apt-get', 'update', '-qq'], { timeoutMs: 300_000 });
-    await sandbox.runCommand('sudo', ['apt-get', 'install', '-y', '-qq', 'python3-venv'], {
+  // Two Workflow branches can reach setup together. The lock is inside the
+  // shared sandbox, so it also coordinates separate serverless invocations.
+  const lock = await sandbox.runCommand(
+    'bash',
+    [
+      '-lc',
+      [
+        `if mkdir '${SETUP_LOCK}' 2>/dev/null; then exit 0; fi`,
+        `for attempt in $(seq 1 120); do`,
+        `  if test -f '${SETUP_MARKER}'; then exit 42; fi`,
+        `  if mkdir '${SETUP_LOCK}' 2>/dev/null; then exit 0; fi`,
+        '  sleep 1',
+        'done',
+        'exit 1',
+      ].join('\n'),
+    ],
+    { timeoutMs: 130_000 },
+  );
+  if (lock.exitCode === 42) return;
+  if (lock.exitCode !== 0) throw new Error('timed out waiting for Atros setup lock');
+
+  try {
+    const afterLock = await sandbox.runCommand('bash', [
+      '-lc',
+      `${VENV_BIN}/pip show atros >/dev/null 2>&1 && test -f '${SETUP_MARKER}'`,
+    ]);
+    if (afterLock.exitCode === 0) return;
+
+    // Debian's PEP 668 lock forbids system-wide pip installs; atros lives in a venv.
+    const mkvenv = await sandbox.runCommand('python3', ['-m', 'venv', '/tmp/atros-venv'], {
       timeoutMs: 300_000,
     });
-    const retry = await sandbox.runCommand('python3', ['-m', 'venv', '/tmp/atros-venv'], {
-      timeoutMs: 120_000,
-    });
-    if (retry.exitCode !== 0) {
-      throw new Error(`venv creation failed: ${await retry.stderr()}`);
+    if (mkvenv.exitCode !== 0) {
+      // Minimal images lack ensurepip: install python3-venv, then retry once.
+      await sandbox.runCommand('sudo', ['apt-get', 'update', '-qq'], { timeoutMs: 300_000 });
+      await sandbox.runCommand('sudo', ['apt-get', 'install', '-y', '-qq', 'python3-venv'], {
+        timeoutMs: 300_000,
+      });
+      const retry = await sandbox.runCommand('python3', ['-m', 'venv', '/tmp/atros-venv'], {
+        timeoutMs: 120_000,
+      });
+      if (retry.exitCode !== 0) {
+        throw new Error(`venv creation failed: ${await retry.stderr()}`);
+      }
     }
-  }
-  // pyswisseph (via kerykeion) ships no wheel for the sandbox Python, so the
-  // toolchain must exist before pip runs. Passwordless sudo is available.
-  const sysdeps = await sandbox.runCommand(
-    'sudo',
-    ['apt-get', 'install', '-y', '-qq', 'build-essential', 'pkg-config', 'python3-dev'],
-    { timeoutMs: 300_000 },
-  );
-  if (sysdeps.exitCode !== 0) {
-    // Package lists may be stale on a fresh image; refresh once and retry.
-    await sandbox.runCommand('sudo', ['apt-get', 'update', '-qq'], { timeoutMs: 300_000 });
-    const retry = await sandbox.runCommand(
+    // pyswisseph (via kerykeion) ships no wheel for the sandbox Python, so the
+    // toolchain must exist before pip runs. Passwordless sudo is available.
+    const sysdeps = await sandbox.runCommand(
       'sudo',
       ['apt-get', 'install', '-y', '-qq', 'build-essential', 'pkg-config', 'python3-dev'],
       { timeoutMs: 300_000 },
     );
-    if (retry.exitCode !== 0) {
-      throw new Error(`system deps install failed: ${await retry.stderr()}`);
+    if (sysdeps.exitCode !== 0) {
+      // Package lists may be stale on a fresh image; refresh once and retry.
+      await sandbox.runCommand('sudo', ['apt-get', 'update', '-qq'], { timeoutMs: 300_000 });
+      const retry = await sandbox.runCommand(
+        'sudo',
+        ['apt-get', 'install', '-y', '-qq', 'build-essential', 'pkg-config', 'python3-dev'],
+        { timeoutMs: 300_000 },
+      );
+      if (retry.exitCode !== 0) {
+        throw new Error(`system deps install failed: ${await retry.stderr()}`);
+      }
     }
-  }
 
-  const files = await collectVendorFiles();
-  await sandbox.writeFiles(files.map((f) => ({ path: f.path, content: f.content })));
-  const install = await sandbox.runCommand(
-    `${VENV_BIN}/pip`,
-    ['install', '--quiet', ATROS_DIR],
-    { timeoutMs: 120_000 },
-  );
-  if (install.exitCode !== 0) {
-    throw new Error(`atros install failed: ${await install.stderr()}`);
-  }
-  // Pre-warm ephemeris data at sandbox setup so per-turn calls stay in budget.
-  // The warmup doubles as an install verification: a broken dependency chain
-  // (e.g. pyswisseph missing for the sandbox Python) fails HERE, not on the
-  // first real calculation.
-  const warmup = await sandbox.runCommand(
-    `${VENV_BIN}/atros`,
-    chartArgs({
-      name: 'Warmup',
-      date: '2000-04-22',
-      time: '09:15',
-      latitude: 26.4499,
-      longitude: 80.3319,
-      timezone: 'Asia/Kolkata',
-    }),
-    { timeoutMs: 120_000 },
-  );
-  if (warmup.exitCode !== 0) {
-    const stderr = await warmup.stderr().catch(() => '');
-    throw new Error(`atros warmup failed: ${(stderr || `exit ${warmup.exitCode}`).slice(0, 500)}`);
+    const files = await collectVendorFiles();
+    await sandbox.writeFiles(files.map((f) => ({ path: f.path, content: f.content })));
+    const install = await sandbox.runCommand(
+      `${VENV_BIN}/pip`,
+      ['install', '--quiet', ATROS_DIR],
+      { timeoutMs: 120_000 },
+    );
+    if (install.exitCode !== 0) {
+      throw new Error(`atros install failed: ${await install.stderr()}`);
+    }
+    // Pre-warm ephemeris data at sandbox setup so per-turn calls stay in budget.
+    // The warmup doubles as an install verification: a broken dependency chain
+    // (e.g. pyswisseph missing for the sandbox Python) fails HERE, not on the
+    // first real calculation.
+    const warmup = await sandbox.runCommand(
+      `${VENV_BIN}/atros`,
+      chartArgs({
+        name: 'Warmup',
+        date: '2000-04-22',
+        time: '09:15',
+        latitude: 26.4499,
+        longitude: 80.3319,
+        timezone: 'Asia/Kolkata',
+      }),
+      { timeoutMs: 120_000 },
+    );
+    if (warmup.exitCode !== 0) {
+      const stderr = await warmup.stderr().catch(() => '');
+      throw new Error(`atros warmup failed: ${(stderr || `exit ${warmup.exitCode}`).slice(0, 500)}`);
+    }
+    await sandbox.runCommand('touch', [SETUP_MARKER]);
+  } finally {
+    await sandbox.runCommand('rm', ['-rf', SETUP_LOCK]).catch(() => undefined);
   }
 }
 
-const TEMPLATE_NAME = 'atros-template';
-
-/**
- * Provision a fresh per-session sandbox. Preferred path: fork the prebuilt
- * template snapshot (venv + atros + warm ephemeris), so cold sessions skip
- * the ~70s compiler/pip setup. The template builds itself on first use.
- *
- * Fallback when the template path is unavailable (e.g. snapshot storage
- * quota 402 on the Hobby plan): a NON-PERSISTENT unnamed sandbox. Named
- * sandboxes are persistent by default and snapshot on stop, so a full
- * snapshots quota fails them too; non-persistent sandboxes skip snapshot
- * storage entirely, at the cost of a full setup each session.
- */
-async function freshSessionSandbox(name: string): Promise<Sandbox> {
+/** Get one shared sandbox; Atros receives only validated argv and writes no user data. */
+async function getAtrosSandbox(): Promise<Sandbox> {
+  if (sharedSandbox) return sharedSandbox;
   try {
-    const template = await Sandbox.getOrCreate({ name: TEMPLATE_NAME });
-    await ensureAtrosInstalled(template);
-    try {
-      await template.snapshot({ expiration: 0 });
-    } catch {
-      // Persistent sandboxes auto-snapshot on stop; explicit snapshot is a bonus.
-    }
-    return await Sandbox.fork({ sourceSandbox: TEMPLATE_NAME, name });
+    sharedSandbox = await Sandbox.getOrCreate({
+      name: TEMPLATE_NAME,
+      timeout: SANDBOX_TIMEOUT_MS,
+    });
   } catch {
-    // Non-persistent: no snapshot, no quota dependency.
-    return await Sandbox.create({ timeout: 15 * 60 * 1000, persistent: false });
+    // Keep a no-snapshot fallback for Hobby accounts that cannot create or
+    // resume the named sandbox. The shared path above avoids forks entirely.
+    sharedSandbox = await Sandbox.create({ timeout: SANDBOX_TIMEOUT_MS, persistent: false });
   }
+  return sharedSandbox;
+}
+
+/** Prepare the shared sandbox once before a durable intake fan-out. */
+export async function ensureAtrosReady(): Promise<void> {
+  await ensureAtrosInstalled(await getAtrosSandbox());
 }
 
 export interface RunAtrosOptions {
@@ -283,20 +310,15 @@ export interface RunAtrosOptions {
 }
 
 /**
- * Run an allowlisted `atros` argv inside a per-session Vercel Sandbox.
- * Reuses the named sandbox across turns; 25s timeout with 1 retry.
+ * Run an allowlisted `atros` argv inside the shared Vercel Sandbox.
+ * Reuses the prepared environment across sessions; 25s timeout with 1 retry.
  */
 export async function runAtros(
   argv: string[],
   { sessionId, timeoutMs = TOOL_TIMEOUT_MS }: RunAtrosOptions,
 ): Promise<AtrosResult> {
-  const name = `atros-${sessionId}`;
-  let sandbox: Sandbox;
-  try {
-    sandbox = await Sandbox.get({ name });
-  } catch {
-    sandbox = await freshSessionSandbox(name);
-  }
+  void sessionId;
+  const sandbox = await getAtrosSandbox();
 
   try {
     await ensureAtrosInstalled(sandbox);

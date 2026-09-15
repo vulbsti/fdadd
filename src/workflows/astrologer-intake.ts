@@ -10,6 +10,8 @@ import { FatalError } from 'workflow';
 import { atrosChart, atrosSensitivity } from '@/lib/astro/tools';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore } from '@/lib/astro/agent-store';
+import { ensureAtrosReady } from '@/lib/astro/atros-commands';
+import { getErrorMessage, isMissingAtrosAssetError } from '@/lib/astro/workflow-errors';
 
 const INTAKE_GREETING =
   'Your chart is calculated and frozen. Ask me about timing, transits, or the patterns shaping this period — or tell me a life event with its date so I can test it against your dasha chain.';
@@ -35,15 +37,6 @@ async function loadIntakeRun(runId: string) {
     profileId: run.profile_id,
     sessionId: run.session_id,
     userId: run.user_id,
-    birth: {
-      name: profile.name as string,
-      date: profile.birth_date as string,
-      time: profile.birth_time as string,
-      latitude: profile.lat as number,
-      longitude: profile.lng as number,
-      timezone: profile.tz as string,
-      place_name: (profile.place_name as string | null) ?? undefined,
-    },
   };
 }
 
@@ -54,11 +47,8 @@ async function calculateFrozen(input: {
   sessionId: string;
   userId: string;
   kind: 'chart' | 'sensitivity';
-  birth: { name: string; date: string; time: string; latitude: number; longitude: number; timezone: string; place_name?: string };
 }): Promise<FrozenCalculation> {
   'use step';
-  const store = new AgentStore(createAdminClient(), createAdminClient());
-  const run = await store.getRun(input.runId);
 
   const outcome =
     input.kind === 'chart'
@@ -66,10 +56,23 @@ async function calculateFrozen(input: {
       : await atrosSensitivity(createAdminClient(), input.userId, input.sessionId, input.profileId);
 
   if (!outcome.ok) {
-    throw new Error(`atros ${input.kind} failed: ${outcome.error.code} ${outcome.error.message}`);
+    const error = new Error(`atros ${input.kind} failed: ${outcome.error.code} ${outcome.error.message}`);
+    if (isMissingAtrosAssetError(error)) throw new FatalError(error.message);
+    throw error;
   }
-  void run;
   return { profileId: input.profileId, kind: input.kind, result: outcome.data };
+}
+
+/** Install/warm Atros before chart and sensitivity branches share the sandbox. */
+async function prepareAtros(): Promise<void> {
+  'use step';
+  try {
+    await ensureAtrosReady();
+  } catch (error) {
+    const message = getErrorMessage(error, 'Atros setup failed');
+    if (isMissingAtrosAssetError(error)) throw new FatalError(message);
+    throw error;
+  }
 }
 
 /** Freeze chart/sensitivity, mark ready, insert greeting, complete run/session. */
@@ -113,6 +116,7 @@ export async function astrologerIntakeWorkflow(runId: string) {
   let chart: FrozenCalculation;
   let sensitivity: FrozenCalculation;
   try {
+    await prepareAtros();
     [chart, sensitivity] = await Promise.all([
       calculateFrozen({ ...intake, kind: 'chart' }),
       calculateFrozen({ ...intake, kind: 'sensitivity' }),
@@ -123,7 +127,8 @@ export async function astrologerIntakeWorkflow(runId: string) {
       sensitivity: sensitivity.result,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'intake failed';
+    const message = getErrorMessage(error, 'intake failed');
+    console.error('[astrologer-intake] failed', { runId: intake.runId, message });
     await failIntake({ runId: intake.runId, message });
     return { status: 'failed' as const, error: message };
   }

@@ -26,11 +26,18 @@ import type {
 interface AstrologerChatProps {
   sessionId: string;
   className?: string;
+  onSessionUpdated?: (detail: AstrologerSessionDetail) => void;
+  onStartNewReading?: () => void;
 }
 
 type SendState = 'idle' | 'sending' | 'streaming';
 
-export default function AstrologerChat({ sessionId, className }: AstrologerChatProps) {
+export default function AstrologerChat({
+  sessionId,
+  className,
+  onSessionUpdated,
+  onStartNewReading,
+}: AstrologerChatProps) {
   const [messages, setMessages] = useState<AstrologerMessage[]>([]);
   const [detail, setDetail] = useState<AstrologerSessionDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,43 +46,67 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
   const [error, setError] = useState<ApiErrorDto | null>(null);
   const [focusedQuestion, setFocusedQuestion] = useState<FocusedQuestion | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const eventRunIdRef = useRef<string | null>(null);
 
-  const loadDetail = useCallback(async () => {
+  const loadDetail = useCallback(async (): Promise<AstrologerSessionDetail | null> => {
     const response = await fetch(`/api/astrologer/sessions/${sessionId}`);
     if (!response.ok) {
       const payload = (await response.json().catch(() => null)) as ApiErrorDto | null;
       setError(payload ?? { code: 'internal', message: 'Could not load session.' });
       setLoading(false);
-      return;
+      return null;
     }
     const data = (await response.json()) as AstrologerSessionDetail;
     setDetail(data);
     setMessages(data.messages);
     setFocusedQuestion(data.session.currentQuestion ?? null);
+    onSessionUpdated?.(data);
     setError(null);
     setLoading(false);
-  }, [sessionId]);
+    return data;
+  }, [onSessionUpdated, sessionId]);
 
   useEffect(() => {
-    void loadDetail();
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const refresh = async () => {
+      const data = await loadDetail();
+      if (cancelled) return;
+      if (data === null || data.profile?.initializationStatus === 'pending') {
+        timer = setTimeout(() => void refresh(), 2500);
+      }
+    };
+
+    void refresh();
     return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
       eventSourceRef.current?.close();
+      eventSourceRef.current = null;
+      eventRunIdRef.current = null;
     };
   }, [loadDetail]);
 
   const connectEvents = useCallback(
     (runId: string, after?: number) => {
+      if (eventRunIdRef.current === runId && eventSourceRef.current) return;
       eventSourceRef.current?.close();
+      eventRunIdRef.current = runId;
       const url = `/api/astrologer/runs/${runId}/events${after ? `?after=${after}` : ''}`;
       const source = new EventSource(url);
       eventSourceRef.current = source;
       source.addEventListener('answer.ready', () => void loadDetail());
       source.addEventListener('run.completed', () => {
         source.close();
+        eventRunIdRef.current = null;
+        setSendState('idle');
         void loadDetail();
       });
       source.addEventListener('run.failed', () => {
         source.close();
+        eventRunIdRef.current = null;
+        setSendState('idle');
         void loadDetail();
       });
       source.onerror = () => {
@@ -84,6 +115,12 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
     },
     [loadDetail],
   );
+
+  useEffect(() => {
+    if (detail?.profile?.initializationStatus === 'pending' && detail.latestRun?.kind === 'intake') {
+      connectEvents(detail.latestRun.id);
+    }
+  }, [connectEvents, detail]);
 
   const send = useCallback(
     async (text: string, answerToQuestionId?: string) => {
@@ -139,7 +176,9 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
 
   const busy = sendState !== 'idle';
   const latestRun = detail?.latestRun ?? null;
-  const resumableFailed = latestRun?.status === 'failed' && latestRun.resumable;
+  const intakeFailed = detail?.profile?.initializationStatus === 'failed' && latestRun?.kind === 'intake';
+  const resumableFailed = latestRun?.kind === 'question' && latestRun.status === 'failed' && latestRun.resumable;
+  const canChat = detail?.profile?.initializationStatus === 'ready';
 
   const resume = async () => {
     const response = await fetch(`/api/astrologer/runs/${latestRun?.id}/resume`, {
@@ -155,10 +194,19 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
 
   return (
     <div className={cn('flex h-full flex-col', className)}>
-      {(detail?.profile?.initializationStatus === 'pending') && !resumableFailed ? (
+      {detail?.profile?.initializationStatus === 'pending' && !resumableFailed ? (
         <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
           <Loader2 className="mr-2 inline h-3 w-3 animate-spin" />
           Calculating your chart — this takes about a minute. You&apos;ll be able to chat as soon as it&apos;s ready.
+        </div>
+      ) : intakeFailed ? (
+        <div className="border-b bg-destructive/10 px-4 py-3 text-xs text-destructive" role="alert">
+          <p>{detail?.profile?.initializationError ?? 'Chart calculation failed before the reading was ready.'}</p>
+          {onStartNewReading ? (
+            <Button variant="outline" size="sm" className="mt-2" onClick={onStartNewReading}>
+              Start a new reading
+            </Button>
+          ) : null}
         </div>
       ) : (detail?.session.nextAction || latestRun?.phase) && !resumableFailed ? (
         <div className="border-b px-4 py-2 text-xs text-muted-foreground">
@@ -200,7 +248,7 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
         </div>
       </ScrollArea>
 
-      {error ? (
+      {error && !intakeFailed ? (
         <div className="border-t bg-destructive/10 px-4 py-2 text-xs text-destructive" role="alert">
           {error.message}
           {error.resumable && latestRun ? (
@@ -249,7 +297,7 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
         <Input
           placeholder="Ask your astrologer…"
           value={draft}
-          disabled={busy}
+          disabled={busy || !canChat}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -258,7 +306,7 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
             }
           }}
         />
-        <Button size="icon" disabled={busy || draft.trim().length === 0} onClick={submitDraft}>
+        <Button size="icon" disabled={busy || !canChat || draft.trim().length === 0} onClick={submitDraft}>
           <SendHorizonal className="h-4 w-4" />
         </Button>
       </div>
