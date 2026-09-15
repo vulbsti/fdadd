@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
     ],
   },
   output: 'standalone', // Recommended for Vercel and similar environments
+  // Atros is loaded with fs.readdir at runtime, so Next's static tracer cannot
+  // discover the vendored Python package without an explicit include.
+  outputFileTracingIncludes: {
+    '/*': ['./vendor/atros/**/*'],
+  },
 };
 
 export default withWorkflow(nextConfig);

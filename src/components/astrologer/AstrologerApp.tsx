@@ -103,6 +103,13 @@ const AstrologerApp: React.FC = () => {
     setChoosing(true);
   };
 
+  const handleChatDetail = useCallback((next: AstrologerSessionDetail) => {
+    setDetail(next);
+    setSessions((current) =>
+      current.map((session) => (session.id === next.session.id ? next.session : session)),
+    );
+  }, []);
+
   if (loading) {
     return (
       <div className="flex h-[calc(100vh-12rem)] max-h-[800px] items-center justify-center rounded-lg border bg-card text-sm text-muted-foreground">
@@ -178,7 +185,12 @@ const AstrologerApp: React.FC = () => {
             </Button>
           </div>
         ) : selectedId && detail ? (
-          <AstrologerChat sessionId={selectedId} className="flex-1" />
+          <AstrologerChat
+            sessionId={selectedId}
+            className="flex-1"
+            onSessionUpdated={handleChatDetail}
+            onStartNewReading={handleNewReading}
+          />
         ) : (
           <div className="flex flex-1 items-center justify-center gap-2 text-sm text-muted-foreground">
             <MessageSquare className="h-4 w-4" /> Select a reading or start a new one.
