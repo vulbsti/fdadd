@@ -227,7 +227,10 @@ async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
     throw new Error(`atros install failed: ${await install.stderr()}`);
   }
   // Pre-warm ephemeris data at sandbox setup so per-turn calls stay in budget.
-  await sandbox.runCommand(
+  // The warmup doubles as an install verification: a broken dependency chain
+  // (e.g. pyswisseph missing for the sandbox Python) fails HERE, not on the
+  // first real calculation.
+  const warmup = await sandbox.runCommand(
     `${VENV_BIN}/atros`,
     chartArgs({
       name: 'Warmup',
@@ -239,6 +242,10 @@ async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
     }),
     { timeoutMs: 120_000 },
   );
+  if (warmup.exitCode !== 0) {
+    const stderr = await warmup.stderr().catch(() => '');
+    throw new Error(`atros warmup failed: ${(stderr || `exit ${warmup.exitCode}`).slice(0, 500)}`);
+  }
 }
 
 const TEMPLATE_NAME = 'atros-template';
@@ -246,8 +253,13 @@ const TEMPLATE_NAME = 'atros-template';
 /**
  * Provision a fresh per-session sandbox. Preferred path: fork the prebuilt
  * template snapshot (venv + atros + warm ephemeris), so cold sessions skip
- * the ~70s compiler/pip setup. The template builds itself on first use;
- * any failure falls back to a fresh sandbox with full setup.
+ * the ~70s compiler/pip setup. The template builds itself on first use.
+ *
+ * Fallback when the template path is unavailable (e.g. snapshot storage
+ * quota 402 on the Hobby plan): a NON-PERSISTENT unnamed sandbox. Named
+ * sandboxes are persistent by default and snapshot on stop, so a full
+ * snapshots quota fails them too; non-persistent sandboxes skip snapshot
+ * storage entirely, at the cost of a full setup each session.
  */
 async function freshSessionSandbox(name: string): Promise<Sandbox> {
   try {
@@ -260,7 +272,8 @@ async function freshSessionSandbox(name: string): Promise<Sandbox> {
     }
     return await Sandbox.fork({ sourceSandbox: TEMPLATE_NAME, name });
   } catch {
-    return await Sandbox.getOrCreate({ name });
+    // Non-persistent: no snapshot, no quota dependency.
+    return await Sandbox.create({ timeout: 15 * 60 * 1000, persistent: false });
   }
 }
 

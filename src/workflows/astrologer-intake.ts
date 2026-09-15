@@ -23,7 +23,7 @@ interface FrozenCalculation {
 /** Load the pending intake run and the birth data frozen on its profile. */
 async function loadIntakeRun(runId: string) {
   'use step';
-  const store = new AgentStore(createAdminClient());
+  const store = new AgentStore(createAdminClient(), createAdminClient());
   const run = await store.getRun(runId);
   if (run.kind !== 'intake') {
     throw new FatalError(`run ${runId} is not an intake run`);
@@ -57,7 +57,7 @@ async function calculateFrozen(input: {
   birth: { name: string; date: string; time: string; latitude: number; longitude: number; timezone: string; place_name?: string };
 }): Promise<FrozenCalculation> {
   'use step';
-  const store = new AgentStore(createAdminClient());
+  const store = new AgentStore(createAdminClient(), createAdminClient());
   const run = await store.getRun(input.runId);
 
   const outcome =
@@ -79,7 +79,7 @@ async function finalizeIntake(input: {
   sensitivity: unknown;
 }): Promise<{ status: string }> {
   'use step';
-  const store = new AgentStore(createAdminClient());
+  const store = new AgentStore(createAdminClient(), createAdminClient());
   const outcome = await store.workerFinishIntake({
     runId: input.runId,
     chart: input.chart,
@@ -92,7 +92,7 @@ async function finalizeIntake(input: {
 /** Record a durable intake failure on profile/run/session. */
 async function failIntake(input: { runId: string; message: string }): Promise<void> {
   'use step';
-  const store = new AgentStore(createAdminClient());
+  const store = new AgentStore(createAdminClient(), createAdminClient());
   await store.workerFailIntake({
     runId: input.runId,
     errorCode: 'intake_failed',
