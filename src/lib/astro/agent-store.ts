@@ -60,6 +60,13 @@ const PG_CONSTRAINT_HINTS: Record<string, AgentErrorCode> = {
 
 function normalizeDbError(error: { code?: string; message?: string }): AgentStoreError {
   const code = error.code ?? '';
+  if (code === 'PGRST202') {
+    return new AgentStoreError(
+      'unconfigured',
+      'Astrologer database functions are not deployed. Please apply the Supabase migrations and try again.',
+      error.message,
+    );
+  }
   const mapped = PG_ERROR_CODES[code] ?? PG_CONSTRAINT_HINTS[code.split('')[0] === '2' ? code : ''];
   if (mapped) {
     return new AgentStoreError(mapped, error.message ?? 'database error', error.message);
@@ -302,7 +309,7 @@ export class AgentStore {
     return unwrapQuery(
       await this.user
         .from('astro_sessions')
-        .select('*, profile:astro_profiles(name)')
+        .select('*, profile:astro_sessions_profile_owner_fk(name)')
         .eq('user_id', userId)
         .order('updated_at', { ascending: false })
         .order('id', { ascending: false })

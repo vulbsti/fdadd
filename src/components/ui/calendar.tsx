@@ -8,6 +8,13 @@ import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
+// Birth dates reach back a century: styled dropdowns make year navigation usable.
+const DROPDOWN_CLASS_NAMES = {
+  caption_dropdowns: 'relative flex items-center justify-center gap-2 pt-1',
+  dropdown_month: 'h-9 rounded-md border border-input bg-background px-2 text-sm',
+  dropdown_year: 'h-9 rounded-md border border-input bg-background px-2 text-sm',
+};
+
 
 function Calendar({
   className,
@@ -18,8 +25,9 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      className={cn('p-3', className)}
       classNames={{
+        ...DROPDOWN_CLASS_NAMES,
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",

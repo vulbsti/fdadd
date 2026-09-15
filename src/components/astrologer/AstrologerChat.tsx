@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SendHorizonal } from 'lucide-react';
+import { Loader2, SendHorizonal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type {
   ApiErrorDto,
@@ -155,7 +155,12 @@ export default function AstrologerChat({ sessionId, className }: AstrologerChatP
 
   return (
     <div className={cn('flex h-full flex-col', className)}>
-      {(detail?.session.nextAction || latestRun?.phase) && !resumableFailed ? (
+      {(detail?.profile?.initializationStatus === 'pending') && !resumableFailed ? (
+        <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
+          <Loader2 className="mr-2 inline h-3 w-3 animate-spin" />
+          Calculating your chart — this takes about a minute. You&apos;ll be able to chat as soon as it&apos;s ready.
+        </div>
+      ) : (detail?.session.nextAction || latestRun?.phase) && !resumableFailed ? (
         <div className="border-b px-4 py-2 text-xs text-muted-foreground">
           {latestRun?.phase ? <span className="mr-2 uppercase">{latestRun.phase}</span> : null}
           {detail?.session.nextAction}

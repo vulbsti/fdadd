@@ -460,13 +460,19 @@ export async function astrologerRunWorkflow(runId: string) {
   const toolRefs: string[] = [];
   let draft: string | null = null;
 
-  for (let planStepIndex = checkpoint.planStepIndex; planStepIndex < plan.steps.length; planStepIndex++) {
-    const planStep = plan.steps[planStepIndex];
-    if (agentSteps >= MAX_AGENT_STEPS) break;
+  // Verification can reject a draft while the run still has budget. Keep the
+  // same durable run alive, append the evidence gap, and restart the plan from
+  // its first step so the next model pass can actually use that evidence.
+  while (true) {
+    draft = null;
+    const attempt = checkpoint.rejectedDraftCount;
+    for (let planStepIndex = checkpoint.planStepIndex; planStepIndex < plan.steps.length; planStepIndex++) {
+      const planStep = plan.steps[planStepIndex];
+      if (agentSteps >= MAX_AGENT_STEPS) break;
 
-    if (planStep.kind === 'retrieve') {
+      if (planStep.kind === 'retrieve') {
       const query = plan.retrievalQueries[planStepIndex % Math.max(plan.retrievalQueries.length, 1)] ?? checkpoint.currentGoal;
-      const key = stepKeyFor(planStepIndex, 0, 0, 'context_search');
+      const key = stepKeyFor(planStepIndex, attempt, 0, 'context_search');
       const items = await retrieveContext({
         runId,
         query,
@@ -490,7 +496,7 @@ export async function astrologerRunWorkflow(runId: string) {
       continue;
     }
 
-    if (planStep.kind === 'calculate') {
+      if (planStep.kind === 'calculate') {
       const toolName = planStep.objective.includes('dasha')
         ? 'atros_current_dasha'
         : planStep.objective.includes('transit')
@@ -498,7 +504,7 @@ export async function astrologerRunWorkflow(runId: string) {
           : planStep.objective.includes('timeline')
             ? 'atros_timeline'
             : 'atros_chart';
-      const key = stepKeyFor(planStepIndex, 0, 0, toolName);
+      const key = stepKeyFor(planStepIndex, attempt, 0, toolName);
       await claimToolCall({ runId, stepKey: key, toolName });
       const outcome = await executeToolStep({
         runId,
@@ -528,10 +534,10 @@ export async function astrologerRunWorkflow(runId: string) {
       continue;
     }
 
-    // evaluate / verify steps drive a model decision with tool access.
-    const key = stepKeyFor(planStepIndex, 0, 0, 'model');
-    const manifest = await loadManifestForMessages(runId);
-    const messages: ChatMessage[] = [
+      // evaluate / verify steps drive a model decision with tool access.
+      const key = stepKeyFor(planStepIndex, attempt, 0, 'model');
+      const manifest = await loadManifestForMessages(runId);
+      const messages: ChatMessage[] = [
       {
         role: 'system',
         content:
@@ -542,15 +548,15 @@ export async function astrologerRunWorkflow(runId: string) {
         content: `Context summary:\n${snapshot.manifestSummary}\n\nSelected context:\n${contextBlock(await loadSelectedItems(runId))}\n\nTool results so far:\n${toolRefs.join('\n') || 'none'}\n\nUser: ${question}\n\nPlan step: ${planStep.objective}`,
       },
       ...manifest.recentMessages.map((m) => ({ role: m.role, content: m.content }) as ChatMessage),
-    ];
-    const decision = await modelDecisionStep({ runId, stepKey: key, messages, forceFinish: false });
-    agentSteps++;
+      ];
+      const decision = await modelDecisionStep({ runId, stepKey: key, messages, forceFinish: false });
+      agentSteps++;
 
-    if (decision.toolCalls.length > 0) {
+      if (decision.toolCalls.length > 0) {
       // Execute model-returned calls in order; correctness over parallelism.
       for (let toolIndex = 0; toolIndex < decision.toolCalls.length; toolIndex++) {
         const call = decision.toolCalls[toolIndex];
-        const toolKey = stepKeyFor(planStepIndex, 0, toolIndex, call.function.name);
+        const toolKey = stepKeyFor(planStepIndex, attempt, toolIndex, call.function.name);
         let outcome: { ok: boolean; result: unknown; error?: { code: string; message: string } };
         if (call.function.name === 'astro_finish_run') {
           const parsed = JSON.parse(call.function.arguments || '{}') as { answer?: string };
@@ -601,14 +607,14 @@ export async function astrologerRunWorkflow(runId: string) {
         checkpoint: { ...checkpoint, planStepIndex },
       });
       version = cp.version;
-      continue;
-    }
+        continue;
+      }
 
     // No tool calls: treat content as a draft when present.
-    if (decision.content && !draft) {
-      draft = decision.content;
-    }
-    const cp = await checkpointStep({
+      if (decision.content && !draft) {
+        draft = decision.content;
+      }
+      const cp = await checkpointStep({
       runId,
       expectedVersion: version,
       stepKey: key,
@@ -617,78 +623,92 @@ export async function astrologerRunWorkflow(runId: string) {
       outputSummary: decision.content ? 'draft candidate' : 'no output',
       checkpoint: { ...checkpoint, planStepIndex: planStepIndex + 1, lastCompletedStep: key },
     });
-    version = cp.version;
-    checkpoint.planStepIndex = planStepIndex + 1;
-    checkpoint.lastCompletedStep = key;
-  }
+      version = cp.version;
+      checkpoint.planStepIndex = planStepIndex + 1;
+      checkpoint.lastCompletedStep = key;
+    }
 
-  // --- Verification + finalization -----------------------------------------
-  if (!draft) {
-    await failRun({
-      runId,
-      expectedVersion: version,
-      errorCode: 'agent_step_limit',
-      errorMessage: 'run exhausted its step budget without producing a draft',
-      resumable: true,
-      nextAction: checkpoint.nextAction || 'continue retrieval and analysis',
-    });
-    return { status: 'failed' as const, errorCode: 'agent_step_limit' };
-  }
-
-  const verification = await verifyDraft({
-    runId,
-    draft,
-    planGoal: plan.goal,
-    selectedContext: contextBlock(await loadSelectedItems(runId)),
-    toolRefs: toolRefs.join('\n') || 'none',
-  });
-
-  if (verification.verdict !== 'supported') {
-    checkpoint.rejectedDraftCount += 1;
-    if (checkpoint.rejectedDraftCount >= MAX_REJECTED_DRAFTS || agentSteps >= MAX_AGENT_STEPS) {
+    // --- Verification + finalization ---------------------------------------
+    if (!draft) {
       await failRun({
         runId,
         expectedVersion: version,
         errorCode: 'agent_step_limit',
-        errorMessage: `verification rejected ${checkpoint.rejectedDraftCount} drafts`,
+        errorMessage: 'run exhausted its step budget without producing a draft',
         resumable: true,
-        nextAction: verification.unsupportedClaims[0] ?? verification.reason,
+        nextAction: checkpoint.nextAction || 'continue retrieval and analysis',
       });
       return { status: 'failed' as const, errorCode: 'agent_step_limit' };
     }
-    // Budget remains: append actionable gaps and continue.
-    const gapKey = stepKeyFor(plan.steps.length, 0, 0, 'retrieval_gap');
-    const gapItems = await retrieveContext({
-      runId,
-      query: verification.unsupportedClaims.join('; ') || verification.reason,
-      stepKey: gapKey,
-    });
-    const cp = await checkpointStep({
-      runId,
-      expectedVersion: version,
-      stepKey: gapKey,
-      kind: 'retrieval',
-      status: 'succeeded',
-      outputSummary: `verification gaps: ${verification.unsupportedClaims.length}`,
-      refs: { itemIds: gapItems.map((i) => i.id).slice(0, 25), requiredEvidenceIds: verification.requiredEvidenceIds },
-      checkpoint: { ...checkpoint, planStepIndex: 0, lastCompletedStep: gapKey },
-    });
-    version = cp.version;
-    return astrologerRunRetryContinuation(runId, version, checkpoint);
-  }
 
-  // Supported: finalize with the model-proposed terminal state.
-  const finishArgs = await loadFinishArgs(runId);
-  const terminalStatus = finishArgs?.terminalStatus === 'complete' ? 'complete' : 'waiting_for_user';
-  const focusedQuestion = terminalStatus === 'waiting_for_user' ? (finishArgs?.focusedQuestion ?? null) : null;
+    const verification = await verifyDraft({
+      runId,
+      draft,
+      planGoal: plan.goal,
+      selectedContext: contextBlock(await loadSelectedItems(runId)),
+      toolRefs: toolRefs.join('\n') || 'none',
+    });
 
-  const finalCheckpoint: RunCheckpoint = {
-    ...checkpoint,
-    focusedQuestion,
-    lastCompletedStep: 'finalize',
-    nextAction: finishArgs?.nextAction ?? '',
-  };
-  const outcome = await finalizeRun({
+    if (verification.verdict !== 'supported') {
+      const rejectedDraftCount = checkpoint.rejectedDraftCount + 1;
+      if (rejectedDraftCount >= MAX_REJECTED_DRAFTS || agentSteps >= MAX_AGENT_STEPS) {
+        await failRun({
+          runId,
+          expectedVersion: version,
+          errorCode: 'agent_step_limit',
+          errorMessage: `verification rejected ${rejectedDraftCount} drafts`,
+          resumable: true,
+          nextAction: verification.unsupportedClaims[0] ?? verification.reason,
+        });
+        return { status: 'failed' as const, errorCode: 'agent_step_limit' };
+      }
+      // Budget remains: append actionable gaps, persist the rewind, and let the
+      // outer loop execute the plan again in this same workflow run.
+      const gapKey = stepKeyFor(plan.steps.length, rejectedDraftCount, 0, 'retrieval_gap');
+      const gapItems = await retrieveContext({
+        runId,
+        query: verification.unsupportedClaims.join('; ') || verification.reason,
+        stepKey: gapKey,
+      });
+      const nextCheckpoint: RunCheckpoint = {
+        ...checkpoint,
+        rejectedDraftCount,
+        planStepIndex: 0,
+        lastCompletedStep: gapKey,
+        evidenceReviewedIds: [
+          ...new Set([
+            ...checkpoint.evidenceReviewedIds,
+            ...gapItems.filter((item) => item.kind === 'evidence').map((item) => item.id),
+          ]),
+        ].slice(0, 50),
+      };
+      const cp = await checkpointStep({
+        runId,
+        expectedVersion: version,
+        stepKey: gapKey,
+        kind: 'retrieval',
+        status: 'succeeded',
+        outputSummary: `verification gaps: ${verification.unsupportedClaims.length}`,
+        refs: { itemIds: gapItems.map((i) => i.id).slice(0, 25), requiredEvidenceIds: verification.requiredEvidenceIds },
+        checkpoint: nextCheckpoint,
+      });
+      version = cp.version;
+      checkpoint = nextCheckpoint;
+      continue;
+    }
+
+    // Supported: finalize with the model-proposed terminal state.
+    const finishArgs = await loadFinishArgs(runId);
+    const terminalStatus = finishArgs?.terminalStatus === 'complete' ? 'complete' : 'waiting_for_user';
+    const focusedQuestion = terminalStatus === 'waiting_for_user' ? (finishArgs?.focusedQuestion ?? null) : null;
+
+    const finalCheckpoint: RunCheckpoint = {
+      ...checkpoint,
+      focusedQuestion,
+      lastCompletedStep: 'finalize',
+      nextAction: finishArgs?.nextAction ?? '',
+    };
+    const outcome = await finalizeRun({
     runId,
     expectedVersion: version,
     stepKey: stepKeyFor(plan.steps.length + 1, 0, 0, 'finalize'),
@@ -711,21 +731,10 @@ export async function astrologerRunWorkflow(runId: string) {
             currentGoal: plan.goal,
             lastMessagePreview: draft.slice(0, 140),
           },
-  });
-  void outcome;
-  return { status: terminalStatus };
-}
-
-/** Continuation after verification gaps: resume plan execution in the same run. */
-async function astrologerRunRetryContinuation(
-  _runId: string,
-  _version: number,
-  _checkpoint: RunCheckpoint,
-): Promise<{ status: 'failed' | 'complete' | 'waiting_for_user' }> {
-  // Workflow functions cannot recurse into themselves mid-run; the gap
-  // retrieval above already appended evidence. Reaching here means the next
-  // model pass happens in this same workflow body via the loop below.
-  return { status: 'complete' };
+    });
+    void outcome;
+    return { status: terminalStatus };
+  }
 }
 
 // ---------------------------------------------------------------------------
