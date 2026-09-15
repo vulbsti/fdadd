@@ -30,10 +30,3 @@ declare global { // Or use a custom namespace like `namespace MyApp { ... }`
     }
 }
 
-// Special types for Firebase and Vercel
-declare module 'firebase-nextjs-compat' {
-  interface FirebasePageProps {
-    params: any;
-    searchParams?: any;
-  }
-}

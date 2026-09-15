@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { withWorkflow } from 'workflow/next';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -15,4 +16,4 @@ const nextConfig: NextConfig = {
   output: 'standalone', // Recommended for Vercel and similar environments
 };
 
-export default nextConfig;
+export default withWorkflow(nextConfig);

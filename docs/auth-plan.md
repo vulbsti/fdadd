@@ -4,9 +4,8 @@
 using the modern `@supabase/ssr` cookie-based session pattern for Next.js 15 App Router.
 
 **Decision:** Supabase (chosen 2026-06). The commented-out code in `AuthContext.tsx` already
-targets Supabase, so this realizes the original intent. Note: we deploy on **Firebase App Hosting**
-(Next.js SSR backend) — that's fine; Supabase is just an external service the backend talks to.
-The `firebase` npm SDK currently shipped is unused and should be removed unless kept for Hosting only.
+targets Supabase, so this realizes the original intent. Note: we deploy on **Vercel**
+(Git auto-deploy on push to `main`); Supabase is just an external service the backend talks to.
 
 ---
 
@@ -39,7 +38,7 @@ So we create three thin factories so each context uses the right one:
 ## Phase 0 — Supabase project setup (no code)
 
 - [ ] Create a Supabase project; note **Project URL** and **anon/publishable key**.
-- [ ] Enable **Email** provider; configure **GitHub** OAuth (matches existing UI) with callback `https://aidoraa-fashion.web.app/auth/callback` (+ a localhost entry for dev).
+- [ ] Enable **Email + Google** providers; register callback URLs for production (`https://<vercel-domain>/auth/callback`) and `http://localhost:9002/auth/callback` (dev port per `package.json`).
 - [ ] (If using Supabase as the DB too) create tables with **Row Level Security ON** from day one.
 
 ## Phase 1 — Dependencies & env
@@ -48,9 +47,9 @@ So we create three thin factories so each context uses the right one:
 - [ ] Add to `.env.local` **and** create `.env.example`:
   ```
   NEXT_PUBLIC_SUPABASE_URL=...
-  NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
   ```
-- [ ] Set the same two vars in **Firebase App Hosting** environment config (they're `NEXT_PUBLIC_`, so safe to expose; the anon key is designed to be public — RLS is what protects data).
+- [ ] Set the same two vars in **Vercel** environment config (they're `NEXT_PUBLIC_`, so safe to expose; the publishable key is designed to be public — RLS is what protects data).
 
 ## Phase 2 — Client factories (`src/lib/supabase/`)
 
@@ -93,13 +92,11 @@ So we create three thin factories so each context uses the right one:
 - [ ] GitHub OAuth round-trips through `/auth/callback`.
 - [ ] Sign-out clears the session everywhere.
 - [ ] A protected API write returns `401` when logged out.
-- [ ] Deploy to Firebase App Hosting and re-run the above against `aidoraa-fashion.web.app` (cookie domain/redirect URLs are the usual breakage point).
+- [ ] Deploy to Vercel and re-run the above against the production domain (cookie domain/redirect URLs are the usual breakage point).
 
 ---
 
 ## Risks & notes
 
 - **Redirect URLs** are the #1 OAuth failure: every callback URL (prod + localhost) must be registered in both the Supabase dashboard and the GitHub OAuth app.
-- **Middleware on Firebase App Hosting**: middleware runs in the SSR backend (Cloud Run), not at a separate edge — functionally fine, just be aware it's not Vercel Edge.
 - **Don't introduce a second source of truth**: this is also when the DB decision lands. If blog/profile data moves to Supabase Postgres, retire the in-memory `blog-service.ts` store in the same effort (see `TODO.md` P0 database item).
-- **Remove `firebase` SDK** from `package.json` if it stays unused after this — avoid shipping two auth stacks.

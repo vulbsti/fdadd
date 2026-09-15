@@ -14,16 +14,19 @@ alter table public.profiles enable row level security;
 revoke all on table public.profiles from anon, authenticated;
 grant select, insert, update on table public.profiles to authenticated;
 
+drop policy if exists "Users can view their own profile" on public.profiles;
 create policy "Users can view their own profile"
   on public.profiles for select
   to authenticated
   using ((select auth.uid()) = id);
 
+drop policy if exists "Users can insert their own profile" on public.profiles;
 create policy "Users can insert their own profile"
   on public.profiles for insert
   to authenticated
   with check ((select auth.uid()) = id);
 
+drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile"
   on public.profiles for update
   to authenticated
@@ -75,6 +78,7 @@ alter table public.payment_orders enable row level security;
 revoke all on table public.payment_orders from anon, authenticated;
 grant select on table public.payment_orders to authenticated;
 
+drop policy if exists "Users can view their own payment orders" on public.payment_orders;
 create policy "Users can view their own payment orders"
   on public.payment_orders for select
   to authenticated

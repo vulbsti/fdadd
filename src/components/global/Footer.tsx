@@ -10,7 +10,9 @@ export default function Footer() {
             <Link href="/" className="text-2xl font-serif font-bold text-primary mb-2 inline-block">
               aidoraa
             </Link>
-            <p className="text-sm text-muted-foreground">AI-powered fashion for the modern individual.</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              AI for the oldest journey there is — the one inward.
+            </p>
           </div>
           <div className="flex flex-col space-y-2 text-sm">
             <h4 className="font-semibold mb-2 text-foreground">Quick Links</h4>
@@ -27,7 +29,7 @@ export default function Footer() {
         </div>
         <div className="mt-8 border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Aidoraa Fashion. All rights reserved.
+            &copy; {new Date().getFullYear()} Aidoraa. All rights reserved.
           </p>
           <div className="flex space-x-4">
             <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">

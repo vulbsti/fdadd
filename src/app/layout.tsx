@@ -18,8 +18,9 @@ const fontSerif = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Aidoraa Fashion',
-  description: 'Sophisticated AI-powered fashion assistance.',
+  title: 'Aidoraa — Explore Thyself',
+  description:
+    'AI for the grand voyage inward. Pioneering tools for self-exploration — starting with fashion and dating, charting toward the whole self.',
 };
 
 export default function RootLayout({

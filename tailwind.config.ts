@@ -14,7 +14,15 @@ export default {
         serif: ["var(--font-serif)", "serif"],
       },
   		colors: {
-  			background: 'hsl(var(--background))',
+ 			background: 'hsl(var(--background))',
+ 			gold: {
+ 				DEFAULT: 'hsl(var(--gold))',
+ 				bright: 'hsl(var(--gold-bright))'
+ 			},
+ 			voyage: {
+ 				DEFAULT: 'hsl(var(--voyage))',
+ 				foreground: 'hsl(var(--voyage-foreground))'
+ 			},
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
