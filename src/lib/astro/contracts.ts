@@ -118,6 +118,23 @@ export const AstrologerRunSummarySchema = z.object({
 });
 export type AstrologerRunSummary = z.infer<typeof AstrologerRunSummarySchema>;
 
+/** Safe, bounded execution receipt; reasoning text is intentionally absent. */
+export const AstrologerRunStepSchema = z.object({
+  id: z.string().uuid(),
+  ordinal: z.number().int().nonnegative(),
+  stepKey: z.string(),
+  kind: z.enum(['plan', 'retrieval', 'model', 'tool', 'verification', 'checkpoint']),
+  status: z.enum(['started', 'succeeded', 'failed']),
+  toolName: z.string().nullable(),
+  inputSummary: z.string().nullable(),
+  outputSummary: z.string().nullable(),
+  refs: z.record(z.unknown()),
+  cacheHit: z.boolean(),
+  createdAt: z.string(),
+  completedAt: z.string().nullable(),
+});
+export type AstrologerRunStep = z.infer<typeof AstrologerRunStepSchema>;
+
 export const AstrologerSessionSummarySchema = z.object({
   id: z.string().uuid(),
   profileId: z.string().uuid().nullable(),
@@ -137,6 +154,7 @@ export const AstrologerSessionDetailSchema = z.object({
   profile: ProfileSummarySchema.nullable(),
   messages: z.array(AstrologerMessageSchema),
   latestRun: AstrologerRunSummarySchema.nullable(),
+  trace: z.array(AstrologerRunStepSchema),
   nextCursor: z.string().nullable(),
 });
 export type AstrologerSessionDetail = z.infer<typeof AstrologerSessionDetailSchema>;

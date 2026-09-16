@@ -10,8 +10,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   AstrologerMessageSchema,
+  AstrologerRunStepSchema,
   FactRowSchema,
   type AstrologerMessage,
+  type AstrologerRunStep,
   type AgentErrorCode,
   type ApiErrorDto,
   type BirthInput,
@@ -289,6 +291,34 @@ export class AgentStore {
         .maybeSingle(),
     );
     return (row as unknown as RunRow) ?? null;
+  }
+
+  /** Return bounded, owner-scoped execution receipts for the trace panel. */
+  async listRunSteps(runId: string): Promise<AstrologerRunStep[]> {
+    const rows = unwrapQuery(
+      await this.user
+        .from('astro_agent_run_steps')
+        .select(
+          'id, ordinal, step_key, kind, status, tool_name, input_summary, output_summary, refs, cache_hit, created_at, completed_at',
+        )
+        .eq('run_id', runId)
+        .order('ordinal', { ascending: true })
+        .limit(100),
+    ) as Array<Record<string, unknown>>;
+    return rows.map((row) => AstrologerRunStepSchema.parse({
+      id: row.id as string,
+      ordinal: Number(row.ordinal ?? 0),
+      stepKey: row.step_key as string,
+      kind: row.kind as AstrologerRunStep['kind'],
+      status: row.status as AstrologerRunStep['status'],
+      toolName: (row.tool_name as string | null) ?? null,
+      inputSummary: (row.input_summary as string | null) ?? null,
+      outputSummary: (row.output_summary as string | null) ?? null,
+      refs: (row.refs as Record<string, unknown> | null) ?? {},
+      cacheHit: Boolean(row.cache_hit),
+      createdAt: row.created_at as string,
+      completedAt: (row.completed_at as string | null) ?? null,
+    }));
   }
 
   async getProfile(profileId: string): Promise<Record<string, unknown> | null> {

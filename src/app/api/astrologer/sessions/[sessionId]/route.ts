@@ -51,6 +51,7 @@ export async function GET(
     const latestRun = session.last_run_id
       ? await auth.store.getRun(session.last_run_id as string).catch(() => null)
       : null;
+    const trace = latestRun ? await auth.store.listRunSteps(latestRun.id) : [];
 
     const profileName = (profile?.name as string | null) ?? null;
     const detail: AstrologerSessionDetail = AstrologerSessionDetailSchema.parse({
@@ -92,6 +93,7 @@ export async function GET(
               createdAt: latestRun.started_at,
               updatedAt: latestRun.updated_at,
             },
+      trace,
       nextCursor: nextCursor ? encodeCursor(nextCursor) : null,
     });
     return NextResponse.json(detail);

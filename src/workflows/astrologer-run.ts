@@ -11,13 +11,14 @@
  * returns prior committed state instead of duplicating effects.
  */
 
-import { FatalError } from 'workflow';
+import { FatalError, getWritable } from 'workflow';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore, parseCheckpoint, parsePlan, parseVerification, type RunRow } from '@/lib/astro/agent-store';
 import { loadContextManifest, selectRelevantContext, recordSelectedContext } from '@/lib/astro/agent-context';
 import { dispatchTool, runAtrosTool, TOOL_DEFINITIONS, validatePlanArgs, toStepOutcome, type ToolContext } from '@/lib/astro/agent-tools';
 import { chatCompletion, ProviderError, type ChatMessage, type ToolCallRequest, type FunctionToolDefinition } from '@/lib/ai/provider';
-import type { RunCheckpoint, RunPlan, RunVerification } from '@/lib/astro/contracts';
+import type { AgentErrorCode, AstrologerRunEvent, RunCheckpoint, RunPlan, RunVerification } from '@/lib/astro/contracts';
+import { getErrorMessage } from '@/lib/astro/workflow-errors';
 
 const MAX_AGENT_STEPS = 12;
 const MAX_REJECTED_DRAFTS = 2;
@@ -142,16 +143,15 @@ async function checkpointStep(input: {
   return { version: outcome.version, stepCount: outcome.stepCount };
 }
 
-/** One planning-model call with a forced `astro_record_plan` function. */
+/** One planning-model call. OpenCode Go uses automatic tool selection. */
 async function planRun(input: {
   runId: string;
   question: string;
   manifestSummary: string;
   priorSummaries: string;
-}): Promise<RunPlan> {
+}): Promise<{ plan: RunPlan; provider?: string; model?: string }> {
   'use step';
-  const { plan } = await planWithProvider(input);
-  return plan;
+  return planWithProvider(input);
 }
 
 function providerTools(names?: string[]): FunctionToolDefinition[] {
@@ -166,7 +166,7 @@ async function planWithProvider(input: {
   question: string;
   manifestSummary: string;
   priorSummaries: string;
-}): Promise<{ plan: RunPlan }> {
+}): Promise<{ plan: RunPlan; provider?: string; model?: string }> {
   const messages: ChatMessage[] = [
     {
       role: 'system',
@@ -181,7 +181,9 @@ async function planWithProvider(input: {
   const result = await chatCompletion({
     messages,
     tools: providerTools(['astro_record_plan']),
-    toolChoice: { name: 'astro_record_plan' },
+    // Pi/OMP let the OpenCode Go Responses adapter use automatic selection.
+    // The single planner tool plus this instruction supplies the constraint.
+    toolChoice: 'auto',
 
     sessionId: input.runId,
     maxTokens: 2048,
@@ -190,7 +192,7 @@ async function planWithProvider(input: {
   if (!call) throw new Error('planning model returned no astro_record_plan call');
   const parsed = validatePlanArgs(JSON.parse(call.function.arguments || '{}'));
   if (!parsed.ok) throw new Error(`invalid plan: ${parsed.message}`);
-  return { plan: parsed.plan };
+  return { plan: parsed.plan, provider: result.provider, model: result.model };
 }
 
 /** Selective retrieval step: query the worker RPC and persist selections. */
@@ -247,17 +249,24 @@ async function modelDecisionStep(input: {
   stepKey: string;
   messages: ChatMessage[];
   forceFinish: boolean;
-}): Promise<{ content: string | null; toolCalls: ToolCallRequest[] }> {
+}): Promise<{ content: string | null; toolCalls: ToolCallRequest[]; provider?: string; model?: string }> {
   'use step';
   const result = await chatCompletion({
     messages: input.messages,
-    tools: providerTools(),
-    toolChoice: input.forceFinish ? { name: 'astro_finish_run' } : 'auto',
+    tools: providerTools().filter((tool) => tool.function.name !== 'astro_record_plan'),
+    // OpenCode Go/Responses only accepts automatic selection. The prompt and
+    // the tool registry provide the semantic constraint when finishing.
+    toolChoice: 'auto',
     sessionId: input.runId,
     maxTokens: 4096,
   });
   const message = result.choices[0]?.message;
-  return { content: message?.content ?? null, toolCalls: message?.tool_calls ?? [] };
+  return {
+    content: message?.content ?? null,
+    toolCalls: message?.tool_calls ?? [],
+    provider: result.provider,
+    model: result.model,
+  };
 }
 
 /** Execute one registered tool call. */
@@ -308,7 +317,7 @@ async function verifyDraft(input: {
   planGoal: string;
   selectedContext: string;
   toolRefs: string;
-}): Promise<RunVerification> {
+}): Promise<{ verification: RunVerification; provider?: string; model?: string }> {
   'use step';
   const result = await chatCompletion({
     messages: [
@@ -336,13 +345,17 @@ async function verifyDraft(input: {
   const verification = parseVerification(parsed);
   if (!verification) {
     return {
-      verdict: 'needs_more_evidence',
-      unsupportedClaims: [],
-      requiredEvidenceIds: [],
-      reason: 'verifier returned an unparseable verdict; treat as needs_more_evidence',
+      verification: {
+        verdict: 'needs_more_evidence',
+        unsupportedClaims: [],
+        requiredEvidenceIds: [],
+        reason: 'verifier returned an unparseable verdict; treat as needs_more_evidence',
+      },
+      provider: result.provider,
+      model: result.model,
     };
   }
-  return verification;
+  return { verification, provider: result.provider, model: result.model };
 }
 
 /** Terminal persistence: assistant message + checkpoint + session state. */
@@ -367,6 +380,7 @@ async function finalizeRun(input: {
       kind: 'checkpoint',
       status: 'succeeded',
       outputSummary: `finalized ${input.terminalStatus}`,
+      phase: 'responding',
       nextAction: input.nextAction,
     },
     checkpoint: input.checkpoint,
@@ -406,22 +420,152 @@ function contextBlock(items: Array<{ kind: string; title: string; excerpt: strin
   return items.map((item) => `- [${item.kind}] ${item.title}: ${item.excerpt}`).join('\n');
 }
 
+function resultCacheHit(result: unknown): boolean {
+  return Boolean(
+    result &&
+      typeof result === 'object' &&
+      'cacheHit' in result &&
+      Boolean((result as { cacheHit?: unknown }).cacheHit),
+  );
+}
+
+type RunEventChunk = { type: AstrologerRunEvent['event']; payload: AstrologerRunEvent };
+type RunEventSink = (event: AstrologerRunEvent) => Promise<void>;
+
+function safeFailure(error: unknown): {
+  code: AgentErrorCode;
+  message: string;
+  resumable: boolean;
+} {
+  const raw = getErrorMessage(error, 'The astrologer run failed.');
+  const providerFailure =
+    error instanceof ProviderError ||
+    /(?:provider|opencode|openrouter|api key|request failed with status)/i.test(raw);
+  return {
+    code: 'internal',
+    message: providerFailure
+      ? 'The astrologer model could not complete this run. You can resume it after the provider request is corrected.'
+      : raw.slice(0, 300),
+    resumable: true,
+  };
+}
+
+function safeAgentErrorCode(value: string | null | undefined): AgentErrorCode {
+  return value === 'not_found' ||
+    value === 'forbidden' ||
+    value === 'conflict' ||
+    value === 'stale_version' ||
+    value === 'quota_exceeded' ||
+    value === 'invalid_transition' ||
+    value === 'invalid_request' ||
+    value === 'unconfigured' ||
+    value === 'internal'
+    ? value
+    : 'internal';
+}
+
+async function loadCurrentRun(runId: string): Promise<RunRow | null> {
+  'use step';
+  try {
+    return await new AgentStore(createAdminClient(), createAdminClient()).getRun(runId);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Durable wrapper around the orchestration body. The provider/model/tool
+ * boundaries remain steps, while this stream mirrors Pi/OMP lifecycle events
+ * without exposing hidden reasoning.
+ */
+export async function astrologerRunWorkflow(runId: string) {
+  'use workflow';
+
+  const stream = getWritable<RunEventChunk>();
+  const writer = stream.getWriter();
+  const emit: RunEventSink = async (event) => {
+    await writer.write({ type: event.event, payload: event });
+  };
+
+  try {
+    await emit({ event: 'run.started', runId, phase: 'planning', status: 'active', summary: 'run started' });
+    const result = await astrologerRunWorkflowBody(runId, emit);
+    if (result.status === 'failed') {
+      const current = await loadCurrentRun(runId);
+      await emit({
+        event: 'run.failed',
+        runId,
+        status: 'failed',
+        error: {
+          code: safeAgentErrorCode(current?.error_code ?? result.errorCode),
+          message: current?.error_message?.slice(0, 300) ?? 'The astrologer run failed.',
+          resumable: current?.resumable ?? true,
+        },
+      });
+    } else {
+      await emit({
+        event: 'run.completed',
+        runId,
+        status: result.status as 'waiting_for_user' | 'complete',
+      });
+    }
+    return result;
+  } catch (error) {
+    const failure = safeFailure(error);
+    console.error('[astrologer-run] failed', { runId, message: getErrorMessage(error) });
+
+    const current = await loadCurrentRun(runId);
+    if (current?.status === 'active' || current?.status === 'waiting_for_user') {
+      try {
+        await failRun({
+          runId,
+          expectedVersion: current.version,
+          errorCode: failure.code,
+          errorMessage: failure.message,
+          resumable: failure.resumable,
+          nextAction: 'Correct the provider or tool issue, then resume this run.',
+        });
+      } catch (persistError) {
+        console.error('[astrologer-run] could not persist failure', {
+          runId,
+          message: getErrorMessage(persistError),
+        });
+      }
+    }
+
+    const failed = await loadCurrentRun(runId);
+    await emit({
+      event: 'run.failed',
+      runId,
+      status: 'failed',
+      error: {
+        code: failed?.error_code ? safeAgentErrorCode(failed.error_code) : failure.code,
+        message: failed?.error_message?.slice(0, 300) ?? failure.message,
+        resumable: failed?.resumable ?? failure.resumable,
+      },
+    });
+    return { status: 'failed' as const, errorCode: failure.code };
+  } finally {
+    await writer.close().catch(() => undefined);
+  }
+}
+
 /**
  * One Workflow run per user message. Never fabricates a completion: after
  * two rejected drafts or twelve agent steps the run fails durably with
  * `resumable=true` and a preserved next action.
  */
-export async function astrologerRunWorkflow(runId: string) {
-  'use workflow';
-
+async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
   const snapshot = await loadRunSnapshot(runId);
   let version = snapshot.run.version;
   let checkpoint = snapshot.checkpoint;
   const runRow = snapshot.run;
 
   if (runRow.status !== 'active') {
-    throw new FatalError(`run ${runId} is ${runRow.status}, not active`);
+    return { status: runRow.status as 'waiting_for_user' | 'complete' | 'failed' };
   }
+
+  await emit({ event: 'phase.changed', runId, phase: 'planning', status: 'active', summary: 'planning the request' });
 
   const triggeringMessage = runRow.triggering_message_id
     ? await loadTriggeringMessage(runId)
@@ -432,19 +576,20 @@ export async function astrologerRunWorkflow(runId: string) {
   const planKey = stepKeyFor(0, 0, 0, 'astro_record_plan');
   if (!snapshot.plan) {
     const priorSummaries = await loadPriorSummaries(runId);
-    const plan = await planRun({
+    const planned = await planRun({
       runId,
       question,
       manifestSummary: snapshot.manifestSummary,
       priorSummaries,
     });
+    const plan = planned.plan;
     const cp = await checkpointStep({
       runId,
       expectedVersion: version,
       stepKey: planKey,
       kind: 'plan',
       status: 'succeeded',
-      outputSummary: `plan: ${plan.goal}`,
+      outputSummary: `model=${planned.model ?? 'configured'}; plan: ${plan.goal}`,
       phase: 'retrieval',
       checkpoint: { ...checkpoint, currentGoal: plan.goal, planStepIndex: 0, contextVersion: checkpoint.contextVersion + 1 },
       plan,
@@ -458,6 +603,10 @@ export async function astrologerRunWorkflow(runId: string) {
   // --- Plan execution ------------------------------------------------------
   let agentSteps = 0;
   const toolRefs: string[] = [];
+  // Unlike the old loop, keep the exact assistant tool-call and tool-result
+  // messages in the next request. This is the key Pi/OMP interaction: the
+  // provider session header is routing/cache affinity, not conversation state.
+  const modelTranscript: ChatMessage[] = [];
   let draft: string | null = null;
 
   // Verification can reject a draft while the run still has budget. Keep the
@@ -469,10 +618,19 @@ export async function astrologerRunWorkflow(runId: string) {
     for (let planStepIndex = checkpoint.planStepIndex; planStepIndex < plan.steps.length; planStepIndex++) {
       const planStep = plan.steps[planStepIndex];
       if (agentSteps >= MAX_AGENT_STEPS) break;
+      const phase: 'retrieval' | 'analysis' = planStep.kind === 'retrieve' ? 'retrieval' : 'analysis';
+      await emit({
+        event: 'phase.changed',
+        runId,
+        phase,
+        status: 'active',
+        summary: `${phase}: ${planStep.objective}`.slice(0, 300),
+      });
 
       if (planStep.kind === 'retrieve') {
       const query = plan.retrievalQueries[planStepIndex % Math.max(plan.retrievalQueries.length, 1)] ?? checkpoint.currentGoal;
       const key = stepKeyFor(planStepIndex, attempt, 0, 'context_search');
+      await emit({ event: 'tool.started', runId, phase: 'retrieval', tool: 'astro_context_search', summary: query.slice(0, 300) });
       const items = await retrieveContext({
         runId,
         query,
@@ -488,11 +646,19 @@ export async function astrologerRunWorkflow(runId: string) {
         kind: 'retrieval',
         status: 'succeeded',
         outputSummary: `${items.length} items`,
+        phase: 'retrieval',
         refs: { itemIds: items.map((i) => i.id).slice(0, 25) },
         checkpoint: { ...checkpoint, lastCompletedStep: key, evidenceReviewedIds: [...new Set([...checkpoint.evidenceReviewedIds, ...items.filter((i) => i.kind === 'evidence').map((i) => i.id)])].slice(0, 50) },
       });
       version = cp.version;
       checkpoint.lastCompletedStep = key;
+      await emit({
+        event: 'tool.completed',
+        runId,
+        phase: 'retrieval',
+        tool: 'astro_context_search',
+        summary: `${items.length} context items selected`,
+      });
       continue;
     }
 
@@ -505,6 +671,7 @@ export async function astrologerRunWorkflow(runId: string) {
             ? 'atros_timeline'
             : 'atros_chart';
       const key = stepKeyFor(planStepIndex, attempt, 0, toolName);
+      await emit({ event: 'tool.started', runId, phase: 'analysis', tool: toolName, summary: 'deterministic chart calculation' });
       await claimToolCall({ runId, stepKey: key, toolName });
       const outcome = await executeToolStep({
         runId,
@@ -517,6 +684,7 @@ export async function astrologerRunWorkflow(runId: string) {
         }),
       });
       agentSteps++;
+      const cacheHit = resultCacheHit(outcome.result);
       const cp = await checkpointStep({
         runId,
         expectedVersion: version,
@@ -524,13 +692,26 @@ export async function astrologerRunWorkflow(runId: string) {
         kind: 'tool',
         status: outcome.ok ? 'succeeded' : 'failed',
         toolName,
-        outputSummary: outcome.ok ? 'calculation completed' : (outcome.error?.message ?? 'failed'),
+        outputSummary: outcome.ok
+          ? `calculation completed${cacheHit ? ' (cache hit)' : ''}`
+          : (outcome.error?.message ?? 'failed'),
         refs: { tool: toolName, result: outcome.ok ? 'cached-or-computed' : outcome.error },
+        phase: 'analysis',
+        cacheHit,
         checkpoint: { ...checkpoint, lastCompletedStep: key },
       });
       version = cp.version;
       checkpoint.lastCompletedStep = key;
       if (outcome.ok) toolRefs.push(`${toolName}: ${JSON.stringify(outcome.result).slice(0, 300)}`);
+      await emit({
+        event: 'tool.completed',
+        runId,
+        phase: 'analysis',
+        tool: toolName,
+        summary: outcome.ok
+          ? `calculation completed${cacheHit ? ' (cache hit)' : ''}`
+          : (outcome.error?.message ?? 'calculation failed'),
+      });
       continue;
     }
 
@@ -548,9 +729,15 @@ export async function astrologerRunWorkflow(runId: string) {
         content: `Context summary:\n${snapshot.manifestSummary}\n\nSelected context:\n${contextBlock(await loadSelectedItems(runId))}\n\nTool results so far:\n${toolRefs.join('\n') || 'none'}\n\nUser: ${question}\n\nPlan step: ${planStep.objective}`,
       },
       ...manifest.recentMessages.map((m) => ({ role: m.role, content: m.content }) as ChatMessage),
+      ...modelTranscript,
       ];
       const decision = await modelDecisionStep({ runId, stepKey: key, messages, forceFinish: false });
       agentSteps++;
+
+      const assistantToolMessage: ChatMessage | null = decision.toolCalls.length
+        ? { role: 'assistant', content: decision.content, tool_calls: decision.toolCalls }
+        : null;
+      if (assistantToolMessage) modelTranscript.push(assistantToolMessage);
 
       if (decision.toolCalls.length > 0) {
       // Execute model-returned calls in order; correctness over parallelism.
@@ -581,6 +768,18 @@ export async function astrologerRunWorkflow(runId: string) {
         if (outcome.ok) {
           toolRefs.push(`${call.function.name}: ${JSON.stringify(outcome.result).slice(0, 300)}`);
         }
+        modelTranscript.push({
+          role: 'tool',
+          tool_call_id: call.id,
+          content: JSON.stringify(outcome.ok ? outcome.result : { error: outcome.error }),
+        });
+        await emit({
+          event: 'tool.completed',
+          runId,
+          phase: 'analysis',
+          tool: call.function.name,
+          summary: outcome.ok ? 'tool completed' : (outcome.error?.message ?? 'tool failed'),
+        });
         const cp = await checkpointStep({
           runId,
           expectedVersion: version,
@@ -591,6 +790,7 @@ export async function astrologerRunWorkflow(runId: string) {
           inputSummary: call.function.arguments.slice(0, 500),
           outputSummary: outcome.ok ? 'ok' : (outcome.error?.message ?? 'failed'),
           refs: { tool: call.function.name },
+          phase: 'analysis',
           checkpoint: { ...checkpoint, lastCompletedStep: toolKey },
         });
         version = cp.version;
@@ -603,8 +803,9 @@ export async function astrologerRunWorkflow(runId: string) {
         stepKey: key,
         kind: 'model',
         status: 'succeeded',
-        outputSummary: `model produced ${decision.toolCalls.length} tool calls`,
-        checkpoint: { ...checkpoint, planStepIndex },
+          outputSummary: `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; produced ${decision.toolCalls.length} tool calls`,
+          phase: 'analysis',
+          checkpoint: { ...checkpoint, planStepIndex },
       });
       version = cp.version;
         continue;
@@ -620,7 +821,10 @@ export async function astrologerRunWorkflow(runId: string) {
       stepKey: key,
       kind: 'model',
       status: 'succeeded',
-      outputSummary: decision.content ? 'draft candidate' : 'no output',
+      outputSummary: decision.content
+        ? `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; draft candidate`
+        : `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; no output`,
+      phase: 'analysis',
       checkpoint: { ...checkpoint, planStepIndex: planStepIndex + 1, lastCompletedStep: key },
     });
       version = cp.version;
@@ -641,12 +845,35 @@ export async function astrologerRunWorkflow(runId: string) {
       return { status: 'failed' as const, errorCode: 'agent_step_limit' };
     }
 
-    const verification = await verifyDraft({
+    await emit({ event: 'phase.changed', runId, phase: 'verification', status: 'active', summary: 'checking the draft against selected evidence' });
+    const verified = await verifyDraft({
       runId,
       draft,
       planGoal: plan.goal,
       selectedContext: contextBlock(await loadSelectedItems(runId)),
       toolRefs: toolRefs.join('\n') || 'none',
+    });
+    const verification = verified.verification;
+    agentSteps++;
+    const verificationKey = stepKeyFor(plan.steps.length, checkpoint.rejectedDraftCount, 0, 'verification');
+    const verificationCheckpoint = await checkpointStep({
+      runId,
+      expectedVersion: version,
+      stepKey: verificationKey,
+      kind: 'verification',
+      status: 'succeeded',
+      outputSummary: `model=${verified.model ?? 'configured'}; provider=${verified.provider ?? 'configured'}; verdict=${verification.verdict}`,
+      phase: 'verification',
+      checkpoint: { ...checkpoint, lastCompletedStep: verificationKey },
+    });
+    version = verificationCheckpoint.version;
+    checkpoint.lastCompletedStep = verificationKey;
+    await emit({
+      event: 'tool.completed',
+      runId,
+      phase: 'verification',
+      tool: 'astro_record_verification',
+      summary: `verdict=${verification.verdict}`,
     });
 
     if (verification.verdict !== 'supported') {
@@ -670,6 +897,13 @@ export async function astrologerRunWorkflow(runId: string) {
         query: verification.unsupportedClaims.join('; ') || verification.reason,
         stepKey: gapKey,
       });
+      await emit({
+        event: 'tool.completed',
+        runId,
+        phase: 'retrieval',
+        tool: 'astro_context_search',
+        summary: `${gapItems.length} evidence-gap items selected`,
+      });
       const nextCheckpoint: RunCheckpoint = {
         ...checkpoint,
         rejectedDraftCount,
@@ -689,6 +923,7 @@ export async function astrologerRunWorkflow(runId: string) {
         kind: 'retrieval',
         status: 'succeeded',
         outputSummary: `verification gaps: ${verification.unsupportedClaims.length}`,
+        phase: 'retrieval',
         refs: { itemIds: gapItems.map((i) => i.id).slice(0, 25), requiredEvidenceIds: verification.requiredEvidenceIds },
         checkpoint: nextCheckpoint,
       });
@@ -708,6 +943,7 @@ export async function astrologerRunWorkflow(runId: string) {
       lastCompletedStep: 'finalize',
       nextAction: finishArgs?.nextAction ?? '',
     };
+    await emit({ event: 'phase.changed', runId, phase: 'responding', status: 'active', summary: 'persisting the verified answer' });
     const outcome = await finalizeRun({
     runId,
     expectedVersion: version,
@@ -733,6 +969,13 @@ export async function astrologerRunWorkflow(runId: string) {
           },
     });
     void outcome;
+    await emit({
+      event: 'answer.ready',
+      runId,
+      phase: 'responding',
+      status: terminalStatus,
+      summary: `answer persisted (${terminalStatus})`,
+    });
     return { status: terminalStatus };
   }
 }

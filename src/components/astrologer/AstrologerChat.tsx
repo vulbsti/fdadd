@@ -97,6 +97,8 @@ export default function AstrologerChat({
       const source = new EventSource(url);
       eventSourceRef.current = source;
       source.addEventListener('answer.ready', () => void loadDetail());
+      source.addEventListener('phase.changed', () => void loadDetail());
+      source.addEventListener('tool.completed', () => void loadDetail());
       source.addEventListener('run.completed', () => {
         source.close();
         eventRunIdRef.current = null;
@@ -110,7 +112,10 @@ export default function AstrologerChat({
         void loadDetail();
       });
       source.onerror = () => {
-        // EventSource reconnects automatically with Last-Event-ID.
+        // EventSource reconnects automatically with Last-Event-ID. Refresh
+        // the durable row too, so a short-lived stream failure cannot leave
+        // the UI showing an eternal spinner after the worker has failed.
+        void loadDetail();
       };
     },
     [loadDetail],
@@ -213,6 +218,30 @@ export default function AstrologerChat({
           {latestRun?.phase ? <span className="mr-2 uppercase">{latestRun.phase}</span> : null}
           {detail?.session.nextAction}
         </div>
+      ) : null}
+
+      {detail?.trace?.length ? (
+        <details className="border-b px-4 py-2 text-xs">
+          <summary className="cursor-pointer text-muted-foreground">
+            Run trace ({detail.trace.length} receipts)
+          </summary>
+          <div className="mt-2 max-h-56 space-y-2 overflow-auto font-mono">
+            {detail.trace.map((step) => (
+              <div key={step.id} className="rounded border bg-muted/30 p-2">
+                <div className="flex flex-wrap gap-2">
+                  <span>{step.kind}</span>
+                  {step.toolName ? <span>{step.toolName}</span> : null}
+                  <span className="text-muted-foreground">{step.status}</span>
+                  {step.cacheHit ? <span className="text-muted-foreground">cache hit</span> : null}
+                </div>
+                {step.inputSummary ? <div className="mt-1 break-all">in: {step.inputSummary}</div> : null}
+                {step.outputSummary ? (
+                  <div className="mt-1 break-words text-muted-foreground">out: {step.outputSummary}</div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </details>
       ) : null}
 
       <ScrollArea className="flex-1 p-4">
