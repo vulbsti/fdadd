@@ -219,7 +219,16 @@ const ResultSchema = z.object({
   ),
 });
 
-const FETCH_TIMEOUT_MS = 120_000;
+const DEFAULT_FETCH_TIMEOUT_MS = 45_000;
+const MIN_FETCH_TIMEOUT_MS = 5_000;
+const MAX_FETCH_TIMEOUT_MS = 120_000;
+
+/** Keep provider stalls shorter than the Workflow retry/recovery window. */
+export function resolveProviderTimeoutMs(override?: number, configured?: string): number {
+  const parsed = override ?? (configured?.trim() ? Number(configured) : Number.NaN);
+  if (!Number.isFinite(parsed)) return DEFAULT_FETCH_TIMEOUT_MS;
+  return Math.min(Math.max(Math.trunc(parsed), MIN_FETCH_TIMEOUT_MS), MAX_FETCH_TIMEOUT_MS);
+}
 
 export async function chatCompletion(options: ChatCompletionOptions): Promise<ChatCompletionResult> {
   const provider = resolveProvider();
@@ -239,7 +248,10 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     // Match the installed Pi/OMP OpenCode Go adapter's routing hint.
     ...(provider.name === 'opencode-go' ? { 'x-opencode-client': 'pi' } : {}),
   };
-  const timeoutMs = options.timeoutMs ?? FETCH_TIMEOUT_MS;
+  const timeoutMs = resolveProviderTimeoutMs(
+    options.timeoutMs,
+    process.env.ASTROLOGER_PROVIDER_TIMEOUT_MS,
+  );
   const fetchWithTimeout = (url: string, init: RequestInit): Promise<Response> =>
     fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
 

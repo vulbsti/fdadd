@@ -12,4 +12,6 @@ if ! npm exec -- supabase status --output json 2>/dev/null | node -e 'let raw = 
   exit 2
 fi
 
-exec npm exec -- supabase test db --local supabase/tests/p0_owner_isolation.sql
+exec npm exec -- supabase test db --local \
+  supabase/tests/p0_owner_isolation.sql \
+  supabase/tests/p1_dispatch_outbox.sql

@@ -11,7 +11,7 @@
  * returns prior committed state instead of duplicating effects.
  */
 
-import { FatalError, getWritable } from 'workflow';
+import { FatalError, getWorkflowMetadata, getWritable } from 'workflow';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore, parseCheckpoint, parsePlan, parseVerification, type RunRow } from '@/lib/astro/agent-store';
 import { loadContextManifest, selectRelevantContext, recordSelectedContext } from '@/lib/astro/agent-context';
@@ -21,8 +21,12 @@ import type { AstroFinishRunArgs, AgentErrorCode, AstrologerRunEvent, RunCheckpo
 import { getErrorMessage } from '@/lib/astro/workflow-errors';
 import { selectedContextBlock, type SelectedSource } from '@/lib/astro/selected-context';
 import { parseFinishProposal } from '@/lib/astro/finish-proposal';
+import { verificationNeedsRetry } from '@/lib/astro/verification-policy';
 
-const MAX_AGENT_STEPS = 12;
+// This budget includes retrieval/model/tool/verification operations. Sixteen
+// leaves room for one bounded verifier-driven revision without permitting an
+// open-ended agent loop.
+const MAX_AGENT_STEPS = 16;
 const MAX_REJECTED_DRAFTS = 2;
 const DAILY_TOOL_CALL_LIMIT = 100;
 
@@ -61,6 +65,7 @@ async function loadRunSnapshot(runId: string): Promise<RunSnapshot> {
   const summaryLines = [
     `Person: ${manifest.profileName} (memory v${manifest.memoryVersion}, ready=${manifest.profileReady})`,
     `Frozen chart=${manifest.hasFrozenChart} sensitivity=${manifest.hasFrozenSensitivity}`,
+    `Birth input on file: date=${profile.birth_date as string}, time=${profile.birth_time as string}, place=${(profile.place_name as string | null) ?? 'coordinates on file'}, timezone=${profile.tz as string}.`,
     `Session status: ${manifest.sessionStatus}`,
     checkpoint.currentGoal ? `Continuing goal: ${checkpoint.currentGoal}` : 'New question.',
     checkpoint.nextAction ? `Prior next action: ${checkpoint.nextAction}` : '',
@@ -162,6 +167,35 @@ function providerTools(names?: string[]): FunctionToolDefinition[] {
     function: { name: t.name, description: t.description, parameters: t.parameters },
   }));
 }
+
+const VERIFICATION_TOOL: FunctionToolDefinition = {
+  type: 'function',
+  function: {
+    name: 'astro_record_verification',
+    description: 'Record whether a proposed answer is supported by the supplied context and tool receipts.',
+    parameters: {
+      type: 'object',
+      properties: {
+        verdict: {
+          type: 'string',
+          enum: ['supported', 'needs_more_evidence', 'contradicted'],
+        },
+        unsupportedClaims: {
+          type: 'array',
+          items: { type: 'string', maxLength: 500 },
+          maxItems: 20,
+        },
+        requiredEvidenceIds: {
+          type: 'array',
+          items: { type: 'string' },
+          maxItems: 20,
+        },
+        reason: { type: 'string', maxLength: 2000 },
+      },
+      required: ['verdict', 'unsupportedClaims', 'requiredEvidenceIds', 'reason'],
+    },
+  },
+};
 
 async function planWithProvider(input: {
   runId: string;
@@ -265,7 +299,12 @@ async function modelDecisionStep(input: {
     : input.messages;
   const result = await chatCompletion({
     messages,
-    tools: providerTools().filter((tool) => tool.function.name !== 'astro_record_plan'),
+    // Budget enforcement must be structural, not just prompt text. Once the
+    // run reaches its final two operations, do not expose retrieval or Atros
+    // tools that could consume the remaining budget without a draft.
+    tools: input.forceFinish
+      ? providerTools(['astro_finish_run'])
+      : providerTools().filter((tool) => tool.function.name !== 'astro_record_plan'),
     // OpenCode Go/Responses only accepts automatic selection. The prompt and
     // the tool registry provide the semantic constraint when finishing.
     toolChoice: 'auto',
@@ -327,47 +366,70 @@ async function verifyDraft(input: {
   runId: string;
   draft: string;
   planGoal: string;
+  runContext: string;
   selectedContext: string;
   toolRefs: string;
 }): Promise<{ verification: RunVerification; provider?: string; model?: string }> {
   'use step';
-  const result = await chatCompletion({
-    messages: [
+  const messages: ChatMessage[] = [
       {
         role: 'system',
         content:
-          'You are a strict verification model. Judge ONLY whether the draft is supported by the supplied selected context and tool references. Respond with astro_record_verification semantics: verdict supported|needs_more_evidence|contradicted, unsupportedClaims, requiredEvidenceIds, reason.',
+          'You are a strict verification model. Judge ONLY concrete factual claims in the draft against the supplied selected context and tool references, then call astro_record_verification exactly once. Questions, acknowledgements, intentions, uncertainty statements, and polite framing are not factual claims and need no evidence. A statement that context is absent is supported when the supplied context is empty. A statement that information was recorded is supported by a successful evidence/fact tool receipt. Do not reject a focused question merely because the answer is intentionally waiting for the user to provide missing information.',
       },
       {
         role: 'user',
-        content: `Plan goal: ${input.planGoal}\n\nSelected context:\n${input.selectedContext}\n\nTool references:\n${input.toolRefs}\n\nDraft:\n${input.draft}`,
+        content: `Run/profile context:\n${input.runContext}\n\nPlan goal: ${input.planGoal}\n\nSelected context:\n${input.selectedContext}\n\nTool references:\n${input.toolRefs}\n\nDraft:\n${input.draft}`,
       },
-    ],
-    sessionId: input.runId,
-    maxTokens: 1500,
-    temperature: 0,
-  });
-  const content = result.choices[0]?.message.content ?? '';
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(content.slice(content.indexOf('{'), content.lastIndexOf('}') + 1));
-  } catch {
-    parsed = null;
+    ];
+  let provider: string | undefined;
+  let model: string | undefined;
+  let verification: RunVerification | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const result = await chatCompletion({
+      messages: attempt === 0 ? messages : [
+        ...messages,
+        {
+          role: 'system',
+          content:
+            'Your prior verdict was unparseable or non-actionable. Return supported, or name at least one exact unsupported claim or required evidence ID. Do not return needs_more_evidence with both arrays empty.',
+        },
+      ],
+      tools: [VERIFICATION_TOOL],
+      toolChoice: 'auto',
+      sessionId: input.runId,
+      // Muse Spark may spend the smaller budget on reasoning and return HTTP
+      // 200 with an empty output array. Match the decision-step allowance so
+      // the structured verification call is actually emitted.
+      maxTokens: 4096,
+      temperature: 0,
+    });
+    provider = result.provider;
+    model = result.model;
+    const message = result.choices[0]?.message;
+    const verificationCall = message?.tool_calls?.find(
+      (call) => call.function.name === 'astro_record_verification',
+    );
+    const content = verificationCall?.function.arguments ?? message?.content ?? '';
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(content.slice(content.indexOf('{'), content.lastIndexOf('}') + 1));
+    } catch {
+      parsed = null;
+    }
+    verification = parseVerification(parsed);
+    if (!verificationNeedsRetry(verification)) break;
   }
-  const verification = parseVerification(parsed);
-  if (!verification) {
-    return {
-      verification: {
-        verdict: 'needs_more_evidence',
-        unsupportedClaims: [],
-        requiredEvidenceIds: [],
-        reason: 'verifier returned an unparseable verdict; treat as needs_more_evidence',
-      },
-      provider: result.provider,
-      model: result.model,
-    };
-  }
-  return { verification, provider: result.provider, model: result.model };
+  return {
+    verification: verification ?? {
+      verdict: 'needs_more_evidence',
+      unsupportedClaims: ['The verifier did not return a valid actionable verdict.'],
+      requiredEvidenceIds: [],
+      reason: 'Verifier contract failed after one bounded retry.',
+    },
+    provider,
+    model,
+  };
 }
 
 /** Terminal persistence: assistant message + checkpoint + session state. */
@@ -503,6 +565,18 @@ async function loadCurrentRun(runId: string): Promise<RunRow | null> {
 }
 
 /**
+ * The first durable step fences duplicate Workflow starts. It uses the actual
+ * Workflow run ID supplied by the runtime, so even a dispatcher that crashes
+ * after `start()` but before attaching can register itself on replay.
+ */
+async function claimRunExecution(runId: string) {
+  'use step';
+  const { workflowRunId } = getWorkflowMetadata();
+  const store = new AgentStore(createAdminClient(), createAdminClient());
+  return store.claimRunExecution(runId, workflowRunId);
+}
+
+/**
  * Durable wrapper around the orchestration body. The provider/model/tool
  * boundaries remain steps, while this stream mirrors Pi/OMP lifecycle events
  * without exposing hidden reasoning.
@@ -513,6 +587,13 @@ export async function astrologerRunWorkflow(runId: string) {
   const emit: RunEventSink = emitRunEvent;
 
   try {
+    const execution = await claimRunExecution(runId);
+    if (!execution.won) {
+      return {
+        status: 'duplicate' as const,
+        workflowRunId: execution.workflowRunId,
+      };
+    }
     await emit({ event: 'run.started', runId, phase: 'planning', status: 'active', summary: 'run started' });
     const result = await astrologerRunWorkflowBody(runId, emit);
     if (result.status === 'failed') {
@@ -575,7 +656,7 @@ export async function astrologerRunWorkflow(runId: string) {
 
 /**
  * One Workflow run per user message. Never fabricates a completion: after
- * two rejected drafts or twelve agent steps the run fails durably with
+ * two rejected drafts or sixteen agent operations the run fails durably with
  * `resumable=true` and a preserved next action.
  */
 async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
@@ -752,7 +833,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
           {
             role: 'system',
             content:
-              'You are Aidoraa\'s Vedic astrologer. Use the recorded plan and tools; cite grounding IDs in astro_finish_run. Ask one focused question at a time when information is missing.',
+              'You are Aidoraa\'s Vedic astrologer. Use the recorded plan and tools; cite grounding IDs in astro_finish_run. Ask one focused question at a time when information is missing. Treat the run/profile context as authoritative: distinguish zero person-memory facts from birth input and chart availability, and never claim birth/chart data is absent when the context says it is on file.',
           },
           {
             role: 'user',
@@ -899,6 +980,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       runId,
       draft,
       planGoal: plan.goal,
+      runContext: snapshot.manifestSummary,
       selectedContext: selectedContextBlock(await loadSelectedItems(runId)),
       toolRefs: toolRefs.join('\n') || 'none',
     });
@@ -912,6 +994,12 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       kind: 'verification',
       status: 'succeeded',
       outputSummary: `model=${verified.model ?? 'configured'}; provider=${verified.provider ?? 'configured'}; verdict=${verification.verdict}`,
+      refs: {
+        verdict: verification.verdict,
+        unsupportedClaims: verification.unsupportedClaims,
+        requiredEvidenceIds: verification.requiredEvidenceIds,
+        reason: verification.reason,
+      },
       phase: 'verification',
       checkpoint: { ...checkpoint, lastCompletedStep: verificationKey },
     });

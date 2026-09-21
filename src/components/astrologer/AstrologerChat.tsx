@@ -166,8 +166,8 @@ export default function AstrologerChat({
     const text = draft.trim();
     if (!text) return;
     setDraft('');
-    void send(text);
-  }, [draft, send]);
+    void send(text, focusedQuestion?.id);
+  }, [draft, focusedQuestion?.id, send]);
 
   if (loading) {
     return (

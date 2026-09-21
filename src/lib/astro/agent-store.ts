@@ -200,6 +200,25 @@ export interface ClaimResult {
   toolCalls: number;
 }
 
+export interface DispatchClaim {
+  runId: string;
+  leaseToken: string;
+  attempt: number;
+  maxAttempts: number;
+}
+
+export interface DispatchCompletion {
+  won: boolean;
+  workflowRunId: string | null;
+  fenced?: boolean;
+}
+
+export interface DispatchRelease {
+  released: boolean;
+  fenced: boolean;
+  dead: boolean;
+}
+
 export class AgentStore {
   constructor(
     /** Request-scoped authenticated client (user-entry RPCs, SELECTs). */
@@ -272,6 +291,56 @@ export class AgentStore {
     });
     if (error) throw normalizeDbError(error);
     return data as unknown as { workflowRunId: string; won: boolean };
+  }
+
+  // -- Service-only durable dispatch ---------------------------------------
+
+  async claimRunDispatch(runId: string | null = null, leaseSeconds = 60): Promise<DispatchClaim | null> {
+    const { data, error } = await this.adminRequired().rpc('worker_claim_astro_run_dispatch', {
+      p_run_id: runId,
+      p_lease_seconds: leaseSeconds,
+    });
+    if (error) throw normalizeDbError(error);
+    return (data as unknown as DispatchClaim | null) ?? null;
+  }
+
+  async completeRunDispatch(
+    runId: string,
+    leaseToken: string,
+    workflowRunId: string,
+  ): Promise<DispatchCompletion> {
+    const { data, error } = await this.adminRequired().rpc('worker_complete_astro_run_dispatch', {
+      p_run_id: runId,
+      p_lease_token: leaseToken,
+      p_workflow_run_id: workflowRunId,
+    });
+    if (error) throw normalizeDbError(error);
+    return data as unknown as DispatchCompletion;
+  }
+
+  async releaseRunDispatch(
+    runId: string,
+    leaseToken: string,
+    errorMessage: string,
+    retrySeconds: number,
+  ): Promise<DispatchRelease> {
+    const { data, error } = await this.adminRequired().rpc('worker_release_astro_run_dispatch', {
+      p_run_id: runId,
+      p_lease_token: leaseToken,
+      p_error_message: errorMessage,
+      p_retry_seconds: retrySeconds,
+    });
+    if (error) throw normalizeDbError(error);
+    return data as unknown as DispatchRelease;
+  }
+
+  async claimRunExecution(runId: string, workflowRunId: string): Promise<DispatchCompletion> {
+    const { data, error } = await this.adminRequired().rpc('worker_claim_astro_run_execution', {
+      p_run_id: runId,
+      p_workflow_run_id: workflowRunId,
+    });
+    if (error) throw normalizeDbError(error);
+    return data as unknown as DispatchCompletion;
   }
 
   // -- Run reads ------------------------------------------------------------

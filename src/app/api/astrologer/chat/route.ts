@@ -6,8 +6,8 @@
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { errorResponse, requireAuth, startAndAttach, unconfigured } from '@/lib/astro/api-helpers';
-import { astrologerRunWorkflow } from '@/workflows/astrologer-run';
+import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
+import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
 
 export const runtime = 'nodejs';
 
@@ -41,15 +41,10 @@ export async function POST(request: Request) {
       answerToQuestionId: parsed.data.answerToQuestionId ?? null,
     });
 
-    let replayed = begun.replayed;
-    if (!replayed) {
-      const run = await auth.store.getRun(begun.runId);
-      if (!run.workflow_run_id) {
-        await startAndAttach(astrologerRunWorkflow, begun.runId, auth.store);
-      } else {
-        replayed = true;
-      }
-    }
+    // Always attempt dispatch, including an idempotent request replay. A retry
+    // can therefore recover a process crash that happened after the database
+    // committed the run but before Workflow was started.
+    await dispatchAstrologerRunBestEffort(begun.runId);
 
     return NextResponse.json(
       {
@@ -57,7 +52,7 @@ export async function POST(request: Request) {
         messageId: begun.messageId,
         status: begun.status,
         eventsUrl: `/api/astrologer/runs/${begun.runId}/events`,
-        replayed,
+        replayed: begun.replayed,
       },
       { status: 202 },
     );

@@ -3,9 +3,18 @@ import {
   toChatCompletionsToolChoice,
   toResponsesInput,
   toResponsesToolChoice,
+  resolveProviderTimeoutMs,
 } from './provider';
 
 describe('OpenCode/Pi tool protocol compatibility', () => {
+  it('bounds provider timeout configuration for durable retry recovery', () => {
+    expect(resolveProviderTimeoutMs()).toBe(45_000);
+    expect(resolveProviderTimeoutMs(undefined, '30000')).toBe(30_000);
+    expect(resolveProviderTimeoutMs(100)).toBe(5_000);
+    expect(resolveProviderTimeoutMs(undefined, '999999')).toBe(120_000);
+    expect(resolveProviderTimeoutMs(undefined, 'invalid')).toBe(45_000);
+  });
+
   it('normalizes named Responses choices to automatic selection for OpenCode Go', () => {
     expect(toResponsesToolChoice('opencode-go', { name: 'astro_record_plan' })).toBe('auto');
     expect(toResponsesToolChoice('openrouter', { name: 'astro_record_plan' })).toEqual({

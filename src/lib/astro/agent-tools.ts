@@ -214,7 +214,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: 'astro_evidence_record',
     description:
-      'Record immutable evidence. For direct user statements, exactQuote MUST be a verbatim substring of the user message you are citing (pass its messageId).',
+      'Record immutable evidence. You MUST pass sourceMessageId or sourceEventId; use astro_context_search first when the source ID is unknown. For direct user statements, exactQuote MUST be a verbatim substring of the cited user message.',
     parameters: {
       type: 'object',
       properties: {
@@ -229,6 +229,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         assertionMode: { type: 'string', enum: ['direct', 'derived'] },
       },
       required: ['evidenceType', 'exactQuote', 'summary'],
+      anyOf: [
+        { required: ['sourceMessageId'] },
+        { required: ['sourceEventId'] },
+      ],
     },
   },
   {
@@ -303,6 +307,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
             },
             allowFreeText: { type: 'boolean' },
           },
+          required: ['prompt', 'responseKind'],
         },
         nextAction: { type: 'string', maxLength: 500 },
         confidence: { type: 'number', minimum: 0, maximum: 1 },
