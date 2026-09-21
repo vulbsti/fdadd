@@ -1,118 +1,108 @@
-# Aidoraa Fashion
+# Aidoraa
 
-Aidoraa is a sophisticated AI-powered fashion assistance application designed to provide personalized styling advice, date planning, and help users discover their unique fashion aesthetic. Built with Next.js, with model calls via OpenCode Go (OpenAI-compatible chat completions; see `src/lib/ai/provider.ts`, OpenRouter fallback) and Opencode as the dev-time agent CLI.
+Aidoraa is a Next.js application containing the fashion, date-planning, blog,
+payment, authentication, and astrologer surfaces. The repository is a working
+prototype with a real Supabase authentication/payment foundation. Several
+product areas still use sample or in-memory data; the documentation labels
+those boundaries explicitly.
 
-## Features
+## Current surfaces
 
-*   **FashionDaddy:** An AI stylist chatbot for outfit suggestions, fashion advice, and more.
-*   **DatePlanner:** AI assistance for planning outfits, locations, and activities for dates based on user input.
-*   **Aesthetic Quiz:** An interactive quiz to help users discover their personal fashion style and preferences.
-*   **Blog:** Fashion-related articles and tips.
-*   **User Authentication:** Secure login/signup functionality (currently simulated).
+- **FashionDaddy** — a client-side styling UI with sample chat history,
+  wardrobe data, and placeholder replies.
+- **DatePlanner** — a client-side date-plan UI with a small keyword-based
+  placeholder generator.
+- **Aesthetic Quiz** — the style-preference quiz.
+- **Blog and RSS** — sample/in-memory services and route handlers.
+- **Contact form** — a placeholder submission alert; no delivery backend.
+- **Authentication and payments** — Supabase Auth with email/Google flows and
+  Razorpay order/verification/webhook routes. Provider configuration is in
+  [`docs/supabase-razorpay-setup.md`](docs/supabase-razorpay-setup.md).
+- **Astrologer** — an authenticated chart and conversation surface backed by
+  Supabase, Workflow, the provider adapter, and Atros. The approved v3 person
+  model remains a proposed implementation contract; it is not delivered by the
+  current source tree.
 
-## Tech Stack
+## Stack
 
-*   **Framework:** Next.js 15 (App Router)
-*   **Language:** TypeScript
-*   **Styling:** Tailwind CSS, ShadCN UI
-*   **AI Model Provider:** OpenCode Go (`muse-spark-1.3-contributor`, OpenAI-compatible; see `src/lib/ai/provider.ts`)
-*   **UI Components:** ShadCN UI, Lucide React Icons
-*   **Deployment:** Vercel (recommended)
+- Next.js `^16.3.5` App Router, React `^18.3.1`, and TypeScript.
+- Node.js 22.x and npm.
+- Tailwind CSS, Radix UI primitives, and the existing component library.
+- Supabase Auth/Postgres, Vercel Workflow, and Vercel Sandbox for Atros.
+- The astrologer provider resolves keys in this order:
+  `OPENCODE_API_KEY`, `OPENGO_API`, then `OPENROUTER_API_KEY`. OpenCode Go
+  uses `muse-spark-1.3-contributor` by default; `ASTROLOGER_MODEL` and then
+  `OPENROUTER_MODEL` can override the model.
 
-## Getting Started (Local Development)
+## Local development
 
-Follow these instructions to set up and run the project on your local machine.
+Use Node.js 22, install the locked dependencies, and configure the services
+you need in `.env.local`:
 
-### Prerequisites
+```bash
+npm ci
+npm run dev
+```
 
-*   **Node.js:** Version 22.x (as specified in `package.json`). You can use [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versions.
-*   **npm:** Should be installed with Node.js.
-*   **Git:** To clone the repository.
-*   **OpenCode Go API Key:** You need a Go API key from [OpenCode Zen](https://opencode.ai/auth). Set it as `OPENGO_API` (or `OPENCODE_API_KEY`).
+Open [http://localhost:9002](http://localhost:9002). Copy `.env.example` for
+the Supabase and Razorpay variables. Set an OpenCode Go key (`OPENCODE_API_KEY`
+or `OPENGO_API`) for the primary model path, or `OPENROUTER_API_KEY` for the
+fallback path. Never commit `.env.local` or server-only secrets.
 
-### Setup
+OpenRouter is selected when no Go key is configured; it is not automatic
+failover after a Go request fails.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <your-repository-url>
-    cd <repository-folder-name>
-    ```
+Useful checks:
 
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npm run test:db:local
+npm run test:e2e:local
+```
 
-3.  **Set up environment variables:**
-    Copy `.env.example` to `.env.local` and populate the services you want to
-    enable. `OPENGO_API` (OpenCode Go key) powers AI features — `OPENROUTER_API_KEY`
-    works as a fallback; `ASTROLOGER_MODEL` overrides the default model. Supabase and Razorpay
-    variables enable authentication and payments. See
-    `docs/supabase-razorpay-setup.md` for the provider-side configuration.
+The database and browser smoke commands require the local Supabase stack. They
+use disposable fixtures; see the [P0 receipt](docs/architecture/person-model-v3/P0-EXECUTION-RECEIPT.md)
+for their exact coverage and limits.
 
-### Running the Application
+## Dev-time agent CLI
 
-1.  **Start the Next.js development server:**
-    ```bash
-    npm run dev
-    ```
-    This command starts the Next.js application with Turbopack enabled on port 9002 (as configured in `package.json`).
-
-2.  **Access the application:**
-    Open your browser and navigate to [http://localhost:9002](http://localhost:9002).
-
-### Dev-time agent CLI (Opencode)
-
-Opencode is a local dev CLI pinned to the same OpenRouter model string (`opencode.json`):
+`opencode.json` selects `opencode-go/muse-spark-1.3-contributor` for local
+agent work. For example:
 
 ```bash
 opencode run "help me debug the astrologer chat route"
 ```
 
-## Building for Production
+## Deployment
 
-To create an optimized production build:
+`.github/workflows/deploy-production.yml` runs for pushes to `main` and for a
+manual dispatch. It uses Node 22, runs `npm ci`, typecheck, lint, and unit
+tests before pulling Vercel settings, building, and deploying. A separate P0
+quality workflow runs local database and browser smoke checks on PRs and main.
+These checks do not yet prove the v3 guided-update loop. Vercel production and
+preview environment variables must be
+configured separately; use the provider setup document for Supabase and
+Razorpay callback URLs and server-only variables.
 
-```bash
-npm run build
-```
+## Documentation map
 
-To run the production build locally (requires building first):
+The documentation index at [`docs/README.md`](docs/README.md) is the entry
+point for design, architecture, provider setup, and historical operational
+records.
 
-```bash
-npm run start
-```
+- [Approved v3 person-model package](docs/architecture/person-model-v3/README.md)
+  — current-state audit, proposed execution specification, UI behavior
+  contract, and acceptance plan. It is an implementation plan, not a delivery
+  receipt.
+- [Approved v2 profile concepts](docs/design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md)
+  — the four visual references and their generation/refinement prompts.
+- [Supabase and Razorpay setup](docs/supabase-razorpay-setup.md) — provider
+  configuration, environment variables, verification matrix, and rollout.
+- [`logs/changes_logs.md`](logs/changes_logs.md) — dated historical notes;
+  entries are not current implementation claims.
 
-## Deployment (Vercel)
-
-Vercel is the recommended platform for deploying this Next.js application.
-
-### Prerequisites
-
-*   **Vercel Account:** Sign up at [vercel.com](https://vercel.com/).
-*   **GitHub/GitLab/Bitbucket Account:** Your project code should be hosted on one of these platforms.
-
-### Steps
-
-1.  **Push your code:** Ensure your latest code, including the `package.json` specifying Node.js 22, is pushed to your Git repository.
-
-2.  **Import Project on Vercel:**
-    *   Go to your Vercel Dashboard.
-    *   Click "Add New..." > "Project".
-    *   Import the Git repository containing your project.
-
-3.  **Configure Project:**
-    *   **Framework Preset:** Vercel should automatically detect Next.js.
-    *   **Build & Development Settings:** The repository pins Node.js 22 and the GitHub Actions workflow runs the Vercel build and production deploy.
-    *   **Environment Variables:**
-        *   Navigate to your project's "Settings" tab, then "Environment Variables".
-        *   Add `OPENGO_API` with your OpenCode Go key (Production + Preview at minimum). Optional: `ASTROLOGER_MODEL` to override the default `muse-spark-1.3-contributor`.
-
-4.  **Deploy:**
-    *   Click the "Deploy" button. Vercel will build and deploy your application.
-    *   Subsequent pushes to your connected Git branch (e.g., `main` or `master`) will automatically trigger new deployments.
-
-## Other Scripts
-
-*   **Linting:** `npm run lint` - Runs the Next.js linter.
-*   **Type Checking:** `npm run typecheck` - Checks TypeScript types.
+The source commit reviewed by the current architecture package is
+`27fc172156633cb15b550d1b36c69eb702fdcbba`.

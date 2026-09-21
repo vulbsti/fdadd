@@ -1,6 +1,7 @@
 import { getBlogPosts } from '@/services/blog';
 import { BlogPostCard } from '@/components/blog/BlogPostCard';
 import { Suspense } from 'react';
+import Link from 'next/link';
 
 // Simple loading component
 function LoadingPosts() {
@@ -46,24 +47,24 @@ export default async function BlogPage({
         
         {/* Source filter tabs */}
         <div className="flex space-x-4 mt-4 md:mt-0 justify-center md:justify-end">
-          <a 
+          <Link
             href="/blog"
             className={`px-3 py-1 rounded-full ${sourceFilter === 'all' ? 'bg-primary text-white' : 'bg-gray-100'}`}
           >
             All
-          </a>
-          <a 
+          </Link>
+          <Link
             href="/blog?source=internal"
             className={`px-3 py-1 rounded-full ${sourceFilter === 'internal' ? 'bg-primary text-white' : 'bg-gray-100'}`}
           >
             Our Posts
-          </a>
-          <a 
+          </Link>
+          <Link
             href="/blog?source=rss"
             className={`px-3 py-1 rounded-full ${sourceFilter === 'rss' ? 'bg-primary text-white' : 'bg-gray-100'}`}
           >
             RSS Feeds
-          </a>
+          </Link>
         </div>
       </div>
 

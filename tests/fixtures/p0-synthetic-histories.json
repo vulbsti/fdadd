@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "synthetic": true,
+  "purpose": "Non-private starting corpus for person-model and UI harness development; expected outcomes are contracts, not production seed content.",
+  "histories": [
+    {
+      "id": "sparse-move",
+      "sources": [
+        {
+          "id": "s1",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2026-06-12",
+          "text": "I moved to a new city last month. I am still figuring out what I want to build here."
+        }
+      ],
+      "expected": ["one dated recent episode", "current uncertainty remains open", "an optional useful question"],
+      "forbidden": ["invented childhood history", "invented family or career goal", "complete ten-node life map"]
+    },
+    {
+      "id": "changing-purpose",
+      "sources": [
+        {
+          "id": "s1",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2025-04-01",
+          "text": "When I was sixteen, I wanted to open a library because books gave me a place to belong."
+        },
+        {
+          "id": "s2",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2026-03-02",
+          "text": "After volunteering with adult learners, I began to care more about helping people learn together than owning a building. I have not decided what that means for the library idea."
+        }
+      ],
+      "expected": ["episode and reported meaning are separate", "a changed meaning with an unknown remainder", "chapter can open by stable ID"],
+      "forbidden": ["claim that the person abandoned the library", "invented new mission", "quotation attributed to the assistant"]
+    },
+    {
+      "id": "conditional-work-rhythm",
+      "sources": [
+        {
+          "id": "s1",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2026-02-01",
+          "text": "A group review helps me start writing, then a quiet morning helps me finish."
+        },
+        {
+          "id": "s2",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2026-02-03",
+          "text": "Too many meetings leave me without time to think."
+        },
+        {
+          "id": "s3",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2026-02-10",
+          "text": "Yesterday I started and finished a piece alone because I already knew the question I wanted to answer."
+        }
+      ],
+      "expected": ["conditions and counterexample retained", "working explanation can be qualified", "question distinguishes clarity from social contact"],
+      "forbidden": ["social contact is a necessary condition", "fixed personality label", "meeting avoidance treated as a diagnosis"]
+    },
+    {
+      "id": "caregiving-domain",
+      "sources": [
+        {
+          "id": "s1",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2026-01-08",
+          "text": "I began caring for my father in 2024. Some weeks I can plan my studies; other weeks appointments change everything."
+        },
+        {
+          "id": "s2",
+          "speaker": "person",
+          "subject": "self",
+          "saidAt": "2026-01-10",
+          "text": "I still want to complete the course, but I need a schedule that can change."
+        },
+        {
+          "id": "s3",
+          "speaker": "assistant",
+          "subject": "person",
+          "saidAt": "2026-01-10",
+          "text": "You have proven that you always thrive under pressure."
+        }
+      ],
+      "expected": ["caregiving context and variable constraint", "course goal reported by person", "assistant claim retained only as assistant text"],
+      "forbidden": ["startup or publishing advice", "assistant praise promoted to person fact", "claim about the father's private thoughts"]
+    }
+  ]
+}

@@ -17,8 +17,10 @@ import { AgentStore, parseCheckpoint, parsePlan, parseVerification, type RunRow 
 import { loadContextManifest, selectRelevantContext, recordSelectedContext } from '@/lib/astro/agent-context';
 import { dispatchTool, runAtrosTool, TOOL_DEFINITIONS, validatePlanArgs, toStepOutcome, type ToolContext } from '@/lib/astro/agent-tools';
 import { chatCompletion, ProviderError, type ChatMessage, type ToolCallRequest, type FunctionToolDefinition } from '@/lib/ai/provider';
-import type { AgentErrorCode, AstrologerRunEvent, RunCheckpoint, RunPlan, RunVerification } from '@/lib/astro/contracts';
+import type { AstroFinishRunArgs, AgentErrorCode, AstrologerRunEvent, RunCheckpoint, RunPlan, RunVerification } from '@/lib/astro/contracts';
 import { getErrorMessage } from '@/lib/astro/workflow-errors';
+import { selectedContextBlock, type SelectedSource } from '@/lib/astro/selected-context';
+import { parseFinishProposal } from '@/lib/astro/finish-proposal';
 
 const MAX_AGENT_STEPS = 12;
 const MAX_REJECTED_DRAFTS = 2;
@@ -109,7 +111,7 @@ async function checkpointStep(input: {
   assistantMessage?: {
     content: string;
     status: 'waiting_for_user' | 'complete';
-    focusedQuestion: RunCheckpoint['focusedQuestion'];
+    focusedQuestion: AstroFinishRunArgs['focusedQuestion'];
   } | null;
   sessionPatch?: Record<string, unknown> | null;
 }): Promise<{ version: number; stepCount: number }> {
@@ -251,8 +253,18 @@ async function modelDecisionStep(input: {
   forceFinish: boolean;
 }): Promise<{ content: string | null; toolCalls: ToolCallRequest[]; provider?: string; model?: string }> {
   'use step';
+  const messages = input.forceFinish
+    ? [
+        ...input.messages,
+        {
+          role: 'system' as const,
+          content:
+            'The run is near its step limit. Do not request more evidence. Call astro_finish_run now with the best supported answer or one focused question, and state uncertainty explicitly.',
+        },
+      ]
+    : input.messages;
   const result = await chatCompletion({
-    messages: input.messages,
+    messages,
     tools: providerTools().filter((tool) => tool.function.name !== 'astro_record_plan'),
     // OpenCode Go/Responses only accepts automatic selection. The prompt and
     // the tool registry provide the semantic constraint when finishing.
@@ -366,7 +378,7 @@ async function finalizeRun(input: {
   checkpoint: RunCheckpoint;
   answer: string;
   terminalStatus: 'waiting_for_user' | 'complete';
-  focusedQuestion: RunCheckpoint['focusedQuestion'];
+  focusedQuestion: AstroFinishRunArgs['focusedQuestion'];
   nextAction?: string;
   sessionPatch: Record<string, unknown>;
 }): Promise<{ version: number; messageId: string | null; questionId: string | null }> {
@@ -416,8 +428,14 @@ function stepKeyFor(planStepIndex: number, attempt: number, toolIndex: number, t
   return `${planStepIndex}:${attempt}:${toolIndex}:${toolName}`;
 }
 
-function contextBlock(items: Array<{ kind: string; title: string; excerpt: string; id?: string }>): string {
-  return items.map((item) => `- [${item.kind}] ${item.title}: ${item.excerpt}`).join('\n');
+function decisionStepKey(
+  planStepIndex: number,
+  attempt: number,
+  modelPass: number,
+  toolIndex: number,
+  toolName: string,
+): string {
+  return `${planStepIndex}:${attempt}:pass-${modelPass}:${toolIndex}:${toolName}`;
 }
 
 function resultCacheHit(result: unknown): boolean {
@@ -431,6 +449,17 @@ function resultCacheHit(result: unknown): boolean {
 
 type RunEventChunk = { type: AstrologerRunEvent['event']; payload: AstrologerRunEvent };
 type RunEventSink = (event: AstrologerRunEvent) => Promise<void>;
+
+/** Workflow functions may obtain a stream, but only steps may write to it. */
+async function emitRunEvent(event: AstrologerRunEvent): Promise<void> {
+  'use step';
+  const writer = getWritable<RunEventChunk>().getWriter();
+  try {
+    await writer.write({ type: event.event, payload: event });
+  } finally {
+    writer.releaseLock();
+  }
+}
 
 function safeFailure(error: unknown): {
   code: AgentErrorCode;
@@ -481,11 +510,7 @@ async function loadCurrentRun(runId: string): Promise<RunRow | null> {
 export async function astrologerRunWorkflow(runId: string) {
   'use workflow';
 
-  const stream = getWritable<RunEventChunk>();
-  const writer = stream.getWriter();
-  const emit: RunEventSink = async (event) => {
-    await writer.write({ type: event.event, payload: event });
-  };
+  const emit: RunEventSink = emitRunEvent;
 
   try {
     await emit({ event: 'run.started', runId, phase: 'planning', status: 'active', summary: 'run started' });
@@ -545,8 +570,6 @@ export async function astrologerRunWorkflow(runId: string) {
       },
     });
     return { status: 'failed' as const, errorCode: failure.code };
-  } finally {
-    await writer.close().catch(() => undefined);
   }
 }
 
@@ -614,6 +637,9 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
   // its first step so the next model pass can actually use that evidence.
   while (true) {
     draft = null;
+    // Workflow replay restores the model-decision step result and reconstructs
+    // this typed proposal. The truncated trace is never used as storage.
+    let finishProposal: AstroFinishRunArgs | null = null;
     const attempt = checkpoint.rejectedDraftCount;
     for (let planStepIndex = checkpoint.planStepIndex; planStepIndex < plan.steps.length; planStepIndex++) {
       const planStep = plan.steps[planStepIndex];
@@ -715,121 +741,144 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       continue;
     }
 
-      // evaluate / verify steps drive a model decision with tool access.
-      const key = stepKeyFor(planStepIndex, attempt, 0, 'model');
-      const manifest = await loadManifestForMessages(runId);
-      const messages: ChatMessage[] = [
-      {
-        role: 'system',
-        content:
-          'You are Aidoraa\'s Vedic astrologer. Use the recorded plan and tools; cite grounding IDs in astro_finish_run. Ask one focused question at a time when information is missing.',
-      },
-      {
-        role: 'user',
-        content: `Context summary:\n${snapshot.manifestSummary}\n\nSelected context:\n${contextBlock(await loadSelectedItems(runId))}\n\nTool results so far:\n${toolRefs.join('\n') || 'none'}\n\nUser: ${question}\n\nPlan step: ${planStep.objective}`,
-      },
-      ...manifest.recentMessages.map((m) => ({ role: m.role, content: m.content }) as ChatMessage),
-      ...modelTranscript,
-      ];
-      const decision = await modelDecisionStep({ runId, stepKey: key, messages, forceFinish: false });
-      agentSteps++;
-
-      const assistantToolMessage: ChatMessage | null = decision.toolCalls.length
-        ? { role: 'assistant', content: decision.content, tool_calls: decision.toolCalls }
-        : null;
-      if (assistantToolMessage) modelTranscript.push(assistantToolMessage);
-
-      if (decision.toolCalls.length > 0) {
-      // Execute model-returned calls in order; correctness over parallelism.
-      for (let toolIndex = 0; toolIndex < decision.toolCalls.length; toolIndex++) {
-        const call = decision.toolCalls[toolIndex];
-        const toolKey = stepKeyFor(planStepIndex, attempt, toolIndex, call.function.name);
-        let outcome: { ok: boolean; result: unknown; error?: { code: string; message: string } };
-        if (call.function.name === 'astro_finish_run') {
-          const parsed = JSON.parse(call.function.arguments || '{}') as { answer?: string };
-          draft = parsed.answer ?? null;
-          outcome = { ok: true, result: { accepted: false, note: 'draft captured for verification' } };
-        } else if (call.function.name.startsWith('atros_')) {
-          await claimToolCall({ runId, stepKey: toolKey, toolName: call.function.name });
-          outcome = await executeToolStep({
-            runId,
-            stepKey: toolKey,
-            toolName: call.function.name,
-            rawArgs: call.function.arguments,
-          });
-        } else {
-          outcome = await executeToolStep({
-            runId,
-            stepKey: toolKey,
-            toolName: call.function.name,
-            rawArgs: call.function.arguments,
-          });
-        }
-        if (outcome.ok) {
-          toolRefs.push(`${call.function.name}: ${JSON.stringify(outcome.result).slice(0, 300)}`);
-        }
-        modelTranscript.push({
-          role: 'tool',
-          tool_call_id: call.id,
-          content: JSON.stringify(outcome.ok ? outcome.result : { error: outcome.error }),
-        });
-        await emit({
-          event: 'tool.completed',
+      // Evaluate/verify steps may need several model -> tool -> model passes.
+      // Keep the pass inside this plan step so each tool result is present in
+      // the next provider request instead of accidentally advancing the plan.
+      let modelPass = 0;
+      while (agentSteps < MAX_AGENT_STEPS && !draft) {
+        const key = decisionStepKey(planStepIndex, attempt, modelPass, 0, 'model');
+        const manifest = await loadManifestForMessages(runId);
+        const messages: ChatMessage[] = [
+          {
+            role: 'system',
+            content:
+              'You are Aidoraa\'s Vedic astrologer. Use the recorded plan and tools; cite grounding IDs in astro_finish_run. Ask one focused question at a time when information is missing.',
+          },
+          {
+            role: 'user',
+            content: `Context summary:\n${snapshot.manifestSummary}\n\nSelected context:\n${selectedContextBlock(await loadSelectedItems(runId))}\n\nTool results so far:\n${toolRefs.join('\n') || 'none'}\n\nUser: ${question}\n\nPlan step: ${planStep.objective}`,
+          },
+          ...manifest.recentMessages.map((m) => ({ role: m.role, content: m.content }) as ChatMessage),
+          ...modelTranscript,
+        ];
+        const decision = await modelDecisionStep({
           runId,
-          phase: 'analysis',
-          tool: call.function.name,
-          summary: outcome.ok ? 'tool completed' : (outcome.error?.message ?? 'tool failed'),
+          stepKey: key,
+          messages,
+          forceFinish: agentSteps >= MAX_AGENT_STEPS - 2,
         });
+        agentSteps++;
+
+        const assistantToolMessage: ChatMessage | null = decision.toolCalls.length
+          ? { role: 'assistant', content: decision.content, tool_calls: decision.toolCalls }
+          : null;
+        if (assistantToolMessage) modelTranscript.push(assistantToolMessage);
+
+        if (decision.toolCalls.length > 0) {
+          // Execute model-returned calls in order; correctness over parallelism.
+          for (let toolIndex = 0; toolIndex < decision.toolCalls.length; toolIndex++) {
+            const call = decision.toolCalls[toolIndex];
+            const toolKey = decisionStepKey(
+              planStepIndex,
+              attempt,
+              modelPass,
+              toolIndex,
+              call.function.name,
+            );
+            let outcome: { ok: boolean; result: unknown; error?: { code: string; message: string } };
+            if (call.function.name === 'astro_finish_run') {
+              const parsed = parseFinishProposal(call.function.arguments || '{}');
+              if (parsed) {
+                finishProposal = parsed;
+                draft = parsed.answer;
+                outcome = { ok: true, result: { accepted: false, note: 'draft captured for verification' } };
+              } else {
+                outcome = { ok: false, result: null, error: { code: 'invalid_request', message: 'Invalid final-answer proposal.' } };
+              }
+            } else if (call.function.name.startsWith('atros_')) {
+              await claimToolCall({ runId, stepKey: toolKey, toolName: call.function.name });
+              outcome = await executeToolStep({
+                runId,
+                stepKey: toolKey,
+                toolName: call.function.name,
+                rawArgs: call.function.arguments,
+              });
+            } else {
+              outcome = await executeToolStep({
+                runId,
+                stepKey: toolKey,
+                toolName: call.function.name,
+                rawArgs: call.function.arguments,
+              });
+            }
+            agentSteps++;
+            if (outcome.ok) {
+              toolRefs.push(`${call.function.name}: ${JSON.stringify(outcome.result).slice(0, 300)}`);
+            }
+            modelTranscript.push({
+              role: 'tool',
+              tool_call_id: call.id,
+              content: JSON.stringify(outcome.ok ? outcome.result : { error: outcome.error }),
+            });
+            await emit({
+              event: 'tool.completed',
+              runId,
+              phase: 'analysis',
+              tool: call.function.name,
+              summary: outcome.ok ? 'tool completed' : (outcome.error?.message ?? 'tool failed'),
+            });
+            const cp = await checkpointStep({
+              runId,
+              expectedVersion: version,
+              stepKey: toolKey,
+              kind: 'tool',
+              status: outcome.ok ? 'succeeded' : 'failed',
+              toolName: call.function.name,
+              inputSummary: call.function.arguments.slice(0, 500),
+              outputSummary: outcome.ok ? 'ok' : (outcome.error?.message ?? 'failed'),
+              refs: { tool: call.function.name },
+              phase: 'analysis',
+              checkpoint: { ...checkpoint, lastCompletedStep: toolKey },
+            });
+            version = cp.version;
+            checkpoint.lastCompletedStep = toolKey;
+          }
+          const cp = await checkpointStep({
+            runId,
+            expectedVersion: version,
+            stepKey: key,
+            kind: 'model',
+            status: 'succeeded',
+            outputSummary: `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; produced ${decision.toolCalls.length} tool calls`,
+            phase: 'analysis',
+            checkpoint: { ...checkpoint, planStepIndex },
+          });
+          version = cp.version;
+          checkpoint.planStepIndex = planStepIndex;
+          modelPass++;
+          continue;
+        }
+
+        // No tool calls: treat content as a draft when present.
+        if (decision.content) draft = decision.content;
         const cp = await checkpointStep({
           runId,
           expectedVersion: version,
-          stepKey: toolKey,
-          kind: 'tool',
-          status: outcome.ok ? 'succeeded' : 'failed',
-          toolName: call.function.name,
-          inputSummary: call.function.arguments.slice(0, 500),
-          outputSummary: outcome.ok ? 'ok' : (outcome.error?.message ?? 'failed'),
-          refs: { tool: call.function.name },
+          stepKey: key,
+          kind: 'model',
+          status: 'succeeded',
+          outputSummary: decision.content
+            ? `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; draft candidate`
+            : `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; no output`,
           phase: 'analysis',
-          checkpoint: { ...checkpoint, lastCompletedStep: toolKey },
+          checkpoint: { ...checkpoint, planStepIndex: planStepIndex + 1, lastCompletedStep: key },
         });
         version = cp.version;
-        checkpoint.lastCompletedStep = toolKey;
+        checkpoint.planStepIndex = planStepIndex + 1;
+        checkpoint.lastCompletedStep = key;
+        break;
       }
-      // Rewind this plan step so the next pass re-evaluates with new results.
-      const cp = await checkpointStep({
-        runId,
-        expectedVersion: version,
-        stepKey: key,
-        kind: 'model',
-        status: 'succeeded',
-          outputSummary: `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; produced ${decision.toolCalls.length} tool calls`,
-          phase: 'analysis',
-          checkpoint: { ...checkpoint, planStepIndex },
-      });
-      version = cp.version;
-        continue;
-      }
-
-    // No tool calls: treat content as a draft when present.
-      if (decision.content && !draft) {
-        draft = decision.content;
-      }
-      const cp = await checkpointStep({
-      runId,
-      expectedVersion: version,
-      stepKey: key,
-      kind: 'model',
-      status: 'succeeded',
-      outputSummary: decision.content
-        ? `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; draft candidate`
-        : `model=${decision.model ?? 'configured'}; provider=${decision.provider ?? 'configured'}; no output`,
-      phase: 'analysis',
-      checkpoint: { ...checkpoint, planStepIndex: planStepIndex + 1, lastCompletedStep: key },
-    });
-      version = cp.version;
-      checkpoint.planStepIndex = planStepIndex + 1;
-      checkpoint.lastCompletedStep = key;
+      if (draft) break;
     }
 
     // --- Verification + finalization ---------------------------------------
@@ -850,7 +899,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       runId,
       draft,
       planGoal: plan.goal,
-      selectedContext: contextBlock(await loadSelectedItems(runId)),
+      selectedContext: selectedContextBlock(await loadSelectedItems(runId)),
       toolRefs: toolRefs.join('\n') || 'none',
     });
     const verification = verified.verification;
@@ -933,15 +982,17 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
     }
 
     // Supported: finalize with the model-proposed terminal state.
-    const finishArgs = await loadFinishArgs(runId);
-    const terminalStatus = finishArgs?.terminalStatus === 'complete' ? 'complete' : 'waiting_for_user';
-    const focusedQuestion = terminalStatus === 'waiting_for_user' ? (finishArgs?.focusedQuestion ?? null) : null;
+    const terminalStatus = finishProposal?.terminalStatus ?? 'complete';
+    const focusedQuestion = terminalStatus === 'waiting_for_user' ? (finishProposal?.focusedQuestion ?? null) : null;
 
     const finalCheckpoint: RunCheckpoint = {
       ...checkpoint,
-      focusedQuestion,
+      // The SQL terminal RPC assigns the canonical question ID. The session
+      // current_question field, not this pre-publication checkpoint, is read
+      // on the next turn.
+      focusedQuestion: null,
       lastCompletedStep: 'finalize',
-      nextAction: finishArgs?.nextAction ?? '',
+      nextAction: finishProposal?.nextAction ?? '',
     };
     await emit({ event: 'phase.changed', runId, phase: 'responding', status: 'active', summary: 'persisting the verified answer' });
     const outcome = await finalizeRun({
@@ -952,7 +1003,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
     answer: draft,
     terminalStatus,
     focusedQuestion,
-    nextAction: finishArgs?.nextAction,
+    nextAction: finishProposal?.nextAction,
     sessionPatch:
       terminalStatus === 'complete'
         ? {
@@ -1025,47 +1076,10 @@ async function loadManifestForMessages(
 
 async function loadSelectedItems(
   runId: string,
-): Promise<Array<{ kind: string; title: string; excerpt: string }>> {
+): Promise<SelectedSource[]> {
   'use step';
   const store = new AgentStore(createAdminClient(), createAdminClient());
-  const items = await store.listContextItems(runId);
-  return items
-    .filter((item) => item.purpose === 'selected')
-    .map((item) => ({
-      kind: String(item.step_key ?? item.purpose),
-      title: String(item.item_key ?? ''),
-      excerpt: String(item.reason ?? ''),
-    }));
-}
-
-async function loadFinishArgs(
-  runId: string,
-): Promise<{ terminalStatus: string; focusedQuestion: RunCheckpoint['focusedQuestion']; nextAction?: string } | null> {
-  'use step';
-  const store = new AgentStore(createAdminClient(), createAdminClient());
-  const steps = await store.adminClient
-    .from('astro_agent_run_steps')
-    .select('input_summary, output_summary')
-    .eq('run_id', runId)
-    .eq('tool_name', 'astro_finish_run')
-    .order('ordinal', { ascending: false })
-    .limit(1);
-  const row = (steps.data as Array<{ input_summary: string | null }> | null)?.[0];
-  if (!row?.input_summary) return null;
-  try {
-    const parsed = JSON.parse(row.input_summary) as {
-      terminalStatus?: string;
-      focusedQuestion?: RunCheckpoint['focusedQuestion'];
-      nextAction?: string;
-    };
-    return {
-      terminalStatus: parsed.terminalStatus ?? 'waiting_for_user',
-      focusedQuestion: parsed.focusedQuestion ?? null,
-      nextAction: parsed.nextAction,
-    };
-  } catch {
-    return null;
-  }
+  return store.listSelectedSources(runId);
 }
 
 function summarizeSession(answer: string, goal: string): string {

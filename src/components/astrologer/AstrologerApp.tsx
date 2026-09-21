@@ -51,6 +51,8 @@ const AstrologerApp: React.FC = () => {
         .then((r) => (r.ok ? r.json() : { profiles: [] }))
         .then((d: { profiles: ProfileSummary[] }) => setProfiles(d.profiles))
         .catch(() => setProfiles([])),
+      // Existing async fetch helper updates state only after the response settles.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       loadSummaries(),
     ])
       .then(([, sessionList]) => {
@@ -83,6 +85,9 @@ const AstrologerApp: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Legacy detail loader synchronously clears stale errors before fetching.
+    // P1 replaces this state path with route-backed run hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (selectedId) void loadDetail(selectedId);
   }, [selectedId, loadDetail]);
 

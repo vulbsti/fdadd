@@ -1,6 +1,7 @@
 /** Session detail: persisted messages, latest run, opaque keyset cursor. */
 
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { AgentStoreError } from '@/lib/astro/agent-store';
 import {
@@ -17,12 +18,12 @@ function encodeCursor(cursor: { createdAt: string; id: string }): string {
 function decodeCursor(raw: string | null): { createdAt: string; id: string } | null {
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(Buffer.from(raw, 'base64url').toString('utf8')) as {
-      createdAt?: string;
-      id?: string;
-    };
-    if (!parsed.createdAt || !parsed.id) return null;
-    return { createdAt: parsed.createdAt, id: parsed.id };
+    if (raw.length > 256) return null;
+    const parsed = z.object({
+      createdAt: z.string().datetime({ offset: true }),
+      id: z.string().uuid(),
+    }).safeParse(JSON.parse(Buffer.from(raw, 'base64url').toString('utf8')));
+    return parsed.success ? parsed.data : null;
   } catch {
     return null;
   }

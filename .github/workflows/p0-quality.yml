@@ -1,0 +1,51 @@
+name: P0 quality and local integration
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  code:
+    name: Lint, typecheck, unit, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  local-integration:
+    name: Local RLS and authenticated browser smoke
+    needs: code
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Start disposable local Supabase
+        run: npm exec -- supabase start > /dev/null
+      - name: Two-user database/RLS integration
+        run: npm run test:db:local
+      - name: Selected-context storage integration
+        run: npm run test:integration:local
+      - name: Install Chromium for browser verification
+        run: npm exec -- playwright install --with-deps chromium > /dev/null
+      - name: Authenticated browser smoke and screenshots
+        run: npm run test:e2e:local

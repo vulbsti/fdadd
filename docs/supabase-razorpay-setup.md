@@ -1,7 +1,10 @@
 # Supabase Auth + Google + Razorpay Setup
 
-Status: Supabase project, schema, auth URLs, and Vercel integration are connected.
-Google OAuth credentials and Razorpay account settings are still required.
+Status: configuration and verification guide. The repository contains the
+Supabase migrations, Auth routes, and Razorpay routes, but this document does
+not assert that a particular dashboard, migration, OAuth provider, or Vercel
+environment is currently configured. Verify those states in the target
+project before rollout.
 
 ## System map
 
@@ -21,6 +24,12 @@ Razorpay Checkout
   └─ payment.captured webhook → POST /api/payments/webhook
        └─ raw-body HMAC verification → payment_orders.status = paid
 ```
+
+The astrologer calculation boundary uses the shared Vercel Sandbox template:
+`src/lib/astro/atros-commands.ts` calls `Sandbox.getOrCreate(template-name)`
+and falls back to `Sandbox.create` when needed. The Sandbox is execution
+infrastructure; Supabase remains the durable product state. Do not treat a
+Sandbox identity as a user session or as the source of conversation memory.
 
 The browser callback improves UX, but it does not grant access. A verified,
 captured webhook is the payment source of truth.
@@ -43,21 +52,22 @@ captured webhook is the payment source of truth.
 
 ## 1. Supabase project
 
-1. The dedicated `aidoraa` project is deployed in Mumbai (`ap-south-1`).
-2. In Project Settings → API, the application uses:
+1. In the target Supabase project, open Project Settings → API and configure:
    - Project URL
    - Publishable key (`sb_publishable_...`)
    - Secret key (`sb_secret_...`, server-only)
-3. `supabase/migrations/202608230001_auth_and_payments.sql` has been applied.
-4. Authentication → URL Configuration is managed by `supabase/config.toml`:
+2. Apply `supabase/migrations/202608230001_auth_and_payments.sql` in the target
+   project and verify the resulting schema before enabling payments.
+3. `supabase/config.toml` declares these Authentication → URL Configuration
+   values:
    - Site URL: `https://www.aidoraa.com`
    - Redirect URLs:
      - `https://www.aidoraa.com/auth/callback`
      - `https://www.aidoraa.com/auth/confirm`
      - `http://localhost:9002/auth/callback`
      - `http://localhost:9002/auth/confirm`
-5. Keep email confirmation enabled for production.
-6. The signup call supplies `/auth/callback?next=/profile` as its
+4. Keep email confirmation enabled for production.
+5. The signup call supplies `/auth/callback?next=/profile` as its
    `emailRedirectTo`. The default hosted email template therefore returns with
    a PKCE code that the callback exchanges for a cookie-backed session.
 
@@ -89,9 +99,10 @@ The Google client secret belongs in Supabase, not Vercel and not this repo.
 Copy `.env.example` to `.env.local` for development. Add the same variables in
 Vercel Project → Settings → Environment Variables.
 
-The Vercel project is connected to `vulbsti/fdadd`: feature branches create
-Preview deployments, while changes merged to `main` create Production
-deployments for `www.aidoraa.com`.
+The deployment workflow is configured for the repository's Vercel project:
+feature branches may create Preview deployments, while changes merged to
+`main` trigger the production workflow. Verify the project and environment
+scopes in Vercel rather than relying on this document as a live receipt.
 
 | Variable | Browser visible | Environments |
 |---|---:|---|
@@ -168,9 +179,10 @@ browser verification route.
 
 ## Rollout
 
-1. Configure Supabase and apply the migration. **Complete.**
-2. Test email and Google auth locally.
-3. Add Supabase variables to Vercel and verify production auth.
+1. Configure Supabase and apply the migration; verify schema and RLS in the
+   target project.
+2. Test email and Google auth locally after the provider is enabled.
+3. Add Supabase variables to Vercel and verify preview and production auth.
 4. Configure Razorpay Test Mode and an approved test price.
 5. Exercise every payment test above on a non-production deployment.
 6. Add the entitlement rule.
@@ -180,3 +192,18 @@ browser verification route.
 Rollback is simple: remove or disable the payment price variable to hide active
 checkout, and disable Google or Razorpay at the provider dashboard. Existing
 auth and payment audit records remain intact.
+
+## Troubleshooting notes
+
+A September 14, 2026 preview investigation found that signup worked through
+a VPN but failed on the reporter's normal network because local DNS returned
+an incorrect Supabase address. This is historical evidence, not a diagnosis
+for every signup error. For a fresh `Failed to fetch`, first check the target
+environment and browser network failure, then compare DNS/TLS behavior on a
+trusted alternate network before changing application credentials. The UI
+still surfaces the raw auth error; a clearer connectivity hint remains open.
+
+The current `/astrologer` page redirects to `/` when Supabase is unconfigured
+or the visitor is logged out. A tab that appears to do nothing can therefore
+be an authentication redirect. A visible sign-in/configuration state remains
+part of the planned UI work.

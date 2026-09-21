@@ -50,10 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!configured) {
-      setLoading(false);
-      return;
-    }
+    if (!configured) return;
 
     const supabase = createClient();
     let mounted = true;
