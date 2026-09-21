@@ -124,12 +124,12 @@ const AstrologerApp: React.FC = () => {
   }
 
   return (
-    <div className="relative flex h-[calc(100vh-12rem)] max-h-[800px] w-full overflow-hidden rounded-lg border bg-card shadow-lg">
+    <div className="relative flex h-[calc(100vh-12rem)] max-h-[800px] w-full flex-col overflow-hidden rounded-lg border bg-card shadow-lg md:flex-row">
       {/* Sidebar */}
       <div
         className={cn(
-          'flex w-64 shrink-0 flex-col border-r transition-all',
-          isSidebarOpen ? 'block' : 'hidden',
+          'h-52 w-full shrink-0 flex-col border-b transition-all md:h-auto md:w-64 md:border-r md:border-b-0',
+          isSidebarOpen ? 'flex' : 'hidden',
         )}
       >
         <div className="flex items-center justify-between border-b p-3">

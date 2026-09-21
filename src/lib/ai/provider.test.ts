@@ -4,9 +4,23 @@ import {
   toResponsesInput,
   toResponsesToolChoice,
   resolveProviderTimeoutMs,
+  resolveProviderBaseUrl,
 } from './provider';
 
 describe('OpenCode/Pi tool protocol compatibility', () => {
+  it('normalizes server-controlled compatible provider endpoints', () => {
+    expect(resolveProviderBaseUrl('http://127.0.0.1:19082/v1/', 'https://fallback.invalid'))
+      .toBe('http://127.0.0.1:19082/v1');
+    expect(resolveProviderBaseUrl(undefined, 'https://fallback.invalid/v1'))
+      .toBe('https://fallback.invalid/v1');
+    expect(() => resolveProviderBaseUrl('file:///tmp/provider', 'https://fallback.invalid'))
+      .toThrow(/HTTP\(S\)/);
+    expect(() => resolveProviderBaseUrl('https://secret@example.com/v1', 'https://fallback.invalid'))
+      .toThrow(/credentials/);
+    expect(() => resolveProviderBaseUrl('https://example.com/v1?route=go', 'https://fallback.invalid'))
+      .toThrow(/query string/);
+  });
+
   it('bounds provider timeout configuration for durable retry recovery', () => {
     expect(resolveProviderTimeoutMs()).toBe(45_000);
     expect(resolveProviderTimeoutMs(undefined, '30000')).toBe(30_000);

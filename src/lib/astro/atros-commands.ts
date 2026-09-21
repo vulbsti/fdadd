@@ -309,6 +309,53 @@ export interface RunAtrosOptions {
   timeoutMs?: number;
 }
 
+export interface AtrosCommandResult {
+  exitCode: number;
+  stdout(): Promise<string>;
+  stderr(): Promise<string>;
+}
+
+export type AtrosCommandExecutor = (
+  argv: string[],
+  timeoutMs: number,
+) => Promise<AtrosCommandResult>;
+
+/** Interpret and retry an Atros command independently of Sandbox transport. */
+export async function executeAtrosWithRetry(
+  argv: string[],
+  timeoutMs: number,
+  execute: AtrosCommandExecutor,
+): Promise<AtrosResult> {
+  const wantsJson = argv.includes('--output') && argv.includes('json');
+  let lastError = 'unknown error';
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const result = await execute(argv, timeoutMs);
+      const stdout = await result.stdout();
+      if (result.exitCode !== 0) {
+        const stderr = await result.stderr().catch(() => '');
+        lastError = (stderr || stdout || `exit ${result.exitCode}`).slice(0, 500);
+        if (/ephemeris|swiss|kerykeion/i.test(lastError)) {
+          return { ok: false, error: { code: 'EPHEMERIS_ERROR', message: lastError } };
+        }
+        continue;
+      }
+      if (wantsJson) {
+        try {
+          return { ok: true, data: JSON.parse(stdout) };
+        } catch {
+          lastError = 'atros returned non-JSON output';
+          continue;
+        }
+      }
+      return { ok: true, data: stdout };
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : 'command failed';
+    }
+  }
+  return { ok: false, error: { code: 'INTERNAL', message: lastError } };
+}
+
 /**
  * Run an allowlisted `atros` argv inside the shared Vercel Sandbox.
  * Reuses the prepared environment across sessions; 25s timeout with 1 retry.
@@ -332,34 +379,16 @@ export async function runAtros(
     };
   }
 
-  const wantsJson = argv.includes('--output') && argv.includes('json');
-  let lastError = 'unknown error';
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const result = await sandbox.runCommand(`${VENV_BIN}/atros`, argv, { timeoutMs });
-      const stdout = await result.stdout();
-      if (result.exitCode !== 0) {
-        const stderr = await result.stderr().catch(() => '');
-        lastError = (stderr || stdout || `exit ${result.exitCode}`).slice(0, 500);
-        if (/ephemeris|swiss|kerykeion/i.test(lastError)) {
-          return { ok: false, error: { code: 'EPHEMERIS_ERROR', message: lastError } };
-        }
-        continue; // retry once
-      }
-      if (wantsJson) {
-        try {
-          return { ok: true, data: JSON.parse(stdout) };
-        } catch {
-          lastError = 'atros returned non-JSON output';
-          continue;
-        }
-      }
-      return { ok: true, data: stdout };
-    } catch (error) {
-      lastError = error instanceof Error ? error.message : 'command failed';
-    }
-  }
-  return { ok: false, error: { code: 'INTERNAL', message: lastError } };
+  return executeAtrosWithRetry(argv, timeoutMs, async (commandArgs, commandTimeoutMs) => {
+    const result = await sandbox.runCommand(`${VENV_BIN}/atros`, commandArgs, {
+      timeoutMs: commandTimeoutMs,
+    });
+    return {
+      exitCode: result.exitCode,
+      stdout: () => result.stdout(),
+      stderr: () => result.stderr(),
+    };
+  });
 }
 
 export { invalidBirthData };

@@ -11,9 +11,12 @@
     "test": "vitest run",
     "test:db:local": "bash scripts/test-p0-db.sh",
     "test:integration:local": "P1_LOCAL_INTEGRATION=1 node scripts/with-local-supabase-env.mjs npm exec -- vitest run src/lib/astro/selected-context.local.test.ts",
+    "test:integration:atros": "P1_ATROS_SANDBOX_INTEGRATION=1 vitest run src/lib/astro/atros-commands.integration.test.ts",
     "test:e2e:smoke": "playwright test tests/e2e/astrologer-smoke.spec.ts",
     "test:e2e:local": "node scripts/with-local-supabase-env.mjs npm run test:e2e:smoke",
-    "test:e2e:provider:local": "node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-conversation.spec.ts --project=laptop"
+    "test:e2e:recovery-visual:local": "NEXT_DIST_DIR=.next-recovery E2E_BASE_URL=http://localhost:9013 E2E_FORCE_NEW_SERVER=1 node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-recovery-visual.spec.ts --workers=1",
+    "test:e2e:provider:local": "node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-conversation.spec.ts --project=laptop",
+    "test:e2e:provider-recovery:local": "P1_PROVIDER_RECOVERY_PROXY=1 OPENGO_BASE_URL=http://127.0.0.1:19082 NEXT_DIST_DIR=.next-recovery E2E_BASE_URL=http://localhost:9012 E2E_FORCE_NEW_SERVER=1 node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-recovery.spec.ts --project=laptop"
   },
   "engines": {
     "node": "22.x"

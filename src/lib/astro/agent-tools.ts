@@ -28,7 +28,7 @@ import {
   type FocusedQuestion,
   type RunPlan,
 } from './contracts';
-import { ATROS_ENGINE_VERSION } from './atros-commands';
+import { ATROS_ENGINE_VERSION, type AtrosResult } from './atros-commands';
 import {
   atrosChart,
   atrosSensitivity,
@@ -43,11 +43,9 @@ import {
 // Calculation cache
 // ---------------------------------------------------------------------------
 
-export interface CachedCalculation {
-  result: unknown;
-  cacheHit: boolean;
-  cacheId: string | null;
-}
+export type CachedCalculation =
+  | { ok: true; result: unknown; cacheHit: boolean; cacheId: string | null }
+  | { ok: false; error: { code: string; message: string }; cacheHit: false; cacheId: null };
 
 /**
  * Canonicalize args, hash them, and read-through the deterministic cache.
@@ -72,10 +70,10 @@ export async function cachedAtrosCall(
     toolName,
     argsHash,
   });
-  if (hit) return { result: hit.resultJson, cacheHit: true, cacheId: hit.id };
+  if (hit) return { ok: true, result: hit.resultJson, cacheHit: true, cacheId: hit.id };
 
   const outcome = await execute();
-  if (!outcome.ok) return { result: outcome, cacheHit: false, cacheId: null };
+  if (!outcome.ok) return { ok: false, error: outcome.error, cacheHit: false, cacheId: null };
 
   const expiresAt =
     toolName === 'atros_current_dasha' ? nextUtcMidnight() : null;
@@ -89,7 +87,7 @@ export async function cachedAtrosCall(
     resultJson: outcome.data,
     expiresAt,
   });
-  return { result: outcome.data, cacheHit: false, cacheId };
+  return { ok: true, result: outcome.data, cacheHit: false, cacheId };
 }
 
 function nextUtcMidnight(): string {
@@ -508,6 +506,7 @@ export async function runAtrosTool(
   ctx: ToolContext,
   toolName: string,
   options?: { from?: string; to?: string; level?: string; asOf?: string; years?: number; offsets?: number[] },
+  executeOverride?: () => Promise<AtrosResult>,
 ): Promise<ToolOutcome> {
   const birth = {
     name: ctx.profile.name,
@@ -544,6 +543,21 @@ export async function runAtrosTool(
     asOf: options?.asOf, years: options?.years, offsets: options?.offsets,
   };
 
-  const outcome = await cachedAtrosCall(ctx.store, ctx.run, birth, toolName, args, exec);
-  return { ok: true, result: { ...outcome, toolName } };
+  const outcome = await cachedAtrosCall(
+    ctx.store,
+    ctx.run,
+    birth,
+    toolName,
+    args,
+    executeOverride ?? exec,
+  );
+  if (!outcome.ok) {
+    const message = {
+      INVALID_BIRTHDATA: 'The calculation could not run because the stored birth data is invalid.',
+      EPHEMERIS_ERROR: 'The calculation could not run because ephemeris data was unavailable.',
+      INTERNAL: 'The calculation service could not complete this request.',
+    }[outcome.error.code] ?? 'The calculation could not be completed.';
+    return err(`atros_${outcome.error.code.toLowerCase()}`, message);
+  }
+  return ok({ ...outcome, toolName });
 }

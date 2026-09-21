@@ -6,7 +6,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = extensions, public;
 
-select plan(26);
+select plan(31);
 
 \set dispatch_user c0000000-0000-4000-8000-000000000001
 \set dispatch_profile c0000000-0000-4000-8000-000000000011
@@ -168,6 +168,70 @@ select is((select error_code from public.astro_agent_runs where id = :'terminal_
 select is((select phase from public.astro_agent_runs where id = :'terminal_run'::uuid),
   null::text, 'failed run does not retain an active phase');
 
+-- Resume must retain the request even when the provider failed before a plan
+-- or currentGoal could be checkpointed.
+set local role service_role;
+insert into public.astro_messages
+  (id, user_id, session_id, role, content, client_message_id)
+values
+  ('c0000000-0000-4000-8000-000000000025'::uuid, :'dispatch_user'::uuid,
+   :'dispatch_session'::uuid, 'user', 'Preserve this exact request across resume.',
+   'c0000000-0000-4000-8000-000000000026'::uuid);
+update public.astro_agent_runs
+  set triggering_message_id = 'c0000000-0000-4000-8000-000000000025'::uuid
+  where id = :'terminal_run'::uuid;
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select is(
+  public.resume_astro_agent_run(
+    :'terminal_run'::uuid,
+    'c0000000-0000-4000-8000-000000000027'::uuid
+  ) ->> 'status',
+  'active',
+  'resumable failure creates a fresh active run'
+);
+
+set local role service_role;
+select is(
+  (select triggering_message_id from public.astro_agent_runs
+   where resume_from_run_id = :'terminal_run'::uuid),
+  'c0000000-0000-4000-8000-000000000025'::uuid,
+  'resumed run preserves the original triggering message'
+);
+select is(
+  (select count(*) from public.astro_run_dispatches d
+   join public.astro_agent_runs r on r.id = d.run_id
+   where r.resume_from_run_id = :'terminal_run'::uuid),
+  1::bigint,
+  'resumed run receives a transactional dispatch row'
+);
+select is(
+  (select next_action from public.astro_sessions where id = :'dispatch_session'::uuid),
+  null::text,
+  'resume clears the stale failure instruction from the session'
+);
+
+set local role service_role;
+update public.astro_agent_runs set status = 'complete'
+  where resume_from_run_id = :'terminal_run'::uuid;
+insert into public.astro_agent_runs
+  (id, user_id, profile_id, session_id, kind, status, client_request_id, resumable)
+values
+  ('c0000000-0000-4000-8000-000000000028'::uuid, :'dispatch_user'::uuid,
+   :'dispatch_profile'::uuid, :'dispatch_session'::uuid, 'intake', 'failed',
+   'c0000000-0000-4000-8000-000000000029'::uuid, true);
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select throws_ok(
+  $$select public.resume_astro_agent_run(
+    'c0000000-0000-4000-8000-000000000028'::uuid,
+    'c0000000-0000-4000-8000-000000000030'::uuid)$$,
+  'AIT01', null, 'question resume path rejects failed intake runs'
+);
+
+set local role service_role;
 update public.astro_agent_runs set status = 'waiting_for_user', phase = 'responding'
   where id = :'dispatch_run'::uuid;
 select is((select phase from public.astro_agent_runs where id = :'dispatch_run'::uuid),

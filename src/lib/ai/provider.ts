@@ -76,12 +76,32 @@ interface ResolvedProvider {
   defaultModel: string;
 }
 
+/**
+ * Resolve a server-controlled compatible endpoint without permitting URL
+ * credentials or non-HTTP transports. Besides self-hosted gateways, this is
+ * the seam used by the local fault proxy in the provider recovery E2E.
+ */
+export function resolveProviderBaseUrl(configured: string | undefined, fallback: string): string {
+  const candidate = configured?.trim() || fallback;
+  const parsed = new URL(candidate);
+  if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) {
+    throw new Error('Provider base URL must be an HTTP(S) URL without embedded credentials.');
+  }
+  if (parsed.search || parsed.hash) {
+    throw new Error('Provider base URL must not include a query string or fragment.');
+  }
+  return candidate.replace(/\/+$/, '');
+}
+
 function resolveProvider(): ResolvedProvider {
   const goKey = process.env.OPENCODE_API_KEY?.trim() || process.env.OPENGO_API?.trim();
   if (goKey) {
     return {
       name: 'opencode-go',
-      baseUrl: 'https://opencode.ai/zen/go/v1',
+      baseUrl: resolveProviderBaseUrl(
+        process.env.OPENGO_BASE_URL,
+        'https://opencode.ai/zen/go/v1',
+      ),
       apiKey: goKey,
       defaultModel: 'muse-spark-1.3-contributor',
     };
@@ -90,7 +110,10 @@ function resolveProvider(): ResolvedProvider {
   if (openRouterKey) {
     return {
       name: 'openrouter',
-      baseUrl: 'https://openrouter.ai/api/v1',
+      baseUrl: resolveProviderBaseUrl(
+        process.env.OPENROUTER_BASE_URL,
+        'https://openrouter.ai/api/v1',
+      ),
       apiKey: openRouterKey,
       defaultModel: 'anthropic/claude-sonnet-4',
     };

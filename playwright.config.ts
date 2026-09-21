@@ -4,9 +4,14 @@ import { loadEnvConfig } from '@next/env';
 loadEnvConfig(process.cwd(), true);
 
 const baseURL = process.env.E2E_BASE_URL?.trim() || 'http://localhost:9002';
-if (!['127.0.0.1', 'localhost'].includes(new URL(baseURL).hostname)) {
+const parsedBaseURL = new URL(baseURL);
+if (!['127.0.0.1', 'localhost'].includes(parsedBaseURL.hostname)) {
   throw new Error('P0 browser smoke is local-only; E2E_BASE_URL must be loopback.');
 }
+const devPort = parsedBaseURL.port || '9002';
+const webServerCommand = devPort === '9002'
+  ? 'npm run dev'
+  : `npm exec -- next dev --turbopack -p ${devPort}`;
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -37,9 +42,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
+    command: webServerCommand,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI && process.env.E2E_FORCE_NEW_SERVER !== '1',
     timeout: 120_000,
   },
 });
