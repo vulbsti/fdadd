@@ -3,10 +3,11 @@ import 'server-only';
 import { randomUUID } from 'node:crypto';
 import { createAdminClient } from '@/lib/supabase/admin';
 import {
-  ConsolidationSourceSchema,
   CountercontextItemSchema,
   ExistingObjectContextSchema,
   ExistingRelationContextSchema,
+  PERSON_GUIDANCE_VERSION,
+  PERSON_MODEL_POLICY_VERSION,
   PersonVerifierReceiptSchema,
   type ConsolidationSnapshot,
   type ConsolidationSource,
@@ -17,6 +18,7 @@ import {
 } from './consolidation';
 import { TimeRangeSchema } from './contracts';
 import { PERSON_LEASE_LOST_CODE, PersonLeaseLostError } from './consolidation-errors';
+import { assembleConsolidationSources, explicitExclusionObjectIds } from './consolidation-source';
 
 export interface PersonJobClaim {
   jobId: string;
@@ -151,8 +153,8 @@ export class PersonConsolidationStore {
       p_output_payload_id: input.outputPayloadId ?? null,
       p_provider: input.provider ?? null,
       p_model: input.model ?? null,
-      p_guidance_version: 'person-consolidation-2026-09-22.v1',
-      p_model_policy_version: 'person-consolidation-bounded.v1',
+      p_guidance_version: PERSON_GUIDANCE_VERSION,
+      p_model_policy_version: PERSON_MODEL_POLICY_VERSION,
       p_metrics: input.metrics ?? {},
       p_safe_summary: (input.safeSummary ?? '').slice(0, 1000),
       p_error_code: input.errorCode ?? null,
@@ -353,27 +355,22 @@ export class PersonConsolidationStore {
     if (asNumber(head.current_revision) !== claim.baseRevision || asNumber(head.privacy_epoch) !== claim.privacyEpoch
       || asNumber(preferences.mode_epoch) !== claim.modeEpoch) throw new Error('Person consolidation freshness tuple changed.');
     const messageIds = sourceRows.map((source) => source.source_message_id).filter((id) => typeof id === 'string');
-    const messageRows = messageIds.length ? rows(must(await admin.from('astro_messages')
-      .select('id,user_id,profile_id,role,content,created_at').eq('user_id', claim.userId).eq('profile_id', claim.profileId).in('id', messageIds))) : [];
-    const messages = new Map(messageRows.map((message) => [String(message.id), message]));
-    const sources = sourceRows.map((source) => {
-      const message = typeof source.source_message_id === 'string' ? messages.get(source.source_message_id) : undefined;
-      if (source.inclusion_status === 'included' && !message) throw new Error('Included person source has no owner-scoped message.');
-      return ConsolidationSourceSchema.parse({
-        sourceId: source.id,
-        sourceSeq: asNumber(source.source_seq),
-        sourceTime: source.source_time,
-        ingestedAt: source.ingested_at,
-        sourceKind: source.source_kind === 'explicit_correction' ? 'explicit_correction'
-          : source.source_kind === 'import_item' ? 'import_item'
-            : source.source_kind === 'native_message' ? 'native_message' : 'other',
-        speaker: source.speaker_role,
-        subjectKind: source.subject_kind,
-        subjectLabel: source.subject_label ?? null,
-        inclusion: source.inclusion_status,
-        body: text(message?.content, source.inclusion_status === 'included' ? '' : '[excluded source]'),
-      });
-    });
+    const sourceIds = sourceRows.map((source) => String(source.id));
+    const [messageRows, changeRows] = await Promise.all([
+      messageIds.length ? admin.from('astro_messages')
+        .select('id,user_id,profile_id,role,content,created_at')
+        .eq('user_id', claim.userId).eq('profile_id', claim.profileId).in('id', messageIds)
+        .then((result) => rows(must(result))) : Promise.resolve([]),
+      sourceIds.length ? admin.from('person_changes')
+        .select('id,source_item_id,change_kind,target_kind,target_id,prior_version_id,request')
+        .eq('user_id', claim.userId).eq('profile_id', claim.profileId).in('source_item_id', sourceIds)
+        .then((result) => rows(must(result))) : Promise.resolve([]),
+    ]);
+    const changeIds = changeRows.map((change) => String(change.id));
+    const impactRows = changeIds.length ? rows(must(await admin.from('person_change_impacts')
+      .select('change_id,entity_kind,entity_id').eq('user_id', claim.userId).eq('profile_id', claim.profileId)
+      .in('change_id', changeIds))) : [];
+    const sources = assembleConsolidationSources({ sourceRows, messageRows, changeRows, impactRows });
     if (sources.some((source) => source.inclusion === 'pending')) {
       throw new Error('Pending person sources cannot be published as handled.');
     }
@@ -382,7 +379,12 @@ export class PersonConsolidationStore {
       .select('id,source_item_id,subject_kind,assertion_type,status,normalized_assertion,event_time,occurred_from,occurred_to,time_precision')
       .eq('user_id', claim.userId).eq('profile_id', claim.profileId).lt('source_seq', claim.sourceFromSeq)
       .in('status', ['proposed', 'verified', 'rejected', 'superseded']).order('source_seq', { ascending: false }).limit(200)));
-    const countercontext = counterRows.map((item) => CountercontextItemSchema.parse({
+    const counterSourceIds = [...new Set(counterRows.map((item) => text(item.source_item_id)).filter(Boolean))];
+    const counterSourceRows = counterSourceIds.length ? rows(must(await admin.from('person_source_items')
+      .select('id,inclusion_status').eq('user_id', claim.userId).eq('profile_id', claim.profileId).in('id', counterSourceIds))) : [];
+    const includedCounterSourceIds = new Set(counterSourceRows
+      .filter((source) => source.inclusion_status === 'included').map((source) => String(source.id)));
+    const countercontext = counterRows.filter((item) => includedCounterSourceIds.has(String(item.source_item_id))).map((item) => CountercontextItemSchema.parse({
       observationId: item.id,
       sourceId: item.source_item_id,
       subjectKind: item.subject_kind,
@@ -394,7 +396,14 @@ export class PersonConsolidationStore {
         end: item.occurred_to ?? null, age: null, note: null,
       },
     }));
-    const snapshot = await this.loadSnapshot(claim, asNumber(head.current_revision), asNumber(head.processed_source_seq));
+    const rawSnapshot = await this.loadSnapshot(claim, asNumber(head.current_revision), asNumber(head.processed_source_seq));
+    const excludedObjectIds = explicitExclusionObjectIds(includedSources);
+    const snapshot = excludedObjectIds.size ? {
+      ...rawSnapshot,
+      objectMembers: rawSnapshot.objectMembers.filter((object) => !excludedObjectIds.has(object.objectId)),
+      relationMembers: rawSnapshot.relationMembers.filter((relation) =>
+        !excludedObjectIds.has(relation.fromObjectId) && !excludedObjectIds.has(relation.toObjectId)),
+    } : rawSnapshot;
     return { claim, sources, includedSources, countercontext, snapshot };
   }
 

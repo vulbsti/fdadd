@@ -25,6 +25,7 @@ import {
   validateObservationSpans,
   validateVerificationReferences,
   verifiedCompositionSubset,
+  resolveChangeIdsForPlan,
   type PersonCompositionPlan,
   type PersonConsolidationStage,
   type MaterializedConsolidationCandidate,
@@ -51,7 +52,7 @@ function stopRetryingStaleWorker(error: unknown): never {
   throw error;
 }
 
-const systemGuidance = `You are a careful personal-history consolidation worker. Extract only explicit, source-grounded observations. Distinguish self, another person, hypothetical, and unknown attribution. Preserve uncertainty, conditions, exceptions, and counterevidence; do not diagnose, predict motivation, or invent later meaning. Dates must retain their stated precision. Every observation must quote an exact JavaScript string slice from one supplied source, with UTF-16 start/end offsets. Refer only to supplied source/object/observation IDs. Return only the requested function call. Guidance ${PERSON_GUIDANCE_VERSION}; policy ${PERSON_MODEL_POLICY_VERSION}.`;
+const systemGuidance = `You are a careful personal-history consolidation worker. Extract only explicit, source-grounded observations. Distinguish self, another person, hypothetical, and unknown attribution. Preserve uncertainty, conditions, exceptions, and counterevidence; do not diagnose, predict motivation, or invent later meaning. Dates must retain their stated precision. Every observation must quote an exact JavaScript string slice from one supplied source, with UTF-16 start/end offsets. A source with change metadata is an explicit user instruction: corrections and rejections must revise their named target rather than create an unrelated additive claim; an explicit exclusion is a control request and must not become a personal observation. Refer only to supplied source/object/observation IDs. Return only the requested function call. Guidance ${PERSON_GUIDANCE_VERSION}; policy ${PERSON_MODEL_POLICY_VERSION}.`;
 
 async function claimPersonJob(jobId: string): Promise<PersonJobClaim | null> {
   'use step';
@@ -355,6 +356,7 @@ export async function personConsolidationWorkflow(jobId: string) {
       plan,
       observations,
       sourceIds: context.includedSources.map((source) => source.sourceId),
+      resolveChangeIds: resolveChangeIdsForPlan(context.includedSources, plan),
       verification,
       provider: composed.metadata.provider,
       model: composed.metadata.model,

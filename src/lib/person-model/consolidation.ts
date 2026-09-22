@@ -22,12 +22,21 @@ export const ConsolidationSourceSchema = z.object({
   sourceSeq: z.number().int().positive(),
   sourceTime: z.string().datetime({ offset: true }).nullable(),
   ingestedAt: z.string().datetime({ offset: true }),
-  sourceKind: z.enum(['native_message', 'explicit_correction', 'import_item', 'other']),
+  sourceKind: z.enum(['native_message', 'explicit_correction', 'explicit_exclusion', 'import_item', 'other']),
   speaker: z.enum(['user', 'assistant', 'tool', 'system', 'unknown']),
   subjectKind: z.enum(['self', 'other', 'hypothetical', 'unknown']),
   subjectLabel: z.string().max(180).nullable(),
   inclusion: z.enum(['included', 'excluded', 'pending', 'retracted']),
   body: z.string().min(1).max(24_000),
+  change: z.object({
+    changeId: uuid,
+    changeKind: z.enum(['correction', 'rejection', 'exclusion', 'inclusion', 'deletion', 'merge', 'split']),
+    targetKind: z.enum(['object', 'relation', 'source', 'person']),
+    targetId: uuid,
+    priorVersionId: uuid.nullable(),
+    request: z.record(z.string(), z.unknown()),
+    invalidatedObjectIds: z.array(uuid).max(500),
+  }).strict().nullable(),
 }).strict();
 export type ConsolidationSource = z.infer<typeof ConsolidationSourceSchema>;
 
@@ -303,6 +312,7 @@ export function materializeConsolidationCandidate(input: {
   plan: PersonCompositionPlan;
   observations: Array<PersonObservationDraft & { observationId?: string }>;
   sourceIds: string[];
+  resolveChangeIds?: string[];
   verification: PersonVerificationOutput;
   provider: string | null;
   model: string | null;
@@ -355,7 +365,8 @@ export function materializeConsolidationCandidate(input: {
       effectiveTo: isoValue(item.effectiveTime.end, item.effectiveTime.precision),
       timePrecision: dbTimePrecision(item.effectiveTime.precision),
     });
-    objectMemberMap.set(objectId, { objectId, versionId });
+    if (item.lifecycle === 'active') objectMemberMap.set(objectId, { objectId, versionId });
+    else objectMemberMap.delete(objectId);
 
     const supportedSources = new Set(item.sourceIds);
     for (const sourceId of supportedSources) objectSupport.push({ versionId, sourceId, observationId: null, relation: 'supports', note: null, weight: null });
@@ -367,19 +378,21 @@ export function materializeConsolidationCandidate(input: {
   const resolveRef = (ref: z.infer<typeof PersonPlanReferenceSchema>): string => {
     if (ref.kind === 'planned') {
       const id = plannedKeyToObjectId.get(ref.key);
-      if (!id) throw new MalformedPersonStageOutputError('Relation referenced an unknown planned object.');
+      if (!id || !objectMemberMap.has(id)) throw new MalformedPersonStageOutputError('Relation referenced an inactive or unknown planned object.');
       return id;
     }
-    if (!objectById.has(ref.objectId) && !plannedKeyToObjectIdHasId(plannedKeyToObjectId, ref.objectId)) {
-      throw new MalformedPersonStageOutputError('Relation referenced an object outside the current revision.');
+    if (!objectMemberMap.has(ref.objectId)) {
+      throw new MalformedPersonStageOutputError('Relation referenced an object outside the active candidate revision.');
     }
     return ref.objectId;
   };
 
-  const relationMembers = new Map(snapshot.relationMembers.map((relation) => [relation.relationId, {
-    relationId: relation.relationId,
-    versionId: relation.versionId,
-  }]));
+  const relationMembers = new Map(snapshot.relationMembers
+    .filter((relation) => objectMemberMap.has(relation.fromObjectId) && objectMemberMap.has(relation.toObjectId))
+    .map((relation) => [relation.relationId, {
+      relationId: relation.relationId,
+      versionId: relation.versionId,
+    }]));
   const stagedRelations: MaterializedConsolidationCandidate['relations'] = [];
   const relationSupport: MaterializedConsolidationCandidate['relationSupport'] = [];
   const changedRelationIds = new Set<string>();
@@ -426,7 +439,7 @@ export function materializeConsolidationCandidate(input: {
     objectMembers: [...objectMemberMap.values()],
     relationMembers: [...relationMembers.values()],
     conflictIds: snapshot.conflictIds,
-    resolveChangeIds: [],
+    resolveChangeIds: input.resolveChangeIds ?? [],
     brief: plan.brief,
     changedIds: [...new Set([...changedObjectIds, ...changedRelationIds])],
     decisionSummary: plan.decisionSummary,
@@ -443,7 +456,6 @@ export function materializeConsolidationCandidate(input: {
 
   // UUIDs are assigned inside this durable materialization step so support
   // rows point at the exact observation records inserted by the publisher.
-  void plannedKeyToObjectIdHasId;
   return MaterializedConsolidationCandidateSchema.parse({
     baseRevision: snapshot.baseRevision,
     privacyEpoch: snapshot.privacyEpoch,
@@ -463,9 +475,39 @@ export function materializeConsolidationCandidate(input: {
   });
 }
 
-function plannedKeyToObjectIdHasId(map: Map<string, string>, id: string): boolean {
-  for (const value of map.values()) if (value === id) return true;
-  return false;
+/**
+ * A change is resolved only when the verified plan actually represents it.
+ * Object changes must touch their target, rejections must actually remove it
+ * from active membership, and additive changes must use their source as
+ * support. Exclusions resolve only after context loading has removed every
+ * impacted object and relation from the candidate snapshot, so resolving the
+ * change cannot expose content derived from the excluded source again.
+ */
+export function resolveChangeIdsForPlan(
+  sources: ConsolidationSource[],
+  plan: PersonCompositionPlan,
+): string[] {
+  const representedSourceIds = new Set([
+    ...plan.objects.flatMap((item) => item.sourceIds),
+    ...plan.relations.flatMap((item) => item.sourceIds),
+  ]);
+  const touchedObjectIds = new Set(plan.objects.flatMap((item) => item.existingObjectId ? [item.existingObjectId] : []));
+  const touchedRelationIds = new Set(plan.relations.flatMap((item) => item.existingRelationId ? [item.existingRelationId] : []));
+
+  return sources.flatMap((source) => {
+    const change = source.change;
+    if (!change) return [];
+    if (change.changeKind === 'exclusion') return [change.changeId];
+    if (change.targetKind === 'object' && touchedObjectIds.has(change.targetId)
+      && representedSourceIds.has(source.sourceId)) {
+      const target = plan.objects.find((item) => item.existingObjectId === change.targetId);
+      if (change.changeKind !== 'rejection' || target?.lifecycle !== 'active') return [change.changeId];
+    }
+    if (change.targetKind === 'relation' && touchedRelationIds.has(change.targetId)
+      && representedSourceIds.has(source.sourceId)) return [change.changeId];
+    if (change.targetKind === 'person' && representedSourceIds.has(source.sourceId)) return [change.changeId];
+    return [];
+  });
 }
 
 export const PersonVerificationFindingSchema = z.object({
@@ -501,7 +543,7 @@ export const PersonVerifierReceiptSchema = z.object({
   unresolvedQuestions: z.array(boundedText(500)).max(50),
 }).strict();
 
-export const PERSON_GUIDANCE_VERSION = 'person-consolidation-2026-09-22.v1';
+export const PERSON_GUIDANCE_VERSION = 'person-consolidation-2026-09-23.v2';
 export const PERSON_MODEL_POLICY_VERSION = 'person-consolidation-bounded.v1';
 
 export class MalformedPersonStageOutputError extends Error {

@@ -83,39 +83,90 @@ test('revision-backed life map, pattern, chapter, and guided chat match the appr
       [ids.influence, 'influence', { kind: 'influence', title: 'People who helped shape the question', subjectPersonId: null, entityAsDescribed: 'Teachers and peers', relationshipLabelAsReported: null, experiencedInfluence: 'They widened what seemed possible.', connectedEpisodeIds: [ids.episode] }],
       [ids.gap, 'gap', { kind: 'gap', title: 'What makes action easier to begin?', distinction: 'Knowing versus beginning', whyItMatters: 'It changes which next step is useful.', blockedInterpretationOrDecision: null, candidateQuestion: 'What would make the first release easier to begin?', status: 'open' }],
     ];
-    const objectRows = payloads.map(([id, kind]) => ({ id, user_id: userId, profile_id: personId, kind }));
-    const insertedObjects = await admin.from('person_objects').insert(objectRows);
-    if (insertedObjects.error) throw insertedObjects.error;
     const versions = payloads.map(([objectId, , typedPayload]) => ({ id: crypto.randomUUID(), user_id: userId, profile_id: personId, object_id: objectId, version_no: 1, epistemic_class: 'reported', lifecycle: 'active', typed_payload: typedPayload }));
-    const insertedVersions = await admin.from('person_object_versions').insert(versions);
-    if (insertedVersions.error) throw insertedVersions.error;
     const patternVersion = versions.find((version) => version.object_id === ids.pattern);
     if (!patternVersion) throw new Error('pattern version fixture missing');
-    const insertedSupport = await admin.from('person_object_version_support').insert({
-      user_id: userId,
-      profile_id: personId,
-      object_version_id: patternVersion.id,
-      source_item_id: source.data.id,
-      relation: 'supports',
-    });
-    if (insertedSupport.error) throw insertedSupport.error;
     const relations = [
       { id: crypto.randomUUID(), from: ids.episode, to: ids.meaning, kind: 'changed_meaning' },
       { id: crypto.randomUUID(), from: ids.episode, to: ids.chapter, kind: 'part_of' },
       { id: crypto.randomUUID(), from: ids.meaning, to: ids.chapter, kind: 'part_of' },
       { id: crypto.randomUUID(), from: ids.episode, to: ids.pattern, kind: 'supports' },
     ];
-    const insertedRelations = await admin.from('person_relations').insert(relations.map((r) => ({ id: r.id, user_id: userId, profile_id: personId, from_object_id: r.from, to_object_id: r.to, relation_kind: r.kind })));
-    if (insertedRelations.error) throw insertedRelations.error;
     const relationVersions = relations.map((r) => ({ id: crypto.randomUUID(), user_id: userId, profile_id: personId, relation_id: r.id, version_no: 1, epistemic_class: 'reported', lifecycle: 'active', typed_payload: {} }));
-    const insertedRelationVersions = await admin.from('person_relation_versions').insert(relationVersions);
-    if (insertedRelationVersions.error) throw insertedRelationVersions.error;
-    const candidate = {
-      processedSourceSeq: 1, brief: 'A sparse, revisable account.', changedIds: Object.values(ids), decisionSummary: 'Browser fixture publication.', verifierReceipt: { fixture: true },
-      objectMembers: versions.map((v) => ({ objectId: v.object_id, versionId: v.id })),
-      relationMembers: relationVersions.map((v, index) => ({ relationId: relations[index].id, versionId: v.id })),
-    };
-    const published = await admin.rpc('person_publish_revision', { p_job_id: jobs.data.id, p_lease_token: claim.data.leaseToken, p_fence: claim.data.fence, p_expected_base_revision: 1, p_expected_privacy_epoch: 0, p_commit_id: crypto.randomUUID(), p_candidate: candidate });
+    const sourceOutcome = await admin.rpc('person_record_source_outcomes', {
+      p_job_id: jobs.data.id,
+      p_lease_token: claim.data.leaseToken,
+      p_fence: claim.data.fence,
+      p_outcomes: [{ sourceId: source.data.id, outcome: 'handled', outcomeCode: null, findingRefs: [] }],
+    });
+    if (sourceOutcome.error) throw sourceOutcome.error;
+    const staged = await admin.rpc('person_stage_consolidation_candidate', {
+      p_job_id: jobs.data.id,
+      p_lease_token: claim.data.leaseToken,
+      p_fence: claim.data.fence,
+      p_candidate: {
+        processedSourceSeq: 1,
+        privacyEpoch: 0,
+        modeEpoch: 0,
+        schemaVersion: 'p3-browser-fixture.v1',
+        guidanceVersion: 'p3-browser-fixture.v1',
+        modelPolicyVersion: 'p3-browser-fixture.v1',
+        provider: 'deterministic-browser-fixture',
+        model: null,
+        observations: [],
+        objects: versions.map((version) => ({
+          objectId: version.object_id,
+          versionId: version.id,
+          kind: payloads.find(([id]) => id === version.object_id)![1],
+          versionNo: version.version_no,
+          epistemicClass: version.epistemic_class,
+          lifecycle: version.lifecycle,
+          typedPayload: version.typed_payload,
+          effectiveFrom: null,
+          effectiveTo: null,
+          timePrecision: 'unknown',
+        })),
+        objectSupport: [{
+          versionId: patternVersion.id,
+          sourceId: source.data.id,
+          observationId: null,
+          relation: 'supports',
+          note: null,
+          weight: null,
+        }],
+        relations: relationVersions.map((version, index) => ({
+          relationId: relations[index].id,
+          versionId: version.id,
+          versionNo: version.version_no,
+          fromObjectId: relations[index].from,
+          toObjectId: relations[index].to,
+          relationKind: relations[index].kind,
+          epistemicClass: version.epistemic_class,
+          lifecycle: version.lifecycle,
+          typedPayload: version.typed_payload,
+        })),
+        relationSupport: [],
+        publication: {
+          processedSourceSeq: 1,
+          brief: 'A sparse, revisable account.',
+          changedIds: Object.values(ids),
+          decisionSummary: 'Browser fixture publication.',
+          verifierReceipt: { fixture: true },
+          objectMembers: versions.map((version) => ({ objectId: version.object_id, versionId: version.id })),
+          relationMembers: relationVersions.map((version, index) => ({ relationId: relations[index].id, versionId: version.id })),
+          resolveChangeIds: [],
+        },
+      },
+      p_findings: [],
+    });
+    if (staged.error) throw staged.error;
+    const published = await admin.rpc('person_publish_staged_candidate', {
+      p_job_id: jobs.data.id,
+      p_lease_token: claim.data.leaseToken,
+      p_fence: claim.data.fence,
+      p_candidate_id: staged.data,
+      p_commit_id: crypto.randomUUID(),
+    });
     if (published.error) throw published.error;
 
     await page.goto('/');
@@ -133,6 +184,16 @@ test('revision-backed life map, pattern, chapter, and guided chat match the appr
     await expect(page.getByText('Share a small release')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: testInfo.outputPath(`p2-life-map-${testInfo.project.name}.png`), fullPage: true });
+    if (testInfo.project.name === 'mobile') {
+      const pathsTab = page.getByRole('link', { name: 'Paths ahead' });
+      await pathsTab.focus();
+      await expect(pathsTab).toBeFocused();
+      expect(await pathsTab.evaluate((element) => {
+        const box = element.getBoundingClientRect();
+        return box.left >= 0 && box.right <= window.innerWidth;
+      })).toBe(true);
+      await page.getByRole('navigation', { name: 'Profile sections' }).screenshot({ path: testInfo.outputPath('p2-tabs-keyboard-reachable-mobile.png') });
+    }
 
     await page.getByRole('link', { name: 'How you think' }).click();
     await page.getByRole('link', { name: 'When does working alone help you?' }).click();
@@ -157,6 +218,37 @@ test('revision-backed life map, pattern, chapter, and guided chat match the appr
     if (explorationMessages.error) throw explorationMessages.error;
     expect(explorationMessages.count).toBe(0);
     await page.screenshot({ path: testInfo.outputPath(`p2-guided-chat-${testInfo.project.name}.png`), fullPage: true });
+
+    await page.goto(`/astrologer/p/${personId}/profile/patterns/${ids.pattern}`);
+    const changesUrl = `**/api/astrologer/profiles/${personId}/changes`;
+    await page.route(changesUrl, (route) => route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ code: 'temporarily_unavailable', message: 'Try again.' }),
+    }), { times: 1 });
+    await page.getByRole('button', { name: 'This does not fit me' }).click();
+    await expect(page.getByText('This was not recorded. Please try again.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Try recording again' })).toBeEnabled();
+    await page.getByTestId('pattern-rejection-panel').screenshot({ path: testInfo.outputPath(`p3-pattern-rejection-panel-failure-${testInfo.project.name}.png`) });
+    await page.screenshot({ path: testInfo.outputPath(`p3-pattern-rejection-failure-${testInfo.project.name}.png`), fullPage: true });
+
+    await page.getByRole('button', { name: 'Try recording again' }).click();
+    await expect(page.getByRole('button', { name: 'Recorded for review' })).toBeDisabled();
+    const recordedChange = await admin.from('person_changes')
+      .select('id,source_item_id,change_kind,target_kind,target_id,request')
+      .eq('user_id', userId).eq('profile_id', personId).eq('target_id', ids.pattern).single();
+    if (recordedChange.error) throw recordedChange.error;
+    expect(recordedChange.data.change_kind).toBe('rejection');
+    expect(recordedChange.data.request).toEqual(expect.objectContaining({ kind: 'reject_interpretation' }));
+    const correctionSource = await admin.from('person_source_items')
+      .select('source_kind,source_message_id,inclusion_status')
+      .eq('id', recordedChange.data.source_item_id).single();
+    if (correctionSource.error) throw correctionSource.error;
+    expect(correctionSource.data).toEqual(expect.objectContaining({
+      source_kind: 'explicit_correction', source_message_id: null, inclusion_status: 'included',
+    }));
+    await page.getByTestId('pattern-rejection-panel').screenshot({ path: testInfo.outputPath(`p3-pattern-rejection-panel-saved-${testInfo.project.name}.png`) });
+    await page.screenshot({ path: testInfo.outputPath(`p3-pattern-rejection-saved-${testInfo.project.name}.png`), fullPage: true });
   } finally {
     const deleted = await admin.auth.admin.deleteUser(userId);
     if (deleted.error) throw deleted.error;

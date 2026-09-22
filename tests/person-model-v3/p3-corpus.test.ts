@@ -50,6 +50,7 @@ describe('P3 synthetic history corpus', () => {
           subjectLabel: subjectKind === 'other' ? 'unspecified third party' : null,
           inclusion: 'included',
           body: turn.text,
+          change: null,
         });
       });
       const observations = history.turns.flatMap((turn, turnIndex) => {

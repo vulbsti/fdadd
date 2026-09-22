@@ -9,6 +9,7 @@ import {
   materializeConsolidationCandidate,
   normalizeObservationSpans,
   personStageToolParameters,
+  resolveChangeIdsForPlan,
   validateCountercontextCoverage,
   validateObservationSpans,
   verifiedCompositionSubset,
@@ -47,6 +48,7 @@ function makeSource(overrides: Partial<ConsolidationSource> = {}): Consolidation
     subjectLabel: null,
     inclusion: 'included',
     body: 'My parent moved. I moved.',
+    change: null,
     ...overrides,
   };
 }
@@ -314,5 +316,104 @@ describe('person consolidation stage contracts', () => {
       sourceId: ids.source,
       observationId: null,
     }));
+  });
+
+  it('removes invalidated objects and their relations from the next revision', () => {
+    const secondObject = '77777777-7777-4777-8777-777777777777';
+    const relationId = '88888888-8888-4888-8888-888888888888';
+    const plan = PersonCompositionPlanSchema.parse({
+      ...makePlan(),
+      objects: [{ ...makePlan().objects[0]!, lifecycle: 'invalidated' }],
+      relations: [],
+      changedKeys: ['meaning-1'],
+    });
+    const candidate = materializeConsolidationCandidate({
+      snapshot: {
+        baseRevision: 2, privacyEpoch: 1, modeEpoch: 0, processedSourceSeq: 3,
+        objectMembers: [
+          {
+            objectId: ids.object, versionId: '66666666-6666-4666-8666-666666666666', versionNo: 1,
+            kind: 'meaning_change', epistemicClass: 'reported', lifecycle: 'active', payload: plan.objects[0]!.payload,
+            effectiveTime: unknownTime, sourceIds: [], observationIds: [],
+          },
+          {
+            objectId: secondObject, versionId: '99999999-9999-4999-8999-999999999999', versionNo: 1,
+            kind: 'goal', epistemicClass: 'reported', lifecycle: 'active',
+            payload: { kind: 'goal', title: 'Keep learning', statedOutcome: 'Keep learning', underlyingValue: null, status: 'active', timeframe: unknownTime, purpose: null },
+            effectiveTime: unknownTime, sourceIds: [], observationIds: [],
+          },
+        ],
+        relationMembers: [{
+          relationId, versionId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', versionNo: 1,
+          kind: 'supports', fromObjectId: ids.object, toObjectId: secondObject,
+          epistemicClass: 'reported', lifecycle: 'active', rationale: null, sourceIds: [], observationIds: [],
+        }],
+        conflictIds: [],
+      },
+      plan,
+      observations: [makeObservation()],
+      sourceIds: [ids.source],
+      verification: { findings: [], acceptedItemKeys: ['meaning-1'], unresolvedQuestions: [] },
+      provider: 'fixture-provider', model: 'fixture-model',
+    });
+
+    expect(candidate.publication.objectMembers.map((member) => member.objectId)).toEqual([secondObject]);
+    expect(candidate.publication.relationMembers).toEqual([]);
+    expect(candidate.objects[0]?.lifecycle).toBe('invalidated');
+  });
+
+  it('resolves only changes represented by the verified plan', () => {
+    const plan = makePlan();
+    const correction = makeSource({
+      sourceKind: 'explicit_correction',
+      change: {
+        changeId: '66666666-6666-4666-8666-666666666666', changeKind: 'correction', targetKind: 'object',
+        targetId: ids.object, priorVersionId: null, request: { kind: 'correct_account' },
+        invalidatedObjectIds: [ids.object],
+      },
+    });
+    const unrepresented = makeSource({
+      sourceId: ids.otherSource,
+      change: {
+        changeId: '77777777-7777-4777-8777-777777777777', changeKind: 'inclusion', targetKind: 'person',
+        targetId: ids.person, priorVersionId: null, request: { kind: 'add_event' },
+        invalidatedObjectIds: [],
+      },
+    });
+    expect(resolveChangeIdsForPlan([correction, unrepresented], plan)).toEqual([
+      '66666666-6666-4666-8666-666666666666',
+      '77777777-7777-4777-8777-777777777777',
+    ]);
+    expect(resolveChangeIdsForPlan([unrepresented], { ...plan, objects: [], relations: [] })).toEqual([]);
+  });
+
+  it('resolves exclusions after snapshot filtering and a rejection only after active membership is removed', () => {
+    const rejectionId = '66666666-6666-4666-8666-666666666666';
+    const rejection = makeSource({
+      sourceKind: 'explicit_correction',
+      change: {
+        changeId: rejectionId, changeKind: 'rejection', targetKind: 'object', targetId: ids.object,
+        priorVersionId: null, request: { kind: 'reject_interpretation' },
+        invalidatedObjectIds: [ids.object],
+      },
+    });
+    const activePlan = makePlan();
+    expect(resolveChangeIdsForPlan([rejection], activePlan)).toEqual([]);
+    expect(resolveChangeIdsForPlan([rejection], {
+      ...activePlan,
+      objects: activePlan.objects.map((item) => item.existingObjectId === ids.object
+        ? { ...item, lifecycle: 'invalidated' as const }
+        : item),
+    })).toEqual([rejectionId]);
+
+    const exclusion = makeSource({
+      sourceKind: 'explicit_exclusion',
+      change: {
+        changeId: '77777777-7777-4777-8777-777777777777', changeKind: 'exclusion', targetKind: 'source',
+        targetId: ids.otherSource, priorVersionId: null, request: { kind: 'exclude_source' },
+        invalidatedObjectIds: [ids.object],
+      },
+    });
+    expect(resolveChangeIdsForPlan([exclusion], activePlan)).toEqual(['77777777-7777-4777-8777-777777777777']);
   });
 });
