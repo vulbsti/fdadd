@@ -285,7 +285,7 @@ export class AgentStore {
   }
 
   async attachWorkflowRun(runId: string, workflowRunId: string): Promise<{ workflowRunId: string; won: boolean }> {
-    const { data, error } = await this.user.rpc('attach_astro_workflow_run', {
+    const { data, error } = await this.adminRequired().rpc('attach_astro_workflow_run', {
       p_run_id: runId,
       p_workflow_run_id: workflowRunId,
     });
