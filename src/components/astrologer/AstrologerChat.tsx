@@ -28,6 +28,9 @@ interface AstrologerChatProps {
   className?: string;
   onSessionUpdated?: (detail: AstrologerSessionDetail) => void;
   onStartNewReading?: () => void;
+  personalOnly?: boolean;
+  anchorMessageId?: string;
+  emptyPrompts?: string[];
 }
 
 type SendState = 'idle' | 'sending' | 'streaming';
@@ -37,6 +40,9 @@ export default function AstrologerChat({
   className,
   onSessionUpdated,
   onStartNewReading,
+  personalOnly = false,
+  anchorMessageId,
+  emptyPrompts = [],
 }: AstrologerChatProps) {
   const [messages, setMessages] = useState<AstrologerMessage[]>([]);
   const [detail, setDetail] = useState<AstrologerSessionDetail | null>(null);
@@ -87,6 +93,12 @@ export default function AstrologerChat({
       eventRunIdRef.current = null;
     };
   }, [loadDetail]);
+
+  useEffect(() => {
+    if (loading || !anchorMessageId) return;
+    const node = document.getElementById(`message-${anchorMessageId}`);
+    node?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [anchorMessageId, loading, messages]);
 
   const connectEvents = useCallback(
     (runId: string, after?: number) => {
@@ -263,9 +275,11 @@ export default function AstrologerChat({
           {messages.map((message) => (
             <div
               key={message.id}
+              id={`message-${message.id}`}
               className={cn(
-                'flex gap-2',
+                'flex gap-2 rounded-md',
                 message.role === 'user' ? 'justify-end' : 'justify-start',
+                message.id === anchorMessageId ? 'ring-2 ring-[#b07a32] ring-offset-2' : '',
               )}
             >
               {message.role === 'assistant' ? (
@@ -285,8 +299,17 @@ export default function AstrologerChat({
               </div>
             </div>
           ))}
+          {messages.length === 0 && emptyPrompts.length ? (
+            <section aria-label="Conversation starters" className="mx-auto my-6 w-full max-w-2xl rounded-md border border-dashed border-[#9aa8b5] bg-[#f7f7f2] p-5">
+              <p className="font-serif text-xl text-[#112d52]">Start with a focused question</p>
+              <p className="mt-1 text-sm leading-6 text-[#687387]">No message has been created for you. Choose a prompt or write your own response below.</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {emptyPrompts.map((prompt) => <button key={prompt} type="button" onClick={() => void send(prompt)} className="rounded-full border border-[#9aa8b5] bg-white px-4 py-2 text-left text-xs text-[#173e67] hover:border-[#b07a32]">{prompt}</button>)}
+              </div>
+            </section>
+          ) : null}
           {busy ? (
-            <div className="text-xs text-muted-foreground">Consulting the chart…</div>
+            <div className="text-xs text-muted-foreground">{personalOnly ? 'Thinking with your current personal context…' : 'Consulting your context and chart…'}</div>
           ) : null}
         </div>
       </ScrollArea>
@@ -355,7 +378,7 @@ export default function AstrologerChat({
 
       <div className="flex items-center gap-2 border-t p-3">
         <Input
-          placeholder="Ask your astrologer…"
+          placeholder={personalOnly ? 'Tell me what you are exploring…' : 'Ask your companion…'}
           value={draft}
           disabled={busy || !canChat || resumableFailed}
           onChange={(e) => setDraft(e.target.value)}

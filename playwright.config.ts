@@ -9,9 +9,9 @@ if (!['127.0.0.1', 'localhost'].includes(parsedBaseURL.hostname)) {
   throw new Error('P0 browser smoke is local-only; E2E_BASE_URL must be loopback.');
 }
 const devPort = parsedBaseURL.port || '9002';
-const webServerCommand = devPort === '9002'
+const webServerCommand = process.env.E2E_WEB_SERVER_COMMAND?.trim() || (devPort === '9002'
   ? 'npm run dev'
-  : `npm exec -- next dev --turbopack -p ${devPort}`;
+  : `npm exec -- next dev --turbopack -p ${devPort}`);
 
 export default defineConfig({
   testDir: './tests/e2e',

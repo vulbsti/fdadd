@@ -1,6 +1,6 @@
 # Executing the approved life-understanding experience
 
-Specification date: September 20, 2026. Status: implementation-ready design, not implemented or deployed.
+Specification date: September 20, 2026. Status: P0–P2 implemented and verified on isolated staging; P3–P9 remain the delivery contract and production is unchanged.
 
 The approved visual direction is fixed. Build the four [v2 mockups](../../design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md), including progressive disclosure, as views of one evolving person model. Text and diagrams must come from that model. The historical examples in the mockups are acceptance examples, never production seed content.
 
@@ -13,6 +13,7 @@ Read in this order:
 5. [Phased implementation plan](PHASED-IMPLEMENTATION-PLAN.md): dependency gates, feature-level E2E/visual/architecture proof, and agent handoff ledger.
 6. [P0 execution receipt](P0-EXECUTION-RECEIPT.md): local proof harness, current read-only run state, and open verification boundaries.
 7. [P1 progress receipt](P1-PROGRESS-RECEIPT.md): partial conversation fixes, verification results, and the remaining provider/dispatch gate.
+8. [P2 execution receipt](P2-EXECUTION-RECEIPT.md): accepted person/revision authority, staging/browser proof, and the boundary before learned consolidation.
 
 The primary architecture is:
 
