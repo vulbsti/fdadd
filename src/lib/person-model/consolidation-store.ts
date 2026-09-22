@@ -16,6 +16,7 @@ import {
   type MaterializedConsolidationCandidate,
 } from './consolidation';
 import { TimeRangeSchema } from './contracts';
+import { PERSON_LEASE_LOST_CODE, PersonLeaseLostError } from './consolidation-errors';
 
 export interface PersonJobClaim {
   jobId: string;
@@ -51,6 +52,7 @@ function rows(value: unknown): Row[] {
 
 function must<T>(result: { data: T | null; error: { code?: string; message?: string } | null }): T {
   if (result.error) {
+    if (result.error.code === PERSON_LEASE_LOST_CODE) throw new PersonLeaseLostError();
     const error = new Error(`Person consolidation storage failed (${result.error.code ?? 'unknown'}).`);
     (error as Error & { databaseCode?: string }).databaseCode = result.error.code;
     throw error;
@@ -86,7 +88,7 @@ export class PersonConsolidationStore {
   async claimJob(jobId: string): Promise<PersonJobClaim | null> {
     const claimed = row(must(await this.admin.rpc('person_claim_job', {
       p_job_id: jobId,
-      p_lease_seconds: 300,
+      p_lease_seconds: 600,
     })));
     if (claimed.claimed !== true) return null;
     const claim: PersonJobClaim = {
@@ -113,7 +115,7 @@ export class PersonConsolidationStore {
 
   async renew(claim: PersonJobClaim): Promise<void> {
     must(await this.admin.rpc('person_renew_job_lease', {
-      p_job_id: claim.jobId, p_lease_token: claim.leaseToken, p_fence: claim.fence, p_lease_seconds: 300,
+      p_job_id: claim.jobId, p_lease_token: claim.leaseToken, p_fence: claim.fence, p_lease_seconds: 600,
     }));
   }
 

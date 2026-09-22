@@ -253,13 +253,19 @@ export function resolveProviderTimeoutMs(override?: number, configured?: string)
   return Math.min(Math.max(Math.trunc(parsed), MIN_FETCH_TIMEOUT_MS), MAX_FETCH_TIMEOUT_MS);
 }
 
-/** A single bounded pause prevents workflow retries from hammering a 429. */
-export function resolveProviderRetryDelayMs(retryAfter: string | null, nowMs = Date.now()): number {
-  const seconds = retryAfter?.trim() ? Number(retryAfter) : Number.NaN;
-  if (Number.isFinite(seconds)) return Math.min(Math.max(Math.ceil(seconds * 1_000), 5_000), 60_000);
-  const at = retryAfter?.trim() ? Date.parse(retryAfter) : Number.NaN;
-  if (Number.isFinite(at)) return Math.min(Math.max(at - nowMs, 5_000), 60_000);
-  return 20_000;
+/**
+ * Retry once only when the provider supplies a short, actionable cooldown.
+ * Missing or long-window limits belong to the durable job/run retry policy;
+ * retrying them immediately only multiplies quota pressure.
+ */
+export function resolveProviderRetryDelayMs(retryAfter: string | null, nowMs = Date.now()): number | null {
+  if (!retryAfter?.trim()) return null;
+  const seconds = Number(retryAfter);
+  const requestedMs = Number.isFinite(seconds)
+    ? Math.ceil(seconds * 1_000)
+    : Date.parse(retryAfter) - nowMs;
+  if (!Number.isFinite(requestedMs) || requestedMs > 60_000) return null;
+  return Math.max(requestedMs, 5_000);
 }
 
 export async function chatCompletion(options: ChatCompletionOptions): Promise<ChatCompletionResult> {
@@ -289,6 +295,7 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     const first = await request();
     if (first.status !== 429) return first;
     const delayMs = resolveProviderRetryDelayMs(first.headers.get('retry-after'));
+    if (delayMs === null) return first;
     await first.body?.cancel().catch(() => undefined);
     await new Promise((resolve) => setTimeout(resolve, delayMs));
     return request();

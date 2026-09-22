@@ -29,7 +29,11 @@ import {
   type PersonConsolidationStage,
   type MaterializedConsolidationCandidate,
 } from '@/lib/person-model/consolidation';
-import { PersonConsolidationStore, type PersonJobClaim } from '@/lib/person-model/consolidation-store';
+import {
+  PersonConsolidationStore,
+  type PersonJobClaim,
+} from '@/lib/person-model/consolidation-store';
+import { isPersonLeaseLostError } from '@/lib/person-model/consolidation-errors';
 
 const stageNames = {
   extract: 'extract_person_observations',
@@ -39,6 +43,13 @@ const stageNames = {
   verify: 'verify_person_revision',
   repair: 'repair_person_revision',
 } as const;
+
+const LEASE_LOST_MESSAGE = 'Person consolidation lease was lost; stale worker stopped.';
+
+function stopRetryingStaleWorker(error: unknown): never {
+  if (isPersonLeaseLostError(error)) throw new FatalError(LEASE_LOST_MESSAGE);
+  throw error;
+}
 
 const systemGuidance = `You are a careful personal-history consolidation worker. Extract only explicit, source-grounded observations. Distinguish self, another person, hypothetical, and unknown attribution. Preserve uncertainty, conditions, exceptions, and counterevidence; do not diagnose, predict motivation, or invent later meaning. Dates must retain their stated precision. Every observation must quote an exact JavaScript string slice from one supplied source, with UTF-16 start/end offsets. Refer only to supplied source/object/observation IDs. Return only the requested function call. Guidance ${PERSON_GUIDANCE_VERSION}; policy ${PERSON_MODEL_POLICY_VERSION}.`;
 
@@ -71,7 +82,11 @@ async function providerStageStep(input: {
   'use step';
   const store = new PersonConsolidationStore();
   const stageKey = ['verify', 'repair'].includes(input.stage) ? `${input.stage}:${input.attempt ?? 0}` : input.stage;
-  await store.renew(input.claim);
+  try {
+    await store.renew(input.claim);
+  } catch (error) {
+    stopRetryingStaleWorker(error);
+  }
   await store.assertFresh(input.claim);
   const checkpointKey = store.stageCheckpointKey(input.claim, stageKey);
   const cached = await store.loadStageCheckpoint(input.claim, checkpointKey);
@@ -142,17 +157,27 @@ async function providerStageStep(input: {
     });
     return { value: parsed, metadata: result.metadata };
   } catch (error) {
-    await store.recordStage(input.claim, {
-      stageKey,
-      stage: input.stage === 'match_countercontext' ? 'match' : input.stage,
-      state: error instanceof MalformedPersonStageOutputError ? 'needs_clarification' : 'retryable_failure',
-      metrics: { durationMs: Date.now() - start },
-      safeSummary: 'Structured stage did not complete.',
-      errorCode: error instanceof MalformedPersonStageOutputError ? error.code : 'provider_or_stage_failure',
-    });
+    if (isPersonLeaseLostError(error)) stopRetryingStaleWorker(error);
+    try {
+      await store.recordStage(input.claim, {
+        stageKey,
+        stage: input.stage === 'match_countercontext' ? 'match' : input.stage,
+        state: error instanceof MalformedPersonStageOutputError ? 'needs_clarification' : 'retryable_failure',
+        metrics: { durationMs: Date.now() - start },
+        safeSummary: 'Structured stage did not complete.',
+        errorCode: error instanceof MalformedPersonStageOutputError ? error.code : 'provider_or_stage_failure',
+      });
+    } catch (receiptError) {
+      stopRetryingStaleWorker(receiptError);
+    }
     throw error;
   }
 }
+
+// Provider errors are persisted and retried by the fenced person_jobs queue.
+// Disabling the SDK's immediate step retry avoids multiplying a single 429
+// into four provider calls before the durable backoff policy can run.
+providerStageStep.maxRetries = 0;
 
 async function recordSourceOutcomesStep(claim: PersonJobClaim, sources: Array<{ sourceId: string; inclusion: string }>, plan: PersonCompositionPlan, partial: boolean, unresolvedSourceIds: string[]): Promise<void> {
   'use step';
@@ -341,11 +366,23 @@ export async function personConsolidationWorkflow(jobId: string) {
     const published = await publishStep(claim, candidateId, await createCommitIdStep());
     return { status: partial ? 'partially_published' as const : 'published' as const, published };
   } catch (error) {
+    if (error instanceof Error && error.message.includes(LEASE_LOST_MESSAGE)) {
+      return { status: 'lease_lost' as const };
+    }
+    if (isPersonLeaseLostError(error)) return { status: 'lease_lost' as const };
     if (error instanceof Error && /freshness tuple changed|freshness or lease fence changed/i.test(error.message)) {
       const rebased = await rebaseStep(claim);
       return { status: 'requeued_or_cancelled' as const, rebase: rebased };
     }
-    await failStep(claim, currentStage, error);
+    try {
+      await failStep(claim, currentStage, error);
+    } catch (failureError) {
+      if (isPersonLeaseLostError(failureError)
+        || (failureError instanceof Error && failureError.message.includes(LEASE_LOST_MESSAGE))) {
+        return { status: 'lease_lost' as const };
+      }
+      throw failureError;
+    }
     throw new FatalError('Person consolidation failed safely and the source remains available for retry.');
   }
 }

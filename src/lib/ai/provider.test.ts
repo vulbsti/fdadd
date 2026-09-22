@@ -30,12 +30,14 @@ describe('OpenCode/Pi tool protocol compatibility', () => {
     expect(resolveProviderTimeoutMs(undefined, 'invalid')).toBe(45_000);
   });
 
-  it('bounds Retry-After pauses and falls back to a meaningful quota cooldown', () => {
+  it('retries only short explicit Retry-After pauses and defers long quota windows', () => {
     const now = Date.parse('2026-09-22T12:00:00Z');
-    expect(resolveProviderRetryDelayMs(null, now)).toBe(20_000);
+    expect(resolveProviderRetryDelayMs(null, now)).toBeNull();
     expect(resolveProviderRetryDelayMs('2', now)).toBe(5_000);
-    expect(resolveProviderRetryDelayMs('120', now)).toBe(60_000);
+    expect(resolveProviderRetryDelayMs('60', now)).toBe(60_000);
+    expect(resolveProviderRetryDelayMs('120', now)).toBeNull();
     expect(resolveProviderRetryDelayMs('Tue, 22 Sep 2026 12:00:30 GMT', now)).toBe(30_000);
+    expect(resolveProviderRetryDelayMs('Tue, 22 Sep 2026 17:00:00 GMT', now)).toBeNull();
   });
 
   it('normalizes named Responses choices to automatic selection for OpenCode Go', () => {

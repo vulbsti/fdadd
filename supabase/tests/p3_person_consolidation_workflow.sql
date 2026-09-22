@@ -126,14 +126,32 @@ select throws_ok(format($$select public.person_record_stage_receipt(%L::uuid,%L:
   (:'claim2'::jsonb->>'jobId'),(:'claim2'::jsonb->>'leaseToken'),((:'claim2'::jsonb->>'fence')::bigint-1)),
   'PJF01',null,'old lease cannot mutate the new job attempt');
 
+-- An expired lease remains fenced even when the token and fence match. A new
+-- claimant advances the fence exactly once and is the only worker allowed to
+-- append receipts or drive retry state.
+set local role postgres;
+update public.person_jobs set lease_expires_at=now()-interval '1 second'
+where id=(:'claim2'::jsonb->>'jobId')::uuid;
+set local role service_role;
+select throws_ok(format($$select public.person_record_stage_receipt(%L::uuid,%L::uuid,%s,'expired','extract','all','succeeded',null,null,null,null,null,null,'{}','',null)$$,
+  (:'claim2'::jsonb->>'jobId'),(:'claim2'::jsonb->>'leaseToken'),(:'claim2'::jsonb->>'fence')),
+  'PJF01',null,'an expired matching lease cannot append a stage receipt');
+select public.person_claim_job((:'claim2'::jsonb->>'jobId')::uuid,600) as reclaimed2 \gset
+select is((:'reclaimed2'::jsonb->>'claimed')::boolean,true,'an expired leased job can be reclaimed');
+select is((:'reclaimed2'::jsonb->>'fence')::bigint,(:'claim2'::jsonb->>'fence')::bigint+1,
+  'reclaim advances the fencing token exactly once');
+select lives_ok(format($$select public.person_record_stage_receipt(%L::uuid,%L::uuid,%s,'reclaimed','extract','all','succeeded',null,null,null,null,null,null,'{}','',null)$$,
+  (:'reclaimed2'::jsonb->>'jobId'),(:'reclaimed2'::jsonb->>'leaseToken'),(:'reclaimed2'::jsonb->>'fence')),
+  'the reclaimed worker can append a stage receipt');
+
 -- Retry is bounded and records why; terminal failure is a user-visible blocked state.
-select public.person_fail_or_retry_job((:'claim2'::jsonb->>'jobId')::uuid,
-  (:'claim2'::jsonb->>'leaseToken')::uuid,(:'claim2'::jsonb->>'fence')::bigint,
+select public.person_fail_or_retry_job((:'reclaimed2'::jsonb->>'jobId')::uuid,
+  (:'reclaimed2'::jsonb->>'leaseToken')::uuid,(:'reclaimed2'::jsonb->>'fence')::bigint,
   'extract','provider',true,false,'provider_unavailable','Learning is paused and can be retried.', '{"retryAfter":"bounded"}'::jsonb) as retry_receipt \gset
 select is((:'retry_receipt'::jsonb->>'state'),'pending','retryable provider failure returns work to pending');
-select is((select state from public.person_outbox o where o.job_id=(:'claim2'::jsonb->>'jobId')::uuid
+select is((select state from public.person_outbox o where o.job_id=(:'reclaimed2'::jsonb->>'jobId')::uuid
   and o.event_type='person.input.accepted'),'pending','retryable job failure re-arms its durable dispatch outbox');
-select is((select count(*) from public.person_job_failure_receipts r where r.job_id=(:'claim2'::jsonb->>'jobId')::uuid),
+select is((select count(*) from public.person_job_failure_receipts r where r.job_id=(:'reclaimed2'::jsonb->>'jobId')::uuid),
   1::bigint,'failure receipt persists separately from operational logs');
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"3a300000-0000-4000-8000-000000000002","role":"authenticated"}',true);

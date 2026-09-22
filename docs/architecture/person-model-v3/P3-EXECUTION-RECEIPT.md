@@ -1,6 +1,6 @@
 # P3 execution receipt — source-led consolidation
 
-Updated: September 22, 2026. Status: **working local vertical slice and staging schema; full P3 acceptance remains open.** Ordinary chat now publishes a source-backed revision and a different chat retrieves it, but the required repeated semantic corpus and later-correction proof are not complete.
+Updated: September 23, 2026. Status: **working local vertical slice and staging schema; hosted proof reached real-provider execution but full P3 acceptance remains open.** Ordinary chat now publishes a source-backed revision and a different chat retrieves it locally. The hosted run exposed and fixed a terminal-draft budget flaw, then reached a genuine OpenCode Go five-hour usage limit before compose could publish.
 
 ## Scope and acceptance boundary
 
@@ -19,17 +19,17 @@ P3 is the `extract → match/countercontext → reconcile → compose → verify
 
 | Gate | Evidence required | Result / artifact |
 |---|---|---|
-| Type and unit | corpus tests, evaluator tests, typecheck, lint | **Pass:** 112 passed, 2 explicit integration skips; P3 evaluator 5/5; typecheck pass; lint 0 errors and one pre-existing React Hook Form warning |
+| Type and unit | corpus tests, evaluator tests, typecheck, lint | **Pass:** 118 passed, 2 explicit integration skips; P3 evaluator 5/5; typecheck pass; lint 0 errors and one pre-existing React Hook Form warning |
 | Worker boundary | actual stage DTO tests; source spans, speaker/subject, temporal precision, unknowns, conditions/exceptions, conflicts | **Pass for implemented contracts:** strict per-stage schemas, exact/uniquely repaired spans, attribution, unknown/countercontext and malformed-output rejection; later-history correction remains unproven E2E |
-| Durable dispatch | accepted input survives pre-dispatch crash; idempotent replay; bounded retry; job watermark | **Pass at contract/database layer:** fenced jobs/outbox, orphan recovery, bounded attempts and checkpoint reuse; browser recovery observed a failed compose fence reuse extraction before later completion |
-| Publication integrity | revision/head atomicity; exact support links; partial-valid publication; verifier rejection; stale fence/base/epoch rejection; history retained | **Pass at pgTAP/unit layer:** 162 database checks; published browser revision had exact observation/source links and verifier receipt; later correction/history scenario still pending |
+| Durable dispatch | accepted input survives pre-dispatch crash; idempotent replay; bounded retry; job watermark | **Pass at contract/database layer:** fenced jobs/outbox, orphan recovery, bounded attempts and checkpoint reuse. Hosted evidence exposed retry multiplication and stale-lease cleanup; provider stages now use the durable job queue as the sole retry authority, take a 600-second bounded lease, and stop stale workers without retrying forbidden writes |
+| Publication integrity | revision/head atomicity; exact support links; partial-valid publication; verifier rejection; stale fence/base/epoch rejection; history retained | **Pass at pgTAP/unit layer:** 166 database checks, including explicit lease expiry/reclaim fencing; published local browser revision had exact observation/source links and verifier receipt; later correction/history scenario still pending |
 | Evaluation quality | 20+ histories × 3 runs per configured model/guidance version; independent verifier; human-reviewed representative set | **Pending** |
 | Ordinary-chat local E2E | exact command in [P3-EVALUATION.md](P3-EVALUATION.md), real user composer input, database observations only | **Pass:** optimized-production server run passed in 5.2 minutes; an earlier dev run passed in 6.3 minutes |
 | Cross-chat retrieval | a new session reads revised account and source, not only prior transcript/summary | **Pass for one synthetic history:** session ID differs, answer survives reload, and its durable plan receipt names revision 2 |
 | Failure/recovery | provider/verifier fail-once; accepted source remains; valid prior model served; retry has no duplicate source/effect; user can recover | **Partial:** real provider failures exercised checkpoint reuse and safe retry; deterministic fail-once plus prior-view UI recovery remains open |
 | Visual/accessibility | synthetic screenshots for all four relevant views at wide/laptop/mobile; human inspection, keyboard/diagram/no-overflow checks | **Partial pass:** life map, pattern, evidence drawer and guided chat reviewed; no horizontal overflow, drawer keyboard toggles pass, duplicate-key/ambiguous evidence row fixed; mobile lower-scroll receipts await next run |
 | Long-term fit | review of immutable source, revisioned objects, conditions/counterevidence, attribution, provenance, dependencies, no single lossy brief | **Pass for architecture:** immutable sources/observations, revisioned typed objects/relations, support edges, verifier receipts, fenced publication, privacy/mode epochs, and revision receipts in answer plans |
-| Staging proof | exact build/migration/workflow registration and staging DB, authenticated ordinary chat and clean disposable-user teardown | **Partial:** four P3 migrations applied to `wtloawiwntyjiidjbmuk` and remote lint passed; deployed preview E2E remains pending |
+| Staging proof | exact build/migration/workflow registration and staging DB, authenticated ordinary chat and clean disposable-user teardown | **Partial:** four P3 migrations applied to `wtloawiwntyjiidjbmuk`, remote lint passed, and Preview commit `993c0f2` completed visible authentication, foreground answer, source acceptance and extraction. First attempt exposed `agent_step_limit` and led to the structural text-only terminal fallback. The rerun was stopped after OpenCode Go returned authenticated `429 GoUsageLimitError` for the five-hour window during compose; no hosted publication/visual acceptance is claimed. Disposable data was removed |
 
 ## Minimum must-pass scenarios
 
@@ -44,12 +44,13 @@ Also satisfy C09–C12, D04–D06, and the complete acceptance corpus before P3 
 
 ## Run record (fill in)
 
-- Code commit / tree SHA: pending the P3 commit in PR #7.
-- Migration set: `20260922143828`, `20260922144655`, `20260922145200`, `20260922162701`; local reset and 162 pgTAP checks passed; the same four versions are recorded on staging.
-- Worker build: optimized Next 16 build passed with 108 workflow steps and 3 workflows. Hosted workflow registration is pending the preview deployment.
+- Code commit / tree SHA: P3 feature `57b15db`; terminal-draft fix `993c0f2`; retry/lease hardening is in PR #8.
+- Migration set: `20260922143828`, `20260922144655`, `20260922145200`, `20260922162701`; local reset and 166 pgTAP checks passed; the same four versions are recorded on staging.
+- Worker build: optimized Next 16 build passed with 108 workflow steps and 3 workflows. Vercel Preview registered and executed both workflows on the branch deployment; production was not changed.
 - Provider and guidance versions: OpenCode Go; Muse Spark foreground answers; Kimi K3 extraction plus JSON-schema-guided compose/verify; `person-consolidation-2026-09-22.v1` / `person-consolidation-bounded.v1`.
 - Corpus version and run count: 20 synthetic histories, one deterministic manifest/contract run per case; **not** the required 20 histories × 3 provider repetitions.
 - Local browser result: one optimized-production real-provider pass in 5.2 minutes and one development-server pass in 6.3 minutes. The production-style run rejected browser console/page errors.
 - Screenshot directory: ignored Playwright `test-results/.../p3-*.png`; wide/laptop/mobile life map, pattern, evidence drawer and guided-chat states manually reviewed. Local Next overlay/duplicate key found in the first review, fixed, then absent in the production-style pass.
-- Staging database receipt: approved ref `wtloawiwntyjiidjbmuk`, migration ledger matched local, error-level remote lint returned no findings. Hosted browser proof pending deployment.
-- Residual gaps: 20×3 provider semantic evaluation, later correction/counterexample revision with preserved history, deterministic fail-once recovery UI, mobile lower-scroll capture execution, and hosted staging E2E. No waiver assigned.
+- Staging database receipt: approved ref `wtloawiwntyjiidjbmuk`, migration ledger matched local, error-level remote lint returned no findings. The branch-only Vercel environment was explicitly pinned to this project; production `aidoraa` was untouched.
+- Hosted provider receipt: the repository OpenCode Go key authenticated and completed foreground/extraction calls. The blocking response was `429 GoUsageLimitError` for the five-hour window, not `401 Invalid API key`. Immediate/step/job retry multiplication was removed; only short explicit `Retry-After` values receive one inline retry.
+- Residual gaps: rerun the hosted staging E2E after the provider window resets; 20×3 provider semantic evaluation; later correction/counterexample revision with preserved history; deterministic fail-once recovery UI; and mobile lower-scroll visual review. No waiver assigned.

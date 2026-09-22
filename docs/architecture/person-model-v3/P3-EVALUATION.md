@@ -1,6 +1,6 @@
 # P3 evaluation harness
 
-Status: **deterministic harness and one real-provider ordinary-chat vertical slice pass; repeated semantic acceptance remains pending.** Updated September 22, 2026.
+Status: **deterministic harness and one local real-provider ordinary-chat vertical slice pass; hosted rerun is blocked by the provider's five-hour usage window and repeated semantic acceptance remains pending.** Updated September 23, 2026.
 
 ## Corpus
 
@@ -58,4 +58,6 @@ The approved staging command (one project makes all three viewport captures with
 playwright test tests/e2e/p3-ordinary-chat-learning.spec.ts --config=playwright.p3-staging.config.ts --project=laptop --workers=1
 ```
 
-The test separately captures the pattern view before opening `Why this appears`, then asserts the drawer's `aria-expanded` state and captures it open at wide, laptop, and mobile sizes. It also retains life-map, chapter, and guided-chat captures at all three sizes. No hosted P3 run has been performed by adding these guards; staging evidence remains pending until an explicitly authorized invocation and cleanup receipt exist.
+The test separately captures the pattern view before opening `Why this appears`, then asserts the drawer's `aria-expanded` state and captures it open at wide, laptop, and mobile sizes. It also retains life-map, chapter, and guided-chat captures at all three sizes, including lower-scroll mobile receipts for the life map and chat composer.
+
+The authorized hosted run reached real visible authentication, foreground answer completion, source acceptance and extraction on the exact branch Preview. It first exposed an `agent_step_limit` failure; the agent budget now falls back to a final text-only model call after two constrained finish-tool attempts. On rerun, OpenCode Go accepted the key and processed calls, then returned `429 GoUsageLimitError` for its five-hour allowance during compose. The test was stopped before further retry dispatch, disposable data was removed, and no hosted publication or screenshot pass is claimed. Rerun this exact guarded command after the provider window resets.
