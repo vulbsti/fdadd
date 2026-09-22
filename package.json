@@ -6,9 +6,18 @@
     "dev": "next dev --turbopack -p 9002",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:db:local": "bash scripts/test-p0-db.sh",
+    "test:integration:local": "P1_LOCAL_INTEGRATION=1 node scripts/with-local-supabase-env.mjs npm exec -- vitest run src/lib/astro/selected-context.local.test.ts",
+    "test:integration:atros": "P1_ATROS_SANDBOX_INTEGRATION=1 vitest run src/lib/astro/atros-commands.integration.test.ts",
+    "test:e2e:smoke": "playwright test tests/e2e/astrologer-smoke.spec.ts",
+    "test:e2e:local": "node scripts/with-local-supabase-env.mjs npm run test:e2e:smoke",
+    "test:e2e:recovery-visual:local": "NEXT_DIST_DIR=.next-recovery E2E_BASE_URL=http://localhost:9013 E2E_FORCE_NEW_SERVER=1 node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-recovery-visual.spec.ts --workers=1",
+    "test:e2e:provider:local": "node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-conversation.spec.ts --project=laptop",
+    "test:e2e:provider-recovery:local": "P1_PROVIDER_RECOVERY_PROXY=1 OPENGO_BASE_URL=http://127.0.0.1:19082 NEXT_DIST_DIR=.next-recovery E2E_BASE_URL=http://localhost:9012 E2E_FORCE_NEW_SERVER=1 node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-recovery.spec.ts --project=laptop",
+    "test:e2e:staging-recovery": "playwright test tests/e2e/astrologer-staging-recovery.spec.ts --config=playwright.staging.config.ts --workers=1"
   },
   "engines": {
     "node": "22.x"
@@ -59,12 +68,17 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@next/env": "16.3.5",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/typography": "^0.5.13",
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/three": "^0.185.4",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.5",
     "postcss": "^8",
+    "supabase": "2.117.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "vite": "^8.3.0",

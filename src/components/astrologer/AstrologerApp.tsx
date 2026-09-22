@@ -51,6 +51,8 @@ const AstrologerApp: React.FC = () => {
         .then((r) => (r.ok ? r.json() : { profiles: [] }))
         .then((d: { profiles: ProfileSummary[] }) => setProfiles(d.profiles))
         .catch(() => setProfiles([])),
+      // Existing async fetch helper updates state only after the response settles.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       loadSummaries(),
     ])
       .then(([, sessionList]) => {
@@ -83,6 +85,9 @@ const AstrologerApp: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Legacy detail loader synchronously clears stale errors before fetching.
+    // P1 replaces this state path with route-backed run hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (selectedId) void loadDetail(selectedId);
   }, [selectedId, loadDetail]);
 
@@ -119,12 +124,12 @@ const AstrologerApp: React.FC = () => {
   }
 
   return (
-    <div className="relative flex h-[calc(100vh-12rem)] max-h-[800px] w-full overflow-hidden rounded-lg border bg-card shadow-lg">
+    <div className="relative flex h-[calc(100vh-12rem)] max-h-[800px] w-full flex-col overflow-hidden rounded-lg border bg-card shadow-lg md:flex-row">
       {/* Sidebar */}
       <div
         className={cn(
-          'flex w-64 shrink-0 flex-col border-r transition-all',
-          isSidebarOpen ? 'block' : 'hidden',
+          'h-52 w-full shrink-0 flex-col border-b transition-all md:h-auto md:w-64 md:border-r md:border-b-0',
+          isSidebarOpen ? 'flex' : 'hidden',
         )}
       >
         <div className="flex items-center justify-between border-b p-3">
@@ -136,7 +141,7 @@ const AstrologerApp: React.FC = () => {
         {listError ? (
           <div className="p-3 text-xs text-destructive">{listError}</div>
         ) : null}
-        <ScrollArea className="flex-1">
+        <ScrollArea className="min-h-0 flex-1">
           <div className="flex flex-col gap-1 p-2">
             {sessions.map((session) => (
               <button
@@ -164,7 +169,7 @@ const AstrologerApp: React.FC = () => {
       </div>
 
       {/* Main */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {!isSidebarOpen ? (
           <div className="border-b p-2">
             <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)}>

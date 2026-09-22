@@ -97,6 +97,8 @@ export default function AstrologerChat({
       const source = new EventSource(url);
       eventSourceRef.current = source;
       source.addEventListener('answer.ready', () => void loadDetail());
+      source.addEventListener('phase.changed', () => void loadDetail());
+      source.addEventListener('tool.completed', () => void loadDetail());
       source.addEventListener('run.completed', () => {
         source.close();
         eventRunIdRef.current = null;
@@ -110,7 +112,10 @@ export default function AstrologerChat({
         void loadDetail();
       });
       source.onerror = () => {
-        // EventSource reconnects automatically with Last-Event-ID.
+        // EventSource reconnects automatically with Last-Event-ID. Refresh
+        // the durable row too, so a short-lived stream failure cannot leave
+        // the UI showing an eternal spinner after the worker has failed.
+        void loadDetail();
       };
     },
     [loadDetail],
@@ -161,8 +166,8 @@ export default function AstrologerChat({
     const text = draft.trim();
     if (!text) return;
     setDraft('');
-    void send(text);
-  }, [draft, send]);
+    void send(text, focusedQuestion?.id);
+  }, [draft, focusedQuestion?.id, send]);
 
   if (loading) {
     return (
@@ -181,19 +186,33 @@ export default function AstrologerChat({
   const canChat = detail?.profile?.initializationStatus === 'ready';
 
   const resume = async () => {
-    const response = await fetch(`/api/astrologer/runs/${latestRun?.id}/resume`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clientRequestId: crypto.randomUUID() }),
-    });
-    if (response.ok) {
+    if (!latestRun || busy) return;
+    setSendState('sending');
+    setError(null);
+    try {
+      const response = await fetch(`/api/astrologer/runs/${latestRun.id}/resume`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientRequestId: crypto.randomUUID() }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as ApiErrorDto | null;
+        setError(payload ?? { code: 'internal', message: 'Could not resume the run.' });
+        setSendState('idle');
+        return;
+      }
       const started = (await response.json()) as StartRunResponse;
+      setSendState('streaming');
       connectEvents(started.runId);
+      void loadDetail();
+    } catch {
+      setError({ code: 'internal', message: 'Network error while resuming the run.' });
+      setSendState('idle');
     }
   };
 
   return (
-    <div className={cn('flex h-full flex-col', className)}>
+    <div className={cn('flex h-full min-h-0 flex-col', className)}>
       {detail?.profile?.initializationStatus === 'pending' && !resumableFailed ? (
         <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
           <Loader2 className="mr-2 inline h-3 w-3 animate-spin" />
@@ -215,7 +234,31 @@ export default function AstrologerChat({
         </div>
       ) : null}
 
-      <ScrollArea className="flex-1 p-4">
+      {detail?.trace?.length ? (
+        <details className="border-b px-4 py-2 text-xs">
+          <summary className="cursor-pointer text-muted-foreground">
+            Run trace ({detail.trace.length} receipts)
+          </summary>
+          <div className="mt-2 max-h-56 space-y-2 overflow-auto font-mono">
+            {detail.trace.map((step) => (
+              <div key={step.id} className="rounded border bg-muted/30 p-2">
+                <div className="flex flex-wrap gap-2">
+                  <span>{step.kind}</span>
+                  {step.toolName ? <span>{step.toolName}</span> : null}
+                  <span className="text-muted-foreground">{step.status}</span>
+                  {step.cacheHit ? <span className="text-muted-foreground">cache hit</span> : null}
+                </div>
+                {step.inputSummary ? <div className="mt-1 break-all">in: {step.inputSummary}</div> : null}
+                {step.outputSummary ? (
+                  <div className="mt-1 break-words text-muted-foreground">out: {step.outputSummary}</div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </details>
+      ) : null}
+
+      <ScrollArea className="min-h-0 flex-1 p-4">
         <div className="flex flex-col gap-3">
           {messages.map((message) => (
             <div
@@ -252,7 +295,13 @@ export default function AstrologerChat({
         <div className="border-t bg-destructive/10 px-4 py-2 text-xs text-destructive" role="alert">
           {error.message}
           {error.resumable && latestRun ? (
-            <Button variant="outline" size="sm" className="ml-2" onClick={() => void resume()}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-2"
+              disabled={busy}
+              onClick={() => void resume()}
+            >
               Resume
             </Button>
           ) : null}
@@ -260,9 +309,20 @@ export default function AstrologerChat({
       ) : null}
 
       {resumableFailed ? (
-        <div className="border-t px-4 py-2 text-xs">
-          The last run failed.{' '}
-          <Button variant="outline" size="sm" onClick={() => void resume()}>
+        <div
+          className="flex flex-wrap items-center gap-2 border-t bg-destructive/10 px-4 py-3 text-xs text-destructive"
+          role="alert"
+        >
+          <span>
+            The last run failed.
+            {detail?.session.nextAction ? ` ${detail.session.nextAction}` : ''}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={busy}
+            onClick={() => void resume()}
+          >
             Resume
           </Button>
         </div>
@@ -297,7 +357,7 @@ export default function AstrologerChat({
         <Input
           placeholder="Ask your astrologer…"
           value={draft}
-          disabled={busy || !canChat}
+          disabled={busy || !canChat || resumableFailed}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -306,7 +366,11 @@ export default function AstrologerChat({
             }
           }}
         />
-        <Button size="icon" disabled={busy || !canChat || draft.trim().length === 0} onClick={submitDraft}>
+        <Button
+          size="icon"
+          disabled={busy || !canChat || resumableFailed || draft.trim().length === 0}
+          onClick={submitDraft}
+        >
           <SendHorizonal className="h-4 w-4" />
         </Button>
       </div>

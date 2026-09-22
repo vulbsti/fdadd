@@ -10,8 +10,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   AstrologerMessageSchema,
+  AstrologerRunStepSchema,
   FactRowSchema,
+  FocusedQuestionSchema,
   type AstrologerMessage,
+  type AstrologerRunStep,
   type AgentErrorCode,
   type ApiErrorDto,
   type BirthInput,
@@ -24,6 +27,7 @@ import {
   type RunVerification,
 } from './contracts';
 import { ContextManifestSchema, RunVerificationSchema } from './contracts';
+import { projectSelectedSources, type SelectedContextRow, type SelectedSource } from './selected-context';
 
 export class AgentStoreError extends Error {
   readonly code: AgentErrorCode;
@@ -196,6 +200,25 @@ export interface ClaimResult {
   toolCalls: number;
 }
 
+export interface DispatchClaim {
+  runId: string;
+  leaseToken: string;
+  attempt: number;
+  maxAttempts: number;
+}
+
+export interface DispatchCompletion {
+  won: boolean;
+  workflowRunId: string | null;
+  fenced?: boolean;
+}
+
+export interface DispatchRelease {
+  released: boolean;
+  fenced: boolean;
+  dead: boolean;
+}
+
 export class AgentStore {
   constructor(
     /** Request-scoped authenticated client (user-entry RPCs, SELECTs). */
@@ -262,12 +285,62 @@ export class AgentStore {
   }
 
   async attachWorkflowRun(runId: string, workflowRunId: string): Promise<{ workflowRunId: string; won: boolean }> {
-    const { data, error } = await this.user.rpc('attach_astro_workflow_run', {
+    const { data, error } = await this.adminRequired().rpc('attach_astro_workflow_run', {
       p_run_id: runId,
       p_workflow_run_id: workflowRunId,
     });
     if (error) throw normalizeDbError(error);
     return data as unknown as { workflowRunId: string; won: boolean };
+  }
+
+  // -- Service-only durable dispatch ---------------------------------------
+
+  async claimRunDispatch(runId: string | null = null, leaseSeconds = 60): Promise<DispatchClaim | null> {
+    const { data, error } = await this.adminRequired().rpc('worker_claim_astro_run_dispatch', {
+      p_run_id: runId,
+      p_lease_seconds: leaseSeconds,
+    });
+    if (error) throw normalizeDbError(error);
+    return (data as unknown as DispatchClaim | null) ?? null;
+  }
+
+  async completeRunDispatch(
+    runId: string,
+    leaseToken: string,
+    workflowRunId: string,
+  ): Promise<DispatchCompletion> {
+    const { data, error } = await this.adminRequired().rpc('worker_complete_astro_run_dispatch', {
+      p_run_id: runId,
+      p_lease_token: leaseToken,
+      p_workflow_run_id: workflowRunId,
+    });
+    if (error) throw normalizeDbError(error);
+    return data as unknown as DispatchCompletion;
+  }
+
+  async releaseRunDispatch(
+    runId: string,
+    leaseToken: string,
+    errorMessage: string,
+    retrySeconds: number,
+  ): Promise<DispatchRelease> {
+    const { data, error } = await this.adminRequired().rpc('worker_release_astro_run_dispatch', {
+      p_run_id: runId,
+      p_lease_token: leaseToken,
+      p_error_message: errorMessage,
+      p_retry_seconds: retrySeconds,
+    });
+    if (error) throw normalizeDbError(error);
+    return data as unknown as DispatchRelease;
+  }
+
+  async claimRunExecution(runId: string, workflowRunId: string): Promise<DispatchCompletion> {
+    const { data, error } = await this.adminRequired().rpc('worker_claim_astro_run_execution', {
+      p_run_id: runId,
+      p_workflow_run_id: workflowRunId,
+    });
+    if (error) throw normalizeDbError(error);
+    return data as unknown as DispatchCompletion;
   }
 
   // -- Run reads ------------------------------------------------------------
@@ -289,6 +362,34 @@ export class AgentStore {
         .maybeSingle(),
     );
     return (row as unknown as RunRow) ?? null;
+  }
+
+  /** Return bounded, owner-scoped execution receipts for the trace panel. */
+  async listRunSteps(runId: string): Promise<AstrologerRunStep[]> {
+    const rows = unwrapQuery(
+      await this.user
+        .from('astro_agent_run_steps')
+        .select(
+          'id, ordinal, step_key, kind, status, tool_name, input_summary, output_summary, refs, cache_hit, created_at, completed_at',
+        )
+        .eq('run_id', runId)
+        .order('ordinal', { ascending: true })
+        .limit(300),
+    ) as Array<Record<string, unknown>>;
+    return rows.map((row) => AstrologerRunStepSchema.parse({
+      id: row.id as string,
+      ordinal: Number(row.ordinal ?? 0),
+      stepKey: row.step_key as string,
+      kind: row.kind as AstrologerRunStep['kind'],
+      status: row.status as AstrologerRunStep['status'],
+      toolName: (row.tool_name as string | null) ?? null,
+      inputSummary: (row.input_summary as string | null) ?? null,
+      outputSummary: (row.output_summary as string | null) ?? null,
+      refs: (row.refs as Record<string, unknown> | null) ?? {},
+      cacheHit: Boolean(row.cache_hit),
+      createdAt: row.created_at as string,
+      completedAt: (row.completed_at as string | null) ?? null,
+    }));
   }
 
   async getProfile(profileId: string): Promise<Record<string, unknown> | null> {
@@ -341,7 +442,11 @@ export class AgentStore {
       .order('id', { ascending: false })
       .limit(50);
     if (cursor) {
-      query = query.lt('created_at', cursor.createdAt);
+      // A timestamp alone skips rows tied at the page boundary. The second
+      // sort key is part of the seek predicate as well as the ORDER BY.
+      query = query.or(
+        `created_at.lt.${cursor.createdAt},and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
+      );
     }
     const rows = unwrapQuery(await query) as Array<Record<string, unknown>>;
     const messages = rows.map(toMessage);
@@ -376,7 +481,8 @@ export class AgentStore {
     assistantMessage?: {
       content: string;
       status: 'waiting_for_user' | 'complete';
-      focusedQuestion: FocusedQuestion | null;
+      // The worker RPC creates the canonical question ID at publication.
+      focusedQuestion: Omit<FocusedQuestion, 'id'> | null;
     } | null;
   }): Promise<CheckpointResult> {
     const { data, error } = await this.adminRequired().rpc('worker_checkpoint_astro_run', {
@@ -639,6 +745,28 @@ export class AgentStore {
     ) as unknown as Array<Record<string, unknown>>;
   }
 
+  /** Resolve selection IDs back to their owned source records for model use. */
+  async listSelectedSources(runId: string): Promise<SelectedSource[]> {
+    const run = await this.getRun(runId);
+    const rows = unwrapQuery(
+      await this.adminRequired()
+        .from('astro_run_context_items')
+        .select(`item_key,created_at,
+          fact:astro_person_facts!astro_run_context_items_fact_fk(id,profile_id,fact_key,summary,status,origin,revision),
+          evidence:astro_evidence!astro_run_context_items_evidence_fk(id,profile_id,source_kind,assertion_mode,summary,exact_quote,occurred_on),
+          hypothesis:astro_hypotheses!astro_run_context_items_hypothesis_fk(id,profile_id,hid,claim,status,revision),
+          event:astro_events!astro_run_context_items_event_fk(id,profile_id,on_date,title,detail,fit),
+          message:astro_messages!astro_run_context_items_message_fk(id,role,content,session:astro_sessions!astro_messages_session_owner_fk(profile_id))`)
+        .eq('run_id', runId)
+        .eq('user_id', run.user_id)
+        .eq('profile_id', run.profile_id)
+        .eq('purpose', 'selected')
+        .order('created_at', { ascending: false })
+        .limit(100),
+    ) as unknown as SelectedContextRow[];
+    return projectSelectedSources(rows, run.profile_id);
+  }
+
   // -- Facts / evidence / hypotheses ----------------------------------------
 
   async listFacts(profileId: string, includeRetired = false): Promise<FactRow[]> {
@@ -761,7 +889,12 @@ export class AgentStore {
       hasFrozenChart: profile.chart_json != null,
       hasFrozenSensitivity: profile.sensitivity_json != null,
       memoryVersion: Number(profile.memory_version ?? 0),
-      sessionCheckpoint: parseCheckpoint(session.checkpoint_json),
+      sessionCheckpoint: {
+        ...parseCheckpoint(session.checkpoint_json),
+        // The terminal RPC generates the durable question ID after writing
+        // checkpoint_json. Read the canonical session field on later turns.
+        focusedQuestion: FocusedQuestionSchema.safeParse(session.current_question).data ?? null,
+      },
       sessionStatus: session.status as ContextManifest['sessionStatus'],
       facts: facts.map((f) => ({
         id: f.id,

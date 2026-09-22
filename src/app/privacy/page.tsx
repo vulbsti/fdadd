@@ -8,7 +8,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-2xl font-semibold">Introduction</h2>
         <p>
-          Aidoraa ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website [Your Website URL] and use our services, including FashionDaddy and DatePlanner (collectively, the "Services"). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site or use our services.
+          Aidoraa (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website [Your Website URL] and use our services, including FashionDaddy and DatePlanner (collectively, the &quot;Services&quot;). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site or use our services.
         </p>
 
         <h2 className="text-2xl font-semibold">Information We Collect</h2>

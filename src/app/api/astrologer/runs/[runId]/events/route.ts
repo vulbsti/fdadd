@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server';
 import { getRun } from 'workflow/api';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { AgentStoreError } from '@/lib/astro/agent-store';
+import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
 import {
   AstrologerRunEventSchema,
   type AstrologerRunEvent,
@@ -95,7 +96,7 @@ export async function GET(
   const { runId } = await params;
 
   try {
-    const run = await auth.store.getRun(runId);
+    let run = await auth.store.getRun(runId);
     if (run.user_id !== auth.userId) {
       throw new AgentStoreError('forbidden', 'not your run');
     }
@@ -113,10 +114,26 @@ export async function GET(
     }
 
     if (!run.workflow_run_id) {
-      return NextResponse.json(
-        { code: 'invalid_transition', message: 'run has no workflow attached yet' },
-        { status: 422 },
-      );
+      // Event reconnect is another safe recovery edge. If the request that
+      // accepted the message died before start, this claims the durable outbox.
+      await dispatchAstrologerRunBestEffort(runId);
+      run = await auth.store.getRun(runId);
+      if (!run.workflow_run_id) {
+        const pending = AstrologerRunEventSchema.parse({
+          event: 'phase.changed',
+          runId,
+          phase: 'planning',
+          status: 'active',
+          summary: 'waiting for a workflow dispatcher',
+        });
+        return new Response(sseFrame(after + 1, pending), {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache, no-transform',
+            'Retry-After': '2',
+          },
+        });
+      }
     }
 
     const workflowRun = getRun(run.workflow_run_id);

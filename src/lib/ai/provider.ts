@@ -64,6 +64,9 @@ export interface ChatCompletionResult {
   choices: Array<{
     message: { content: string | null; tool_calls: ToolCallRequest[] };
   }>;
+  /** Safe request metadata for operational traces; never model reasoning. */
+  provider?: string;
+  model?: string;
 }
 
 interface ResolvedProvider {
@@ -73,12 +76,32 @@ interface ResolvedProvider {
   defaultModel: string;
 }
 
+/**
+ * Resolve a server-controlled compatible endpoint without permitting URL
+ * credentials or non-HTTP transports. Besides self-hosted gateways, this is
+ * the seam used by the local fault proxy in the provider recovery E2E.
+ */
+export function resolveProviderBaseUrl(configured: string | undefined, fallback: string): string {
+  const candidate = configured?.trim() || fallback;
+  const parsed = new URL(candidate);
+  if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) {
+    throw new Error('Provider base URL must be an HTTP(S) URL without embedded credentials.');
+  }
+  if (parsed.search || parsed.hash) {
+    throw new Error('Provider base URL must not include a query string or fragment.');
+  }
+  return candidate.replace(/\/+$/, '');
+}
+
 function resolveProvider(): ResolvedProvider {
   const goKey = process.env.OPENCODE_API_KEY?.trim() || process.env.OPENGO_API?.trim();
   if (goKey) {
     return {
       name: 'opencode-go',
-      baseUrl: 'https://opencode.ai/zen/go/v1',
+      baseUrl: resolveProviderBaseUrl(
+        process.env.OPENGO_BASE_URL,
+        'https://opencode.ai/zen/go/v1',
+      ),
       apiKey: goKey,
       defaultModel: 'muse-spark-1.3-contributor',
     };
@@ -87,7 +110,10 @@ function resolveProvider(): ResolvedProvider {
   if (openRouterKey) {
     return {
       name: 'openrouter',
-      baseUrl: 'https://openrouter.ai/api/v1',
+      baseUrl: resolveProviderBaseUrl(
+        process.env.OPENROUTER_BASE_URL,
+        'https://openrouter.ai/api/v1',
+      ),
       apiKey: openRouterKey,
       defaultModel: 'anthropic/claude-sonnet-4',
     };
@@ -114,35 +140,6 @@ function toResponsesTools(tools: FunctionToolDefinition[]): Array<{
     description: tool.function.description,
     parameters: tool.function.parameters,
   }));
-}
-
-function toResponsesInput(messages: ChatMessage[]): ResponsesInputItem[] {
-  const input: ResponsesInputItem[] = [];
-  for (const message of messages) {
-    if (message.role === 'tool') {
-      input.push({
-        type: 'function_call_output',
-        call_id: message.tool_call_id ?? '',
-        output: message.content ?? '',
-      });
-    } else if (message.role === 'assistant' && message.tool_calls?.length) {
-      input.push({
-        role: 'assistant',
-        content: message.content ? [{ type: 'output_text', text: message.content }] : [],
-      });
-      for (const call of message.tool_calls) {
-        input.push({
-          type: 'function_call',
-          call_id: call.id,
-          name: call.function.name,
-          arguments: call.function.arguments || '{}',
-        });
-      }
-    } else {
-      input.push({ role: message.role, content: message.content ?? '' });
-    }
-  }
-  return input;
 }
 
 interface ResponsesOutputItem {
@@ -177,14 +174,53 @@ function fromResponsesOutput(response: ResponsesResponse): ChatCompletionResult 
 }
 
 /** Map the neutral ToolChoice to each provider's wire shape. */
-function toResponsesToolChoice(choice: ToolChoice): unknown {
+export function toResponsesToolChoice(providerName: string, choice: ToolChoice): unknown {
+  // OpenCode Go's Responses endpoint currently accepts only the automatic
+  // mode. Pi/OMP leave this field unset, which has the same behavior. Keep
+  // the neutral named-choice API for providers that support it, but never
+  // emit a named/required/none choice to OpenCode Go.
+  if (providerName === 'opencode-go') return 'auto';
   if (typeof choice === 'string') return choice;
   return { type: 'function', name: choice.name };
 }
 
-function toChatCompletionsToolChoice(choice: ToolChoice): unknown {
+export function toChatCompletionsToolChoice(choice: ToolChoice): unknown {
   if (typeof choice === 'string') return choice;
   return { type: 'function', function: { name: choice.name } };
+}
+
+/**
+ * Internal Responses transcript shape. Exported for a focused compatibility
+ * test: tool results must be sent as function_call_output items on the next
+ * model turn, exactly as Pi/OMP do.
+ */
+export function toResponsesInput(messages: ChatMessage[]): ResponsesInputItem[] {
+  const input: ResponsesInputItem[] = [];
+  for (const message of messages) {
+    if (message.role === 'tool') {
+      input.push({
+        type: 'function_call_output',
+        call_id: message.tool_call_id ?? '',
+        output: message.content ?? '',
+      });
+    } else if (message.role === 'assistant' && message.tool_calls?.length) {
+      input.push({
+        role: 'assistant',
+        content: message.content ? [{ type: 'output_text', text: message.content }] : [],
+      });
+      for (const call of message.tool_calls) {
+        input.push({
+          type: 'function_call',
+          call_id: call.id,
+          name: call.function.name,
+          arguments: call.function.arguments || '{}',
+        });
+      }
+    } else {
+      input.push({ role: message.role, content: message.content ?? '' });
+    }
+  }
+  return input;
 }
 
 const ResultSchema = z.object({
@@ -206,7 +242,16 @@ const ResultSchema = z.object({
   ),
 });
 
-const FETCH_TIMEOUT_MS = 120_000;
+const DEFAULT_FETCH_TIMEOUT_MS = 45_000;
+const MIN_FETCH_TIMEOUT_MS = 5_000;
+const MAX_FETCH_TIMEOUT_MS = 120_000;
+
+/** Keep provider stalls shorter than the Workflow retry/recovery window. */
+export function resolveProviderTimeoutMs(override?: number, configured?: string): number {
+  const parsed = override ?? (configured?.trim() ? Number(configured) : Number.NaN);
+  if (!Number.isFinite(parsed)) return DEFAULT_FETCH_TIMEOUT_MS;
+  return Math.min(Math.max(Math.trunc(parsed), MIN_FETCH_TIMEOUT_MS), MAX_FETCH_TIMEOUT_MS);
+}
 
 export async function chatCompletion(options: ChatCompletionOptions): Promise<ChatCompletionResult> {
   const provider = resolveProvider();
@@ -223,8 +268,13 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     'X-Title': 'Aidoraa Astrologer',
     'User-Agent': 'aidoraa-astrologer/1.0',
     ...(options.sessionId ? { 'x-opencode-session': options.sessionId } : {}),
+    // Match the installed Pi/OMP OpenCode Go adapter's routing hint.
+    ...(provider.name === 'opencode-go' ? { 'x-opencode-client': 'pi' } : {}),
   };
-  const timeoutMs = options.timeoutMs ?? FETCH_TIMEOUT_MS;
+  const timeoutMs = resolveProviderTimeoutMs(
+    options.timeoutMs,
+    process.env.ASTROLOGER_PROVIDER_TIMEOUT_MS,
+  );
   const fetchWithTimeout = (url: string, init: RequestInit): Promise<Response> =>
     fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
 
@@ -239,7 +289,7 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
         input: toResponsesInput(options.messages),
         ...(options.tools ? { tools: toResponsesTools(options.tools) } : {}),
         ...(options.toolChoice
-          ? { tool_choice: toResponsesToolChoice(options.toolChoice) }
+          ? { tool_choice: toResponsesToolChoice(provider.name, options.toolChoice) }
           : {}),
         ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
         // Reasoning models burn budget before emitting: default generously.
@@ -250,7 +300,11 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
       const body = await response.text().catch(() => '');
       throw new ProviderError(provider.name, response.status, body);
     }
-    return fromResponsesOutput((await response.json()) as ResponsesResponse);
+    return {
+      ...fromResponsesOutput((await response.json()) as ResponsesResponse),
+      provider: provider.name,
+      model,
+    };
   }
 
   const response = await fetchWithTimeout(`${provider.baseUrl}/chat/completions`, {
@@ -277,5 +331,5 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
   if (!parsed.success) {
     throw new ProviderError(provider.name, 502, `unparseable provider response: ${parsed.error.message}`);
   }
-  return parsed.data;
+  return { ...parsed.data, provider: provider.name, model };
 }

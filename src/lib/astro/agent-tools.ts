@@ -28,7 +28,11 @@ import {
   type FocusedQuestion,
   type RunPlan,
 } from './contracts';
-import { ATROS_ENGINE_VERSION } from './atros-commands';
+import {
+  ATROS_ENGINE_VERSION,
+  type AtrosErrorCode,
+  type AtrosResult,
+} from './atros-commands';
 import {
   atrosChart,
   atrosSensitivity,
@@ -43,10 +47,64 @@ import {
 // Calculation cache
 // ---------------------------------------------------------------------------
 
-export interface CachedCalculation {
-  result: unknown;
-  cacheHit: boolean;
-  cacheId: string | null;
+export type CachedCalculation =
+  | { ok: true; result: unknown; cacheHit: boolean; cacheId: string | null }
+  | { ok: false; error: { code: AtrosErrorCode; message: string }; cacheHit: false; cacheId: null };
+
+const ATROS_ERROR_CODES = new Set<AtrosErrorCode>([
+  'INVALID_BIRTHDATA',
+  'EPHEMERIS_ERROR',
+  'INTERNAL',
+]);
+
+function normalizeAtrosResult(value: unknown): {
+  result: AtrosResult;
+  diagnostic: string | null;
+} {
+  if (!value || typeof value !== 'object') {
+    return {
+      result: { ok: false, error: { code: 'INTERNAL', message: 'invalid executor result' } },
+      diagnostic: 'Atros executor returned a non-object result',
+    };
+  }
+
+  const candidate = value as Record<string, unknown>;
+  if (candidate.ok === true && Object.hasOwn(candidate, 'data')) {
+    return { result: { ok: true, data: candidate.data }, diagnostic: null };
+  }
+
+  const error = candidate.error as Record<string, unknown> | null | undefined;
+  if (
+    candidate.ok === false &&
+    error &&
+    typeof error === 'object' &&
+    typeof error.code === 'string' &&
+    ATROS_ERROR_CODES.has(error.code as AtrosErrorCode) &&
+    typeof error.message === 'string' &&
+    error.message.trim().length > 0
+  ) {
+    return {
+      result: {
+        ok: false,
+        error: {
+          code: error.code as AtrosErrorCode,
+          message: error.message.slice(0, 1000),
+        },
+      },
+      diagnostic: null,
+    };
+  }
+
+  return {
+    result: { ok: false, error: { code: 'INTERNAL', message: 'invalid executor result' } },
+    diagnostic: 'Atros executor returned a malformed result',
+  };
+}
+
+function errorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === 'string' && error.trim()) return error;
+  return 'Atros command failed';
 }
 
 /**
@@ -61,7 +119,7 @@ export async function cachedAtrosCall(
   birth: { date: string; time: string; latitude: number; longitude: number; timezone: string; name?: string; place_name?: string },
   toolName: string,
   args: Record<string, unknown>,
-  execute: () => Promise<{ ok: true; data: unknown } | { ok: false; error: { code: string; message: string } }>,
+  execute: () => Promise<unknown>,
 ): Promise<CachedCalculation> {
   const canonical = JSON.stringify({ birth, toolName, args });
   const argsHash = createHash('sha256').update(canonical).digest('hex');
@@ -72,10 +130,43 @@ export async function cachedAtrosCall(
     toolName,
     argsHash,
   });
-  if (hit) return { result: hit.resultJson, cacheHit: true, cacheId: hit.id };
+  if (hit) return { ok: true, result: hit.resultJson, cacheHit: true, cacheId: hit.id };
 
-  const outcome = await execute();
-  if (!outcome.ok) return { result: outcome, cacheHit: false, cacheId: null };
+  let rawOutcome: unknown;
+  try {
+    rawOutcome = await execute();
+  } catch (error) {
+    const diagnostic = errorMessage(error);
+    console.error('[astrologer-tool] Atros executor threw', {
+      run_id: run.id,
+      profile_id: run.profile_id,
+      tool_name: toolName,
+      message: diagnostic.slice(0, 1000),
+    });
+    rawOutcome = { ok: false, error: { code: 'INTERNAL', message: diagnostic } };
+  }
+
+  const normalized = normalizeAtrosResult(rawOutcome);
+  const outcome = normalized.result;
+  if (!outcome.ok) {
+    if (normalized.diagnostic) {
+      console.error('[astrologer-tool] Invalid Atros executor result', {
+        run_id: run.id,
+        profile_id: run.profile_id,
+        tool_name: toolName,
+        message: normalized.diagnostic,
+      });
+    } else {
+      console.error('[astrologer-tool] Atros calculation failed', {
+        run_id: run.id,
+        profile_id: run.profile_id,
+        tool_name: toolName,
+        code: outcome.error.code,
+        message: outcome.error.message.slice(0, 1000),
+      });
+    }
+    return { ok: false, error: outcome.error, cacheHit: false, cacheId: null };
+  }
 
   const expiresAt =
     toolName === 'atros_current_dasha' ? nextUtcMidnight() : null;
@@ -89,7 +180,7 @@ export async function cachedAtrosCall(
     resultJson: outcome.data,
     expiresAt,
   });
-  return { result: outcome.data, cacheHit: false, cacheId };
+  return { ok: true, result: outcome.data, cacheHit: false, cacheId };
 }
 
 function nextUtcMidnight(): string {
@@ -214,7 +305,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: 'astro_evidence_record',
     description:
-      'Record immutable evidence. For direct user statements, exactQuote MUST be a verbatim substring of the user message you are citing (pass its messageId).',
+      'Record immutable evidence. You MUST pass sourceMessageId or sourceEventId; use astro_context_search first when the source ID is unknown. For direct user statements, exactQuote MUST be a verbatim substring of the cited user message.',
     parameters: {
       type: 'object',
       properties: {
@@ -229,6 +320,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         assertionMode: { type: 'string', enum: ['direct', 'derived'] },
       },
       required: ['evidenceType', 'exactQuote', 'summary'],
+      anyOf: [
+        { required: ['sourceMessageId'] },
+        { required: ['sourceEventId'] },
+      ],
     },
   },
   {
@@ -303,6 +398,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
             },
             allowFreeText: { type: 'boolean' },
           },
+          required: ['prompt', 'responseKind'],
         },
         nextAction: { type: 'string', maxLength: 500 },
         confidence: { type: 'number', minimum: 0, maximum: 1 },
@@ -503,6 +599,7 @@ export async function runAtrosTool(
   ctx: ToolContext,
   toolName: string,
   options?: { from?: string; to?: string; level?: string; asOf?: string; years?: number; offsets?: number[] },
+  executeOverride?: () => Promise<unknown>,
 ): Promise<ToolOutcome> {
   const birth = {
     name: ctx.profile.name,
@@ -539,6 +636,21 @@ export async function runAtrosTool(
     asOf: options?.asOf, years: options?.years, offsets: options?.offsets,
   };
 
-  const outcome = await cachedAtrosCall(ctx.store, ctx.run, birth, toolName, args, exec);
-  return { ok: true, result: { ...outcome, toolName } };
+  const outcome = await cachedAtrosCall(
+    ctx.store,
+    ctx.run,
+    birth,
+    toolName,
+    args,
+    executeOverride ?? exec,
+  );
+  if (!outcome.ok) {
+    const message = {
+      INVALID_BIRTHDATA: 'The calculation could not run because the stored birth data is invalid.',
+      EPHEMERIS_ERROR: 'The calculation could not run because ephemeris data was unavailable.',
+      INTERNAL: 'The calculation service could not complete this request.',
+    }[outcome.error.code] ?? 'The calculation could not be completed.';
+    return err(`atros_${outcome.error.code.toLowerCase()}`, message);
+  }
+  return ok({ ...outcome, toolName });
 }

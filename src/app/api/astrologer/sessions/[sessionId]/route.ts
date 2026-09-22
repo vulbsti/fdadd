@@ -1,6 +1,7 @@
 /** Session detail: persisted messages, latest run, opaque keyset cursor. */
 
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { AgentStoreError } from '@/lib/astro/agent-store';
 import {
@@ -17,12 +18,12 @@ function encodeCursor(cursor: { createdAt: string; id: string }): string {
 function decodeCursor(raw: string | null): { createdAt: string; id: string } | null {
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(Buffer.from(raw, 'base64url').toString('utf8')) as {
-      createdAt?: string;
-      id?: string;
-    };
-    if (!parsed.createdAt || !parsed.id) return null;
-    return { createdAt: parsed.createdAt, id: parsed.id };
+    if (raw.length > 256) return null;
+    const parsed = z.object({
+      createdAt: z.string().datetime({ offset: true }),
+      id: z.string().uuid(),
+    }).safeParse(JSON.parse(Buffer.from(raw, 'base64url').toString('utf8')));
+    return parsed.success ? parsed.data : null;
   } catch {
     return null;
   }
@@ -51,6 +52,7 @@ export async function GET(
     const latestRun = session.last_run_id
       ? await auth.store.getRun(session.last_run_id as string).catch(() => null)
       : null;
+    const trace = latestRun ? await auth.store.listRunSteps(latestRun.id) : [];
 
     const profileName = (profile?.name as string | null) ?? null;
     const detail: AstrologerSessionDetail = AstrologerSessionDetailSchema.parse({
@@ -92,6 +94,7 @@ export async function GET(
               createdAt: latestRun.started_at,
               updatedAt: latestRun.updated_at,
             },
+      trace,
       nextCursor: nextCursor ? encodeCursor(nextCursor) : null,
     });
     return NextResponse.json(detail);

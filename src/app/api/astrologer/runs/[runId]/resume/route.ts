@@ -6,8 +6,8 @@
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { errorResponse, requireAuth, startAndAttach, unconfigured } from '@/lib/astro/api-helpers';
-import { astrologerRunWorkflow } from '@/workflows/astrologer-run';
+import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
+import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
 
 export const runtime = 'nodejs';
 
@@ -36,9 +36,9 @@ export async function POST(
 
   try {
     const resumed = await auth.store.resumeAgentRun(runId, parsed.data.clientRequestId);
-    if (!resumed.replayed) {
-      await startAndAttach(astrologerRunWorkflow, resumed.runId, auth.store);
-    }
+    // Replayed resumes are recovery opportunities too: the transaction may
+    // have committed while the original request died before Workflow start.
+    await dispatchAstrologerRunBestEffort(resumed.runId);
     return NextResponse.json(
       {
         runId: resumed.runId,

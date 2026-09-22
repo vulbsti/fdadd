@@ -3,6 +3,9 @@ import { withWorkflow } from 'workflow/next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // A second local E2E server needs an isolated Next lock/build directory.
+  // Keep the production/default artifact at `.next`.
+  distDir: process.env.NEXT_DIST_DIR === '.next-recovery' ? '.next-recovery' : '.next',
   images: {
     remotePatterns: [
       {

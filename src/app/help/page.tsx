@@ -20,7 +20,7 @@ export default function HelpPage() {
         <AccordionItem value="item-2">
           <AccordionTrigger className="text-lg">How does DatePlanner work?</AccordionTrigger>
           <AccordionContent className="text-base text-muted-foreground">
-            Simply describe the type of date you're planning (e.g., occasion, desired vibe, preferences for food or activity). Our AI will analyze your input and generate suggestions for outfits, locations, and activities tailored to your description.
+            Simply describe the type of date you&apos;re planning (e.g., occasion, desired vibe, preferences for food or activity). Our AI will analyze your input and generate suggestions for outfits, locations, and activities tailored to your description.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
@@ -38,7 +38,7 @@ export default function HelpPage() {
          <AccordionItem value="item-5">
           <AccordionTrigger className="text-lg">What if I encounter a problem?</AccordionTrigger>
           <AccordionContent className="text-base text-muted-foreground">
-             If you experience any issues or have further questions, please don't hesitate to <a href="/contact" className="text-primary underline hover:no-underline">contact our support team</a>. We're here to help!
+             If you experience any issues or have further questions, please don&apos;t hesitate to <a href="/contact" className="text-primary underline hover:no-underline">contact our support team</a>. We&apos;re here to help!
           </AccordionContent>
         </AccordionItem>
       </Accordion>
