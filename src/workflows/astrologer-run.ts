@@ -21,6 +21,7 @@ import type { AstroFinishRunArgs, AgentErrorCode, AstrologerRunEvent, RunCheckpo
 import { getErrorMessage } from '@/lib/astro/workflow-errors';
 import { selectedContextBlock, type SelectedSource } from '@/lib/astro/selected-context';
 import { parseFinishProposal } from '@/lib/astro/finish-proposal';
+import { resolveAgentFinishMode, type AgentFinishMode } from '@/lib/astro/agent-budget';
 import { verificationNeedsRetry } from '@/lib/astro/verification-policy';
 import {
   parsePersonRunMode,
@@ -384,17 +385,18 @@ async function modelDecisionStep(input: {
   expectedModeEpoch: number;
   stepKey: string;
   messages: ChatMessage[];
-  forceFinish: boolean;
+  finishMode: AgentFinishMode;
   hasBirthData: boolean;
 }): Promise<{ content: string | null; toolCalls: ToolCallRequest[]; provider?: string; model?: string }> {
   'use step';
-  const messages = input.forceFinish
+  const messages = input.finishMode !== 'normal'
     ? [
         ...input.messages,
         {
           role: 'system' as const,
-          content:
-            'The run is near its step limit. Do not request more evidence. Call astro_finish_run now with the best supported answer or one focused question, and state uncertainty explicitly.',
+          content: input.finishMode === 'text'
+            ? 'The run is at its final model step. Return only the best supported user-facing answer as plain text. Do not call tools, request more evidence, or include hidden reasoning. State uncertainty explicitly.'
+            : 'The run is near its step limit. Do not request more evidence. Call astro_finish_run now with the best supported answer or one focused question, and state uncertainty explicitly.',
         },
       ]
     : input.messages;
@@ -406,9 +408,11 @@ async function modelDecisionStep(input: {
       // Budget enforcement must be structural, not just prompt text. Once the
       // run reaches its final two operations, do not expose retrieval or Atros
       // tools that could consume the remaining budget without a draft.
-      tools: input.forceFinish
-        ? providerTools(['astro_finish_run'])
-        : filterAtrosTools(
+      tools: input.finishMode === 'text'
+        ? undefined
+        : input.finishMode === 'tool'
+          ? providerTools(['astro_finish_run'])
+          : filterAtrosTools(
             providerTools().filter((tool) =>
               tool.function.name !== 'astro_record_plan'
               && !LEGACY_PERSON_WRITE_TOOLS.has(tool.function.name)),
@@ -417,7 +421,7 @@ async function modelDecisionStep(input: {
           ),
       // OpenCode Go/Responses only accepts automatic selection. The prompt and
       // the tool registry provide the semantic constraint when finishing.
-      toolChoice: 'auto',
+      toolChoice: input.finishMode === 'text' ? undefined : 'auto',
       sessionId: input.runId,
       maxTokens: 4096,
     }),
@@ -1018,11 +1022,13 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
           expectedModeEpoch: snapshot.profile.modeEpoch,
           stepKey: key,
           messages,
-          // Each forced finish may consume one model step plus one tool-result
-          // step. Reserve three bounded attempts so one or two malformed
-          // provider envelopes do not turn an otherwise-grounded answer into
-          // an agent_step_limit failure.
-          forceFinish: agentSteps >= MAX_AGENT_STEPS - (FORCED_FINISH_ATTEMPTS * 2),
+          // Each tool-based finish may consume one model step plus one
+          // tool-result step. Reserve bounded attempts, then make the last
+          // model call text-only. OpenCode Go only accepts automatic tool
+          // selection, so removing the tool registry is the structural
+          // fallback when it repeatedly returns malformed/ignored finish
+          // calls.
+          finishMode: resolveAgentFinishMode(agentSteps, MAX_AGENT_STEPS, FORCED_FINISH_ATTEMPTS),
           hasBirthData: Boolean(snapshot.profile.birthDate && snapshot.profile.birthTime && snapshot.profile.lat !== null && snapshot.profile.lng !== null && snapshot.profile.tz),
         });
         agentSteps++;
