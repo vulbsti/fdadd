@@ -113,4 +113,48 @@ describe('Atros agent-tool result propagation', () => {
       });
     expect(store.writeCalculationCache).not.toHaveBeenCalled();
   });
+
+  it('turns malformed executor results into a safe typed failure without caching', async () => {
+    const { context, store } = atrosContext();
+    const execute = vi.fn(async () => ({ ok: true as const }));
+
+    await expect(runAtrosTool(context, 'atros_chart', undefined, execute))
+      .resolves.toEqual({
+        ok: false,
+        error: {
+          code: 'atros_internal',
+          message: 'The calculation service could not complete this request.',
+        },
+      });
+    expect(store.writeCalculationCache).not.toHaveBeenCalled();
+  });
+
+  it('turns thrown executor errors into a safe typed failure and keeps diagnostics server-side', async () => {
+    const { context, store } = atrosContext();
+    const execute = vi.fn(async () => {
+      throw new Error('/private/path/sandbox timed out');
+    });
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    try {
+      await expect(runAtrosTool(context, 'atros_chart', undefined, execute))
+        .resolves.toEqual({
+          ok: false,
+          error: {
+            code: 'atros_internal',
+            message: 'The calculation service could not complete this request.',
+          },
+        });
+      expect(consoleError).toHaveBeenCalledWith(
+        '[astrologer-tool] Atros executor threw',
+        expect.objectContaining({
+          tool_name: 'atros_chart',
+          message: '/private/path/sandbox timed out',
+        }),
+      );
+      expect(store.writeCalculationCache).not.toHaveBeenCalled();
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
 });
