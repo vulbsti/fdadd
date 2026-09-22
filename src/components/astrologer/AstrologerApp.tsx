@@ -141,7 +141,7 @@ const AstrologerApp: React.FC = () => {
         {listError ? (
           <div className="p-3 text-xs text-destructive">{listError}</div>
         ) : null}
-        <ScrollArea className="flex-1">
+        <ScrollArea className="min-h-0 flex-1">
           <div className="flex flex-col gap-1 p-2">
             {sessions.map((session) => (
               <button
@@ -169,7 +169,7 @@ const AstrologerApp: React.FC = () => {
       </div>
 
       {/* Main */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {!isSidebarOpen ? (
           <div className="border-b p-2">
             <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)}>

@@ -212,7 +212,7 @@ export default function AstrologerChat({
   };
 
   return (
-    <div className={cn('flex h-full flex-col', className)}>
+    <div className={cn('flex h-full min-h-0 flex-col', className)}>
       {detail?.profile?.initializationStatus === 'pending' && !resumableFailed ? (
         <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
           <Loader2 className="mr-2 inline h-3 w-3 animate-spin" />
@@ -258,7 +258,7 @@ export default function AstrologerChat({
         </details>
       ) : null}
 
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="min-h-0 flex-1 p-4">
         <div className="flex flex-col gap-3">
           {messages.map((message) => (
             <div
