@@ -3,7 +3,10 @@ import path from 'node:path';
 
 export default defineConfig({
   test: {
-    include: ['tests/person-model-v3/**/*.test.ts'],
+    include: [
+      'tests/person-model-v3/**/*.test.ts',
+      'src/workflows/person-consolidation.recovery.test.ts',
+    ],
     environment: 'node',
   },
   resolve: {

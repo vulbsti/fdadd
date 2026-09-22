@@ -317,12 +317,16 @@ export type PersonChange = z.infer<typeof PersonChangeSchema>;
 
 const AddEventChangeSchema = z.object({
   kind: z.literal('add_event'),
-  payload: episodePayload,
+  payload: z.object({
+    what: nonEmpty(2_000),
+    when: z.string().trim().max(500).nullable().optional(),
+    whatChanged: z.string().trim().max(2_000).nullable().optional(),
+  }).strict(),
 }).strict();
 const CorrectAccountChangeSchema = z.object({
   kind: z.literal('correct_account'),
   targetObjectId: uuidSchema,
-  payload: PersonObjectPayloadSchema,
+  payload: z.object({ correction: nonEmpty(2_000) }).strict(),
 }).strict();
 const RejectInterpretationChangeSchema = z.object({
   kind: z.literal('reject_interpretation'),
@@ -331,7 +335,10 @@ const RejectInterpretationChangeSchema = z.object({
 }).strict();
 const AddMeaningChangeSchema = z.object({
   kind: z.literal('add_meaning'),
-  payload: meaningChangePayload,
+  payload: z.object({
+    meaning: nonEmpty(2_000),
+    context: z.string().trim().max(1_000).nullable().optional(),
+  }).strict(),
 }).strict();
 const ExcludeSourceChangeSchema = z.object({
   kind: z.literal('exclude_source'),
