@@ -19,7 +19,7 @@ document and the code disagree.
 - [`architecture/person-model-v3/P0-EXECUTION-RECEIPT.md`](architecture/person-model-v3/P0-EXECUTION-RECEIPT.md)
   — the local baseline, harness results, and still-unverified external boundaries.
 - [`architecture/person-model-v3/P1-PROGRESS-RECEIPT.md`](architecture/person-model-v3/P1-PROGRESS-RECEIPT.md)
-  — current durable dispatch, two-turn provider/browser proof, visual findings, and open P1 recovery/deployment gates.
+  — accepted P1 reliability gate, isolated staging/deployed recovery proof, visual findings, and explicit P2 handoff limits.
 - [`design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md`](design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md)
   — the approved visual direction and the four retained reference images.
 
