@@ -20,16 +20,17 @@ document and the code disagree.
   — the local baseline, harness results, and still-unverified external boundaries.
 - [`architecture/person-model-v3/P1-PROGRESS-RECEIPT.md`](architecture/person-model-v3/P1-PROGRESS-RECEIPT.md)
   — accepted P1 reliability gate, isolated staging/deployed recovery proof, visual findings, and explicit P2 handoff limits.
+- [`architecture/person-model-v3/P2-EXECUTION-RECEIPT.md`](architecture/person-model-v3/P2-EXECUTION-RECEIPT.md)
+  — accepted P2 person/revision authority, staging and browser evidence, visual-infrastructure status, and explicit P3 boundary.
 - [`design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md`](design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md)
   — the approved visual direction and the four retained reference images.
 
 ## Status boundaries
 
-The v3 architecture package is implementation-ready design. It does not claim
-that the v3 person model, import flow, profile projections, privacy controls,
-or release gates already exist. The current astrologer page still redirects
-unauthenticated or unconfigured visitors to `/`; the v3 UI behavior contract
-describes the intended future behavior.
+The v3 person/revision authority and route-backed visual infrastructure now
+exist through P2. Source-led learning, suggestion generation, complete guided
+loops, imports/deletion, and release gates remain later phases. The P2 receipt
+separates revision-backed contract-fixture UI proof from learned-model proof.
 
 The current source has real Supabase authentication and payment routes, while
 FashionDaddy, DatePlanner, blog, and RSS still contain sample or in-memory

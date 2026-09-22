@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, User, LogOut, LogIn, UserPlus, Palette } from 'lucide-react'; // Added Palette icon
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
@@ -110,6 +110,10 @@ export default function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <SheetHeader className="sr-only">
+                <SheetTitle>Navigation menu</SheetTitle>
+                <SheetDescription>Site navigation and account actions.</SheetDescription>
+              </SheetHeader>
               <nav className="flex flex-col gap-4 pt-8">
                 {NAV_LINKS.map((link) => (
                   <Link

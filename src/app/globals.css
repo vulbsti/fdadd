@@ -128,6 +128,21 @@
     /* Muted gold accent — same hue family as the beige neutrals */
     --gold: 38 55% 52%;
     --gold-bright: 40 70% 68%;
+
+    /* Revision-backed person workspace. Kept semantic so diagrams can change
+       structure without scattering screenshot-specific colours through JSX. */
+    --person-canvas: 42 36% 97%;
+    --person-surface: 42 38% 99%;
+    --person-ink: 213 66% 20%;
+    --person-muted-ink: 217 20% 42%;
+    --person-rule: 38 17% 84%;
+    --person-accent: 34 47% 48%;
+    --person-present: 212 58% 34%;
+    --person-past-tint: 145 16% 91%;
+    --person-interpretation-tint: 220 26% 92%;
+    --person-open-question-tint: 36 33% 91%;
+    --person-future-line: 126 22% 44%;
+    --person-focus-ring: 34 63% 42%;
   }
 }
 

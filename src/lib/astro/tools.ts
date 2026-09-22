@@ -26,11 +26,11 @@ export interface ProfileRow {
   id: string;
   user_id: string;
   name: string;
-  birth_date: string;
-  birth_time: string;
-  lat: number;
-  lng: number;
-  tz: string;
+  birth_date: string | null;
+  birth_time: string | null;
+  lat: number | null;
+  lng: number | null;
+  tz: string | null;
   place_name: string | null;
   time_source: string;
   time_confidence: string;
@@ -39,6 +39,9 @@ export interface ProfileRow {
 }
 
 function birthFromProfile(profile: ProfileRow): BirthDataInput {
+  if (!profile.birth_date || !profile.birth_time || profile.lat === null || profile.lng === null || !profile.tz) {
+    throw new Error('Astrology is unavailable until complete birth information is configured.');
+  }
   return parseBirthData({
     name: profile.name,
     date: profile.birth_date,

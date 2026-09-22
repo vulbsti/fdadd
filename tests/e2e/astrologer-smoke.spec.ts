@@ -51,22 +51,32 @@ test('authenticated astrologer route survives reload and owned profiles API resp
 
     await page.goto('/astrologer');
     await expect(page).toHaveURL(/\/astrologer$/);
-    await expect(page.getByRole('heading', { name: 'Astrologer' })).toBeVisible();
-    await expect(page.getByText('Loading your readings…')).toBeHidden({ timeout: 20_000 });
+    await expect(page.getByRole('heading', { name: 'Whose life are we understanding?' })).toBeVisible();
 
     const profilesApi = await page.request.get('/api/astrologer/profiles');
     expect(profilesApi.status()).toBe(200);
     const payload = (await profilesApi.json()) as { profiles?: unknown };
     expect(payload.profiles).toEqual([]);
 
+    await page.getByLabel('Name').fill('Sparse browser person');
+    await page.getByRole('button', { name: /create personal map/i }).click();
+    await expect(page).toHaveURL(/\/astrologer\/p\/[0-9a-f-]+\/profile\/life-map$/, { timeout: 20_000 });
+    await expect(page.getByRole('heading', { name: /your life map starts/i })).toBeVisible();
+    if (testInfo.project.name === 'mobile') {
+      await page.getByRole('button', { name: /open navigation/i }).click();
+      await expect(page.locator('aside:visible').getByText('Private · Personal only')).toBeVisible();
+      await page.getByRole('button', { name: /close navigation/i }).last().click();
+    } else {
+      await expect(page.getByText('Private · Personal only')).toBeVisible();
+    }
+
     await page.screenshot({
       path: testInfo.outputPath(`astrologer-${testInfo.project.name}-initial.png`),
       fullPage: true,
     });
     await page.reload();
-    await expect(page).toHaveURL(/\/astrologer$/);
-    await expect(page.getByRole('heading', { name: 'Astrologer' })).toBeVisible();
-    await expect(page.getByText('Loading your readings…')).toBeHidden({ timeout: 20_000 });
+    await expect(page).toHaveURL(/\/astrologer\/p\/[0-9a-f-]+\/profile\/life-map$/);
+    await expect(page.getByRole('heading', { name: /your life map starts/i })).toBeVisible();
     await page.screenshot({
       path: testInfo.outputPath(`astrologer-${testInfo.project.name}-reloaded.png`),
       fullPage: true,

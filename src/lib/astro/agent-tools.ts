@@ -199,6 +199,8 @@ export interface ToolContext {
   store: AgentStore;
   run: RunRow;
   profile: ProfileRow;
+  /** Server-derived preference and readiness gate; never supplied by the model. */
+  astrologyEnabled?: boolean;
   stepKey: string;
   today: string;
 }
@@ -601,6 +603,19 @@ export async function runAtrosTool(
   options?: { from?: string; to?: string; level?: string; asOf?: string; years?: number; offsets?: number[] },
   executeOverride?: () => Promise<unknown>,
 ): Promise<ToolOutcome> {
+  if (
+    ctx.astrologyEnabled === false ||
+    !ctx.profile.birth_date ||
+    !ctx.profile.birth_time ||
+    ctx.profile.lat === null ||
+    ctx.profile.lng === null ||
+    !ctx.profile.tz
+  ) {
+    return err(
+      'astrology_unavailable',
+      'Astrological calculations are unavailable in personal-only mode or until complete birth information is configured.',
+    );
+  }
   const birth = {
     name: ctx.profile.name,
     date: ctx.profile.birth_date,
