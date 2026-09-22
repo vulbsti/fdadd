@@ -62,7 +62,13 @@ test('authenticated astrologer route survives reload and owned profiles API resp
     await page.getByRole('button', { name: /create personal map/i }).click();
     await expect(page).toHaveURL(/\/astrologer\/p\/[0-9a-f-]+\/profile\/life-map$/, { timeout: 20_000 });
     await expect(page.getByRole('heading', { name: /your life map starts/i })).toBeVisible();
-    await expect(page.getByText('Personal only')).toBeVisible();
+    if (testInfo.project.name === 'mobile') {
+      await page.getByRole('button', { name: /open navigation/i }).click();
+      await expect(page.locator('aside:visible').getByText('Private · Personal only')).toBeVisible();
+      await page.getByRole('button', { name: /close navigation/i }).last().click();
+    } else {
+      await expect(page.getByText('Private · Personal only')).toBeVisible();
+    }
 
     await page.screenshot({
       path: testInfo.outputPath(`astrologer-${testInfo.project.name}-initial.png`),
