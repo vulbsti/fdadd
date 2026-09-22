@@ -1,8 +1,8 @@
 # P2 execution receipt — person identity and revision authority
 
-Updated: September 22, 2026. Status: **P2 authority gate accepted on local and isolated staging**. This receipt covers source ownership, atomic person revisions, correction invalidation, owner isolation, and revision-backed UI infrastructure. It is not a claim that P3 consolidation, P4 suggestion generation, P8 imports/deletion, or production rollout is complete. Source base `1fad1a4` plus the P2 commit on branch `feature/redesignv2`, PR [#6](https://github.com/vulbsti/fdadd/pull/6).
+Updated: September 22, 2026. Status: **P2 authority gate accepted on local and isolated staging**. This receipt covers source ownership, atomic person revisions, correction invalidation, owner isolation, and revision-backed UI infrastructure. It is not a claim that P3 consolidation, P4 suggestion generation, P8 imports/deletion, or production rollout is complete. Implementation commit `9339b2b` on branch `feature/redesignv2`, PR [#7](https://github.com/vulbsti/fdadd/pull/7).
 
-Production Supabase `aidoraa` (`ezanfqbewuqttatrkvhf`) and the production Vercel alias were not changed. The requested `supabase-amber-book` project (`svekonjfpqlusrwmmafg`) is inactive and past Supabase's restoration window, so the existing active `aidoraa-staging` project (`wtloawiwntyjiidjbmuk`) remains the isolated test target.
+Production Supabase `aidoraa` (`ezanfqbewuqttatrkvhf`) and the production Vercel alias were not changed. The requested `supabase-amber-book` project (`svekonjfpqlusrwmmafg`) is inactive and past Supabase's [restoration window](https://supabase.com/docs/guides/platform/free-project-pausing), so the existing active `aidoraa-staging` project (`wtloawiwntyjiidjbmuk`) remains the isolated test target.
 
 ## What was built
 
@@ -37,6 +37,7 @@ This is **revision-backed contract-fixture integration**, not proof that ordinar
 | Schema lint | No error-level findings locally or on `aidoraa-staging` | `npx supabase db lint --local --level error`; `npx supabase db lint --linked --level error` |
 | Build | Pass on installed Next.js 16.3.5 | `npm run build` |
 | Browser/visual | Three Chromium viewports; four route screenshots per viewport | `npm run test:e2e:p2-visual:local` |
+| Hosted browser/visual | Pass on all three viewports against the exact Ready Preview deployment and staging database; public login, routes, deep links, persisted exploration context, and zero fabricated messages were exercised. | Deployment `dpl_CUfnrKXdLJyNyCxzCf7pMTXfhQKT`; [Preview](https://fdadd-552bncx7e-vulbstis-projects.vercel.app); `npm run test:e2e:p2-visual:staging` |
 | Staging data path | Pass: person, source, job, publication, coherent projection, exploration, search, direct-write denial, and cross-user denial; both disposable users deleted in `finally` | `npm run test:p2:staging` with guarded staging-only environment |
 
 The local network resolved project subdomains to an address that could not complete TLS. The staging canary supports an optional DNS-over-HTTPS-resolved IP through a process-local Undici dispatcher while retaining the original hostname for TLS verification. No host file, global resolver, or Supabase project setting was changed. The currently issued `publishable`/`secret` keys returned `Invalid API key` from the data-plane gateway, while the project's legacy `anon`/`service_role` keys passed; the canary never prints either value.

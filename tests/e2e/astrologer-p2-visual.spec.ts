@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
+import { lookup as systemLookup } from 'node:dns';
+import { Agent, setGlobalDispatcher } from 'undici';
 
 function config() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -17,6 +19,23 @@ function config() {
     && host === `${expectedStagingRef}.supabase.co`;
   if (!isLocal && !isGuardedStaging) {
     throw new Error('P2 visual proof refuses an unexpected or production Supabase target.');
+  }
+  const stagingIp = process.env.P2_STAGING_SUPABASE_IP;
+  if (isGuardedStaging) {
+    if (!stagingIp || !/^(?:\d{1,3}\.){3}\d{1,3}$/.test(stagingIp)) {
+      throw new Error('P2 staging visual proof requires an explicit staging DNS override.');
+    }
+    setGlobalDispatcher(new Agent({
+      connect: {
+        lookup(hostname, options, callback) {
+          if (hostname === host) {
+            callback(null, [{ address: stagingIp, family: 4 }]);
+            return;
+          }
+          systemLookup(hostname, options, callback);
+        },
+      },
+    }));
   }
   return { url, secret, publishable };
 }
