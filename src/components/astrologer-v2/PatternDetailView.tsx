@@ -7,6 +7,7 @@ import { ProfileTabs } from './ProfileTabs';
 import { ProjectionNotice } from './ProjectionState';
 import type { ObjectProjection, ViewNode } from './types';
 import ExploreInChatButton from './ExploreInChatButton';
+import SourceDrawer from './SourceDrawer';
 
 function text(payload: Record<string, unknown>, key: string, fallback: string): string {
   const value = payload[key];
@@ -96,6 +97,7 @@ export default function PatternDetailView({ projection }: { projection: ObjectPr
           <p className="font-serif italic text-white/75">A question that could change this understanding</p>
           <div className="mt-1 flex flex-col justify-between gap-4 lg:flex-row lg:items-end"><h2 className="max-w-4xl font-serif text-xl md:text-2xl">{question}</h2><div className="flex flex-wrap gap-3"><ExploreInChatButton personId={projection.personId} objectId={pattern.id} personRevision={projection.personRevision} /><button type="button" onClick={reject} disabled={rejected} className="px-3 text-sm underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">{rejected ? 'Recorded for review' : 'This does not fit me'}</button></div></div>
         </section>
+        <SourceDrawer node={pattern} sources={projection.sources} />
       </article>
     </>
   );

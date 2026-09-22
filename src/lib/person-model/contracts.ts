@@ -34,7 +34,9 @@ export type PersonRelationKind = z.infer<typeof PersonRelationKindSchema>;
 export const EpistemicClassSchema = z.enum(['reported', 'working_hypothesis', 'unknown']);
 export type EpistemicClass = z.infer<typeof EpistemicClassSchema>;
 
-export const LifecycleSchema = z.enum(['active', 'superseded', 'rejected', 'retired']);
+/** Lifecycle values accepted by persisted object and relation versions. */
+export const LifecycleSchema = z.enum(['active', 'superseded', 'retired', 'invalidated']);
+export const PersonVersionLifecycleSchema = LifecycleSchema;
 export const TimeRangeSchema = z.object({
   precision: z.enum(['exact', 'day', 'month', 'year', 'range', 'age', 'relative', 'approximate', 'unknown']),
   start: z.union([isoDate, isoTimestamp]).nullable(),
@@ -393,19 +395,26 @@ export const AcceptedUserMessageSchema = z.object({
 export type AcceptedUserMessage = z.infer<typeof AcceptedUserMessageSchema>;
 
 /** Input format consumed by the fenced person_record_observations RPC. */
-export const PersonObservationDraftSchema = z.object({
+export const PersonObservationDraftBaseSchema = z.object({
   sourceId: uuidSchema,
   spanStart: z.number().int().nonnegative().nullable(),
   spanEnd: z.number().int().nonnegative().nullable(),
   exactQuote: z.string().max(2_000).nullable(),
   normalizedAssertion: nonEmpty(2_000),
+  // Attribution is an explicit extraction result. A null subject ID must not
+  // silently become "self": the statement may concern a parent, a quoted
+  // speaker, a hypothetical person, or be genuinely ambiguous.
+  subjectKind: z.enum(['self', 'other', 'hypothetical', 'unknown']),
+  subjectLabel: z.string().max(180).nullable(),
   subjectPersonId: uuidSchema.nullable(),
   domain: z.string().max(80),
   assertionType: z.enum(['direct', 'derived', 'reported_interpretation', 'assistant_hypothesis', 'unknown', 'question', 'correction']),
   eventTime: TimeRangeSchema,
   extractorVersion: nonEmpty(120),
   verifierVersion: z.string().max(120).nullable(),
-}).strict().superRefine((value, ctx) => {
+}).strict();
+
+export const PersonObservationDraftSchema = PersonObservationDraftBaseSchema.superRefine((value, ctx) => {
   if (value.spanStart !== null && value.spanEnd !== null && value.spanEnd < value.spanStart) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Observation span end must not precede start.' });
   }

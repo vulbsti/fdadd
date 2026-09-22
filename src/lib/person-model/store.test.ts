@@ -387,6 +387,8 @@ describe('PersonStore', () => {
       spanEnd: 10,
       exactQuote: 'I moved.',
       normalizedAssertion: 'Moved to a new city.',
+      subjectKind: 'self' as const,
+      subjectLabel: null,
       subjectPersonId: profileId,
       domain: 'place',
       assertionType: 'direct' as const,

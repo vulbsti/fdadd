@@ -36,8 +36,14 @@ import {
 // leaves room for one bounded verifier-driven revision without permitting an
 // open-ended agent loop.
 const MAX_AGENT_STEPS = 16;
+const FORCED_FINISH_ATTEMPTS = 3;
 const MAX_REJECTED_DRAFTS = 2;
 const DAILY_TOOL_CALL_LIMIT = 100;
+const LEGACY_PERSON_WRITE_TOOLS = new Set([
+  'astro_evidence_record',
+  'astro_person_fact_propose',
+  'astro_person_fact_assess',
+]);
 
 // ---------------------------------------------------------------------------
 // Durable steps
@@ -62,6 +68,12 @@ interface RunSnapshot {
     modeEpoch: number;
     privacyEpoch: number;
   };
+  personContext: {
+    revision: number | null;
+    sourceWatermark: number;
+    modeEpoch: number;
+    privacyEpoch: number;
+  };
   manifestSummary: string;
 }
 
@@ -72,19 +84,36 @@ async function loadRunSnapshot(runId: string): Promise<RunSnapshot> {
   const run = await store.getRun(runId);
   const profile = await store.getProfile(run.profile_id);
   if (!profile) throw new FatalError('profile missing for run');
-  const preferencesResult = await store.adminClient
-    .from('person_preferences')
-    .select('astrology_enabled, mode_epoch')
-    .eq('profile_id', run.profile_id)
-    .eq('user_id', run.user_id)
-    .maybeSingle();
+  const [preferencesResult, headResult] = await Promise.all([
+    store.adminClient
+      .from('person_preferences')
+      .select('astrology_enabled, mode_epoch')
+      .eq('profile_id', run.profile_id)
+      .eq('user_id', run.user_id)
+      .maybeSingle(),
+    store.adminClient
+      .from('person_model_heads')
+      .select('current_revision,processed_source_seq,privacy_epoch,mode_epoch,publication_state')
+      .eq('profile_id', run.profile_id)
+      .eq('user_id', run.user_id)
+      .maybeSingle(),
+  ]);
   const mode = parsePersonRunMode(preferencesResult);
-  const headResult = await store.adminClient
-    .from('person_model_heads')
-    .select('privacy_epoch')
-    .eq('profile_id', run.profile_id)
-    .eq('user_id', run.user_id)
-    .maybeSingle();
+  const currentRevision = Number(headResult.data?.current_revision ?? 0);
+  const revisionResult = currentRevision > 0
+    ? await store.adminClient
+      .from('person_model_revisions')
+      .select('revision_no,processed_source_seq,mode_epoch,privacy_epoch,brief')
+      .eq('profile_id', run.profile_id)
+      .eq('user_id', run.user_id)
+      .eq('revision_no', currentRevision)
+      .maybeSingle()
+    : { data: null, error: null };
+  const revisionIsEligible = Boolean(
+    revisionResult.data
+    && Number(revisionResult.data.mode_epoch) === Number(headResult.data?.mode_epoch ?? -1)
+    && Number(revisionResult.data.privacy_epoch) === Number(headResult.data?.privacy_epoch ?? -1),
+  );
   const hasBirthData = Boolean(
     profile.birth_date && profile.birth_time && profile.lat !== null &&
     profile.lat !== undefined && profile.lng !== null && profile.lng !== undefined && profile.tz,
@@ -106,6 +135,12 @@ async function loadRunSnapshot(runId: string): Promise<RunSnapshot> {
       .join(', ')}`,
     `Open hypotheses (${manifest.hypotheses.length}).`,
     `Prior sessions summarized: ${manifest.priorSessionSummaries.length}.`,
+    revisionIsEligible && revisionResult.data?.brief
+      ? `Current source-backed person understanding (revision ${currentRevision}, through source ${Number(revisionResult.data.processed_source_seq ?? 0)}):\n${String(revisionResult.data.brief).slice(0, 10000)}`
+      : 'No current source-backed person brief is available yet.',
+    headResult.data?.publication_state && headResult.data.publication_state !== 'current'
+      ? 'A newer person-model update is pending; continue using the last complete revision and state uncertainty.'
+      : '',
   ].filter(Boolean);
 
   return {
@@ -125,6 +160,12 @@ async function loadRunSnapshot(runId: string): Promise<RunSnapshot> {
       hasSensitivity: manifest.hasFrozenSensitivity,
       astrologyEnabled: mode.astrologyEnabled && hasBirthData,
       modeEpoch: mode.modeEpoch,
+      privacyEpoch: Number(headResult.data?.privacy_epoch ?? 0),
+    },
+    personContext: {
+      revision: revisionIsEligible ? currentRevision : null,
+      sourceWatermark: revisionIsEligible ? Number(revisionResult.data?.processed_source_seq ?? 0) : 0,
+      modeEpoch: Number(headResult.data?.mode_epoch ?? mode.modeEpoch),
       privacyEpoch: Number(headResult.data?.privacy_epoch ?? 0),
     },
     manifestSummary: summaryLines.join('\n'),
@@ -368,7 +409,9 @@ async function modelDecisionStep(input: {
       tools: input.forceFinish
         ? providerTools(['astro_finish_run'])
         : filterAtrosTools(
-            providerTools().filter((tool) => tool.function.name !== 'astro_record_plan'),
+            providerTools().filter((tool) =>
+              tool.function.name !== 'astro_record_plan'
+              && !LEGACY_PERSON_WRITE_TOOLS.has(tool.function.name)),
             mode,
             input.hasBirthData,
           ),
@@ -811,6 +854,12 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       kind: 'plan',
       status: 'succeeded',
       outputSummary: `model=${planned.model ?? 'configured'}; plan: ${plan.goal}`,
+      refs: {
+        personRevision: snapshot.personContext.revision,
+        personSourceWatermark: snapshot.personContext.sourceWatermark,
+        personModeEpoch: snapshot.personContext.modeEpoch,
+        personPrivacyEpoch: snapshot.personContext.privacyEpoch,
+      },
       phase: 'retrieval',
       checkpoint: { ...checkpoint, currentGoal: plan.goal, planStepIndex: 0, contextVersion: checkpoint.contextVersion + 1 },
       plan,
@@ -969,7 +1018,11 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
           expectedModeEpoch: snapshot.profile.modeEpoch,
           stepKey: key,
           messages,
-          forceFinish: agentSteps >= MAX_AGENT_STEPS - 2,
+          // Each forced finish may consume one model step plus one tool-result
+          // step. Reserve three bounded attempts so one or two malformed
+          // provider envelopes do not turn an otherwise-grounded answer into
+          // an agent_step_limit failure.
+          forceFinish: agentSteps >= MAX_AGENT_STEPS - (FORCED_FINISH_ATTEMPTS * 2),
           hasBirthData: Boolean(snapshot.profile.birthDate && snapshot.profile.birthTime && snapshot.profile.lat !== null && snapshot.profile.lng !== null && snapshot.profile.tz),
         });
         agentSteps++;

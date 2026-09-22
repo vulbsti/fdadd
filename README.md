@@ -33,6 +33,10 @@ those boundaries explicitly.
   `OPENCODE_API_KEY`, `OPENGO_API`, then `OPENROUTER_API_KEY`. OpenCode Go
   uses `muse-spark-1.3-contributor` by default; `ASTROLOGER_MODEL` and then
   `OPENROUTER_MODEL` can override the model.
+- Structured person-model consolidation can be routed independently with
+  `PERSON_CONSOLIDATION_MODEL`; without an override, OpenCode Go uses
+  `kimi-k3` for exact extraction and JSON-schema-guided later stages. Every
+  stage is still locally validated before it can be staged or published.
 
 ## Local development
 

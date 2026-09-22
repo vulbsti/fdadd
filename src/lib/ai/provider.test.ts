@@ -4,6 +4,7 @@ import {
   toResponsesInput,
   toResponsesToolChoice,
   resolveProviderTimeoutMs,
+  resolveProviderRetryDelayMs,
   resolveProviderBaseUrl,
 } from './provider';
 
@@ -27,6 +28,14 @@ describe('OpenCode/Pi tool protocol compatibility', () => {
     expect(resolveProviderTimeoutMs(100)).toBe(5_000);
     expect(resolveProviderTimeoutMs(undefined, '999999')).toBe(120_000);
     expect(resolveProviderTimeoutMs(undefined, 'invalid')).toBe(45_000);
+  });
+
+  it('bounds Retry-After pauses and falls back to a meaningful quota cooldown', () => {
+    const now = Date.parse('2026-09-22T12:00:00Z');
+    expect(resolveProviderRetryDelayMs(null, now)).toBe(20_000);
+    expect(resolveProviderRetryDelayMs('2', now)).toBe(5_000);
+    expect(resolveProviderRetryDelayMs('120', now)).toBe(60_000);
+    expect(resolveProviderRetryDelayMs('Tue, 22 Sep 2026 12:00:30 GMT', now)).toBe(30_000);
   });
 
   it('normalizes named Responses choices to automatic selection for OpenCode Go', () => {

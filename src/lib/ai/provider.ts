@@ -253,6 +253,15 @@ export function resolveProviderTimeoutMs(override?: number, configured?: string)
   return Math.min(Math.max(Math.trunc(parsed), MIN_FETCH_TIMEOUT_MS), MAX_FETCH_TIMEOUT_MS);
 }
 
+/** A single bounded pause prevents workflow retries from hammering a 429. */
+export function resolveProviderRetryDelayMs(retryAfter: string | null, nowMs = Date.now()): number {
+  const seconds = retryAfter?.trim() ? Number(retryAfter) : Number.NaN;
+  if (Number.isFinite(seconds)) return Math.min(Math.max(Math.ceil(seconds * 1_000), 5_000), 60_000);
+  const at = retryAfter?.trim() ? Date.parse(retryAfter) : Number.NaN;
+  if (Number.isFinite(at)) return Math.min(Math.max(at - nowMs, 5_000), 60_000);
+  return 20_000;
+}
+
 export async function chatCompletion(options: ChatCompletionOptions): Promise<ChatCompletionResult> {
   const provider = resolveProvider();
   const model =
@@ -275,8 +284,15 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     options.timeoutMs,
     process.env.ASTROLOGER_PROVIDER_TIMEOUT_MS,
   );
-  const fetchWithTimeout = (url: string, init: RequestInit): Promise<Response> =>
-    fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+  const fetchWithTimeout = async (url: string, init: RequestInit): Promise<Response> => {
+    const request = () => fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+    const first = await request();
+    if (first.status !== 429) return first;
+    const delayMs = resolveProviderRetryDelayMs(first.headers.get('retry-after'));
+    await first.body?.cancel().catch(() => undefined);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    return request();
+  };
 
   // Responses is Spark-only on Go (qwen/kimi 200 on chat, 401 on responses).
   // Route by model so overrides keep working on their proven protocol.

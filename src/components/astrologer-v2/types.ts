@@ -19,6 +19,20 @@ export interface ViewNode {
   dateLabel?: string | null;
   payload: Record<string, unknown>;
   lifecycle?: string;
+  epistemicClass?: 'reported' | 'working_hypothesis' | 'unknown' | 'calculated' | 'interpretation';
+}
+
+export interface SourceEvidence {
+  supportId: string | null;
+  observationId: string | null;
+  sourceId: string;
+  sourceSeq: number;
+  sourceTime: string | null;
+  speaker: 'user' | 'assistant' | 'tool' | 'system' | 'unknown';
+  subjectKind: 'self' | 'other' | 'hypothetical' | 'unknown';
+  relation: 'supports' | 'contradicts' | 'qualifies' | 'unclassified';
+  assertionType: 'direct' | 'derived' | 'reported_interpretation' | 'assistant_hypothesis' | 'unknown';
+  exactQuote: string | null;
 }
 
 export interface ViewEdge {
@@ -43,6 +57,7 @@ export interface ObjectProjection extends ProjectionMeta {
   related: ViewNode[];
   edges: ViewEdge[];
   supportCount: number;
+  sources: SourceEvidence[];
 }
 
 export interface WorkspacePerson {

@@ -1,6 +1,6 @@
 # Executing the approved life-understanding experience
 
-Specification date: September 20, 2026. Status: P0–P2 implemented and verified on isolated staging; P3–P9 remain the delivery contract and production is unchanged.
+Specification date: September 20, 2026. Status: P0–P2 accepted on isolated staging; P3 has a working local real-provider vertical slice and staging schema, with repeated semantic/correction/hosted-browser gates still open; P4–P9 remain the delivery contract and production is unchanged.
 
 The approved visual direction is fixed. Build the four [v2 mockups](../../design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md), including progressive disclosure, as views of one evolving person model. Text and diagrams must come from that model. The historical examples in the mockups are acceptance examples, never production seed content.
 
@@ -14,6 +14,7 @@ Read in this order:
 6. [P0 execution receipt](P0-EXECUTION-RECEIPT.md): local proof harness, current read-only run state, and open verification boundaries.
 7. [P1 progress receipt](P1-PROGRESS-RECEIPT.md): partial conversation fixes, verification results, and the remaining provider/dispatch gate.
 8. [P2 execution receipt](P2-EXECUTION-RECEIPT.md): accepted person/revision authority, staging/browser proof, and the boundary before learned consolidation.
+9. [P3 execution receipt](P3-EXECUTION-RECEIPT.md): source-led worker, real-provider browser evidence, staging schema receipt, and the remaining closure gates.
 
 The primary architecture is:
 
