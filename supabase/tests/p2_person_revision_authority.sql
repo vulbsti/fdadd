@@ -76,6 +76,7 @@ select public.person_claim_job((select id from public.person_jobs where profile_
 select is((:'first_claim'::jsonb->>'claimed')::boolean,true,'worker receives first fenced source job');
 select public.person_claim_job((:'queued_job'::jsonb->>'jobId')::uuid,300) as concurrent_claim \gset
 select is((:'concurrent_claim'::jsonb->>'claimed')::boolean,true,'concurrent rebuild receives an independent lease fence');
+set local role postgres;
 insert into public.person_objects(id,user_id,profile_id,kind)
 select :'object_id'::uuid, :'user_a'::uuid, id, 'episode' from public.astro_profiles
 where user_id=:'user_a'::uuid and name='P2 A';
@@ -84,6 +85,7 @@ insert into public.person_object_versions(id,user_id,profile_id,object_id,versio
 select :'version_id'::uuid, :'user_a'::uuid, id, :'object_id'::uuid, 1,
   'reported','active','{"title":"Source-backed event"}'::jsonb
 from public.astro_profiles where user_id=:'user_a'::uuid and name='P2 A';
+set local role service_role;
 select public.person_publish_revision(
   (select id from public.person_jobs where profile_id=(select id from public.astro_profiles where user_id=:'user_a'::uuid and name='P2 A')
     and job_kind='source_consolidation'),
@@ -240,11 +242,13 @@ select throws_ok($$select public.person_submit_change(
 set local role service_role;
 select public.person_claim_job((select (result->>'job_id')::uuid from public.person_command_ledger
   where command_id=:'change_command'::uuid),300) as correction_claim \gset
+set local role postgres;
 insert into public.person_object_versions(id,user_id,profile_id,object_id,version_no,
   epistemic_class,lifecycle,typed_payload)
 select 'a2000000-0000-4000-8000-000000000022'::uuid,:'user_a'::uuid,id,:'object_id'::uuid,2,
   'reported','active','{"title":"Corrected event"}'::jsonb
 from public.astro_profiles where user_id=:'user_a'::uuid and name='P2 A';
+set local role service_role;
 select public.person_publish_revision(
   (select (result->>'job_id')::uuid from public.person_command_ledger where command_id=:'change_command'::uuid),
   (:'correction_claim'::jsonb->>'leaseToken')::uuid,

@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
+import { dispatchPersonJobBestEffort } from '@/lib/person-model/consolidation-dispatch';
 
 export const runtime = 'nodejs';
 
@@ -44,7 +45,13 @@ export async function POST(request: Request) {
     // Always attempt dispatch, including an idempotent request replay. A retry
     // can therefore recover a process crash that happened after the database
     // committed the run but before Workflow was started.
-    await dispatchAstrologerRunBestEffort(begun.runId);
+    // Answering and learning are independent durable workflows. The message,
+    // person source, jobs, and both outbox rows have already committed, so a
+    // provider or dispatch failure on either side cannot roll back the input.
+    await Promise.all([
+      dispatchAstrologerRunBestEffort(begun.runId),
+      dispatchPersonJobBestEffort(),
+    ]);
 
     return NextResponse.json(
       {

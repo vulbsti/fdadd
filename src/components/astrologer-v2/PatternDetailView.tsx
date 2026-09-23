@@ -7,6 +7,7 @@ import { ProfileTabs } from './ProfileTabs';
 import { ProjectionNotice } from './ProjectionState';
 import type { ObjectProjection, ViewNode } from './types';
 import ExploreInChatButton from './ExploreInChatButton';
+import SourceDrawer from './SourceDrawer';
 
 function text(payload: Record<string, unknown>, key: string, fallback: string): string {
   const value = payload[key];
@@ -19,7 +20,7 @@ function list(payload: Record<string, unknown>, key: string): string[] {
 }
 
 export default function PatternDetailView({ projection }: { projection: ObjectProjection }) {
-  const [rejected, setRejected] = useState(false);
+  const [rejectionState, setRejectionState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const pattern = projection.object;
   const payload = pattern.payload;
   const supporting = projection.related.filter((node) => node.kind === 'episode');
@@ -32,11 +33,17 @@ export default function PatternDetailView({ projection }: { projection: ObjectPr
   const question = text(payload, 'candidateQuestion', 'What is different when this pattern helps?');
 
   async function reject() {
-    setRejected(true);
-    await fetch(`/api/astrologer/profiles/${projection.personId}/changes`, {
-      method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ kind: 'reject_interpretation', clientCommandId: crypto.randomUUID(), expectedRevision: projection.personRevision, targetId: pattern.id }),
-    });
+    setRejectionState('saving');
+    try {
+      const response = await fetch(`/api/astrologer/profiles/${projection.personId}/changes`, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ kind: 'reject_interpretation', clientCommandId: crypto.randomUUID(), expectedRevision: projection.personRevision, targetId: pattern.id }),
+      });
+      if (!response.ok) throw new Error('rejection was not accepted');
+      setRejectionState('saved');
+    } catch {
+      setRejectionState('error');
+    }
   }
 
   return (
@@ -92,10 +99,12 @@ export default function PatternDetailView({ projection }: { projection: ObjectPr
           </aside>
         </div>
         {supporting.length ? <section className="mt-0 rounded-b-md border border-t-0 px-6 py-4"><h2 className="font-serif text-lg">Episodes to compare</h2><ol className="mt-3 grid gap-4 md:grid-cols-3">{supporting.slice(0, 6).map((node: ViewNode) => <li key={node.id}><Link href={`/astrologer/p/${projection.personId}/profile/life-map/episodes/${node.id}`} className="text-sm underline-offset-4 hover:underline"><strong className="block">{node.dateLabel || 'Date not specified'} · {node.title}</strong><span className="text-[#687387]">{node.summary}</span></Link></li>)}</ol></section> : null}
-        <section className="mt-8 rounded-md border border-[#284b6d] bg-[#153a5c] px-5 py-5 text-white shadow-[0_-8px_30px_rgba(15,40,65,.08)] md:px-8">
+        <section data-testid="pattern-rejection-panel" className="mt-8 rounded-md border border-[#284b6d] bg-[#153a5c] px-5 py-5 text-white shadow-[0_-8px_30px_rgba(15,40,65,.08)] md:px-8">
           <p className="font-serif italic text-white/75">A question that could change this understanding</p>
-          <div className="mt-1 flex flex-col justify-between gap-4 lg:flex-row lg:items-end"><h2 className="max-w-4xl font-serif text-xl md:text-2xl">{question}</h2><div className="flex flex-wrap gap-3"><ExploreInChatButton personId={projection.personId} objectId={pattern.id} personRevision={projection.personRevision} /><button type="button" onClick={reject} disabled={rejected} className="px-3 text-sm underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">{rejected ? 'Recorded for review' : 'This does not fit me'}</button></div></div>
+          <div className="mt-1 flex flex-col justify-between gap-4 lg:flex-row lg:items-end"><h2 className="max-w-4xl font-serif text-xl md:text-2xl">{question}</h2><div className="flex flex-wrap gap-3"><ExploreInChatButton personId={projection.personId} objectId={pattern.id} personRevision={projection.personRevision} /><button type="button" onClick={reject} disabled={rejectionState === 'saving' || rejectionState === 'saved'} className="px-3 text-sm underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">{rejectionState === 'saving' ? 'Recording…' : rejectionState === 'saved' ? 'Recorded for review' : rejectionState === 'error' ? 'Try recording again' : 'This does not fit me'}</button></div></div>
+          {rejectionState === 'error' ? <p role="alert" className="mt-3 text-right text-sm text-[#ffd7d7]">This was not recorded. Please try again.</p> : null}
         </section>
+        <SourceDrawer node={pattern} sources={projection.sources} />
       </article>
     </>
   );

@@ -30,6 +30,7 @@ export default function LifeMapView({ projection }: { projection: PersonProjecti
   const presentStates = events.filter((node) => node.kind === 'current_state').slice(0, 3);
   const scenarios = projection.nodes.filter((node) => node.kind === 'scenario').slice(0, 3);
   const invitations = projection.nodes.filter((node) => ['gap', 'pattern', 'issue'].includes(node.kind)).slice(0, 2);
+  const compactPastTimeline = pastEvents.length <= 3;
 
   async function submitTurningPoint(event: React.FormEvent) {
     event.preventDefault();
@@ -81,14 +82,19 @@ export default function LifeMapView({ projection }: { projection: PersonProjecti
                 <section aria-labelledby="past-events-heading" className="min-w-0 px-6 py-7 md:px-7">
                   <h3 id="past-events-heading" className="text-[11px] font-semibold uppercase tracking-[.16em] text-[#62728a]">What shaped you</h3>
                   {pastEvents.length ? (
-                    <div className="mt-7 md:overflow-x-auto md:pb-3">
-                      <ol aria-label="Earlier experiences, in chronological order" className="relative flex flex-col gap-5 border-l border-[#9ca9b6] pl-4 md:w-max md:min-w-full md:flex-row md:gap-0 md:border-0 md:pl-0 md:pt-6">
+                    <div
+                      aria-label="Earlier experiences timeline. Scroll horizontally for more."
+                      className={`mt-7 md:pb-3 ${compactPastTimeline ? 'md:overflow-visible' : 'md:overflow-x-auto'}`}
+                      role="region"
+                      tabIndex={0}
+                    >
+                      <ol aria-label="Earlier experiences, in chronological order" className={`relative flex flex-col gap-5 border-l border-[#9ca9b6] pl-4 md:min-w-full md:gap-0 md:border-0 md:pl-0 md:pt-6 ${compactPastTimeline ? 'md:grid md:grid-cols-3' : 'md:w-max md:flex-row'}`}>
                         <span aria-hidden className="absolute left-2 right-2 top-[6px] hidden h-px bg-[#163e67] md:block" />
                         {pastEvents.map((node) => (
-                          <li key={node.id} className="relative w-full pb-1 md:w-[175px] md:shrink-0 md:px-3 md:pb-0 first:md:pl-2 last:md:pr-5">
+                          <li key={node.id} className={`relative w-full min-w-0 pb-1 md:px-3 md:pb-0 first:md:pl-2 last:md:pr-5 ${compactPastTimeline ? 'md:w-auto' : 'md:w-[132px] md:shrink-0 xl:w-[165px]'}`}>
                             <span aria-hidden className="absolute -left-[21px] top-1 h-3.5 w-3.5 rounded-full border-2 border-[#fefdf9] bg-[#1f4a77] md:left-3 md:top-[-25px]" />
                             <Link href={objectHref(projection.personId, node)} className="block rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#b07a32]">
-                              <span className="text-[11px] font-semibold uppercase tracking-[.08em] text-[#173e67]">{node.dateLabel || 'Date not specified'}</span>
+                              <span className="text-[11px] font-semibold uppercase tracking-[.08em] text-[#173e67]">{node.dateLabel && node.dateLabel.length <= 40 ? node.dateLabel : 'Date not specified'}</span>
                               <strong className="mt-1 block font-serif text-lg leading-tight text-[#112d52]">{node.title}</strong>
                               {node.summary ? <span className="mt-1 block text-sm leading-5 text-[#52627a]">{node.summary}</span> : null}
                             </Link>
@@ -140,7 +146,7 @@ export default function LifeMapView({ projection }: { projection: PersonProjecti
 
           <section className="mt-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <div><p className="font-serif text-3xl text-[#102d53]">Questions worth exploring</p><p className="mt-1 text-sm text-[#52627a]">Invitations from gaps or patterns in the current revision.</p></div>
+              <div><h2 className="font-serif text-3xl text-[#102d53]">Questions worth exploring</h2><p className="mt-1 text-sm text-[#52627a]">Invitations from gaps or patterns in the current revision.</p></div>
               <button type="button" onClick={() => setAdding(true)} className="flex items-center gap-2 text-sm font-medium text-[#173e67]"><CirclePlus className="h-5 w-5" /> Add a turning point</button>
             </div>
             <div className="mt-5 grid gap-3 md:grid-cols-2">

@@ -1,77 +1,62 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-
-const base = {
-  clientCommandId: z.string().uuid(),
-  expectedRevision: z.number().int().positive(),
-};
-const schema = z.discriminatedUnion('kind', [
-  z.object({
-    ...base,
-    kind: z.literal('add_event'),
-    account: z.object({
-      what: z.string().trim().min(1).max(2_000),
-      when: z.string().trim().max(500).nullable().optional(),
-      whatChanged: z.string().trim().max(2_000).nullable().optional(),
-    }).strict(),
-  }).strict(),
-  z.object({
-    ...base,
-    kind: z.literal('correct_account'),
-    targetId: z.string().uuid(),
-    account: z.object({ correction: z.string().trim().min(1).max(2_000) }).strict(),
-  }).strict(),
-  z.object({
-    ...base,
-    kind: z.literal('reject_interpretation'),
-    targetId: z.string().uuid(),
-    account: z.object({ explanation: z.string().trim().min(1).max(1_000) }).strict().optional(),
-  }).strict(),
-  z.object({
-    ...base,
-    kind: z.literal('add_meaning'),
-    account: z.object({
-      meaning: z.string().trim().min(1).max(2_000),
-      context: z.string().trim().max(1_000).nullable().optional(),
-    }).strict(),
-  }).strict(),
-  z.object({
-    ...base,
-    kind: z.literal('exclude_source'),
-    targetId: z.string().uuid(),
-  }).strict(),
-]);
+import {
+  PersonChangeCommandSchema,
+  personChangeRequestFromCommand,
+} from '@/lib/person-model/contracts';
+import { PersonStore, PersonStoreError } from '@/lib/person-model/store';
 
 export async function POST(request: Request, { params }: { params: Promise<{ personId: string }> }) {
   const { personId } = await params;
-  const parsed = schema.safeParse(await request.json().catch(() => null));
+  if (!z.string().uuid().safeParse(personId).success) {
+    return NextResponse.json({ code: 'invalid_request', message: 'Invalid person.' }, { status: 400 });
+  }
+  const parsed = PersonChangeCommandSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ code: 'invalid_request', message: 'Invalid person change.' }, { status: 400 });
-  const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
-  if (!user) return NextResponse.json({ code: 'forbidden', message: 'unauthenticated' }, { status: 401 });
-  let change: Record<string, unknown>;
-  switch (parsed.data.kind) {
-    case 'reject_interpretation':
-      change = {
-        kind: parsed.data.kind,
-        targetObjectId: parsed.data.targetId,
-        explanation: parsed.data.account?.explanation ?? 'This interpretation does not fit me.',
-      };
-      break;
-    case 'exclude_source':
-      change = { kind: parsed.data.kind, sourceId: parsed.data.targetId };
-      break;
-    case 'correct_account':
-      change = { kind: parsed.data.kind, targetObjectId: parsed.data.targetId, payload: parsed.data.account };
-      break;
-    default:
-      change = { kind: parsed.data.kind, payload: parsed.data.account };
+  try {
+    const store = await PersonStore.fromRequest();
+    const receipt = await store.submitChange({
+      personId,
+      commandId: parsed.data.clientCommandId,
+      expectedRevision: parsed.data.expectedRevision,
+      change: personChangeRequestFromCommand(parsed.data),
+    });
+    return NextResponse.json({
+      change_id: receipt.changeId,
+      person_id: receipt.personId,
+      source_id: receipt.sourceId,
+      source_seq: receipt.sourceSeq,
+      command_id: receipt.commandId,
+      change_kind: receipt.kind,
+      target_kind: receipt.targetKind,
+      target_id: receipt.targetId,
+      prior_version_id: receipt.priorVersionId,
+      status: receipt.status,
+      resolved_revision: receipt.resolvedRevision,
+      request: receipt.request,
+      invalidated_ids: receipt.invalidatedIds,
+      expected_revision: receipt.expectedRevision,
+      job_id: receipt.jobId,
+      created_at: receipt.createdAt,
+      replayed: receipt.replayed,
+    }, { status: receipt.replayed ? 200 : 202, headers: { 'cache-control': 'private, no-store' } });
+  } catch (error) {
+    if (error instanceof PersonStoreError) {
+      const status = error.code === 'unauthenticated' ? 401
+        : error.code === 'not_owned_or_missing' ? 404
+          : ['conflict', 'stale_revision'].includes(error.code) ? 409
+            : error.code === 'unconfigured' ? 503
+              : error.code === 'internal' ? 500
+                : 400;
+      const code = status === 401 ? 'forbidden'
+        : status === 404 ? 'not_found'
+          : error.code === 'stale_revision' ? 'stale_version'
+            : status === 409 ? 'conflict'
+            : status === 503 ? 'unconfigured'
+              : status === 500 ? 'internal'
+                : 'invalid_request';
+      return NextResponse.json({ code, message: error.message }, { status });
+    }
+    return NextResponse.json({ code: 'internal', message: 'Person change failed.' }, { status: 500 });
   }
-  const { data, error } = await client.rpc('person_submit_change', { p_person_id: personId, p_command_id: parsed.data.clientCommandId, p_expected_revision: parsed.data.expectedRevision, p_change: change });
-  if (error) {
-    const status = error.code === 'PST01' || error.code === 'PERS04' ? 409 : error.code === 'ANF01' ? 404 : 400;
-    return NextResponse.json({ code: status === 409 ? 'stale_version' : status === 404 ? 'not_found' : 'invalid_request', message: error.message }, { status });
-  }
-  return NextResponse.json(data, { status: data?.replayed ? 200 : 202, headers: { 'cache-control': 'private, no-store' } });
 }

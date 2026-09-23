@@ -51,6 +51,7 @@ select public.person_claim_job((:'rebuild_enqueue'::jsonb->>'jobId')::uuid, 300)
 select is((:'stale_claim'::jsonb->>'baseRevision')::bigint, 1::bigint,
   'overlapping job starts from the same base as the winning job');
 
+set local role postgres;
 insert into public.person_objects(id,user_id,profile_id,kind)
 select :'object_one'::uuid, :'user_a'::uuid, id, 'episode' from public.astro_profiles
 where user_id=:'user_a'::uuid and name='P2 rebase';
@@ -59,6 +60,7 @@ insert into public.person_object_versions(id,user_id,profile_id,object_id,versio
 select :'version_one'::uuid, :'user_a'::uuid, id, :'object_one'::uuid, 1,
   'reported','active','{"title":"first source item"}'::jsonb
 from public.astro_profiles where user_id=:'user_a'::uuid and name='P2 rebase';
+set local role service_role;
 select public.person_publish_revision(
   (:'first_claim'::jsonb->>'jobId')::uuid,
   (:'first_claim'::jsonb->>'leaseToken')::uuid,
@@ -87,6 +89,7 @@ select throws_ok(format($$select public.person_rebase_job(%L::uuid,%L::uuid,%s)$
   'PJF01', null, 'pre-rebase worker token/fence cannot requeue the new pending attempt');
 
 select public.person_claim_job((:'stale_claim'::jsonb->>'jobId')::uuid, 300) as reclaimed \gset
+set local role postgres;
 insert into public.person_objects(id,user_id,profile_id,kind)
 select :'object_two'::uuid, :'user_a'::uuid, id, 'episode' from public.astro_profiles
 where user_id=:'user_a'::uuid and name='P2 rebase';
@@ -95,6 +98,7 @@ insert into public.person_object_versions(id,user_id,profile_id,object_id,versio
 select :'version_two'::uuid, :'user_a'::uuid, id, :'object_two'::uuid, 1,
   'reported','active','{"title":"second source item"}'::jsonb
 from public.astro_profiles where user_id=:'user_a'::uuid and name='P2 rebase';
+set local role service_role;
 select public.person_publish_revision(
   (:'reclaimed'::jsonb->>'jobId')::uuid,
   (:'reclaimed'::jsonb->>'leaseToken')::uuid,

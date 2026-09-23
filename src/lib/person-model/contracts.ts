@@ -34,7 +34,9 @@ export type PersonRelationKind = z.infer<typeof PersonRelationKindSchema>;
 export const EpistemicClassSchema = z.enum(['reported', 'working_hypothesis', 'unknown']);
 export type EpistemicClass = z.infer<typeof EpistemicClassSchema>;
 
-export const LifecycleSchema = z.enum(['active', 'superseded', 'rejected', 'retired']);
+/** Lifecycle values accepted by persisted object and relation versions. */
+export const LifecycleSchema = z.enum(['active', 'superseded', 'retired', 'invalidated']);
+export const PersonVersionLifecycleSchema = LifecycleSchema;
 export const TimeRangeSchema = z.object({
   precision: z.enum(['exact', 'day', 'month', 'year', 'range', 'age', 'relative', 'approximate', 'unknown']),
   start: z.union([isoDate, isoTimestamp]).nullable(),
@@ -68,8 +70,10 @@ const meaningChangePayload = z.object({
   title: nonEmpty(180),
   priorMeaning: nonEmpty(1_000),
   challengingExperience: nonEmpty(1_500),
-  laterMeaning: z.string().max(1_000).nullable(),
-  laterMeaningStatus: z.enum(['reported', 'unknown', 'not_yet_shared']),
+  laterMeaning: z.string().max(1_000).nullable()
+    .describe('The later meaning only when the person explicitly reports it; otherwise null.'),
+  laterMeaningStatus: z.enum(['reported', 'unknown', 'not_yet_shared'])
+    .describe('Use unknown when the person says the meaning is unresolved, unclear, or not worked out. Use not_yet_shared only when the person explicitly withholds or declines to share it.'),
   effectivePeriod: TimeRangeSchema,
 }).strict();
 
@@ -313,14 +317,25 @@ export const PersonChangeSchema = z.object({
 }).strict();
 export type PersonChange = z.infer<typeof PersonChangeSchema>;
 
+const AddEventPayloadSchema = z.object({
+  what: nonEmpty(2_000),
+  when: z.string().trim().max(500).nullable().optional(),
+  whatChanged: z.string().trim().max(2_000).nullable().optional(),
+}).strict();
+const CorrectAccountPayloadSchema = z.object({ correction: nonEmpty(2_000) }).strict();
+const AddMeaningPayloadSchema = z.object({
+  meaning: nonEmpty(2_000),
+  context: z.string().trim().max(1_000).nullable().optional(),
+}).strict();
+
 const AddEventChangeSchema = z.object({
   kind: z.literal('add_event'),
-  payload: episodePayload,
+  payload: AddEventPayloadSchema,
 }).strict();
 const CorrectAccountChangeSchema = z.object({
   kind: z.literal('correct_account'),
   targetObjectId: uuidSchema,
-  payload: PersonObjectPayloadSchema,
+  payload: CorrectAccountPayloadSchema,
 }).strict();
 const RejectInterpretationChangeSchema = z.object({
   kind: z.literal('reject_interpretation'),
@@ -329,7 +344,7 @@ const RejectInterpretationChangeSchema = z.object({
 }).strict();
 const AddMeaningChangeSchema = z.object({
   kind: z.literal('add_meaning'),
-  payload: meaningChangePayload,
+  payload: AddMeaningPayloadSchema,
 }).strict();
 const ExcludeSourceChangeSchema = z.object({
   kind: z.literal('exclude_source'),
@@ -345,6 +360,50 @@ export const PersonChangeRequestSchema = z.discriminatedUnion('kind', [
   ExcludeSourceChangeSchema,
 ]);
 export type PersonChangeRequest = z.infer<typeof PersonChangeRequestSchema>;
+
+const personChangeCommandBase = {
+  clientCommandId: uuidSchema,
+  expectedRevision: z.number().int().positive(),
+};
+
+/** Browser/API DTO; normalized once before crossing the PersonStore boundary. */
+export const PersonChangeCommandSchema = z.discriminatedUnion('kind', [
+  z.object({ ...personChangeCommandBase, kind: z.literal('add_event'), account: AddEventPayloadSchema }).strict(),
+  z.object({
+    ...personChangeCommandBase,
+    kind: z.literal('correct_account'),
+    targetId: uuidSchema,
+    account: CorrectAccountPayloadSchema,
+  }).strict(),
+  z.object({
+    ...personChangeCommandBase,
+    kind: z.literal('reject_interpretation'),
+    targetId: uuidSchema,
+    account: z.object({ explanation: nonEmpty(1_000) }).strict().optional(),
+  }).strict(),
+  z.object({ ...personChangeCommandBase, kind: z.literal('add_meaning'), account: AddMeaningPayloadSchema }).strict(),
+  z.object({ ...personChangeCommandBase, kind: z.literal('exclude_source'), targetId: uuidSchema }).strict(),
+]);
+export type PersonChangeCommand = z.infer<typeof PersonChangeCommandSchema>;
+
+export function personChangeRequestFromCommand(command: PersonChangeCommand): PersonChangeRequest {
+  switch (command.kind) {
+    case 'add_event':
+      return { kind: 'add_event', payload: command.account };
+    case 'add_meaning':
+      return { kind: 'add_meaning', payload: command.account };
+    case 'correct_account':
+      return { kind: command.kind, targetObjectId: command.targetId, payload: command.account };
+    case 'reject_interpretation':
+      return {
+        kind: command.kind,
+        targetObjectId: command.targetId,
+        explanation: command.account?.explanation ?? 'This interpretation does not fit me.',
+      };
+    case 'exclude_source':
+      return { kind: command.kind, sourceId: command.targetId };
+  }
+}
 
 export const SubmitPersonChangeInputSchema = z.object({
   personId: uuidSchema,
@@ -393,19 +452,27 @@ export const AcceptedUserMessageSchema = z.object({
 export type AcceptedUserMessage = z.infer<typeof AcceptedUserMessageSchema>;
 
 /** Input format consumed by the fenced person_record_observations RPC. */
-export const PersonObservationDraftSchema = z.object({
+export const PersonObservationDraftBaseSchema = z.object({
   sourceId: uuidSchema,
   spanStart: z.number().int().nonnegative().nullable(),
   spanEnd: z.number().int().nonnegative().nullable(),
   exactQuote: z.string().max(2_000).nullable(),
   normalizedAssertion: nonEmpty(2_000),
+  // Attribution is an explicit extraction result. A null subject ID must not
+  // silently become "self": the statement may concern a parent, a quoted
+  // speaker, a hypothetical person, or be genuinely ambiguous.
+  subjectKind: z.enum(['self', 'other', 'hypothetical', 'unknown']),
+  subjectLabel: z.string().max(180).nullable(),
   subjectPersonId: uuidSchema.nullable(),
   domain: z.string().max(80),
-  assertionType: z.enum(['direct', 'derived', 'reported_interpretation', 'assistant_hypothesis', 'unknown', 'question', 'correction']),
+  assertionType: z.enum(['direct', 'derived', 'reported_interpretation', 'assistant_hypothesis', 'unknown', 'question', 'correction'])
+    .describe('Use direct for an explicit statement from the source, including a faithful paraphrase. Use derived only for a conclusion not itself stated. A person explicitly reporting their own interpretation is reported_interpretation, not derived.'),
   eventTime: TimeRangeSchema,
   extractorVersion: nonEmpty(120),
   verifierVersion: z.string().max(120).nullable(),
-}).strict().superRefine((value, ctx) => {
+}).strict();
+
+export const PersonObservationDraftSchema = PersonObservationDraftBaseSchema.superRefine((value, ctx) => {
   if (value.spanStart !== null && value.spanEnd !== null && value.spanEnd < value.spanStart) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Observation span end must not precede start.' });
   }

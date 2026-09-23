@@ -21,7 +21,9 @@ import type { AstroFinishRunArgs, AgentErrorCode, AstrologerRunEvent, RunCheckpo
 import { getErrorMessage } from '@/lib/astro/workflow-errors';
 import { selectedContextBlock, type SelectedSource } from '@/lib/astro/selected-context';
 import { parseFinishProposal } from '@/lib/astro/finish-proposal';
+import { resolveAgentFinishMode, type AgentFinishMode } from '@/lib/astro/agent-budget';
 import { verificationNeedsRetry } from '@/lib/astro/verification-policy';
+import { loadAgentPersonContext, personAgentContextBlock } from '@/lib/astro/person-agent-context';
 import {
   parsePersonRunMode,
   filterAtrosTools,
@@ -36,8 +38,14 @@ import {
 // leaves room for one bounded verifier-driven revision without permitting an
 // open-ended agent loop.
 const MAX_AGENT_STEPS = 16;
+const FORCED_FINISH_ATTEMPTS = 3;
 const MAX_REJECTED_DRAFTS = 2;
 const DAILY_TOOL_CALL_LIMIT = 100;
+const LEGACY_PERSON_WRITE_TOOLS = new Set([
+  'astro_evidence_record',
+  'astro_person_fact_propose',
+  'astro_person_fact_assess',
+]);
 
 // ---------------------------------------------------------------------------
 // Durable steps
@@ -62,6 +70,14 @@ interface RunSnapshot {
     modeEpoch: number;
     privacyEpoch: number;
   };
+  personContext: {
+    revision: number | null;
+    sourceWatermark: number;
+    modeEpoch: number;
+    privacyEpoch: number;
+    objectIds: string[];
+    relationIds: string[];
+  };
   manifestSummary: string;
 }
 
@@ -72,19 +88,46 @@ async function loadRunSnapshot(runId: string): Promise<RunSnapshot> {
   const run = await store.getRun(runId);
   const profile = await store.getProfile(run.profile_id);
   if (!profile) throw new FatalError('profile missing for run');
-  const preferencesResult = await store.adminClient
-    .from('person_preferences')
-    .select('astrology_enabled, mode_epoch')
-    .eq('profile_id', run.profile_id)
-    .eq('user_id', run.user_id)
-    .maybeSingle();
+  const [preferencesResult, headResult] = await Promise.all([
+    store.adminClient
+      .from('person_preferences')
+      .select('astrology_enabled, mode_epoch')
+      .eq('profile_id', run.profile_id)
+      .eq('user_id', run.user_id)
+      .maybeSingle(),
+    store.adminClient
+      .from('person_model_heads')
+      .select('current_revision,processed_source_seq,privacy_epoch,mode_epoch,publication_state')
+      .eq('profile_id', run.profile_id)
+      .eq('user_id', run.user_id)
+      .maybeSingle(),
+  ]);
   const mode = parsePersonRunMode(preferencesResult);
-  const headResult = await store.adminClient
-    .from('person_model_heads')
-    .select('privacy_epoch')
-    .eq('profile_id', run.profile_id)
-    .eq('user_id', run.user_id)
-    .maybeSingle();
+  const currentRevision = Number(headResult.data?.current_revision ?? 0);
+  const revisionResult = currentRevision > 0
+    ? await store.adminClient
+      .from('person_model_revisions')
+      .select('revision_no,processed_source_seq,mode_epoch,privacy_epoch,brief')
+      .eq('profile_id', run.profile_id)
+      .eq('user_id', run.user_id)
+      .eq('revision_no', currentRevision)
+      .maybeSingle()
+    : { data: null, error: null };
+  const revisionIsEligible = Boolean(
+    revisionResult.data
+    && Number(revisionResult.data.mode_epoch) === Number(headResult.data?.mode_epoch ?? -1)
+    && Number(revisionResult.data.privacy_epoch) === Number(headResult.data?.privacy_epoch ?? -1),
+  );
+  const agentPersonContext = revisionIsEligible
+    ? await loadAgentPersonContext(store.adminClient, {
+        userId: run.user_id,
+        personId: run.profile_id,
+        revision: currentRevision,
+        sourceWatermark: Number(revisionResult.data?.processed_source_seq ?? 0),
+        modeEpoch: Number(headResult.data?.mode_epoch ?? mode.modeEpoch),
+        privacyEpoch: Number(headResult.data?.privacy_epoch ?? 0),
+      })
+    : null;
   const hasBirthData = Boolean(
     profile.birth_date && profile.birth_time && profile.lat !== null &&
     profile.lat !== undefined && profile.lng !== null && profile.lng !== undefined && profile.tz,
@@ -106,6 +149,13 @@ async function loadRunSnapshot(runId: string): Promise<RunSnapshot> {
       .join(', ')}`,
     `Open hypotheses (${manifest.hypotheses.length}).`,
     `Prior sessions summarized: ${manifest.priorSessionSummaries.length}.`,
+    revisionIsEligible && revisionResult.data?.brief
+      ? `Current source-backed person understanding (revision ${currentRevision}, through source ${Number(revisionResult.data.processed_source_seq ?? 0)}):\n${String(revisionResult.data.brief).slice(0, 10000)}`
+      : 'No current source-backed person brief is available yet.',
+    agentPersonContext ? personAgentContextBlock(agentPersonContext) : '',
+    headResult.data?.publication_state && headResult.data.publication_state !== 'current'
+      ? 'A newer person-model update is pending; continue using the last complete revision and state uncertainty.'
+      : '',
   ].filter(Boolean);
 
   return {
@@ -126,6 +176,14 @@ async function loadRunSnapshot(runId: string): Promise<RunSnapshot> {
       astrologyEnabled: mode.astrologyEnabled && hasBirthData,
       modeEpoch: mode.modeEpoch,
       privacyEpoch: Number(headResult.data?.privacy_epoch ?? 0),
+    },
+    personContext: {
+      revision: revisionIsEligible ? currentRevision : null,
+      sourceWatermark: revisionIsEligible ? Number(revisionResult.data?.processed_source_seq ?? 0) : 0,
+      modeEpoch: Number(headResult.data?.mode_epoch ?? mode.modeEpoch),
+      privacyEpoch: Number(headResult.data?.privacy_epoch ?? 0),
+      objectIds: agentPersonContext?.objects.map((item) => item.objectId) ?? [],
+      relationIds: agentPersonContext?.relations.map((item) => item.relationId) ?? [],
     },
     manifestSummary: summaryLines.join('\n'),
   };
@@ -264,8 +322,8 @@ async function planWithProvider(input: {
           role: 'system',
           content:
             atrosToolsAllowed(mode, input.hasBirthData)
-              ? 'You are Aidoraa\'s companion with an enabled optional Vedic astrology layer. Record an execution plan with astro_record_plan before answering. Steps are retrieve/calculate/evaluate/verify. Never invent person facts; rely on tools.'
-              : 'You are Aidoraa\'s personal companion. Astrology is disabled for this run: do not use astrological claims, context, guidance, or calculations. Record an execution plan with astro_record_plan before answering. Never invent person facts; rely on permitted personal sources.',
+              ? 'You are Aidoraa\'s companion with an enabled optional Vedic astrology layer. Record a bounded execution plan with astro_record_plan before answering. Use retrieve and exact typed calculate steps as needed, then end with one evaluate step. The host performs verification. Every calculate step must name the exact allowlisted Atros tool and typed arguments in calculation. Never invent person facts; rely on tools.'
+              : 'You are Aidoraa\'s personal companion. Astrology is disabled for this run: do not use astrological claims, context, guidance, or calculations. Record a bounded execution plan with astro_record_plan before answering. Use retrieve steps as needed, then end with one evaluate step; the host performs verification. Never invent person facts; rely on permitted personal sources.',
         },
         {
           role: 'user',
@@ -343,17 +401,18 @@ async function modelDecisionStep(input: {
   expectedModeEpoch: number;
   stepKey: string;
   messages: ChatMessage[];
-  forceFinish: boolean;
+  finishMode: AgentFinishMode;
   hasBirthData: boolean;
 }): Promise<{ content: string | null; toolCalls: ToolCallRequest[]; provider?: string; model?: string }> {
   'use step';
-  const messages = input.forceFinish
+  const messages = input.finishMode !== 'normal'
     ? [
         ...input.messages,
         {
           role: 'system' as const,
-          content:
-            'The run is near its step limit. Do not request more evidence. Call astro_finish_run now with the best supported answer or one focused question, and state uncertainty explicitly.',
+          content: input.finishMode === 'text'
+            ? 'The run is at its final model step. Return only the best supported user-facing answer as plain text. Do not call tools, request more evidence, or include hidden reasoning. State uncertainty explicitly.'
+            : 'The run is near its step limit. Do not request more evidence. Call astro_finish_run now with the best supported answer or one focused question, and state uncertainty explicitly.',
         },
       ]
     : input.messages;
@@ -361,22 +420,30 @@ async function modelDecisionStep(input: {
     input.expectedModeEpoch,
     () => readCurrentPersonRunMode(input.profileId, input.userId),
     (mode) => chatCompletion({
+      // Keep the terminal step on the same prototype model unless an explicit
+      // override is supplied. This avoids a hidden provider/model transition
+      // at the most user-visible point in the run.
+      model: input.finishMode === 'text'
+        ? (process.env.ASTROLOGER_FINAL_MODEL?.trim() || undefined)
+        : undefined,
       messages,
       // Budget enforcement must be structural, not just prompt text. Once the
       // run reaches its final two operations, do not expose retrieval or Atros
       // tools that could consume the remaining budget without a draft.
-      tools: input.forceFinish
-        ? providerTools(['astro_finish_run'])
-        : filterAtrosTools(
-            providerTools().filter((tool) => tool.function.name !== 'astro_record_plan'),
-            mode,
-            input.hasBirthData,
-          ),
+      // The prototype planner owns retrieval and exact Atros selection. Once
+      // those typed steps are complete, the answer model has one capability:
+      // return the terminal response. This keeps the system agentic without a
+      // second, unbounded tool-selection loop that can exhaust the run before
+      // the user receives an answer.
+      tools: input.finishMode === 'text'
+        ? undefined
+        : providerTools(['astro_finish_run']),
       // OpenCode Go/Responses only accepts automatic selection. The prompt and
       // the tool registry provide the semantic constraint when finishing.
-      toolChoice: 'auto',
+      toolChoice: input.finishMode === 'text' ? undefined : 'auto',
       sessionId: input.runId,
-      maxTokens: 4096,
+      reasoningMode: input.finishMode === 'text' ? 'disabled' : 'default',
+      maxTokens: input.finishMode === 'text' ? 1_600 : 4_096,
     }),
   );
   const message = result.choices[0]?.message;
@@ -463,7 +530,7 @@ async function verifyDraft(input: {
       {
         role: 'system',
         content:
-          'You are a strict verification model. Judge ONLY concrete factual claims in the draft against the supplied selected context and tool references, then call astro_record_verification exactly once. Questions, acknowledgements, intentions, uncertainty statements, and polite framing are not factual claims and need no evidence. A statement that context is absent is supported when the supplied context is empty. A statement that information was recorded is supported by a successful evidence/fact tool receipt. Do not reject a focused question merely because the answer is intentionally waiting for the user to provide missing information.',
+          'You are a strict verification model. Judge ONLY concrete factual claims in the draft against the supplied run/profile context, selected context, and tool references, then call astro_record_verification exactly once. The run/profile context includes the accepted current user message, which is valid direct support for claims explicitly stated in that message. Questions, acknowledgements, intentions, uncertainty statements, and polite framing are not factual claims and need no evidence. A statement that context is absent is supported when the supplied context is empty. A statement that information was recorded is supported by a successful evidence/fact tool receipt. Do not reject a focused question merely because the answer is intentionally waiting for the user to provide missing information.',
       },
       {
         role: 'user',
@@ -811,6 +878,14 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       kind: 'plan',
       status: 'succeeded',
       outputSummary: `model=${planned.model ?? 'configured'}; plan: ${plan.goal}`,
+      refs: {
+        personRevision: snapshot.personContext.revision,
+        personSourceWatermark: snapshot.personContext.sourceWatermark,
+        personModeEpoch: snapshot.personContext.modeEpoch,
+        personPrivacyEpoch: snapshot.personContext.privacyEpoch,
+        personObjectIds: snapshot.personContext.objectIds,
+        personRelationIds: snapshot.personContext.relationIds,
+      },
       phase: 'retrieval',
       checkpoint: { ...checkpoint, currentGoal: plan.goal, planStepIndex: 0, contextVersion: checkpoint.contextVersion + 1 },
       plan,
@@ -887,13 +962,10 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
     }
 
       if (planStep.kind === 'calculate') {
-      const toolName = planStep.objective.includes('dasha')
-        ? 'atros_current_dasha'
-        : planStep.objective.includes('transit')
-          ? 'atros_transit'
-          : planStep.objective.includes('timeline')
-            ? 'atros_timeline'
-            : 'atros_chart';
+      // The planner chooses an exact typed Atros operation. Do not infer a
+      // calculation from prose: the validated plan is the capability request.
+      const toolName = planStep.calculation.tool;
+      const calculationArgs = planStep.calculation.args;
       const key = stepKeyFor(planStepIndex, attempt, 0, toolName);
       await emit({ event: 'tool.started', runId, phase: 'analysis', tool: toolName, summary: 'deterministic chart calculation' });
       await claimToolCall({ runId, stepKey: key, toolName });
@@ -902,11 +974,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
         expectedModeEpoch: snapshot.profile.modeEpoch,
         stepKey: key,
         toolName,
-        rawArgs: JSON.stringify({
-          from: plan.dateRange?.from,
-          to: plan.dateRange?.to,
-          asOf: new Date().toISOString().slice(0, 10),
-        }),
+        rawArgs: JSON.stringify(calculationArgs),
       });
       agentSteps++;
       const cacheHit = resultCacheHit(outcome.result);
@@ -920,7 +988,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
         outputSummary: outcome.ok
           ? `calculation completed${cacheHit ? ' (cache hit)' : ''}`
           : (outcome.error?.message ?? 'failed'),
-        refs: { tool: toolName, result: outcome.ok ? 'cached-or-computed' : outcome.error },
+        refs: { tool: toolName, args: calculationArgs, result: outcome.ok ? 'cached-or-computed' : outcome.error },
         phase: 'analysis',
         cacheHit,
         checkpoint: { ...checkpoint, lastCompletedStep: key },
@@ -952,8 +1020,8 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
             role: 'system',
             content:
               snapshot.profile.astrologyEnabled
-                ? 'You are Aidoraa\'s companion with an enabled Vedic astrology layer. Use the recorded plan and tools; cite grounding IDs in astro_finish_run. Ask one focused question at a time when information is missing. Treat the run/profile context as authoritative.'
-                : 'You are Aidoraa\'s personal companion. Astrology is disabled for this run. Do not use astrological claims, context, calculations, or guidance. Use the recorded plan and permitted tools; cite grounding IDs in astro_finish_run. Ask one focused question at a time when information is missing.',
+                ? 'You are Aidoraa\'s companion with an enabled Vedic astrology layer. Use the recorded plan and tools. Put provenance UUIDs only in astro_finish_run grounding fields; the visible answer must be plain prose without UUIDs or Markdown markers. Ask one focused question at a time when information is missing. Treat the run/profile context as authoritative.'
+                : 'You are Aidoraa\'s personal companion. Astrology is disabled for this run. Do not use astrological claims, context, calculations, or guidance. Use the recorded plan and permitted tools. Put provenance UUIDs only in astro_finish_run grounding fields; the visible answer must be plain prose without UUIDs or Markdown markers. Ask one focused question at a time when information is missing.',
           },
           {
             role: 'user',
@@ -969,7 +1037,13 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
           expectedModeEpoch: snapshot.profile.modeEpoch,
           stepKey: key,
           messages,
-          forceFinish: agentSteps >= MAX_AGENT_STEPS - 2,
+          // Each tool-based finish may consume one model step plus one
+          // tool-result step. Reserve bounded attempts, then make the last
+          // model call text-only. OpenCode Go only accepts automatic tool
+          // selection, so removing the tool registry is the structural
+          // fallback when it repeatedly returns malformed/ignored finish
+          // calls.
+          finishMode: resolveAgentFinishMode(agentSteps, MAX_AGENT_STEPS, FORCED_FINISH_ATTEMPTS),
           hasBirthData: Boolean(snapshot.profile.birthDate && snapshot.profile.birthTime && snapshot.profile.lat !== null && snapshot.profile.lng !== null && snapshot.profile.tz),
         });
         agentSteps++;
@@ -1109,7 +1183,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       expectedModeEpoch: snapshot.profile.modeEpoch,
       draft,
       planGoal: plan.goal,
-      runContext: snapshot.manifestSummary,
+      runContext: `${snapshot.manifestSummary}\n\nAccepted current user message:\n${question}`,
       selectedContext: selectedContextBlock(await loadSelectedItems(runId)),
       toolRefs: toolRefs.join('\n') || 'none',
     });

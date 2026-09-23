@@ -1,7 +1,7 @@
 import 'server-only';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { ObjectProjection, PersonProjection, ProjectionMeta, ViewEdge, ViewNode } from '@/components/astrologer-v2/types';
+import type { ObjectProjection, PersonProjection, ProjectionMeta, SourceEvidence, ViewEdge, ViewNode } from '@/components/astrologer-v2/types';
 import { parsePersonReadProjection, type PersonReadProjection } from '@/lib/person-model/projection-contract';
 
 type Row = Record<string, unknown>;
@@ -12,6 +12,11 @@ function record(value: unknown): Record<string, unknown> {
 
 function text(value: unknown): string | null {
   return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+function oneOf<T extends string>(value: unknown, allowed: readonly T[], fallback: T): T {
+  const candidate = text(value);
+  return candidate && allowed.includes(candidate as T) ? candidate as T : fallback;
 }
 
 function summaryFor(kind: string, payload: Record<string, unknown>): string | null {
@@ -55,6 +60,25 @@ function nodeFromRow(row: Row): ViewNode {
     dateLabel: dateLabel(row, payload),
     payload,
     lifecycle: text(row.lifecycle) ?? 'active',
+    epistemicClass: text(row.epistemic_class) as ViewNode['epistemicClass'],
+  };
+}
+
+function sourceEvidenceFromRow(input: unknown): SourceEvidence | null {
+  const row = record(input);
+  const sourceId = text(row.source_id) ?? text(row.sourceId);
+  if (!sourceId) return null;
+  return {
+    supportId: text(row.support_id) ?? text(row.supportId),
+    observationId: text(row.observation_id) ?? text(row.observationId),
+    sourceId,
+    sourceSeq: Number(row.source_seq ?? row.sourceSeq ?? 0),
+    sourceTime: text(row.source_time) ?? text(row.sourceTime),
+    speaker: oneOf(row.speaker_role ?? row.speakerRole, ['user', 'assistant', 'tool', 'system', 'unknown'] as const, 'unknown'),
+    subjectKind: oneOf(row.subject_kind ?? row.subjectKind, ['self', 'other', 'hypothetical', 'unknown'] as const, 'unknown'),
+    relation: oneOf(row.relation ?? row.supportRelation, ['supports', 'contradicts', 'qualifies', 'unclassified'] as const, 'unclassified'),
+    assertionType: oneOf(row.assertion_type ?? row.assertionType, ['direct', 'derived', 'reported_interpretation', 'assistant_hypothesis', 'unknown'] as const, 'unknown'),
+    exactQuote: text(row.exact_quote) ?? text(row.quote),
   };
 }
 
@@ -120,7 +144,14 @@ export async function readObjectProjection(
   personId: string,
   objectId: string,
 ): Promise<ObjectProjection | null> {
-  const projection = await exactProjection(client, personId, 'object', objectId);
+  const [projection, sourceResult] = await Promise.all([
+    exactProjection(client, personId, 'object', objectId),
+    client.rpc('person_read_object_sources', {
+      p_profile_id: personId,
+      p_object_id: objectId,
+    }),
+  ]);
+  if (sourceResult.error) throw sourceResult.error;
   const object = projection.objects.find((item) => String(item.object_id) === objectId);
   if (!object) return null;
   const edges = projection.relations.map(edgeFromRow);
@@ -138,5 +169,12 @@ export async function readObjectProjection(
     related: projection.objects.filter((item) => String(item.object_id) !== objectId).map(nodeFromRow),
     edges,
     supportCount: projection.supportCount,
+    sources: (Array.isArray(sourceResult.data)
+      ? sourceResult.data
+      : Array.isArray(record(sourceResult.data).sources)
+        ? record(sourceResult.data).sources as unknown[]
+        : [])
+      .map(sourceEvidenceFromRow)
+      .filter((item): item is SourceEvidence => item !== null),
   };
 }

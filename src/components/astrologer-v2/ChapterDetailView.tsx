@@ -7,6 +7,7 @@ import { ProfileTabs } from './ProfileTabs';
 import { ProjectionNotice } from './ProjectionState';
 import type { ObjectProjection, ViewNode } from './types';
 import ExploreInChatButton from './ExploreInChatButton';
+import SourceDrawer from './SourceDrawer';
 
 function field(node: ViewNode, key: string, fallback: string): string {
   const value = node.payload[key];
@@ -17,7 +18,7 @@ export default function ChapterDetailView({ projection }: { projection: ObjectPr
   const chapter = projection.object;
   const [correcting, setCorrecting] = useState(false);
   const [correction, setCorrection] = useState('');
-  const [saved, setSaved] = useState(false);
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const stages = projection.related.filter((node) => ['episode', 'meaning_change', 'goal', 'current_state'].includes(node.kind)).slice(0, 3);
   const padded = [...stages];
   while (padded.length < 3) padded.push({ id: `unknown-${padded.length}`, kind: 'unknown', title: padded.length === 2 ? 'A meaning still to understand' : 'A detail not yet shared', summary: null, dateLabel: null, payload: {}, lifecycle: 'unknown' });
@@ -42,11 +43,17 @@ export default function ChapterDetailView({ projection }: { projection: ObjectPr
 
   async function submitCorrection(event: React.FormEvent) {
     event.preventDefault();
-    const response = await fetch(`/api/astrologer/profiles/${projection.personId}/changes`, {
-      method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ kind: 'correct_account', clientCommandId: crypto.randomUUID(), expectedRevision: projection.personRevision, targetId: chapter.id, account: { correction } }),
-    });
-    setSaved(response.ok);
+    setSaveState('saving');
+    try {
+      const response = await fetch(`/api/astrologer/profiles/${projection.personId}/changes`, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ kind: 'correct_account', clientCommandId: crypto.randomUUID(), expectedRevision: projection.personRevision, targetId: chapter.id, account: { correction } }),
+      });
+      if (!response.ok) throw new Error('correction was not accepted');
+      setSaveState('saved');
+    } catch {
+      setSaveState('error');
+    }
   }
 
   return (
@@ -94,8 +101,9 @@ export default function ChapterDetailView({ projection }: { projection: ObjectPr
           <div className="mt-5 flex flex-wrap items-center gap-3"><ExploreInChatButton personId={projection.personId} objectId={chapter.id} personRevision={projection.personRevision} className="bg-[#12375e]" /><button type="button" onClick={() => setCorrecting(true)} className="rounded-md border border-[#718097] px-5 py-3 text-sm">Add what changed</button><button type="button" onClick={() => setCorrecting(true)} className="px-3 py-3 text-sm underline underline-offset-4">Correct this account</button></div>
           <p className="mt-5 text-right text-xs text-[#687387]">Built from what you shared. Open to revision.</p>
         </section>
+        <SourceDrawer node={chapter} sources={projection.sources} />
       </article>
-      {correcting ? <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 grid place-items-center bg-[#0b2038]/30 p-4"><form onSubmit={submitCorrection} className="w-full max-w-lg rounded-md bg-[#fbfaf6] p-7"><h2 className="font-serif text-3xl">Revise this account</h2><p className="mt-2 text-sm text-[#687387]">Your correction is stored as a new source account. The previous revision remains in history.</p><label className="mt-5 block text-sm font-medium">What should change?<textarea required value={correction} onChange={(e) => setCorrection(e.target.value)} className="mt-2 min-h-28 w-full rounded-md border bg-white p-3 font-normal" /></label>{saved ? <p role="status" className="mt-3 text-sm">Saved. The affected view is updating.</p> : null}<div className="mt-5 flex gap-3"><button className="rounded-md bg-[#12375e] px-5 py-3 text-sm font-semibold text-white" type="submit">Save correction</button><button type="button" onClick={() => setCorrecting(false)} className="px-4 py-3 text-sm">Close</button></div></form></div> : null}
+      {correcting ? <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 grid place-items-center bg-[#0b2038]/30 p-4"><form onSubmit={submitCorrection} className="w-full max-w-lg rounded-md bg-[#fbfaf6] p-7"><h2 className="font-serif text-3xl">Revise this account</h2><p className="mt-2 text-sm text-[#687387]">Your correction is stored as a new source account. The previous revision remains in history.</p><label className="mt-5 block text-sm font-medium">What should change?<textarea required value={correction} onChange={(e) => { setCorrection(e.target.value); if (saveState !== 'idle') setSaveState('idle'); }} className="mt-2 min-h-28 w-full rounded-md border bg-white p-3 font-normal" /></label>{saveState === 'saved' ? <p role="status" className="mt-3 text-sm">Saved. The affected view is updating.</p> : null}{saveState === 'error' ? <p role="alert" className="mt-3 text-sm text-red-700">This correction was not saved. Please try again.</p> : null}<div className="mt-5 flex gap-3"><button disabled={saveState === 'saving' || saveState === 'saved'} className="rounded-md bg-[#12375e] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60" type="submit">{saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? 'Saved' : 'Save correction'}</button><button type="button" onClick={() => setCorrecting(false)} className="px-4 py-3 text-sm">Close</button></div></form></div> : null}
     </>
   );
 }

@@ -1,10 +1,10 @@
 /**
  * Model provider for the astrologer agent loop.
  *
- * Primary: OpenCode Go (`https://opencode.ai/zen/go/v1`, `muse-spark-1.3-contributor`).
- * muse-spark is served over the Responses API (`/responses`); Chat Completions
- * 500s for it, so the Go path translates to/from Chat Completions shape and the
- * agent loop stays unchanged. Key resolution: `OPENCODE_API_KEY`, then
+ * Primary: OpenCode Go (`https://opencode.ai/zen/go/v1`, `gpt-6-luna`).
+ * Luna and Muse are served over the Responses API (`/responses`), so the Go
+ * path translates to/from the neutral Chat Completions shape and the agent
+ * loop stays unchanged. Key resolution: `OPENCODE_API_KEY`, then
  * `OPENGO_API`, then `OPENROUTER_API_KEY` (OpenRouter Chat Completions fallback).
  * Model override: `ASTROLOGER_MODEL`, then `OPENROUTER_MODEL`.
  */
@@ -54,6 +54,10 @@ export interface ChatCompletionOptions {
   toolChoice?: ToolChoice;
   temperature?: number;
   maxTokens?: number;
+  /** Ask compatible Chat Completions providers to enforce a JSON object. */
+  responseFormat?: { type: 'json_object' };
+  /** Disable optional model reasoning when a bounded structured job needs predictable latency. */
+  reasoningMode?: 'default' | 'disabled';
   /** Forwarded as `x-opencode-session` so Go can route + cache per conversation. */
   sessionId?: string;
   /** Bounded fetch timeout in milliseconds. */
@@ -103,7 +107,7 @@ function resolveProvider(): ResolvedProvider {
         'https://opencode.ai/zen/go/v1',
       ),
       apiKey: goKey,
-      defaultModel: 'muse-spark-1.3-contributor',
+      defaultModel: 'gpt-6-luna',
     };
   }
   const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
@@ -154,6 +158,15 @@ interface ResponsesResponse {
   output?: ResponsesOutputItem[];
 }
 
+interface AnthropicMessagesResponse {
+  model?: string;
+  content?: Array<
+    | { type: 'text'; text?: string }
+    | { type: 'thinking'; thinking?: string }
+    | { type: 'tool_use'; id?: string; name?: string; input?: unknown }
+  >;
+}
+
 function fromResponsesOutput(response: ResponsesResponse): ChatCompletionResult {
   let text = '';
   const toolCalls: ToolCallRequest[] = [];
@@ -173,6 +186,80 @@ function fromResponsesOutput(response: ResponsesResponse): ChatCompletionResult 
   return { choices: [{ message: { content: text || null, tool_calls: toolCalls } }] };
 }
 
+export function usesAnthropicMessages(model: string): boolean {
+  return /^qwen3\./.test(model) || /^minimax-m/.test(model);
+}
+
+/** Models in the prototype allowlist that OpenCode Go serves via Responses. */
+export function usesResponsesAPI(model: string): boolean {
+  return model === 'gpt-6-luna' || model.startsWith('muse-spark');
+}
+
+export function toAnthropicMessages(messages: ChatMessage[]) {
+  const system = messages
+    .filter((message) => message.role === 'system')
+    .map((message) => message.content ?? '')
+    .filter(Boolean)
+    .join('\n\n');
+  const converted = messages
+    .filter((message) => message.role !== 'system')
+    .map((message) => {
+      if (message.role === 'tool') {
+        return {
+          role: 'user' as const,
+          content: [{ type: 'tool_result' as const, tool_use_id: message.tool_call_id ?? '', content: message.content ?? '' }],
+        };
+      }
+      if (message.role === 'assistant' && message.tool_calls?.length) {
+        return {
+          role: 'assistant' as const,
+          content: [
+            ...(message.content ? [{ type: 'text' as const, text: message.content }] : []),
+            ...message.tool_calls.map((call) => ({
+              type: 'tool_use' as const,
+              id: call.id,
+              name: call.function.name,
+              input: JSON.parse(call.function.arguments || '{}') as unknown,
+            })),
+          ],
+        };
+      }
+      return { role: message.role as 'user' | 'assistant', content: message.content ?? '' };
+    });
+  return { system, messages: converted };
+}
+
+export function toAnthropicTools(tools: FunctionToolDefinition[]) {
+  return tools.map((tool) => ({
+    name: tool.function.name,
+    description: tool.function.description,
+    input_schema: tool.function.parameters,
+  }));
+}
+
+export function toAnthropicToolChoice(choice: ToolChoice): unknown {
+  if (choice === 'required') return { type: 'any' };
+  if (choice === 'auto') return { type: 'auto' };
+  if (choice === 'none') return { type: 'none' };
+  return { type: 'tool', name: choice.name };
+}
+
+export function fromAnthropicOutput(response: AnthropicMessagesResponse): ChatCompletionResult {
+  let text = '';
+  const toolCalls: ToolCallRequest[] = [];
+  for (const item of response.content ?? []) {
+    if (item.type === 'text' && item.text) text += item.text;
+    if (item.type === 'tool_use' && item.id && item.name) {
+      toolCalls.push({
+        id: item.id,
+        type: 'function',
+        function: { name: item.name, arguments: JSON.stringify(item.input ?? {}) },
+      });
+    }
+  }
+  return { choices: [{ message: { content: text || null, tool_calls: toolCalls } }] };
+}
+
 /** Map the neutral ToolChoice to each provider's wire shape. */
 export function toResponsesToolChoice(providerName: string, choice: ToolChoice): unknown {
   // OpenCode Go's Responses endpoint currently accepts only the automatic
@@ -184,7 +271,11 @@ export function toResponsesToolChoice(providerName: string, choice: ToolChoice):
   return { type: 'function', name: choice.name };
 }
 
-export function toChatCompletionsToolChoice(choice: ToolChoice): unknown {
+export function toChatCompletionsToolChoice(providerName: string, choice: ToolChoice): unknown {
+  // Go's routed thinking models reject named and required tool choices on the
+  // Chat Completions route as well. Auto still exposes the exact tool schema;
+  // callers validate the returned function name before accepting its output.
+  if (providerName === 'opencode-go') return 'auto';
   if (typeof choice === 'string') return choice;
   return { type: 'function', function: { name: choice.name } };
 }
@@ -236,11 +327,28 @@ const ResultSchema = z.object({
               function: z.object({ name: z.string(), arguments: z.string() }),
             }),
           )
-          .default([]),
+          .nullish()
+          .transform((value) => value ?? []),
       }),
     }),
   ),
 });
+
+export function parseChatCompletionPayload(value: unknown) {
+  return ResultSchema.safeParse(value);
+}
+
+export function resolveProviderTemperature(
+  providerName: string,
+  model: string,
+  requested: number | undefined,
+): number | undefined {
+  // Go's Responses reasoning models reject the temperature parameter.
+  if (providerName === 'opencode-go' && usesResponsesAPI(model)) return undefined;
+  // Go's Kimi K2.7 Code route rejects every explicit temperature except 1.
+  if (providerName === 'opencode-go' && model === 'kimi-k2.7-code') return 1;
+  return requested;
+}
 
 const DEFAULT_FETCH_TIMEOUT_MS = 45_000;
 const MIN_FETCH_TIMEOUT_MS = 5_000;
@@ -253,6 +361,21 @@ export function resolveProviderTimeoutMs(override?: number, configured?: string)
   return Math.min(Math.max(Math.trunc(parsed), MIN_FETCH_TIMEOUT_MS), MAX_FETCH_TIMEOUT_MS);
 }
 
+/**
+ * Retry once only when the provider supplies a short, actionable cooldown.
+ * Missing or long-window limits belong to the durable job/run retry policy;
+ * retrying them immediately only multiplies quota pressure.
+ */
+export function resolveProviderRetryDelayMs(retryAfter: string | null, nowMs = Date.now()): number | null {
+  if (!retryAfter?.trim()) return null;
+  const seconds = Number(retryAfter);
+  const requestedMs = Number.isFinite(seconds)
+    ? Math.ceil(seconds * 1_000)
+    : Date.parse(retryAfter) - nowMs;
+  if (!Number.isFinite(requestedMs) || requestedMs > 60_000) return null;
+  return Math.max(requestedMs, 5_000);
+}
+
 export async function chatCompletion(options: ChatCompletionOptions): Promise<ChatCompletionResult> {
   const provider = resolveProvider();
   const model =
@@ -260,6 +383,7 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     process.env.ASTROLOGER_MODEL?.trim() ??
     process.env.OPENROUTER_MODEL?.trim() ??
     provider.defaultModel;
+  const temperature = resolveProviderTemperature(provider.name, model, options.temperature);
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -275,12 +399,20 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     options.timeoutMs,
     process.env.ASTROLOGER_PROVIDER_TIMEOUT_MS,
   );
-  const fetchWithTimeout = (url: string, init: RequestInit): Promise<Response> =>
-    fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+  const fetchWithTimeout = async (url: string, init: RequestInit): Promise<Response> => {
+    const request = () => fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+    const first = await request();
+    if (first.status !== 429) return first;
+    const delayMs = resolveProviderRetryDelayMs(first.headers.get('retry-after'));
+    if (delayMs === null) return first;
+    await first.body?.cancel().catch(() => undefined);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    return request();
+  };
 
-  // Responses is Spark-only on Go (qwen/kimi 200 on chat, 401 on responses).
-  // Route by model so overrides keep working on their proven protocol.
-  if (provider.name === 'opencode-go' && model.startsWith('muse-spark')) {
+  // Go exposes model families on different wire protocols. Route by model so
+  // overrides use the endpoint documented for that family.
+  if (provider.name === 'opencode-go' && usesResponsesAPI(model)) {
     const response = await fetchWithTimeout(`${provider.baseUrl}/responses`, {
       method: 'POST',
       headers,
@@ -291,7 +423,7 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
         ...(options.toolChoice
           ? { tool_choice: toResponsesToolChoice(provider.name, options.toolChoice) }
           : {}),
-        ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+        ...(temperature !== undefined ? { temperature } : {}),
         // Reasoning models burn budget before emitting: default generously.
         max_output_tokens: options.maxTokens ?? 4096,
       }),
@@ -307,6 +439,33 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     };
   }
 
+  if (provider.name === 'opencode-go' && usesAnthropicMessages(model)) {
+    const converted = toAnthropicMessages(options.messages);
+    const response = await fetchWithTimeout(`${provider.baseUrl}/messages`, {
+      method: 'POST',
+      headers: { ...headers, 'x-api-key': provider.apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model,
+        max_tokens: options.maxTokens ?? 4096,
+        ...(converted.system ? { system: converted.system } : {}),
+        messages: converted.messages,
+        ...(options.tools ? { tools: toAnthropicTools(options.tools) } : {}),
+        ...(options.toolChoice ? { tool_choice: toAnthropicToolChoice(options.toolChoice) } : {}),
+        ...(temperature !== undefined ? { temperature } : {}),
+        ...(options.reasoningMode === 'disabled' ? { thinking: { type: 'disabled' } } : {}),
+      }),
+    });
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      throw new ProviderError(provider.name, response.status, body);
+    }
+    return {
+      ...fromAnthropicOutput((await response.json()) as AnthropicMessagesResponse),
+      provider: provider.name,
+      model,
+    };
+  }
+
   const response = await fetchWithTimeout(`${provider.baseUrl}/chat/completions`, {
     method: 'POST',
     headers,
@@ -315,10 +474,11 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
       messages: options.messages,
       ...(options.tools ? { tools: options.tools } : {}),
       ...(options.toolChoice
-        ? { tool_choice: toChatCompletionsToolChoice(options.toolChoice) }
+        ? { tool_choice: toChatCompletionsToolChoice(provider.name, options.toolChoice) }
         : {}),
-      ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+      ...(temperature !== undefined ? { temperature } : {}),
       ...(options.maxTokens !== undefined ? { max_tokens: options.maxTokens } : {}),
+      ...(options.responseFormat ? { response_format: options.responseFormat } : {}),
     }),
   });
 
@@ -327,7 +487,7 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
     throw new ProviderError(provider.name, response.status, body);
   }
 
-  const parsed = ResultSchema.safeParse(await response.json());
+  const parsed = parseChatCompletionPayload(await response.json());
   if (!parsed.success) {
     throw new ProviderError(provider.name, 502, `unparseable provider response: ${parsed.error.message}`);
   }

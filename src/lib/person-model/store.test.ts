@@ -323,15 +323,9 @@ describe('PersonStore', () => {
     const change = {
       kind: 'add_event' as const,
       payload: {
-        kind: 'episode' as const,
-        title: 'A move',
-        event: 'Moved to a new city.',
-        setting: null,
-        people: [],
-        reportedExperience: null,
-        reportedEffects: [],
-        unresolvedInterpretation: null,
-        occurred: { precision: 'unknown' as const, start: null, end: null, age: null, note: null },
+        what: 'Moved to a new city.',
+        when: '2025',
+        whatChanged: 'I became more independent.',
       },
     };
 
@@ -343,6 +337,50 @@ describe('PersonStore', () => {
     });
 
     expect(receipt).toMatchObject({ personId: profileId, kind: 'inclusion', sourceSeq: 8, jobId, replayed: false });
+    expect(user.raw.rpc).toHaveBeenCalledWith(PERSON_MODEL_RPC.submitChange, {
+      p_person_id: profileId,
+      p_command_id: '66666666-6666-4666-8666-666666666666',
+      p_expected_revision: 1,
+      p_change: change,
+    });
+  });
+
+  it('accepts concise correction intent instead of requiring a fabricated full object payload', async () => {
+    const user = makeUserClient();
+    user.raw.rpc.mockResolvedValue({ data: {
+      change_id: '44444444-4444-4444-8444-444444444444',
+      person_id: profileId,
+      source_id: '55555555-5555-4555-8555-555555555555',
+      source_seq: 9,
+      command_id: '66666666-6666-4666-8666-666666666666',
+      change_kind: 'correction',
+      target_kind: 'object',
+      target_id: '77777777-7777-4777-8777-777777777777',
+      prior_version_id: null,
+      status: 'accepted',
+      resolved_revision: null,
+      request: { kind: 'correct_account', payload: { correction: 'The move happened in 2025.' } },
+      invalidated_ids: ['77777777-7777-4777-8777-777777777777'],
+      expected_revision: 1,
+      job_id: jobId,
+      created_at: '2026-09-22T10:00:00Z',
+      replayed: false,
+    }, error: null });
+    mocks.createClient.mockResolvedValue(user.client);
+    const store = await PersonStore.fromRequest();
+    const change = {
+      kind: 'correct_account' as const,
+      targetObjectId: '77777777-7777-4777-8777-777777777777',
+      payload: { correction: 'The move happened in 2025.' },
+    };
+
+    await expect(store.submitChange({
+      personId: profileId,
+      commandId: '66666666-6666-4666-8666-666666666666',
+      expectedRevision: 1,
+      change,
+    })).resolves.toMatchObject({ kind: 'correction', sourceSeq: 9 });
+
     expect(user.raw.rpc).toHaveBeenCalledWith(PERSON_MODEL_RPC.submitChange, {
       p_person_id: profileId,
       p_command_id: '66666666-6666-4666-8666-666666666666',
@@ -387,6 +425,8 @@ describe('PersonStore', () => {
       spanEnd: 10,
       exactQuote: 'I moved.',
       normalizedAssertion: 'Moved to a new city.',
+      subjectKind: 'self' as const,
+      subjectLabel: null,
       subjectPersonId: profileId,
       domain: 'place',
       assertionType: 'direct' as const,
