@@ -75,7 +75,12 @@ async function waitForRun(admin: SupabaseClient, runId: string) {
   const { data, error } = await admin.from('astro_agent_runs')
     .select('status,output_message_id,error_code').eq('id', runId).single();
   if (error || !data) throw error ?? new Error('agent run result missing');
-  expect(data.status, `answer run failed (${data.error_code ?? 'unknown'})`).not.toBe('failed');
+  if (data.status === 'failed') {
+    const steps = await admin.from('astro_agent_run_steps')
+      .select('ordinal,kind,status,tool_name,output_summary,refs,cache_hit')
+      .eq('run_id', runId).order('ordinal', { ascending: true });
+    throw new Error(`answer run failed (${data.error_code ?? 'unknown'}): ${JSON.stringify(steps.data ?? [])}`);
+  }
   expect(data.output_message_id).toBeTruthy();
   const { data: message, error: messageError } = await admin.from('astro_messages')
     .select('content').eq('id', data.output_message_id!).single();
@@ -103,6 +108,72 @@ async function sendOrdinaryMessage(page: Page, admin: SupabaseClient, text: stri
   const answer = await waitForRun(admin, body.runId!);
   await expect(page.getByText(answer, { exact: true })).toBeVisible({ timeout: 30_000 });
   return { runId: body.runId!, messageId: body.messageId!, answer };
+}
+
+async function submitTypedChange(page: Page, personId: string, change: Record<string, unknown>) {
+  const response = await page.request.post(`/api/astrologer/profiles/${personId}/changes`, {
+    data: change,
+  });
+  expect(response.status()).toBe(202);
+  const body = await response.json() as {
+    change_id?: string;
+    source_id?: string;
+    source_seq?: number;
+    job_id?: string;
+  };
+  expect(body.change_id).toMatch(/^[0-9a-f-]{36}$/i);
+  expect(body.source_id).toMatch(/^[0-9a-f-]{36}$/i);
+  expect(body.source_seq).toEqual(expect.any(Number));
+  expect(body.job_id).toMatch(/^[0-9a-f-]{36}$/i);
+  return {
+    changeId: body.change_id!,
+    sourceId: body.source_id!,
+    sourceSeq: body.source_seq!,
+    jobId: body.job_id!,
+  };
+}
+
+async function waitForConsolidationJob(
+  page: Page,
+  admin: SupabaseClient,
+  userId: string,
+  personId: string,
+  sourceSeq: number,
+  jobId?: string,
+) {
+  let nudgedAttempt = -1;
+  await expect.poll(async () => {
+    let query = admin.from('person_jobs')
+      .select('id,state,attempt_count,available_at')
+      .eq('profile_id', personId).eq('user_id', userId)
+      .in('job_kind', ['source_consolidation', 'correction']);
+    query = jobId
+      ? query.eq('id', jobId)
+      : query.lte('source_from_seq', sourceSeq).gte('source_to_seq', sourceSeq)
+        .order('created_at', { ascending: false }).limit(1);
+    const result = await query.maybeSingle();
+    if (result.error) throw result.error;
+    const job = result.data;
+    if (job?.state === 'pending' && (!job.available_at || Date.parse(job.available_at) <= Date.now())
+      && job.attempt_count !== nudgedAttempt) {
+      nudgedAttempt = job.attempt_count;
+      await nudgeRecoverySweep(page);
+    }
+    return job?.state ?? null;
+  }, { timeout: 720_000, intervals: [1_000, 2_000, 4_000] }).toMatch(/^(completed|failed)$/);
+  let query = admin.from('person_jobs')
+    .select('id,state,source_from_seq,source_to_seq,result_revision,last_error_code')
+    .eq('profile_id', personId).eq('user_id', userId)
+    .in('job_kind', ['source_consolidation', 'correction']);
+  query = jobId
+    ? query.eq('id', jobId)
+    : query.lte('source_from_seq', sourceSeq).gte('source_to_seq', sourceSeq)
+      .order('created_at', { ascending: false }).limit(1);
+  const result = await query.maybeSingle();
+  if (result.error || !result.data) throw result.error ?? new Error('consolidation job missing');
+  expect(result.data.state, `consolidation failed (${result.data.last_error_code ?? 'unknown'})`).toBe('completed');
+  expect(result.data.result_revision).toBeGreaterThan(0);
+  return result.data;
 }
 
 async function nudgeRecoverySweep(page: Page): Promise<void> {
@@ -173,12 +244,14 @@ async function captureResponsive(page: Page, testInfo: TestInfo, personId: strin
       fullPage: false,
     });
     if (viewport.label === 'mobile' && ['life-map-published', 'guided-chat-context', 'guided-chat-reloaded'].includes(state)) {
-      const main = page.locator('main');
-      await main.evaluate((element) => element.scrollTo({ top: element.scrollHeight, behavior: 'instant' }));
       if (state === 'life-map-published') {
-        await expect(page.getByRole('heading', { name: 'Questions worth exploring' })).toBeVisible();
+        const lowerContent = page.getByRole('heading', { name: 'Questions worth exploring' });
+        await lowerContent.scrollIntoViewIfNeeded();
+        await expect(lowerContent).toBeVisible();
       } else {
-        await expect(page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]')).toBeVisible();
+        const composer = page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]');
+        await composer.scrollIntoViewIfNeeded();
+        await expect(composer).toBeVisible();
       }
       await page.screenshot({
         path: testInfo.outputPath(`p3-${state}-${viewport.label}-lower.png`),
@@ -189,7 +262,17 @@ async function captureResponsive(page: Page, testInfo: TestInfo, personId: strin
   expect(personId).toMatch(/^[0-9a-f-]{36}$/i);
 }
 
-test('P3: an ordinary chat source publishes a supported person revision and carries into an explored new chat', async ({ page }, testInfo) => {
+const correctionOnly = process.env.P3_CORRECTION_ONLY_E2E === '1';
+const prototypeOnly = process.env.P3_PROTOTYPE_E2E === '1';
+const dataOnly = correctionOnly || process.env.P3_DATA_ONLY_E2E === '1';
+
+test(correctionOnly
+  ? 'P3: a typed correction publishes a new revision while retaining history'
+  : prototypeOnly
+    ? 'P3 prototype: ordinary chat learns, publishes, renders, and informs a fresh chat'
+  : dataOnly
+    ? 'P3: correction and counterexample revise the model across independent chats'
+    : 'P3: an ordinary chat source publishes a supported person revision and carries into an explored new chat', async ({ page }, testInfo) => {
   test.setTimeout(1_200_000);
   const { url, secret, publishable } = supabaseTarget();
   const admin: SupabaseClient = createClient(url, secret, { auth: { autoRefreshToken: false, persistSession: false } });
@@ -238,7 +321,7 @@ test('P3: an ordinary chat source publishes a supported person revision and carr
     await page.goto(`/astrologer/p/${personId}/chat/${sessionId}`);
     await expect(page.getByPlaceholder('Tell me what you are exploring…')).toBeEnabled({ timeout: 30_000 });
 
-    const ordinaryChat = 'At 15, a question I kept returning to started shaping what I wanted to do. Later, new questions challenged that goal, and I have not worked out what it means to me now. Working alone can help when I have one clear problem and can give it sustained attention. But when quiet stretches become prolonged isolation, my energy and momentum can drop. A bounded day alone can still go well when I make progress and have the social contact I want.';
+    const ordinaryChat = 'At 15, while completing a school project, I kept returning to a question about how people make choices. Finishing that project made me want to build tools that help people understand themselves. Later, studying conflicting ideas challenged that goal, and I have not worked out what it means to me now. Working alone can help when I have one clear problem and can give it sustained attention. But when quiet stretches become prolonged isolation, my energy and momentum can drop. A bounded day alone can still go well when I make progress and have the social contact I want.';
     const firstTurn = await sendOrdinaryMessage(page, admin, ordinaryChat);
 
     // Observe only: no service writes to source, candidate, object, or revision
@@ -370,67 +453,221 @@ test('P3: an ordinary chat source publishes a supported person revision and carr
     expect(lifeMap.nodes.map((node) => node.kind)).toEqual(expect.arrayContaining(['meaning_change', 'pattern']));
     expect(lifeMap.nodes.some((node) => node.kind === 'episode' || node.kind === 'goal')).toBe(true);
 
-    await page.goto(`/astrologer/p/${personId}/profile/life-map`);
-    await expect(page.getByRole('heading', { name: 'The life behind your choices' })).toBeVisible();
-    await captureResponsive(page, testInfo, personId!, 'life-map-published');
-
     const patternNode = lifeMap.nodes.find((node) => node.kind === 'pattern')!;
-    await page.goto(`/astrologer/p/${personId}/profile/patterns/${patternNode.id}`);
-    await expect(page.getByRole('heading').first()).toBeVisible();
-    await captureResponsive(page, testInfo, personId!, 'pattern-view');
-    const sourceDrawer = page.getByRole('button', { name: /why this appears/i });
-    await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'false');
-    await sourceDrawer.click();
-    await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'true');
-    await sourceDrawer.focus();
-    await sourceDrawer.press('Space');
-    await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'false');
-    await sourceDrawer.press('Enter');
-    await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.getByText(/linked source account|linked source accounts/i)).toBeVisible();
-    await expect(page.getByText(/counterevidence|supporting account|qualifying account/i).first()).toBeVisible();
-    const patternObservationIds = new Set(observationSupport
-      .filter((row) => row.object_version_id === pattern.id)
-      .flatMap((row) => row.observation_id ? [row.observation_id] : []));
-    const patternObservation = observations.find((observation) => patternObservationIds.has(observation.id)
-      && observation.exact_quote && ordinaryChat.includes(observation.exact_quote));
-    expect(patternObservation?.exact_quote).toBeTruthy();
-    await expect(page.getByText(patternObservation!.exact_quote!, { exact: false }).first()).toBeVisible();
-    await captureResponsive(page, testInfo, personId!, 'pattern-source-drawer-open');
+    if (!dataOnly) {
+      await page.goto(`/astrologer/p/${personId}/profile/life-map`);
+      await expect(page.getByRole('heading', { name: 'The life behind your choices' })).toBeVisible();
+      await captureResponsive(page, testInfo, personId!, 'life-map-published');
 
-    const chapterNode = lifeMap.nodes.find((node) => node.kind === 'chapter');
-    if (chapterNode) {
-      await page.goto(`/astrologer/p/${personId}/profile/life-map/chapters/${chapterNode.id}`);
-      await expect(page.getByRole('heading').first()).toBeVisible();
-      await captureResponsive(page, testInfo, personId!, 'chapter-published');
-    } else {
       await page.goto(`/astrologer/p/${personId}/profile/patterns/${patternNode.id}`);
-    }
-    await page.getByRole('button', { name: /explore in chat/i }).click();
-    await expect(page).toHaveURL(new RegExp(`/astrologer/p/${personId}/chat/`));
-    const exploredSessionId = new URL(page.url()).pathname.split('/').filter(Boolean).at(-1);
-    expect(exploredSessionId).toMatch(/^[0-9a-f-]{36}$/i);
-    expect(exploredSessionId).not.toBe(sessionId);
-    await expect(page.getByText(/Exploring a connection in your life/i)).toBeVisible();
-    await expect(page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]')).toBeEnabled({ timeout: 30_000 });
-    await captureResponsive(page, testInfo, personId!, 'guided-chat-context');
+      await expect(page.getByRole('heading').first()).toBeVisible();
+      await captureResponsive(page, testInfo, personId!, 'pattern-view');
+      const sourceDrawer = page.getByRole('button', { name: /why this appears/i });
+      await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'false');
+      await sourceDrawer.click();
+      await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'true');
+      await sourceDrawer.focus();
+      await sourceDrawer.press('Space');
+      await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'false');
+      await sourceDrawer.press('Enter');
+      await expect(sourceDrawer).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.getByText(/linked source account|linked source accounts/i)).toBeVisible();
+      await expect(page.getByText(/counterevidence|supporting account|qualifying account/i).first()).toBeVisible();
+      const objectResponse = await page.request.get(`/api/astrologer/profiles/${personId}/objects/${patternNode.id}`);
+      expect(objectResponse.ok()).toBe(true);
+      const objectProjection = await objectResponse.json() as {
+        sources: Array<{ exactQuote: string | null; assertionType: string; speaker: string }>;
+      };
+      const visibleQuote = objectProjection.sources.find((item) => item.exactQuote
+        && item.assertionType === 'direct' && item.speaker === 'user')?.exactQuote;
+      expect(visibleQuote, 'object projection must expose at least one eligible direct user quote').toBeTruthy();
+      await expect(page.getByText(visibleQuote!, { exact: false }).first()).toBeVisible();
+      await captureResponsive(page, testInfo, personId!, 'pattern-source-drawer-open');
 
-    const secondTurn = await sendOrdinaryMessage(
+      const chapterNode = lifeMap.nodes.find((node) => node.kind === 'chapter');
+      if (chapterNode) {
+        await page.goto(`/astrologer/p/${personId}/profile/life-map/chapters/${chapterNode.id}`);
+        await expect(page.getByRole('heading').first()).toBeVisible();
+        await captureResponsive(page, testInfo, personId!, 'chapter-published');
+      } else {
+        await page.goto(`/astrologer/p/${personId}/profile/patterns/${patternNode.id}`);
+      }
+      await page.getByRole('button', { name: /explore in chat/i }).click();
+      await expect(page).toHaveURL(new RegExp(`/astrologer/p/${personId}/chat/`));
+      const exploredSessionId = new URL(page.url()).pathname.split('/').filter(Boolean).at(-1);
+      expect(exploredSessionId).toMatch(/^[0-9a-f-]{36}$/i);
+      expect(exploredSessionId).not.toBe(sessionId);
+      await expect(page.getByText(/Exploring a connection in your life/i)).toBeVisible();
+      await expect(page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]')).toBeEnabled({ timeout: 30_000 });
+      await captureResponsive(page, testInfo, personId!, 'guided-chat-context');
+    }
+
+    if (prototypeOnly) {
+      const retrievalSessionResult = await userClient.rpc('create_astro_session', { p_profile_id: personId });
+      if (retrievalSessionResult.error) throw retrievalSessionResult.error;
+      const retrievalSessionId = (retrievalSessionResult.data as { sessionId?: string }).sessionId;
+      expect(retrievalSessionId).toMatch(/^[0-9a-f-]{36}$/i);
+      expect(retrievalSessionId).not.toBe(sessionId);
+      await page.goto(`/astrologer/p/${personId}/chat/${retrievalSessionId}`);
+      await expect(page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]')).toBeEnabled({ timeout: 30_000 });
+      const retrievalTurn = await sendOrdinaryMessage(
+        page,
+        admin,
+        'What have you learned about the conditions under which time working alone helps or hurts my energy and progress?',
+      );
+      const { data: planReceipt, error: planReceiptError } = await admin.from('astro_agent_run_steps')
+        .select('refs').eq('run_id', retrievalTurn.runId).eq('kind', 'plan')
+        .order('ordinal', { ascending: true }).limit(1).single();
+      if (planReceiptError || !planReceipt) throw planReceiptError ?? new Error('fresh-chat person-context receipt missing');
+      const refs = planReceipt.refs as {
+        personRevision?: number;
+        personObjectIds?: string[];
+      };
+      expect(refs.personRevision).toBe(revision.revision_no);
+      expect(refs.personObjectIds).toEqual(expect.arrayContaining(members.map((member) => member.object_id)));
+      expect(retrievalTurn.answer).toMatch(/clear|bounded|sustained|progress/i);
+      expect(retrievalTurn.answer).toMatch(/isolation|prolonged|energy|momentum/i);
+      await page.reload();
+      await expect(page.getByText(retrievalTurn.answer, { exact: true })).toBeVisible({ timeout: 30_000 });
+      await captureResponsive(page, testInfo, personId!, 'guided-chat-reloaded');
+      expect(browserErrors).toEqual([]);
+      return;
+    }
+
+    // A later correction is submitted through the authenticated typed-change
+    // API, not by inserting a synthetic message. The API immediately records
+    // the immutable correction/source and invalidates the affected projection;
+    // the worker must then publish a new revision from that source.
+    const priorPatternVersion = versions.find((version) => version.object_id === patternNode.id);
+    expect(priorPatternVersion).toBeTruthy();
+    const correction = await submitTypedChange(page, personId!, {
+      kind: 'correct_account',
+      clientCommandId: crypto.randomUUID(),
+      expectedRevision: revision.revision_no,
+      targetId: patternNode.id,
+      account: {
+        correction: 'The draining period was prolonged isolation with less contact; a clear day working alone can be energising, so solitude itself should not be treated as the cause.',
+      },
+    });
+    const { data: recordedCorrection, error: recordedCorrectionError } = await admin.from('person_changes')
+      .select('id,source_item_id,source_seq,change_kind,target_id,prior_version_id,request')
+      .eq('id', correction.changeId).eq('user_id', userId).eq('profile_id', personId!).single();
+    if (recordedCorrectionError || !recordedCorrection) throw recordedCorrectionError ?? new Error('typed correction was not retained');
+    expect(recordedCorrection.change_kind).toBe('correction');
+    expect(recordedCorrection.target_id).toBe(patternNode.id);
+    expect(recordedCorrection.prior_version_id).toBe(priorPatternVersion!.id);
+    expect(recordedCorrection.request).toEqual(expect.objectContaining({ kind: 'correct_account' }));
+    const { data: correctionSource, error: correctionSourceError } = await admin.from('person_source_items')
+      .select('id,source_seq,source_kind,source_message_id,inclusion_status')
+      .eq('id', correction.sourceId).eq('user_id', userId).eq('profile_id', personId!).single();
+    if (correctionSourceError || !correctionSource) throw correctionSourceError ?? new Error('typed correction source was not retained');
+    expect(correctionSource).toEqual(expect.objectContaining({
+      source_kind: 'explicit_correction', source_message_id: null, inclusion_status: 'included',
+    }));
+    expect(correctionSource.source_seq).toBe(correction.sourceSeq);
+
+    const correctionJob = await waitForConsolidationJob(page, admin, userId, personId!, correction.sourceSeq, correction.jobId);
+    expect(correctionJob.result_revision).toBeGreaterThan(revision.revision_no);
+    const correctionRevisionNo = correctionJob.result_revision;
+    const { data: resolvedCorrection, error: resolvedCorrectionError } = await admin.from('person_changes')
+      .select('status,resolved_revision').eq('id', correction.changeId).eq('user_id', userId).eq('profile_id', personId!).single();
+    if (resolvedCorrectionError || !resolvedCorrection) throw resolvedCorrectionError ?? new Error('typed correction was not resolved');
+    expect(resolvedCorrection).toMatchObject({ status: 'resolved', resolved_revision: correctionRevisionNo });
+    const { data: retainedFirstRevision, error: retainedFirstRevisionError } = await admin.from('person_model_revisions')
+      .select('revision_no,processed_source_seq,brief,verifier_receipt')
+      .eq('profile_id', personId!).eq('user_id', userId).eq('revision_no', revision.revision_no).single();
+    if (retainedFirstRevisionError || !retainedFirstRevision) throw retainedFirstRevisionError ?? new Error('first revision history was lost after correction');
+    expect(retainedFirstRevision.processed_source_seq).toBeGreaterThanOrEqual(source.source_seq);
+    expect(retainedFirstRevision.verifier_receipt).toBeTruthy();
+    const { data: retainedPriorVersion, error: retainedPriorVersionError } = await admin.from('person_object_versions')
+      .select('id,object_id,version_no,typed_payload,lifecycle')
+      .eq('id', priorPatternVersion!.id).eq('user_id', userId).eq('profile_id', personId!).single();
+    if (retainedPriorVersionError || !retainedPriorVersion) throw retainedPriorVersionError ?? new Error('prior object version was lost after correction');
+    expect(retainedPriorVersion.object_id).toBe(patternNode.id);
+    expect(retainedPriorVersion.typed_payload).toBeTruthy();
+    const { data: correctedMembers, error: correctedMembersError } = await admin.from('person_revision_objects')
+      .select('object_id,object_version_id').eq('profile_id', personId!).eq('user_id', userId).eq('revision_no', correctionRevisionNo);
+    if (correctedMembersError || !correctedMembers) throw correctedMembersError ?? new Error('corrected revision members missing');
+    const correctedPattern = correctedMembers.find((member) => member.object_id === patternNode.id);
+    // A correction may revise the object in place or retire it, but it must
+    // never leave the old version as the current projection.
+    expect(correctedPattern?.object_version_id ?? null).not.toBe(priorPatternVersion!.id);
+    if (correctionOnly) return;
+
+    // This is an independent native-message source, deliberately accepted
+    // after the correction. It qualifies the old explanation with a separate
+    // positive example rather than laundering the correction into a chat turn.
+    const counterexampleSessionResult = await userClient.rpc('create_astro_session', { p_profile_id: personId });
+    if (counterexampleSessionResult.error) throw counterexampleSessionResult.error;
+    const counterexampleSessionId = (counterexampleSessionResult.data as { sessionId?: string }).sessionId;
+    expect(counterexampleSessionId).toMatch(/^[0-9a-f-]{36}$/i);
+    await page.goto(`/astrologer/p/${personId}/chat/${counterexampleSessionId}`);
+    await expect(page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]')).toBeEnabled({ timeout: 30_000 });
+    const counterexampleText = 'A separate example is that I recently spent a full day alone on a clear task, kept my energy, and made progress without wanting more social contact. That is a counterexample to treating solitude as inherently draining.';
+    const counterexampleTurn = await sendOrdinaryMessage(page, admin, counterexampleText);
+    const { data: counterexampleSource, error: counterexampleSourceError } = await admin.from('person_source_items')
+      .select('id,source_seq,source_kind,source_message_id,inclusion_status')
+      .eq('profile_id', personId!).eq('user_id', userId).eq('source_message_id', counterexampleTurn.messageId).single();
+    if (counterexampleSourceError || !counterexampleSource) throw counterexampleSourceError ?? new Error('counterexample source was not retained');
+    expect(counterexampleSource.source_kind).toBe('native_message');
+    expect(counterexampleSource.source_message_id).toBe(counterexampleTurn.messageId);
+    expect(counterexampleSource.inclusion_status).toBe('included');
+    expect(counterexampleSource.source_seq).toBeGreaterThan(correction.sourceSeq);
+    const counterexampleJob = await waitForConsolidationJob(page, admin, userId, personId!, counterexampleSource.source_seq);
+    expect(counterexampleJob.result_revision).toBeGreaterThan(correctionRevisionNo);
+    const latestRevisionNo = counterexampleJob.result_revision;
+    const { data: latestRevision, error: latestRevisionError } = await admin.from('person_model_revisions')
+      .select('revision_no,processed_source_seq,brief,verifier_receipt')
+      .eq('profile_id', personId!).eq('user_id', userId).eq('revision_no', latestRevisionNo).single();
+    if (latestRevisionError || !latestRevision) throw latestRevisionError ?? new Error('counterexample revision missing');
+    expect(latestRevision.processed_source_seq).toBeGreaterThanOrEqual(counterexampleSource.source_seq);
+    expect(latestRevision.verifier_receipt).toBeTruthy();
+    const { data: latestMembers, error: latestMembersError } = await admin.from('person_revision_objects')
+      .select('object_id,object_version_id').eq('profile_id', personId!).eq('user_id', userId).eq('revision_no', latestRevisionNo);
+    if (latestMembersError || !latestMembers) throw latestMembersError ?? new Error('latest revision members missing');
+    const latestVersionIds = latestMembers.map((member) => member.object_version_id);
+    expect(latestVersionIds.length).toBeGreaterThan(0);
+    const { data: counterexampleSupport, error: counterexampleSupportError } = await admin.from('person_object_version_support')
+      .select('object_version_id,source_item_id,observation_id,relation')
+      .eq('profile_id', personId!).eq('user_id', userId).in('object_version_id', latestVersionIds);
+    if (counterexampleSupportError || !counterexampleSupport) throw counterexampleSupportError ?? new Error('counterexample support links missing');
+    expect(counterexampleSupport.length).toBeGreaterThan(0);
+    const latestSupportedSourceIds = new Set(counterexampleSupport.flatMap((row) => row.source_item_id ? [row.source_item_id] : []));
+    expect(latestSupportedSourceIds.has(source.id)).toBe(true);
+    expect(latestSupportedSourceIds.has(correction.sourceId)).toBe(true);
+    expect(latestSupportedSourceIds.has(counterexampleSource.id)).toBe(true);
+    const { data: latestVersions, error: latestVersionsError } = await admin.from('person_object_versions')
+      .select('id,object_id,epistemic_class,lifecycle,typed_payload').eq('profile_id', personId!).eq('user_id', userId)
+      .in('id', latestVersionIds);
+    if (latestVersionsError || !latestVersions) throw latestVersionsError ?? new Error('latest object versions missing');
+    const latestNarrative = JSON.stringify({ brief: latestRevision.brief, objects: latestVersions.map((item) => item.typed_payload) });
+    expect(latestNarrative).not.toMatch(/incapable of discipline|cannot be productive alone|needs social contact to function/i);
+
+    // The corrected model and the independent counterexample must be read in
+    // a fresh session that contains neither source turn, with a receipt naming
+    // the latest published revision rather than relying on its transcript.
+    const retrievalSessionResult = await userClient.rpc('create_astro_session', { p_profile_id: personId });
+    if (retrievalSessionResult.error) throw retrievalSessionResult.error;
+    const retrievalSessionId = (retrievalSessionResult.data as { sessionId?: string }).sessionId;
+    expect(retrievalSessionId).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(retrievalSessionId).not.toBe(sessionId);
+    expect(retrievalSessionId).not.toBe(counterexampleSessionId);
+    await page.goto(`/astrologer/p/${personId}/chat/${retrievalSessionId}`);
+    await expect(page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]')).toBeEnabled({ timeout: 30_000 });
+    const revisedTurn = await sendOrdinaryMessage(
       page,
       admin,
-      'In this new conversation, what did I say began around age 15, what challenged the goal later, and what part of its present meaning is still open?',
+      'In this conversation, how does the clear successful day alone qualify the account about prolonged isolation, and what did I correct about the earlier pattern?',
     );
-    expect(secondTurn.answer).toMatch(/\b15\b|formative question/i);
-    expect(secondTurn.answer).toMatch(/unknown|not yet|still (?:open|unclear|working out)|haven't (?:said|worked out)|have not (?:said|worked out)/i);
-    const { data: planReceipt, error: planReceiptError } = await admin.from('astro_agent_run_steps')
-      .select('refs').eq('run_id', secondTurn.runId).eq('kind', 'plan')
+    const { data: revisedPlanReceipt, error: revisedPlanReceiptError } = await admin.from('astro_agent_run_steps')
+      .select('refs').eq('run_id', revisedTurn.runId).eq('kind', 'plan')
       .order('ordinal', { ascending: true }).limit(1).single();
-    if (planReceiptError || !planReceipt) throw planReceiptError ?? new Error('new-chat person revision receipt missing');
-    expect((planReceipt.refs as { personRevision?: number }).personRevision).toBe(revision.revision_no);
+    if (revisedPlanReceiptError || !revisedPlanReceipt) throw revisedPlanReceiptError ?? new Error('revised new-chat receipt missing');
+    expect((revisedPlanReceipt.refs as { personRevision?: number }).personRevision).toBe(latestRevisionNo);
+    expect(revisedTurn.answer).toMatch(/isolation|alone|solitude/i);
     await page.reload();
-    await expect(page.getByText(secondTurn.answer, { exact: true })).toBeVisible({ timeout: 30_000 });
-    await expect(page.locator('input[placeholder="Tell me what you are exploring…"], input[placeholder="Ask your companion…"]')).toBeEnabled({ timeout: 30_000 });
-    await captureResponsive(page, testInfo, personId!, 'guided-chat-reloaded');
+    await expect(page.getByText(revisedTurn.answer, { exact: true })).toBeVisible({ timeout: 30_000 });
+    if (!dataOnly) await captureResponsive(page, testInfo, personId!, 'guided-chat-revised-reloaded');
     expect(browserErrors).toEqual([]);
   } catch (error) {
     primaryError = error;

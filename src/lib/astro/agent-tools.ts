@@ -238,7 +238,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: 'astro_record_plan',
     description:
-      'Record the execution plan for this run before any other work. Required first call.',
+      'Record the execution plan for this run before any other work. Required first call. End with exactly one evaluate step; the host verifies the resulting draft.',
     parameters: {
       type: 'object',
       properties: {
@@ -252,13 +252,100 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
               maxItems: 8,
               minItems: 1,
               items: {
-                type: 'object',
-                properties: {
-                  key: { type: 'string', maxLength: 80 },
-                  kind: { type: 'string', enum: ['retrieve', 'calculate', 'evaluate', 'verify'] },
-                  objective: { type: 'string', maxLength: 500 },
-                },
-                required: ['key', 'kind', 'objective'],
+                oneOf: [
+                  ...(['retrieve', 'evaluate', 'verify'] as const).map((kind) => ({
+                    type: 'object',
+                    properties: {
+                      key: { type: 'string', maxLength: 80 },
+                      kind: { type: 'string', enum: [kind] },
+                      objective: { type: 'string', maxLength: 500 },
+                    },
+                    required: ['key', 'kind', 'objective'],
+                    additionalProperties: false,
+                  })),
+                  {
+                    type: 'object',
+                    properties: {
+                      key: { type: 'string', maxLength: 80 },
+                      kind: { type: 'string', enum: ['calculate'] },
+                      objective: { type: 'string', maxLength: 500 },
+                      calculation: {
+                        description: 'Choose the exact allowlisted Atros CLI operation and only its validated arguments.',
+                        oneOf: [
+                          ...(['atros_chart', 'atros_current_dasha'] as const).map((tool) => ({
+                            type: 'object',
+                            properties: {
+                              tool: { type: 'string', enum: [tool] },
+                              args: { type: 'object', properties: {}, additionalProperties: false },
+                            },
+                            required: ['tool', 'args'],
+                            additionalProperties: false,
+                          })),
+                          {
+                            type: 'object',
+                            properties: {
+                              tool: { type: 'string', enum: ['atros_sensitivity'] },
+                              args: {
+                                type: 'object',
+                                properties: { offsets: { type: 'array', items: { type: 'integer', minimum: -180, maximum: 180 }, maxItems: 25 } },
+                                additionalProperties: false,
+                              },
+                            },
+                            required: ['tool', 'args'],
+                            additionalProperties: false,
+                          },
+                          {
+                            type: 'object',
+                            properties: {
+                              tool: { type: 'string', enum: ['atros_timeline'] },
+                              args: {
+                                type: 'object',
+                                properties: {
+                                  from: { type: 'string', description: 'YYYY-MM-DD' },
+                                  to: { type: 'string', description: 'YYYY-MM-DD' },
+                                  level: { type: 'string', enum: ['maha', 'antar', 'pratyantar', 'sookshma'] },
+                                },
+                                required: ['from', 'to'],
+                                additionalProperties: false,
+                              },
+                            },
+                            required: ['tool', 'args'],
+                            additionalProperties: false,
+                          },
+                          {
+                            type: 'object',
+                            properties: {
+                              tool: { type: 'string', enum: ['atros_transit'] },
+                              args: {
+                                type: 'object',
+                                properties: { asOf: { type: 'string', description: 'YYYY-MM-DD' } },
+                                required: ['asOf'],
+                                additionalProperties: false,
+                              },
+                            },
+                            required: ['tool', 'args'],
+                            additionalProperties: false,
+                          },
+                          {
+                            type: 'object',
+                            properties: {
+                              tool: { type: 'string', enum: ['atros_dasha'] },
+                              args: {
+                                type: 'object',
+                                properties: { years: { type: 'integer', minimum: 1, maximum: 120 } },
+                                additionalProperties: false,
+                              },
+                            },
+                            required: ['tool', 'args'],
+                            additionalProperties: false,
+                          },
+                        ],
+                      },
+                    },
+                    required: ['key', 'kind', 'objective', 'calculation'],
+                    additionalProperties: false,
+                  },
+                ],
               },
             },
             retrievalQueries: { type: 'array', items: { type: 'string' }, maxItems: 6 },
@@ -373,7 +460,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: 'astro_finish_run',
     description:
-      'Propose the final response. The run finishes waiting_for_user (with an optional focused question) or complete. Every claim must cite grounding IDs.',
+      'Propose the final response. The run finishes waiting_for_user (with an optional focused question) or complete. Put provenance UUIDs only in the grounding ID arrays; answer must be plain user-facing text without UUIDs or Markdown formatting.',
     parameters: {
       type: 'object',
       properties: {
@@ -565,7 +652,22 @@ async function handleFinishRun(ctx: ToolContext, rawArgs: unknown): Promise<Tool
 export function validatePlanArgs(rawArgs: unknown): { ok: true; plan: RunPlan } | { ok: false; message: string } {
   const parsed = astroRecordPlanArgsSchema.safeParse(rawArgs ?? {});
   if (!parsed.success) return { ok: false, message: parsed.error.message };
-  return { ok: true, plan: parsed.data.plan };
+  const firstEvaluate = parsed.data.plan.steps.findIndex((step) => step.kind === 'evaluate');
+  const evidenceSteps = (firstEvaluate >= 0
+    ? parsed.data.plan.steps.slice(0, firstEvaluate)
+    : parsed.data.plan.steps)
+    .filter((step) => step.kind !== 'verify')
+    .slice(0, 7);
+  return {
+    ok: true,
+    plan: {
+      ...parsed.data.plan,
+      steps: [
+        ...evidenceSteps,
+        { key: 'answer', kind: 'evaluate', objective: 'Answer from the collected person context and calculation evidence.' },
+      ],
+    },
+  };
 }
 
 export async function dispatchTool(

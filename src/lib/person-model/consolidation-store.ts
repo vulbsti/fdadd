@@ -161,8 +161,8 @@ export class PersonConsolidationStore {
     })));
   }
 
-  stageCheckpointKey(claim: PersonJobClaim, stageKey: string): string {
-    return `p3:${claim.baseRevision}:${claim.privacyEpoch}:${claim.modeEpoch}:${stageKey}`;
+  stageCheckpointKey(claim: PersonJobClaim, stageKey: string, inputDigest: string): string {
+    return `p3:${claim.baseRevision}:${claim.privacyEpoch}:${claim.modeEpoch}:${stageKey}:${inputDigest}`;
   }
 
   async loadStageCheckpoint(claim: PersonJobClaim, payloadKey: string): Promise<{
@@ -281,13 +281,16 @@ export class PersonConsolidationStore {
   }
 
   async fail(claim: PersonJobClaim, stage: string, error: unknown): Promise<void> {
+    const serializedDatabaseCode = error instanceof Error
+      ? error.message.match(/storage failed \(([A-Z0-9]+)\)/i)?.[1] ?? null
+      : null;
     const rawCode = error instanceof Error && 'code' in error && typeof error.code === 'string'
-      ? error.code : 'consolidation_failed';
+      ? error.code : serializedDatabaseCode ? `database_${serializedDatabaseCode.toLowerCase()}` : 'consolidation_failed';
     const code = /^[a-z0-9_.-]{1,80}$/i.test(rawCode) ? rawCode : 'consolidation_failed';
     const dbCode = error instanceof Error && 'databaseCode' in error && typeof error.databaseCode === 'string'
-      ? error.databaseCode.slice(0, 20) : null;
+      ? error.databaseCode.slice(0, 20) : serializedDatabaseCode;
     const status = error instanceof Error && 'status' in error && typeof error.status === 'number' ? error.status : null;
-    const failureKind = code === 'malformed_stage_output' ? 'malformed_output'
+    const failureKind = code.startsWith('malformed_stage_') || code.startsWith('explicit_change_') ? 'malformed_output'
       : code === 'verification_exhausted' ? 'verification_exhausted'
         : status === 429 ? 'quota'
           : status === 408 || status === 504 ? 'timeout'

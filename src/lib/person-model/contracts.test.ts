@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   PersonIdentitySchema,
+  PersonChangeCommandSchema,
   PersonObjectPayloadSchema,
   PersonRelationKindSchema,
   PublishPersonRevisionInputSchema,
+  personChangeRequestFromCommand,
   type PersonObjectKind,
 } from './contracts';
 
@@ -81,6 +83,37 @@ describe('person-model contracts', () => {
     });
     expect(identity.personId).toBe(personId);
     expect(identity.readiness.level).toBe('name_only');
+  });
+
+  it('normalizes the browser correction command into the exact durable intent payload', () => {
+    const command = PersonChangeCommandSchema.parse({
+      kind: 'correct_account',
+      clientCommandId: '11111111-1111-4111-8111-111111111111',
+      expectedRevision: 2,
+      targetId: '22222222-2222-4222-8222-222222222222',
+      account: { correction: 'The job change happened in 2025, not 2024.' },
+    });
+
+    expect(personChangeRequestFromCommand(command)).toEqual({
+      kind: 'correct_account',
+      targetObjectId: '22222222-2222-4222-8222-222222222222',
+      payload: { correction: 'The job change happened in 2025, not 2024.' },
+    });
+  });
+
+  it('normalizes a bare rejection into an explicit durable explanation', () => {
+    const command = PersonChangeCommandSchema.parse({
+      kind: 'reject_interpretation',
+      clientCommandId: '11111111-1111-4111-8111-111111111111',
+      expectedRevision: 2,
+      targetId: '22222222-2222-4222-8222-222222222222',
+    });
+
+    expect(personChangeRequestFromCommand(command)).toEqual({
+      kind: 'reject_interpretation',
+      targetObjectId: '22222222-2222-4222-8222-222222222222',
+      explanation: 'This interpretation does not fit me.',
+    });
   });
 
   it('validates the revision membership payload accepted by the fenced SQL publisher', () => {

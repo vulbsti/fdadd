@@ -163,11 +163,40 @@ export type AstrologerSessionDetail = z.infer<typeof AstrologerSessionDetailSche
 // Run plan / checkpoint / verification
 // ---------------------------------------------------------------------------
 
-export const RunPlanStepSchema = z.object({
+const RunPlanStepBaseSchema = z.object({
   key: z.string().min(1).max(80),
-  kind: z.enum(['retrieve', 'calculate', 'evaluate', 'verify']),
   objective: z.string().min(1).max(500),
-});
+}).strict();
+
+export const AtrosPlanCalculationSchema = z.discriminatedUnion('tool', [
+  z.object({ tool: z.literal('atros_chart'), args: z.object({}).strict() }).strict(),
+  z.object({
+    tool: z.literal('atros_sensitivity'),
+    args: z.object({ offsets: z.array(z.number().int().min(-180).max(180)).max(25).optional() }).strict(),
+  }).strict(),
+  z.object({
+    tool: z.literal('atros_timeline'),
+    args: z.object({
+      from: isoDateSchema,
+      to: isoDateSchema,
+      level: z.enum(['maha', 'antar', 'pratyantar', 'sookshma']).default('pratyantar'),
+    }).strict().refine((value) => value.to >= value.from, { message: 'Timeline end must not precede its start.' }),
+  }).strict(),
+  z.object({ tool: z.literal('atros_transit'), args: z.object({ asOf: isoDateSchema }).strict() }).strict(),
+  z.object({ tool: z.literal('atros_current_dasha'), args: z.object({}).strict() }).strict(),
+  z.object({
+    tool: z.literal('atros_dasha'),
+    args: z.object({ years: z.number().int().min(1).max(120).default(50) }).strict(),
+  }).strict(),
+]);
+export type AtrosPlanCalculation = z.infer<typeof AtrosPlanCalculationSchema>;
+
+export const RunPlanStepSchema = z.discriminatedUnion('kind', [
+  RunPlanStepBaseSchema.extend({ kind: z.literal('retrieve') }).strict(),
+  RunPlanStepBaseSchema.extend({ kind: z.literal('calculate'), calculation: AtrosPlanCalculationSchema }).strict(),
+  RunPlanStepBaseSchema.extend({ kind: z.literal('evaluate') }).strict(),
+  RunPlanStepBaseSchema.extend({ kind: z.literal('verify') }).strict(),
+]);
 export type RunPlanStep = z.infer<typeof RunPlanStepSchema>;
 
 export const RunPlanSchema = z.object({

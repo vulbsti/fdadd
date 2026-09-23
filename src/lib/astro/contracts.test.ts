@@ -17,6 +17,7 @@ import {
 } from '@/lib/astro/contracts';
 import { parseCheckpoint, parseVerification } from '@/lib/astro/agent-store';
 import { AgentStoreError } from '@/lib/astro/agent-store';
+import { validatePlanArgs } from '@/lib/astro/agent-tools';
 
 const UUID = '11111111-1111-4111-8111-111111111111';
 
@@ -57,6 +58,48 @@ describe('RunPlan', () => {
     expect(
       RunPlanSchema.safeParse({ goal: 'g', mode: 'timing', steps: [{ key: 'a', kind: 'retrieve', objective: 'o' }] }).success,
     ).toBe(true);
+  });
+
+  it('requires an exact typed Atros request for calculation steps', () => {
+    expect(RunPlanSchema.safeParse({
+      goal: 'current timing', mode: 'timing',
+      steps: [{ key: 'calculate', kind: 'calculate', objective: 'Inspect current dasha' }],
+    }).success).toBe(false);
+    expect(RunPlanSchema.safeParse({
+      goal: 'current timing', mode: 'timing',
+      steps: [{
+        key: 'calculate', kind: 'calculate', objective: 'Inspect current dasha',
+        calculation: { tool: 'atros_current_dasha', args: {} },
+      }],
+    }).success).toBe(true);
+    expect(RunPlanSchema.safeParse({
+      goal: 'timing window', mode: 'timing',
+      steps: [{
+        key: 'calculate', kind: 'calculate', objective: 'Inspect timeline',
+        calculation: { tool: 'atros_timeline', args: { from: '2026-10-01', to: '2026-09-01', level: 'antar' } },
+      }],
+    }).success).toBe(false);
+  });
+
+  it('host-bounds a provider plan with one terminal evaluation step', () => {
+    const parsed = validatePlanArgs({
+      plan: {
+        goal: 'understand the person',
+        mode: 'profile_understanding',
+        steps: [
+          { key: 'r1', kind: 'retrieve', objective: 'Find context' },
+          { key: 'v1', kind: 'verify', objective: 'Provider-proposed verification' },
+          { key: 'r2', kind: 'retrieve', objective: 'Find another relevant account' },
+        ],
+      },
+    });
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.plan.steps).toEqual([
+      { key: 'r1', kind: 'retrieve', objective: 'Find context' },
+      { key: 'r2', kind: 'retrieve', objective: 'Find another relevant account' },
+      { key: 'answer', kind: 'evaluate', objective: 'Answer from the collected person context and calculation evidence.' },
+    ]);
   });
 });
 

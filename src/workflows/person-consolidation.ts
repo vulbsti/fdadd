@@ -3,10 +3,11 @@
  * internal job id; every DB read/write and provider call is a replayable step.
  */
 import { FatalError } from 'workflow';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import {
   callPersonStage,
   coldStartMatchAndReconciliation,
+  explicitObjectChangeMatchAndReconciliation,
   MalformedPersonStageOutputError,
   PersonCompositionPlanSchema,
   PersonExtractionOutputSchema,
@@ -26,6 +27,9 @@ import {
   validateVerificationReferences,
   verifiedCompositionSubset,
   resolveChangeIdsForPlan,
+  bindExplicitObjectChangeTargets,
+  bindPlanEvidenceToObservations,
+  validateExplicitChangeCoverage,
   type PersonCompositionPlan,
   type PersonConsolidationStage,
   type MaterializedConsolidationCandidate,
@@ -45,6 +49,15 @@ const stageNames = {
   repair: 'repair_person_revision',
 } as const;
 
+const stageTokenBudgets: Record<PersonConsolidationStage, number> = {
+  extract: 2_500,
+  match_countercontext: 2_000,
+  reconcile: 2_500,
+  compose: 5_000,
+  verify: 3_000,
+  repair: 5_000,
+};
+
 const LEASE_LOST_MESSAGE = 'Person consolidation lease was lost; stale worker stopped.';
 
 function stopRetryingStaleWorker(error: unknown): never {
@@ -52,7 +65,7 @@ function stopRetryingStaleWorker(error: unknown): never {
   throw error;
 }
 
-const systemGuidance = `You are a careful personal-history consolidation worker. Extract only explicit, source-grounded observations. Distinguish self, another person, hypothetical, and unknown attribution. Preserve uncertainty, conditions, exceptions, and counterevidence; do not diagnose, predict motivation, or invent later meaning. Dates must retain their stated precision. Every observation must quote an exact JavaScript string slice from one supplied source, with UTF-16 start/end offsets. A source with change metadata is an explicit user instruction: corrections and rejections must revise their named target rather than create an unrelated additive claim; an explicit exclusion is a control request and must not become a personal observation. Refer only to supplied source/object/observation IDs. Return only the requested function call. Guidance ${PERSON_GUIDANCE_VERSION}; policy ${PERSON_MODEL_POLICY_VERSION}.`;
+const systemGuidance = `You are a careful personal-history consolidation worker. Extract only explicit, source-grounded observations. A faithful normalized paraphrase of an explicit source statement is assertionType "direct"; use "derived" only when the observation adds a conclusion the source did not itself state, and use "reported_interpretation" when the person explicitly reports their own interpretation. Distinguish self, another person, hypothetical, and unknown attribution. Preserve uncertainty, conditions, exceptions, and counterevidence; do not diagnose, predict motivation, or invent later meaning. When a reported pattern has an explicit situation in which it does not hold, retain that situation in the pattern object's exceptions array; do not omit it or flatten it into a universal rule. For meaning changes, "unknown" means the person explicitly says the later meaning is unresolved, unclear, or not worked out; "not_yet_shared" is only for an explicit refusal or choice to withhold it. Dates must retain their stated precision. Represent an explicit time-bounded experience as an episode and an explicit stated aim as a goal when the source supports them; do not flatten concrete history into only an abstract pattern, but do not force unsupported ontology kinds. Every observation must quote an exact JavaScript string slice from one supplied source, with UTF-16 start/end offsets. A source with change metadata is an explicit user instruction: corrections and rejections must revise their named target rather than create an unrelated additive claim; an explicit exclusion is a control request and must not become a personal observation. Refer only to supplied source/object/observation IDs. Return only the requested structured result. Guidance ${PERSON_GUIDANCE_VERSION}; policy ${PERSON_MODEL_POLICY_VERSION}.`;
 
 async function claimPersonJob(jobId: string): Promise<PersonJobClaim | null> {
   'use step';
@@ -79,6 +92,11 @@ async function providerStageStep(input: {
   attempt?: number;
   content: unknown;
   expected: 'extract' | 'match_countercontext' | 'reconcile' | 'compose' | 'verify' | 'repair';
+  changeContext?: {
+    sources: Parameters<typeof bindExplicitObjectChangeTargets>[0];
+    snapshot: Parameters<typeof bindExplicitObjectChangeTargets>[1];
+    observations: Parameters<typeof bindPlanEvidenceToObservations>[1];
+  };
 }) {
   'use step';
   const store = new PersonConsolidationStore();
@@ -89,10 +107,23 @@ async function providerStageStep(input: {
     stopRetryingStaleWorker(error);
   }
   await store.assertFresh(input.claim);
-  const checkpointKey = store.stageCheckpointKey(input.claim, stageKey);
+  const inputDigest = createHash('sha256').update(JSON.stringify({
+    version: 'p3-stage-input.v1',
+    stage: input.stage,
+    expected: input.expected,
+    content: input.content,
+    changeContext: input.changeContext,
+  })).digest('hex');
+  const checkpointKey = store.stageCheckpointKey(input.claim, stageKey, inputDigest);
   const cached = await store.loadStageCheckpoint(input.claim, checkpointKey);
   if (cached) {
-    const parsed = schemaFor(input.stage).parse(cached.value);
+    const schemaParsed = schemaFor(input.stage).parse(cached.value);
+    const targeted = input.changeContext && (input.expected === 'compose' || input.expected === 'repair')
+      ? bindExplicitObjectChangeTargets(input.changeContext.sources, input.changeContext.snapshot, schemaParsed as PersonCompositionPlan)
+      : schemaParsed;
+    const parsed = input.changeContext && (input.expected === 'compose' || input.expected === 'repair')
+      ? bindPlanEvidenceToObservations(targeted as PersonCompositionPlan, input.changeContext.observations)
+      : targeted;
     await store.recordStage(input.claim, {
       stageKey,
       stage: input.stage === 'match_countercontext' ? 'match' : input.stage === 'repair' ? 'repair' : input.stage,
@@ -113,36 +144,54 @@ async function providerStageStep(input: {
     metrics: { inputBytes: Buffer.byteLength(JSON.stringify(input.content)) },
   });
   try {
+    // The prototype deliberately uses the same proven model for conversation
+    // and learning. Stage-specific overrides remain available for later
+    // evaluation, but are not a hidden second default.
     const consolidationModel = process.env.PERSON_CONSOLIDATION_MODEL?.trim()
+      || process.env.ASTROLOGER_MODEL?.trim()
       || (process.env.OPENCODE_API_KEY?.trim() || process.env.OPENGO_API?.trim()
-        ? 'kimi-k3'
+        ? 'gpt-6-luna'
         : undefined);
-    const result = await callPersonStage<unknown>({
-      stage: input.stage,
-      toolName: stageNames[input.stage],
-      description: `Return the strictly validated ${input.stage} result for this person consolidation stage.`,
-      parameters: personStageToolParameters(input.stage),
-      system: systemGuidance,
-      content: JSON.stringify(input.content),
-      model: consolidationModel,
-      // The Go chat adapter reliably invokes the extraction tool. Its larger
-      // composition and verifier schemas have produced empty/malformed tool
-      // envelopes across routed models, so those stages receive the same
-      // generated schema in a JSON-only prompt. The local Zod gate is
-      // unchanged: invalid output can never be staged or published.
-      responseMode: input.stage === 'extract' ? 'tool' : 'json',
-      // Keep enough room for strict multi-object output without reserving an
-      // unnecessarily large share of the provider's output-token rate limit.
-      maxTokens: 5_000,
-      // OpenCode Go requires stable routing/cache affinity for reliable tool
-      // adherence. Fence and stage keep unrelated attempts isolated.
-      sessionId: `person-${input.claim.jobId}-${input.claim.fence}-${stageKey}`,
-    });
-    const parsed = input.expected === 'extract' ? PersonExtractionOutputSchema.parse(result.value)
+    const invokeStage = (repair = false) => callPersonStage<unknown>({
+        stage: input.stage,
+        toolName: stageNames[input.stage],
+        description: `Return the strictly validated ${input.stage} result for this person consolidation stage.`,
+        parameters: personStageToolParameters(input.stage),
+        system: repair
+          ? `${systemGuidance}\nYour prior attempt did not return the required single structured tool result. Call the one supplied tool exactly once with a complete schema-valid object; emit no prose.`
+          : systemGuidance,
+        content: JSON.stringify(input.content),
+        model: consolidationModel,
+        // Go uses automatic tool selection. callPersonStage still validates the
+        // exact returned tool name and complete local Zod contract before any
+        // output can be staged or published.
+        responseMode: 'tool',
+        // Keep enough room for strict multi-object output without reserving an
+        // unnecessarily large share of the provider's output-token rate limit.
+        maxTokens: stageTokenBudgets[input.stage],
+        // A malformed structure gets one isolated repair session below. Rate
+        // limits, transport errors, and semantic verifier findings never use
+        // this inline repair and remain governed by the durable job queue.
+        sessionId: `person-${input.claim.jobId}-${input.claim.fence}-${stageKey}${repair ? '-schema-repair' : ''}`,
+      });
+    let result;
+    try {
+      result = await invokeStage();
+    } catch (error) {
+      if (!(error instanceof MalformedPersonStageOutputError)) throw error;
+      result = await invokeStage(true);
+    }
+    const schemaParsed = input.expected === 'extract' ? PersonExtractionOutputSchema.parse(result.value)
       : input.expected === 'match_countercontext' ? PersonMatchOutputSchema.parse(result.value)
         : input.expected === 'reconcile' ? PersonReconciliationOutputSchema.parse(result.value)
           : input.expected === 'compose' || input.expected === 'repair' ? PersonCompositionPlanSchema.parse(result.value)
             : PersonVerificationOutputSchema.parse(result.value);
+    const targeted = input.changeContext && (input.expected === 'compose' || input.expected === 'repair')
+      ? bindExplicitObjectChangeTargets(input.changeContext.sources, input.changeContext.snapshot, schemaParsed as PersonCompositionPlan)
+      : schemaParsed;
+    const parsed = input.changeContext && (input.expected === 'compose' || input.expected === 'repair')
+      ? bindPlanEvidenceToObservations(targeted as PersonCompositionPlan, input.changeContext.observations)
+      : targeted;
     await store.renew(input.claim);
     await store.assertFresh(input.claim);
     const outputPayloadId = await store.saveStageCheckpoint(input.claim, checkpointKey, parsed, result.metadata);
@@ -196,6 +245,7 @@ async function recordDeterministicStageStep(
   claim: PersonJobClaim,
   stageKey: 'match_countercontext' | 'reconcile',
   stage: 'match' | 'reconcile',
+  reason: 'cold_start' | 'explicit_change',
 ): Promise<void> {
   'use step';
   const store = new PersonConsolidationStore();
@@ -207,8 +257,10 @@ async function recordDeterministicStageStep(
     state: 'succeeded',
     provider: 'deterministic',
     model: null,
-    metrics: { coldStart: 1 },
-    safeSummary: `${stage} completed deterministically because no prior person-model evidence existed.`,
+    metrics: reason === 'cold_start' ? { coldStart: 1 } : { explicitChange: 1 },
+    safeSummary: reason === 'cold_start'
+      ? `${stage} completed deterministically because no prior person-model evidence existed.`
+      : `${stage} completed deterministically from the typed change target and its prior evidence.`,
   });
 }
 
@@ -269,13 +321,20 @@ export async function personConsolidationWorkflow(jobId: string) {
     }
 
     const coldStart = context.snapshot.objectMembers.length === 0 && context.countercontext.length === 0;
-    const deterministic = coldStart ? coldStartMatchAndReconciliation(observations.length) : null;
+    const explicitChange = explicitObjectChangeMatchAndReconciliation(
+      context.includedSources,
+      context.snapshot,
+      context.countercontext,
+      observations,
+    );
+    const deterministic = explicitChange ?? (coldStart ? coldStartMatchAndReconciliation(observations.length) : null);
+    const deterministicReason = explicitChange ? 'explicit_change' as const : 'cold_start' as const;
     currentStage = 'match';
     const matched = deterministic ? null : await providerStageStep({
       claim, stage: 'match_countercontext', expected: 'match_countercontext',
       content: { observations, currentObjects: context.snapshot.objectMembers, countercontext: context.countercontext },
     });
-    if (deterministic) await recordDeterministicStageStep(claim, 'match_countercontext', 'match');
+    if (deterministic) await recordDeterministicStageStep(claim, 'match_countercontext', 'match', deterministicReason);
     const matchOutput = deterministic?.match ?? matched!.value as any;
     if (matchOutput.matches.length !== observations.length || matchOutput.matches.some((match: any, index: number) => match.observationIndex !== index)) {
       throw new MalformedPersonStageOutputError('Match stage must return exactly one ordered match per observation.');
@@ -291,7 +350,7 @@ export async function personConsolidationWorkflow(jobId: string) {
       claim, stage: 'reconcile', expected: 'reconcile',
         content: { observations, extractionUnknowns: extraction.unknowns, matches: matchOutput.matches, countercontext: selectedCountercontext, existingRelations: context.snapshot.relationMembers },
     });
-    if (deterministic) await recordDeterministicStageStep(claim, 'reconcile', 'reconcile');
+    if (deterministic) await recordDeterministicStageStep(claim, 'reconcile', 'reconcile', deterministicReason);
     const reconciliation = deterministic?.reconciliation ?? reconciled!.value as any;
     validateCountercontextCoverage(selectedCountercontext, reconciliation);
     if (reconciliation.decisions.length !== observations.length || reconciliation.decisions.some((decision: any, index: number) => decision.observationIndex !== index)) {
@@ -301,6 +360,7 @@ export async function personConsolidationWorkflow(jobId: string) {
     currentStage = 'compose';
     const composed = await providerStageStep({
       claim, stage: 'compose', expected: 'compose',
+      changeContext: { sources: context.includedSources, snapshot: context.snapshot, observations },
       content: {
         sources: context.includedSources,
         observations,
@@ -335,7 +395,14 @@ export async function personConsolidationWorkflow(jobId: string) {
       currentStage = 'repair';
       const repaired = await providerStageStep({
         claim, stage: 'repair', attempt, expected: 'repair',
-        content: { plan, blockingFindings: verification.findings.filter((finding: any) => finding.severity === 'blocking'), sources: context.includedSources, observations },
+        changeContext: { sources: context.includedSources, snapshot: context.snapshot, observations },
+        content: {
+          plan,
+          blockingFindings: verification.findings.filter((finding: any) => finding.severity === 'blocking'),
+          sources: context.includedSources,
+          observations,
+          currentObjects: context.snapshot.objectMembers,
+        },
       });
       plan = repaired.value as PersonCompositionPlan;
     }
@@ -343,6 +410,7 @@ export async function personConsolidationWorkflow(jobId: string) {
     const hasUnresolved = verification.findings.some((finding: any) => finding.severity === 'blocking')
       || plan.unresolvedQuestions.length > 0;
     const partial = hasUnresolved;
+    validateExplicitChangeCoverage(context.includedSources, plan);
     const outcomeSources = context.sources.map((source) => ({
       sourceId: source.sourceId,
       inclusion: source.inclusion,
@@ -355,6 +423,7 @@ export async function personConsolidationWorkflow(jobId: string) {
       snapshot: context.snapshot,
       plan,
       observations,
+      sources: context.includedSources,
       sourceIds: context.includedSources.map((source) => source.sourceId),
       resolveChangeIds: resolveChangeIdsForPlan(context.includedSources, plan),
       verification,

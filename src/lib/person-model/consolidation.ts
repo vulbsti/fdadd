@@ -157,12 +157,12 @@ const PersonPlanReferenceSchema = z.discriminatedUnion('kind', [
 export const PersonCompositionPlanSchema = z.object({
   objects: z.array(z.object({
     key: z.string().regex(/^[a-zA-Z0-9_-]{1,80}$/),
-    existingObjectId: uuid.nullable(),
+    existingObjectId: uuid.nullable().describe('The supplied current object UUID being revised. For an explicit correction or rejection, use the change target UUID; use null only for a genuinely new object.'),
     payload: PersonObjectPayloadSchema,
     epistemicClass: z.enum(['reported', 'working_hypothesis', 'unknown']),
     lifecycle: PersonVersionLifecycleSchema,
     effectiveTime: TimeRangeSchema,
-    sourceIds: z.array(uuid).min(1).max(200),
+    sourceIds: z.array(uuid).min(1).max(200).describe('Supplied source UUIDs supporting this complete object version. Include the explicit change source when applying a correction or rejection.'),
     observationIndexes: z.array(z.number().int().nonnegative()).min(1).max(100),
   }).strict()).max(200),
   relations: z.array(z.object({
@@ -311,6 +311,7 @@ export function materializeConsolidationCandidate(input: {
   snapshot: ConsolidationSnapshot;
   plan: PersonCompositionPlan;
   observations: Array<PersonObservationDraft & { observationId?: string }>;
+  sources: ConsolidationSource[];
   sourceIds: string[];
   resolveChangeIds?: string[];
   verification: PersonVerificationOutput;
@@ -321,10 +322,21 @@ export function materializeConsolidationCandidate(input: {
   const objectById = new Map(snapshot.objectMembers.map((object) => [object.objectId, object]));
   const relationById = new Map(snapshot.relationMembers.map((relation) => [relation.relationId, relation]));
   const validSourceIds = new Set(input.sourceIds);
+  const correctedObjectIds = new Set(input.sources.flatMap((source) =>
+    source.change?.changeKind === 'correction' && source.change.targetKind === 'object'
+      ? [source.change.targetId]
+      : []));
   const stagedObservations = observations.map((observation) => ({
     ...observation,
     observationId: observation.observationId ?? crypto.randomUUID(),
     normalizedAssertion: { text: observation.normalizedAssertion },
+    // question/correction are workflow extraction dispositions, not durable
+    // epistemic types. Keep storage aligned with person_record_observations:
+    // explicit correction text is direct user evidence; a question is not a
+    // claim and remains unknown.
+    assertionType: observation.assertionType === 'correction' ? 'direct' as const
+      : observation.assertionType === 'question' ? 'unknown' as const
+        : observation.assertionType,
   }));
   const stagedObjects: MaterializedConsolidationCandidate['objects'] = [];
   const objectSupport: MaterializedConsolidationCandidate['objectSupport'] = [];
@@ -367,6 +379,24 @@ export function materializeConsolidationCandidate(input: {
     });
     if (item.lifecycle === 'active') objectMemberMap.set(objectId, { objectId, versionId });
     else objectMemberMap.delete(objectId);
+
+    // An object version is a complete current claim, not a delta that can
+    // discard its earlier evidence. Carry prior provenance forward from the
+    // trusted snapshot. When this job is an explicit correction, retain the
+    // earlier evidence as qualifying context rather than claiming it still
+    // supports the corrected fields unchanged.
+    if (prior) {
+      const relation = correctedObjectIds.has(prior.objectId) ? 'qualifies' : 'supports';
+      const note = relation === 'qualifies'
+        ? 'Prior evidence retained as context after an explicit correction.'
+        : 'Evidence carried forward from the prior object version.';
+      for (const sourceId of new Set(prior.sourceIds)) {
+        objectSupport.push({ versionId, sourceId, observationId: null, relation, note, weight: null });
+      }
+      for (const observationId of new Set(prior.observationIds)) {
+        objectSupport.push({ versionId, sourceId: null, observationId, relation, note, weight: null });
+      }
+    }
 
     const supportedSources = new Set(item.sourceIds);
     for (const sourceId of supportedSources) objectSupport.push({ versionId, sourceId, observationId: null, relation: 'supports', note: null, weight: null });
@@ -426,6 +456,14 @@ export function materializeConsolidationCandidate(input: {
       typedPayload: { rationale: item.rationale },
     });
     relationMembers.set(relationId, { relationId, versionId });
+    if (prior) {
+      for (const sourceId of new Set(prior.sourceIds)) {
+        relationSupport.push({ versionId, sourceId, observationId: null, relation: 'supports' });
+      }
+      for (const observationId of new Set(prior.observationIds)) {
+        relationSupport.push({ versionId, sourceId: null, observationId, relation: 'supports' });
+      }
+    }
     const supportedSources = new Set(item.sourceIds);
     for (const sourceId of supportedSources) relationSupport.push({ versionId, sourceId, observationId: null, relation: 'supports' });
     for (const observationIndex of item.observationIndexes) {
@@ -510,6 +548,116 @@ export function resolveChangeIdsForPlan(
   });
 }
 
+/**
+ * A typed correction already names the authoritative object it changes. The
+ * model decides the revised content, but it must not be trusted to copy that
+ * target UUID perfectly. Bind one unambiguous, kind-compatible proposal to the
+ * named target and reject ambiguous or incompatible plans before verification.
+ */
+export function bindExplicitObjectChangeTargets(
+  sources: ConsolidationSource[],
+  snapshot: ConsolidationSnapshot,
+  plan: PersonCompositionPlan,
+): PersonCompositionPlan {
+  let objects = plan.objects.map((item) => ({ ...item }));
+  const currentById = new Map(snapshot.objectMembers.map((item) => [item.objectId, item]));
+
+  for (const source of sources) {
+    const change = source.change;
+    if (!change || change.targetKind !== 'object'
+      || !['correction', 'rejection'].includes(change.changeKind)) continue;
+    const current = currentById.get(change.targetId);
+    if (!current) {
+      throw new MalformedPersonStageOutputError(
+        'Explicit object change targeted an object outside the current revision.',
+        'explicit_change_target_missing',
+      );
+    }
+    const represented = objects.filter((item) => item.sourceIds.includes(source.sourceId));
+    const alreadyBound = represented.filter((item) => item.existingObjectId === change.targetId);
+    if (alreadyBound.length > 1) {
+      throw new MalformedPersonStageOutputError(
+        'Explicit object change targeted more than one proposed object version.',
+        'explicit_change_target_ambiguous',
+      );
+    }
+    let targetIndex = alreadyBound.length === 1 ? objects.indexOf(alreadyBound[0]!) : -1;
+    if (targetIndex < 0) {
+      const candidates = represented.filter((item) => item.existingObjectId === null
+        && item.payload.kind === current.kind);
+      if (candidates.length !== 1) {
+        throw new MalformedPersonStageOutputError(
+          'Explicit object change did not produce one unambiguous kind-compatible target revision.',
+          'explicit_change_target_unrepresented',
+        );
+      }
+      targetIndex = objects.indexOf(candidates[0]!);
+      objects[targetIndex] = { ...objects[targetIndex]!, existingObjectId: change.targetId };
+    }
+    if (objects[targetIndex]!.payload.kind !== current.kind) {
+      throw new MalformedPersonStageOutputError(
+        'Explicit object change attempted to change the target object kind.',
+        'explicit_change_kind_mismatch',
+      );
+    }
+    if (change.changeKind === 'rejection') {
+      objects[targetIndex] = { ...objects[targetIndex]!, lifecycle: 'invalidated' };
+    }
+  }
+
+  return PersonCompositionPlanSchema.parse({ ...plan, objects });
+}
+
+/**
+ * Provider-selected source IDs are advisory and may accidentally repeat prior
+ * history. Exact observation indexes are already validated and each points to
+ * one current-job source, so derive new support from those indexes. Historical
+ * support is carried separately from the trusted snapshot during materialize.
+ */
+export function bindPlanEvidenceToObservations(
+  plan: PersonCompositionPlan,
+  observations: readonly PersonIdentifiedObservation[],
+): PersonCompositionPlan {
+  const sourceIdsFor = (indexes: readonly number[]): string[] => {
+    const sourceIds = indexes.map((index) => observations[index]?.sourceId);
+    if (sourceIds.some((sourceId) => !sourceId)) {
+      throw new MalformedPersonStageOutputError(
+        'Composition referenced an unknown extracted observation.',
+        'malformed_stage_observation_reference',
+      );
+    }
+    return [...new Set(sourceIds as string[])];
+  };
+  return PersonCompositionPlanSchema.parse({
+    ...plan,
+    objects: plan.objects.map((item) => ({
+      ...item,
+      sourceIds: sourceIdsFor(item.observationIndexes),
+    })),
+    relations: plan.relations.map((item) => ({
+      ...item,
+      sourceIds: sourceIdsFor(item.observationIndexes),
+    })),
+  });
+}
+
+/** The verified subset may not silently drop a typed correction or rejection. */
+export function validateExplicitChangeCoverage(
+  sources: ConsolidationSource[],
+  plan: PersonCompositionPlan,
+): void {
+  const resolved = new Set(resolveChangeIdsForPlan(sources, plan));
+  const missing = sources.filter((source) => source.change
+    && ['correction', 'rejection'].includes(source.change.changeKind)
+    && !resolved.has(source.change.changeId));
+  if (missing.length > 0) {
+    throw new MalformedPersonStageOutputError(
+      'Verified plan did not represent every explicit correction or rejection.',
+      'explicit_change_verifier_dropped',
+    );
+  }
+}
+
 export const PersonVerificationFindingSchema = z.object({
   itemKey: z.string().min(1).max(80),
   fieldPath: z.string().min(1).max(200),
@@ -543,15 +691,16 @@ export const PersonVerifierReceiptSchema = z.object({
   unresolvedQuestions: z.array(boundedText(500)).max(50),
 }).strict();
 
-export const PERSON_GUIDANCE_VERSION = 'person-consolidation-2026-09-23.v2';
+export const PERSON_GUIDANCE_VERSION = 'person-consolidation-2026-09-24.v6';
 export const PERSON_MODEL_POLICY_VERSION = 'person-consolidation-bounded.v1';
 
 export class MalformedPersonStageOutputError extends Error {
-  readonly code = 'malformed_stage_output';
+  readonly code: string;
 
-  constructor(message: string) {
+  constructor(message: string, code = 'malformed_stage_output') {
     super(message);
     this.name = 'MalformedPersonStageOutputError';
+    this.code = code;
   }
 }
 
@@ -582,11 +731,15 @@ export function schemaFor(stage: PersonConsolidationStage): z.ZodTypeAny {
 function zodSchemaToJsonSchema(schema: z.ZodTypeAny): Record<string, unknown> {
   const definition = (schema as any)._def as Record<string, any>;
   const typeName = String(definition.typeName);
+  const described = (output: Record<string, unknown>) =>
+    typeof definition.description === 'string' && definition.description
+      ? { ...output, description: definition.description }
+      : output;
   switch (typeName) {
     case 'ZodEffects': return zodSchemaToJsonSchema(definition.schema);
     case 'ZodDefault':
     case 'ZodOptional': return zodSchemaToJsonSchema(definition.innerType);
-    case 'ZodNullable': return { anyOf: [zodSchemaToJsonSchema(definition.innerType), { type: 'null' }] };
+    case 'ZodNullable': return described({ anyOf: [zodSchemaToJsonSchema(definition.innerType), { type: 'null' }] });
     case 'ZodString': {
       const output: Record<string, unknown> = { type: 'string' };
       for (const check of definition.checks as Array<Record<string, any>>) {
@@ -611,7 +764,7 @@ function zodSchemaToJsonSchema(schema: z.ZodTypeAny): Record<string, unknown> {
     }
     case 'ZodBoolean': return { type: 'boolean' };
     case 'ZodNull': return { type: 'null' };
-    case 'ZodEnum': return { type: 'string', enum: definition.values };
+    case 'ZodEnum': return described({ type: 'string', enum: definition.values });
     case 'ZodNativeEnum': return { enum: Object.values(definition.values).filter((value) => typeof value !== 'number') };
     case 'ZodLiteral': return { const: definition.value };
     case 'ZodArray': {
@@ -663,6 +816,39 @@ export function personStageToolParameters(stage: PersonConsolidationStage): Reco
     if (properties?.[field]) properties[field] = { ...properties[field], description };
   }
   return { ...output, description: `Strict structured output for the ${stage} stage.` };
+}
+
+/**
+ * Anthropic-style tool providers commonly omit nullable properties even when
+ * JSON Schema marks them required. Restore only the schema's explicit null
+ * value; every missing non-nullable property and every other mismatch remains
+ * subject to the strict Zod gate below.
+ */
+export function normalizeMissingProviderNulls(value: unknown, schema: Record<string, any>): unknown {
+  const alternatives = Array.isArray(schema.anyOf) ? schema.anyOf as Array<Record<string, any>> : null;
+  if (alternatives) {
+    const nullable = alternatives.some((option) => option.type === 'null');
+    if (value === undefined && nullable) return null;
+    const discriminator = value && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, unknown>).kind
+      : undefined;
+    const selected = alternatives.find((option) =>
+      discriminator !== undefined && option.properties?.kind?.const === discriminator)
+      ?? alternatives.find((option) => option.type !== 'null');
+    return selected ? normalizeMissingProviderNulls(value, selected) : value;
+  }
+  if (schema.type === 'array' && Array.isArray(value)) {
+    return value.map((item) => normalizeMissingProviderNulls(item, schema.items ?? {}));
+  }
+  if (schema.type === 'object' && value && typeof value === 'object' && !Array.isArray(value)) {
+    const output: Record<string, unknown> = { ...(value as Record<string, unknown>) };
+    for (const [key, childSchema] of Object.entries(schema.properties ?? {}) as Array<[string, Record<string, any>]>) {
+      const normalized = normalizeMissingProviderNulls(output[key], childSchema);
+      if (normalized !== undefined) output[key] = normalized;
+    }
+    return output;
+  }
+  return value;
 }
 
 /**
@@ -718,7 +904,9 @@ export async function callPersonStage<T = unknown>(input: {
     ...(responseMode === 'tool' ? { toolChoice: { name: input.toolName } as const } : {}),
     sessionId: input.sessionId,
     temperature: 0,
+    reasoningMode: 'disabled',
     maxTokens: input.maxTokens ?? 4_000,
+    ...(responseMode === 'json' ? { responseFormat: { type: 'json_object' as const } } : {}),
     // Consolidation stages return larger strict objects than foreground chat.
     // They are one-shot, so allow the provider's bounded maximum. The caller
     // supplies a fresh routing session per durable-step attempt.
@@ -737,7 +925,10 @@ export async function callPersonStage<T = unknown>(input: {
     const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
     raw = fenced?.[1] ?? trimmed;
   } else {
-    throw new MalformedPersonStageOutputError('Provider did not return the single expected stage result.');
+    const names = calls.map((call) => call.function.name).slice(0, 5).join(',') || 'none';
+    throw new MalformedPersonStageOutputError(
+      `Provider did not return the single expected stage result (calls=${calls.length}; names=${names}).`,
+    );
   }
   if (raw.length > 100_000) throw new MalformedPersonStageOutputError('Provider stage output exceeded the size limit.');
   let decoded: unknown;
@@ -746,9 +937,16 @@ export async function callPersonStage<T = unknown>(input: {
   } catch {
     throw new MalformedPersonStageOutputError('Provider stage output was not valid whole-response JSON.');
   }
-  const parsed = schema.safeParse(decoded);
+  const parsed = schema.safeParse(normalizeMissingProviderNulls(decoded, input.parameters));
   if (!parsed.success) {
-    throw new MalformedPersonStageOutputError('Provider stage output did not match its strict schema.');
+    const issueSummary = parsed.error.issues.slice(0, 6).map((issue) => {
+      const path = issue.path.length ? issue.path.join('.') : '<root>';
+      return `${path}:${issue.code}`;
+    }).join(',');
+    throw new MalformedPersonStageOutputError(
+      `Provider stage output did not match its strict schema (${issueSummary || 'unknown issue'}).`,
+      'malformed_stage_schema',
+    );
   }
   return {
     value: parsed.data as T,
@@ -839,6 +1037,65 @@ export function coldStartMatchAndReconciliation(observationCount: number): {
         disposition: 'new',
         rationale: 'No prior observation or object exists to reconcile against.',
         counterevidence: [],
+      })),
+      unresolvedQuestions: [],
+    }),
+  };
+}
+
+/**
+ * Explicit corrections and rejections already carry a trusted target ID. Do
+ * not ask a model to rediscover that authority through fuzzy matching. This
+ * deterministic seam also makes the target's prior observation support the
+ * exact countercontext that reconciliation must assess.
+ */
+export function explicitObjectChangeMatchAndReconciliation(
+  sources: readonly ConsolidationSource[],
+  snapshot: ConsolidationSnapshot,
+  countercontext: readonly CountercontextItem[],
+  observations: readonly PersonIdentifiedObservation[],
+): { match: PersonMatchOutput; reconciliation: PersonReconciliationOutput } | null {
+  const sourceById = new Map(sources.map((source) => [source.sourceId, source]));
+  const objectById = new Map(snapshot.objectMembers.map((object) => [object.objectId, object]));
+  const changes = observations.map((observation) => sourceById.get(observation.sourceId)?.change ?? null);
+  if (changes.length === 0 || changes.some((change) => !change
+    || change.targetKind !== 'object'
+    || !['correction', 'rejection'].includes(change.changeKind))) return null;
+
+  const targets = changes.map((change) => objectById.get(change!.targetId));
+  if (targets.some((target) => !target)) {
+    throw new MalformedPersonStageOutputError(
+      'Explicit object change targeted an object outside the current revision.',
+      'explicit_change_target_missing',
+    );
+  }
+  const relevantObservationIds = new Set(targets.flatMap((target) => target!.observationIds));
+  const selectedCountercontext = countercontext.filter((item) => relevantObservationIds.has(item.observationId));
+
+  return {
+    match: PersonMatchOutputSchema.parse({
+      matches: changes.map((change, observationIndex) => ({
+        observationIndex,
+        targetObjectId: change!.targetId,
+        matchKind: 'correction_target',
+        rationale: 'The typed change command names this existing object as its authoritative target.',
+      })),
+      countercontextObservationIds: selectedCountercontext.map((item) => item.observationId),
+    }),
+    reconciliation: PersonReconciliationOutputSchema.parse({
+      decisions: changes.map((change, observationIndex) => ({
+        observationIndex,
+        disposition: change!.changeKind === 'rejection' ? 'unsupported_prior_inference' : 'correction',
+        rationale: change!.changeKind === 'rejection'
+          ? 'The person explicitly rejected the targeted interpretation.'
+          : 'The person explicitly corrected the targeted account.',
+        counterevidence: selectedCountercontext.map((item) => ({
+          observationId: item.observationId,
+          impact: change!.changeKind === 'rejection' ? 'not_applicable' : 'qualifies',
+          rationale: change!.changeKind === 'rejection'
+            ? 'Prior evidence remains historical provenance but no longer supports the rejected active interpretation.'
+            : 'Prior evidence remains relevant context but is qualified by the explicit correction.',
+        })),
       })),
       unresolvedQuestions: [],
     }),
