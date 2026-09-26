@@ -10,6 +10,7 @@ import {
   REQUIRED_SCHEMA_OBJECTS,
 } from './check-remote-schema.mjs';
 import { findMissingEnvironmentKeys } from './assert-vercel-env-keys.mjs';
+import { isolatedStagingValues, stagingBuildEnvironment, STAGING_REF } from './configure-isolated-staging-env.mjs';
 import { inspectPrebuiltFunctions } from './check-prebuilt-functions.mjs';
 
 function withArtifact(run) {
@@ -75,6 +76,33 @@ test('deployment ignore blocks dotenv files but permits only the checked-in exam
 });
 
 const versions = ['202609090001', '202609140001', '20260922064955'];
+
+const stagingEnv = {
+  P3_STAGING_SUPABASE_REF: STAGING_REF,
+  P3_STAGING_SUPABASE_URL: `https://${STAGING_REF}.supabase.co`,
+  P3_STAGING_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_synthetic_fixture',
+  P3_STAGING_SUPABASE_SECRET_KEY: 'sb_secret_synthetic_fixture',
+  P3_STAGING_CRON_SECRET: 'synthetic-recovery-secret',
+};
+
+test('isolated test build and runtime refuse production or masked server credentials', () => {
+  assert.throws(() => isolatedStagingValues({ ...stagingEnv, P3_STAGING_SUPABASE_REF: 'ezanfqbewuqttatrkvhf' }));
+  assert.throws(() => isolatedStagingValues({ ...stagingEnv, P3_STAGING_SUPABASE_URL: 'https://ezanfqbewuqttatrkvhf.supabase.co' }));
+  assert.throws(() => isolatedStagingValues({ ...stagingEnv, P3_STAGING_SUPABASE_SECRET_KEY: '__REDACTED__' }));
+  assert.throws(() => isolatedStagingValues({ ...stagingEnv, P3_STAGING_CRON_SECRET: '' }));
+});
+
+test('test-only build replaces all shared database defaults and preserves unrelated settings', () => {
+  const contents = 'NEXT_PUBLIC_SUPABASE_URL="https://ezanfqbewuqttatrkvhf.supabase.co"\nNEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="shared-key"\nSUPABASE_SECRET_KEY="__REDACTED__"\nCRON_SECRET="__REDACTED__"\nASTROLOGER_MODEL="provider/model"\n';
+  const output = stagingBuildEnvironment(contents, stagingEnv);
+  assert.ok(!output.includes('ezanfqbewuqttatrkvhf'));
+  assert.ok(!output.includes('__REDACTED__'));
+  assert.ok(output.includes('ASTROLOGER_MODEL="provider/model"'));
+  for (const [key, value] of Object.entries(isolatedStagingValues(stagingEnv))) {
+    assert.equal(output.split('\n').filter((line) => line.startsWith(`${key}=`)).length, 1);
+    assert.ok(output.includes(`${key}="${value}"`));
+  }
+});
 
 test('accepts the two verified historical ledger aliases and required objects', () => {
   const output = [

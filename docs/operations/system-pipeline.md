@@ -60,21 +60,22 @@ copy the pulled file's other values into commands or logs.
 
 ## Hosted staging journey
 
-Use an isolated Preview deployment whose Preview Supabase environment points
-to the approved staging project. Rotate the Preview `CRON_SECRET` only when it
-needs repair/rotation; do not repeat this during a run, since the already
-deployed Preview would still have the previous value. Prepare, deploy, then pass
-the exact immutable Preview URL to the helper:
+Normal Preview deployments share production accounts and saved setup. The
+system journey must use a test-only deployment configured for the approved
+isolated staging project. The helper overrides the database and recovery secret
+for that deployment at build and runtime, leaving project-wide Preview defaults
+unchanged. Prepare, deploy, then pass the resulting immutable URL to the helper:
 
 ```bash
 node scripts/with-system-staging-env.mjs --prepare-cron
-vercel deploy --yes
+node scripts/with-system-staging-env.mjs --deploy
 node scripts/with-system-staging-env.mjs https://<immutable-preview>.vercel.app npm exec -- playwright test --config=playwright.system-staging.config.ts --workers=1
 ```
 
 The helper resolves staging keys and the pinned database IP privately and
 injects them only into the child process. It validates the URL and refuses a
-production target. It does not print the CLI errors that may contain sensitive
+production database target. Do not use a normal shared-data preview for this
+test. It does not print the CLI errors that may contain sensitive
 data. Inspect the generated PNGs locally; the hosted journey's trace is kept in
 the ignored `test-results/` directory and must not be uploaded or shared.
 
