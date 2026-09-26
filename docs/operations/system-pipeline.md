@@ -9,6 +9,35 @@ with the approved mock set manually. The test checks horizontal overflow, not
 pixel parity. Never upload a trace: it can contain session cookies and Vercel
 bypass headers. `.vercelignore` excludes `test-results`; CI uploads PNGs only.
 
+## Prebuilt deployment packaging
+
+Both release builds run `node scripts/check-prebuilt-functions.mjs` before
+`vercel deploy --prebuilt`. The check follows deduplicated function symlinks
+and validates `.vc-config.json` `filePathMap` references, including references
+that are not physical files inside the function directory. It fails on missing
+targets or private dotenv files. Regression tests run with
+`npm run test:release-preflight`.
+
+Keep `.env*` excluded from upload, with the exact `!.env.example` exception.
+That checked-in template contains only empty values and placeholders. Vercel
+CLI 60.1.3 references it from prebuilt function file maps even when Next's
+route traces exclude it. Removing it from upload leaves a dangling reference
+and fails with `ENOENT ... readlink /vercel/path0/.env.example`. Do not broaden
+the exception to `.env.local`, `.env.production`, or pulled Vercel credentials.
+This uses Vercel's documented [ignore-rule negation](https://vercel.com/docs/deployments/vercel-ignore#allowlist).
+
+A source deployment is not a substitute for testing this release path: run
+`vercel pull --environment=preview`, `vercel build`, the artifact check, and
+`vercel deploy --prebuilt` against an isolated Preview.
+
+Verification on 2026-09-26: Node 22.23.2 and Vercel CLI 60.1.3 completed that
+prebuilt sequence successfully for Preview
+`fdadd-22utixp32-vulbstis-projects.vercel.app`
+(`dpl_Ae1ULb2aDudAdsneyBuFNt8qR7Rb`, READY). The `.env.example` collision
+warning disappeared; the artifact guard checked 8 deduplicated functions, and
+all 11 release-preflight tests passed. This was an isolated Preview packaging
+test, not a production promotion or another full person-model journey.
+
 On 2026-09-26, Preview candidate `4iadfmk9k` passed the complete hosted journey
 in 5.3 minutes. See [the repair receipt](../qa/2026-09-26-pipeline-repair.md)
 for the test boundaries, production status, and remaining acceptance work.
