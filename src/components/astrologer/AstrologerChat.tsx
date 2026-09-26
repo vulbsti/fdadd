@@ -23,6 +23,7 @@ import type {
 } from '@/lib/astro/contracts';
 import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, type ChatMessage } from './chat-message-state';
 import { subscribePersonState } from './person-state-sync';
+import { AssistantMarkdown } from './AssistantMarkdown';
 
 interface AstrologerChatProps {
   sessionId: string;
@@ -388,13 +389,13 @@ function AstrologerChatSession({
               ) : null}
               <div
                 className={cn(
-                  'max-w-[75%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap',
+                  'min-w-0 max-w-[75%] rounded-lg px-3 py-2 text-sm [overflow-wrap:anywhere]',
                   message.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-primary text-primary-foreground whitespace-pre-wrap'
                     : 'bg-muted',
                 )}
               >
-                {message.content}
+                {message.role === 'assistant' ? <AssistantMarkdown content={message.content} /> : message.content}
                 {message.delivery === 'sending' ? <p className="mt-1 text-xs opacity-75">Sending…</p> : null}
                 {message.delivery === 'failed' ? (
                   <div className="mt-2 flex items-center gap-2 text-xs">

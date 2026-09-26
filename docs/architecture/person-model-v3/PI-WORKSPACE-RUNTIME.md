@@ -13,8 +13,14 @@ separated below.
   staging project. The regular production deployment does not enable it.
 - A separate Vercel Sandbox is created for each owner/person/run and authority
   epoch, with `persistent: false`. The VM is an ephemeral working copy, not the
-  persistence boundary; runtime initialization installs the pinned bundle in
-  each newly created VM. Simultaneous runs cannot replace another run's
+  persistence boundary. The explicit Ubuntu managed image supports the Atros
+  installer; the deprecated `runtime: node22` image is Amazon Linux and does
+  not. Initialization verifies the pinned Pi bundle and actual Atros executable
+  on every preparation, including retries after a partially failed setup.
+  An install-ready marker and a private-data phase marker separate installation
+  from hydration: data-bearing VMs cannot reinstall or reopen broad egress.
+  Atros pins Kerykeion 5.12.9; a fresh install must not silently migrate to v6.
+  Simultaneous runs cannot replace another run's
   firewall-injected capability. Kernel locking prevents duplicate runner
   processes within the same run.
 - The real working directory is `/vercel/sandbox/aidoraa/workspace`. It contains

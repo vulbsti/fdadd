@@ -136,9 +136,11 @@ async function send(page: Page, admin: SupabaseClient, scope: Scope, text: strin
     if (answer.error || !answer.data) throw new Error('Completed Pi run has no persisted answer.');
     expect(answer.data.role).toBe('assistant');
     expect(answer.data.content.trim()).not.toBe('');
-    await expect(page.getByText(answer.data.content, { exact: true })).toBeVisible({ timeout: 45_000 });
+    const answerBubble = page.locator(`#message-${run.data.output_message_id}`);
+    await expect(answerBubble).toBeVisible({ timeout: 45_000 });
+    await expect(answerBubble).not.toHaveText('☉');
     await expect(page.locator('[id^="message-"].justify-end').filter({ hasText: text })).toHaveCount(1);
-    return { ...body, answer: answer.data.content as string, steps };
+    return { ...body, outputMessageId: run.data.output_message_id as string, answer: answer.data.content as string, steps };
   } finally {
     release();
     if (proveOptimistic) await page.unroute('**/api/astrologer/chat', heldRoute);
@@ -291,7 +293,7 @@ test('Pi workspace: optimistic personal chat, fresh-chat memory, same-chat 2026 
     const personalArchive = await checkpoint(admin, scope, personal.runId);
     expect(personalArchive.saved.files.some((file) => file.path.startsWith('astrology/'))).toBe(false);
     await page.reload();
-    await expect(page.getByText(personal.answer, { exact: true })).toBeVisible();
+    await expect(page.locator(`#message-${personal.outputMessageId}`)).toBeVisible();
     await screenshots(page, info, '04-personal-answer-reloaded', visualIssues);
     stage = 'memory consolidation and second chat';
     await consolidation(admin, scope, personal.messageId);
@@ -358,7 +360,7 @@ test('Pi workspace: optimistic personal chat, fresh-chat memory, same-chat 2026 
     expect(JSON.stringify(result)).toMatch(/2026-\d{2}-\d{2}/);
     expect(archive.saved.answer?.content?.filter((part) => part.type === 'text').map((part) => part.text ?? '').join('\n').trim()).toBe(dasha.answer);
     await page.reload();
-    await expect(page.getByText(dasha.answer, { exact: true })).toBeVisible();
+    await expect(page.locator(`#message-${dasha.outputMessageId}`)).toBeVisible();
     await screenshots(page, info, '08-atros-2026-answer-reloaded', visualIssues);
     stage = 'same-mode session and calculation-file restore';
     const followup = await send(page, admin, scope, 'Use the timeline result you just saved: which maha and antar period includes 2026-01-01? Repeat its dated boundaries and keep this answer concise.', info, visualIssues);

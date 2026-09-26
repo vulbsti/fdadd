@@ -27,14 +27,20 @@ sessions are not reused as current model context.
 
 ## Local verification
 
-- Vitest: **208 passed, 4 skipped**, including nine stream-lifecycle tests and
-  three person-scoped cross-tab invalidation tests.
+- Vitest: **227 passed, 5 skipped**, including nine stream-lifecycle tests,
+  three person-scoped cross-tab invalidation tests, 16 initialization/locking
+  regressions, and three safe Markdown rendering checks.
+- Opt-in fresh Vercel Sandbox bootstrap: **passed** installation, executable
+  readiness re-entry, and a complete JSON 2026 timeline in a new Ubuntu VM.
 - Filesystem and release-preflight Node tests: **19 passed**.
 - Local database contract suite: **183 passed across 8 files**, including 13
   Pi-specific checkpoint/publication/authority tests.
 - Full TypeScript and lint passed. Lint retains the pre-existing React Hook
   Form compiler warning in `BirthIntakeForm`; generated Vercel output is excluded.
 - The Pi database migration was applied to local and staging only, not production.
+- PR CI passed code quality/build, local RLS/database integration, populated
+  legacy-schema upgrade, selected-context integration, and authenticated browser
+  smoke on implementation commit `f9128a9`.
 
 ## Hosted investigation
 
@@ -63,6 +69,22 @@ Failures found during this implementation, rather than hidden by test doubles:
 6. Structured context omitted stable object kinds and relationship endpoints.
    Exact owner-scoped metadata is now included. Missing source bodies fail
    explicitly rather than silently producing a lineage-only context file.
+7. The third browser pass proved cross-tab refresh, but the actual Atros tool
+   returned `spawn /tmp/atros-venv/bin/atros ENOENT`. The deprecated `node22`
+   runtime is Amazon Linux, while the installer uses Debian package commands.
+   Worse, a failed `getOrCreate.onCreate` left the named VM behind; Workflow
+   replay reused it without reinstalling. Pi now selects the Ubuntu managed
+   image and explicitly verifies initialization on every preparation. Setup
+   must finish before personal files are mounted; an incomplete data-bearing
+   VM fails closed rather than reopening installation access.
+8. An independent fresh-image bootstrap then exposed dependency drift:
+   `kerykeion>=5.0.0` installed v6, which removed `AstrologicalSubject` and changed
+   calculation defaults. The vendored dependency now pins **5.12.9**, matching
+   the existing working Atros sandbox. This is not a v6 engine migration.
+9. Luna's screenshot review found literal Markdown syntax in assistant bubbles.
+   The chat now renders Markdown headings, emphasis, lists, and tables; raw HTML
+   is disabled, unsafe link protocols are stripped, and model-provided images
+   are represented by alt text rather than fetched automatically.
 
 Hosted acceptance results and final Preview URL will be added after the running
 browser journey finishes. A deployment being Ready is not evidence that Pi
@@ -91,3 +113,26 @@ tests are narrower evidence. The user-facing workspace browser, automatic
 acceptance of Pi memory proposals, and production artifact retention/deletion
 integration are not implemented. Existing validated background consolidation
 continues to own accepted personal memory.
+
+The hosted timing receipts also expose substantial checkpoint overhead: one
+personal answer produced 20 checkpoints approximately 5–6 seconds apart.
+Coalescing pending snapshots while preserving every receipt and final file is a
+next optimization; this prototype does not yet provide low-latency turns.
+
+### Separate Atros engine defect found during verification
+
+The synthetic 1991-02-03 04:56 Asia/Kolkata Bengaluru fixture exposes a real
+date-partition defect in the vendored CLI, not lost context in Pi. Its Rahu
+mahadasha is 2008-12-03–2026-12-03 (6,574 days), but the nine antardashas sum to
+6,569 days; the last ends 2026-11-28. `antardasha.py` floors each child duration
+independently and never allocates the remainder. The same issue exists in
+pratyantar and generic subdivision. Inclusive lookup also selects the old
+mahadasha on the shared 2026-12-03 boundary and returns no antardasha.
+
+Reproduction used the existing Python environment with `PYTHONPATH` explicitly
+pointed at this repository's `vendor/atros/src`; imported module paths were
+checked. This PR does not change the engine's calendar convention. Before a
+precision-calculation release: add partition/continuity regressions, choose a
+consistent residual allocation across all subdividers, and use consistent
+half-open boundary selection. A successful tool call or preserved dated output
+is **not** evidence that this engine edge case is correct.
