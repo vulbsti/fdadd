@@ -10,7 +10,7 @@ import {
   REQUIRED_SCHEMA_OBJECTS,
 } from './check-remote-schema.mjs';
 import { findMissingEnvironmentKeys } from './assert-vercel-env-keys.mjs';
-import { isolatedStagingValues, stagingBuildEnvironment, STAGING_REF } from './configure-isolated-staging-env.mjs';
+import { isolatedStagingValues, stagingBuildEnvironment, STAGING_REF, deploymentURL } from './configure-isolated-staging-env.mjs';
 import { inspectPrebuiltFunctions } from './check-prebuilt-functions.mjs';
 
 function withArtifact(run) {
@@ -84,6 +84,15 @@ const stagingEnv = {
   P3_STAGING_SUPABASE_SECRET_KEY: 'sb_secret_synthetic_fixture',
   P3_STAGING_CRON_SECRET: 'synthetic-recovery-secret',
 };
+
+test('Preview URL parsing supports CLI agent JSON and rejects ambiguous or production output', () => {
+  const url = 'https://fdadd-fixture-vulbstis-projects.vercel.app';
+  assert.equal(deploymentURL(url), url);
+  assert.equal(deploymentURL(JSON.stringify({ url, status: 'ok' })), url);
+  assert.equal(deploymentURL(JSON.stringify({ url: url.replace('https://', '') })), url);
+  assert.throws(() => deploymentURL('https://www.aidoraa.com'));
+  assert.throws(() => deploymentURL(`${url}\nhttps://fdadd-other-vulbstis-projects.vercel.app`));
+});
 
 test('isolated test build and runtime refuse production or masked server credentials', () => {
   assert.throws(() => isolatedStagingValues({ ...stagingEnv, P3_STAGING_SUPABASE_REF: 'ezanfqbewuqttatrkvhf' }));

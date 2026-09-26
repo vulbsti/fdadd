@@ -78,6 +78,17 @@ try {
   psql(database, `
     create schema auth;
     create schema extensions;
+    create schema storage;
+    -- Genuine subset of the local Supabase Storage bucket contract needed by
+    -- application migrations: text PK, non-null unique name, nullable public
+    -- flag with a private default. This is not a Storage service/RLS substitute;
+    -- real Storage behavior remains covered by the local Supabase DB tests.
+    create table storage.buckets (
+      id text primary key,
+      name text not null unique,
+      public boolean default false
+    );
+    alter table storage.buckets enable row level security;
     create table auth.users (
       id uuid primary key,
       raw_user_meta_data jsonb not null default '{}'::jsonb
@@ -96,6 +107,8 @@ try {
   psql(database, `
     insert into auth.users (id, raw_user_meta_data)
       values ('${userId}', '{"name":"Synthetic migration-retention user"}'::jsonb);
+    insert into storage.buckets (id, name, public)
+      values ('legacy-retained-bucket', 'legacy-retained-bucket', true);
     insert into public.astro_profiles (
       id, user_id, name, birth_date, birth_time, lat, lng, tz, place_name,
       time_source, time_confidence, chart_json, sensitivity_json, initialization_status
@@ -126,10 +139,14 @@ try {
       'chartsPreserved', (select chart_json->>'chart' = 'pre-upgrade-chart-marker'
         and sensitivity_json->>'sensitivity' = 'pre-upgrade-sensitivity-marker'
         from public.astro_profiles where id='${profileId}' and user_id='${userId}'),
-      'headsTableAbsent', to_regclass('public.person_model_heads') is null
+      'headsTableAbsent', to_regclass('public.person_model_heads') is null,
+      'piBucketAbsent', not exists (select 1 from storage.buckets where id='pi-workspaces'),
+      'legacyBucketPreserved', exists (select 1 from storage.buckets
+        where id='legacy-retained-bucket' and name='legacy-retained-bucket' and public=true)
     )::text;
   `));
-  if (afterRollback.profiles !== 1 || afterRollback.chartsPreserved !== true || afterRollback.headsTableAbsent !== true) {
+  if (afterRollback.profiles !== 1 || afterRollback.chartsPreserved !== true || afterRollback.headsTableAbsent !== true
+    || afterRollback.piBucketAbsent !== true || afterRollback.legacyBucketPreserved !== true) {
     throw new Error(`Failed regression transaction did not fully roll back: ${JSON.stringify(afterRollback)}`);
   }
 
@@ -147,11 +164,16 @@ try {
           and h.current_revision=r.revision_no),
       'preferences', (select count(*) from public.person_preferences where profile_id='${profileId}' and user_id='${userId}'),
       'sourceSequence', (select count(*) from public.person_source_sequences where profile_id='${profileId}' and user_id='${userId}'),
+      'privatePiBucket', exists (select 1 from storage.buckets
+        where id='pi-workspaces' and name='pi-workspaces' and public=false),
+      'legacyBucketPreserved', exists (select 1 from storage.buckets
+        where id='legacy-retained-bucket' and name='legacy-retained-bucket' and public=true),
       'requiredTablesPresent', (to_regclass('public.person_model_heads') is not null
         and to_regclass('public.person_model_revisions') is not null
         and to_regclass('public.person_source_items') is not null
         and to_regclass('public.person_outbox') is not null
-        and to_regclass('public.person_jobs') is not null)
+        and to_regclass('public.person_jobs') is not null
+        and to_regclass('public.pi_workspace_checkpoints') is not null)
     )::text;
   `));
   if (receipt.profiles !== 1
@@ -161,6 +183,8 @@ try {
     || receipt.headAndRevision !== 1
     || receipt.preferences !== 1
     || receipt.sourceSequence !== 1
+    || receipt.privatePiBucket !== true
+    || receipt.legacyBucketPreserved !== true
     || receipt.requiredTablesPresent !== true) {
     throw new Error(`Upgrade transaction did not preserve/backfill expected state: ${JSON.stringify(receipt)}`);
   }

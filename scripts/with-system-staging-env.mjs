@@ -1,7 +1,9 @@
 // Local operator helper. Credentials remain in process memory except a temporary,
 // private recovery secret needed across the deploy and browser-test commands.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, mkdtempSync, copyFileSync, rmSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { randomBytes } from 'node:crypto';
 import { configureStagingBuild, deployStagingCandidate } from './configure-isolated-staging-env.mjs';
 
@@ -9,6 +11,7 @@ const project = 'prj_T6xLcx3lfm7KjpLk4co1lCgkSMnK';
 const team = 'team_t689qVHC6ycaHamXLceV4yu5';
 const ref = 'wtloawiwntyjiidjbmuk';
 const stateFile = '.vercel/system-proof-secret.json';
+let phase = 'prepare';
 function api(path, method = 'GET', body) {
   const args = ['api', `${path}${path.includes('?') ? '&' : '?'}teamId=${team}`, '--method', method];
   if (body) args.push('--input', '-');
@@ -34,12 +37,42 @@ try {
       P3_STAGING_SUPABASE_SECRET_KEY: keys.find((entry) => entry.type === 'secret')?.api_key,
       P3_STAGING_SUPABASE_PUBLISHABLE_KEY: keys.find((entry) => entry.type === 'publishable')?.api_key,
       P3_STAGING_CRON_SECRET: secret,
+      ...(process.env.ASTROLOGER_RUNTIME === 'pi' ? {
+        VERCEL_AUTOMATION_BYPASS_SECRET: Object.keys(api(`/v9/projects/${project}`).protectionBypass ?? {})[0],
+      } : {}),
     };
     execFileSync('vercel', ['pull', '--yes', '--environment=preview'], { stdio: ['ignore', 'pipe', 'pipe'] });
     configureStagingBuild(env);
-    console.log('Building isolated test candidate…');
-    execFileSync('vercel', ['build', '--yes'], { stdio: ['ignore', 'pipe', 'pipe'] });
-    console.log(deployStagingCandidate(env));
+    // Next/Vercel may add local dotenv files to the final function map even
+    // when excluded from NFT tracing. Build a clean working-tree copy instead
+    // of moving the operator's files or ever allowing them into upload inputs.
+    const candidate = mkdtempSync(join(tmpdir(), 'aidoraa-staging-build-'));
+    try {
+      const files = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+      for (const file of files) {
+        if (file.split('/').some((part) => part.startsWith('.env') && part !== '.env.example')) continue;
+        const target = join(candidate, file);
+        mkdirSync(dirname(target), { recursive: true });
+        copyFileSync(file, target);
+      }
+      mkdirSync(join(candidate, '.vercel'));
+      for (const file of ['project.json', '.env.preview.local']) copyFileSync(`.vercel/${file}`, join(candidate, '.vercel', file));
+      console.log('Building clean isolated test candidate…');
+      phase = 'clean dependency install';
+      execFileSync('npm', ['ci', '--ignore-scripts'], { cwd: candidate, stdio: ['ignore', 'pipe', 'pipe'] });
+      phase = 'clean vercel build';
+      try {
+        execFileSync('vercel', ['build', '--yes'], { cwd: candidate, stdio: ['ignore', 'pipe', 'pipe'] });
+      } catch (error) {
+        // Diagnostic artifact is private/local, never included in deployment.
+        writeFileSync('.vercel/pi-build-error.log', String(error.stdout ?? '') + String(error.stderr ?? ''), { mode: 0o600 });
+        throw new Error('Build failed; private diagnostic saved in .vercel/pi-build-error.log');
+      }
+      phase = 'isolated deployment';
+      console.log(deployStagingCandidate(env, candidate));
+    } finally {
+      rmSync(candidate, { recursive: true, force: true });
+    }
   } else {
     const [url, ...command] = process.argv.slice(2);
     const parsed = new URL(url);
@@ -69,8 +102,9 @@ try {
     } });
     process.exitCode = child.status ?? 1;
   }
-} catch {
+} catch (error) {
   // Do not print CLI exceptions: they can embed credential-bearing stdin/args.
-  console.error('Staging helper failed. Check CLI access, the isolated Preview URL, and whether --prepare-cron and --deploy were run.');
+  console.error(`Staging helper failed during ${phase}. Check CLI access, build diagnostics, and isolated Preview configuration.`);
+  if (phase === 'isolated deployment') console.error(error.message);
   process.exitCode = 1;
 }

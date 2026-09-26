@@ -23,6 +23,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - run: npm run test:pi:workspace
       - run: npm run test:release-preflight
       - run: npm run build
 

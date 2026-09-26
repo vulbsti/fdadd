@@ -16,6 +16,7 @@ import {
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import type { WorkspaceConversation, WorkspacePerson } from './types';
+import { subscribePersonState } from '@/components/astrologer/person-state-sync';
 
 interface WorkspaceShellProps {
   person: WorkspacePerson;
@@ -37,6 +38,22 @@ export default function WorkspaceShell({ person, people, conversations, children
     [conversations, search],
   );
   const isChat = pathname.includes('/chat/');
+
+  useEffect(() => subscribePersonState(person.id, () => router.refresh()), [person.id, router]);
+
+  useEffect(() => {
+    // Settings may have changed in another tab. Revalidate the server-owned
+    // shell as well as chat state without replacing the mounted conversation.
+    const refresh = () => {
+      if (document.visibilityState === 'visible') router.refresh();
+    };
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [router]);
 
   useEffect(() => {
     const query = search.trim();

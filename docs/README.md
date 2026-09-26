@@ -13,6 +13,12 @@ document and the code disagree.
   gate.
 - [`qa/2026-09-26-pipeline-repair.md`](qa/2026-09-26-pipeline-repair.md) — observed
   pipeline failures, repairs, hosted test evidence, and remaining acceptance.
+- [`architecture/person-model-v3/AGENT-HARNESS-AUDIT.md`](architecture/person-model-v3/AGENT-HARNESS-AUDIT.md)
+  — September 26 evidence-loss, rigid-loop, and stale-context audit; proposed
+  repairs and acceptance gates, not deployed fixes.
+- [`architecture/person-model-v3/PI-WORKSPACE-RUNTIME.md`](architecture/person-model-v3/PI-WORKSPACE-RUNTIME.md)
+  — filesystem-first Pi-on-Vercel replacement architecture and first E2E slice;
+  proposed, not deployed.
 - [`supabase-razorpay-setup.md`](supabase-razorpay-setup.md) — Supabase/Razorpay
   configuration, callback URLs, environment variables,
   verification cases, and rollout notes.

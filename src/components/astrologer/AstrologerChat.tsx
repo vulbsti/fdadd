@@ -17,11 +17,13 @@ import { Loader2, SendHorizonal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type {
   ApiErrorDto,
-  AstrologerMessage,
   AstrologerSessionDetail,
   FocusedQuestion,
   StartRunResponse,
 } from '@/lib/astro/contracts';
+import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, type ChatMessage } from './chat-message-state';
+import { subscribePersonState } from './person-state-sync';
+import { AssistantMarkdown } from './AssistantMarkdown';
 
 interface AstrologerChatProps {
   sessionId: string;
@@ -35,7 +37,11 @@ interface AstrologerChatProps {
 
 type SendState = 'idle' | 'sending' | 'streaming';
 
-export default function AstrologerChat({
+export default function AstrologerChat(props: AstrologerChatProps) {
+  return <AstrologerChatSession key={props.sessionId} {...props} />;
+}
+
+function AstrologerChatSession({
   sessionId,
   className,
   onSessionUpdated,
@@ -44,7 +50,7 @@ export default function AstrologerChat({
   anchorMessageId,
   emptyPrompts = [],
 }: AstrologerChatProps) {
-  const [messages, setMessages] = useState<AstrologerMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [detail, setDetail] = useState<AstrologerSessionDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [sendState, setSendState] = useState<SendState>('idle');
@@ -53,24 +59,91 @@ export default function AstrologerChat({
   const [focusedQuestion, setFocusedQuestion] = useState<FocusedQuestion | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const eventRunIdRef = useRef<string | null>(null);
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
+  const requestInFlightRef = useRef(false);
+  const sessionIdRef = useRef<string | null>(sessionId);
+  const [confirmedPersonalOnly, setConfirmedPersonalOnly] = useState<boolean | null>(null);
+  const currentPersonalOnly = confirmedPersonalOnly ?? personalOnly;
+  const modeRequestRef = useRef(0);
+  const detailRequestRef = useRef(0);
+
+  useEffect(() => {
+    sessionIdRef.current = sessionId;
+    return () => { sessionIdRef.current = null; };
+  }, [sessionId]);
+
+  const refreshMode = useCallback(async (profileId: string | null) => {
+    if (!profileId) return;
+    const requestId = ++modeRequestRef.current;
+    try {
+      const response = await fetch(`/api/astrologer/profiles/${profileId}/model`, { cache: 'no-store' });
+      if (!response.ok) return;
+      const model = await response.json() as { mode?: string };
+      if (sessionIdRef.current !== sessionId || requestId !== modeRequestRef.current) return;
+      const personalOnly = personalOnlyFromModel(model);
+      if (personalOnly !== null) setConfirmedPersonalOnly(personalOnly);
+    } catch {
+      // Keep the last confirmed presentation; execution checks its own mode.
+    }
+  }, [sessionId]);
 
   const loadDetail = useCallback(async (): Promise<AstrologerSessionDetail | null> => {
-    const response = await fetch(`/api/astrologer/sessions/${sessionId}`);
-    if (!response.ok) {
-      const payload = (await response.json().catch(() => null)) as ApiErrorDto | null;
-      setError(payload ?? { code: 'internal', message: 'Could not load session.' });
+    const requestId = ++detailRequestRef.current;
+    try {
+      const response = await fetch(`/api/astrologer/sessions/${sessionId}`, { cache: 'no-store' });
+      if (sessionIdRef.current !== sessionId || requestId !== detailRequestRef.current) return null;
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as ApiErrorDto | null;
+        if (sessionIdRef.current !== sessionId || requestId !== detailRequestRef.current) return null;
+        setError(payload ?? { code: 'internal', message: 'Could not load session.' });
+        setLoading(false);
+        return null;
+      }
+      const data = (await response.json()) as AstrologerSessionDetail;
+      if (sessionIdRef.current !== sessionId || requestId !== detailRequestRef.current) return null;
+      setDetail(data);
+      setMessages((current) => mergePersistedMessages(current, data.messages));
+      setFocusedQuestion(data.session.currentQuestion ?? null);
+      onSessionUpdated?.(data);
+      setError(null);
       setLoading(false);
+      void refreshMode(data.session.profileId);
+      if (data.latestRun?.kind === 'question' && data.latestRun.status === 'active') {
+        setSendState('streaming');
+      }
+      if (eventRunIdRef.current === data.latestRun?.id && data.latestRun?.status !== 'active') {
+        eventSourceRef.current?.close();
+        eventSourceRef.current = null;
+        eventRunIdRef.current = null;
+        setSendState('idle');
+      }
+      return data;
+    } catch {
+      if (sessionIdRef.current === sessionId && requestId === detailRequestRef.current) {
+        setError({ code: 'internal', message: 'Network error while refreshing the conversation.' });
+        setLoading(false);
+      }
       return null;
     }
-    const data = (await response.json()) as AstrologerSessionDetail;
-    setDetail(data);
-    setMessages(data.messages);
-    setFocusedQuestion(data.session.currentQuestion ?? null);
-    onSessionUpdated?.(data);
-    setError(null);
-    setLoading(false);
-    return data;
-  }, [onSessionUpdated, sessionId]);
+  }, [onSessionUpdated, refreshMode, sessionId]);
+
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === 'visible') void loadDetail();
+    };
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [loadDetail]);
+
+  const personId = detail?.session.profileId;
+  useEffect(() => {
+    if (!personId) return;
+    return subscribePersonState(personId, () => { void loadDetail(); });
+  }, [personId, loadDetail]);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,6 +173,12 @@ export default function AstrologerChat({
     node?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }, [anchorMessageId, loading, messages]);
 
+  useEffect(() => {
+    if (messages.at(-1)?.delivery === 'sending') {
+      messageEndRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    }
+  }, [messages]);
+
   const connectEvents = useCallback(
     (runId: string, after?: number) => {
       if (eventRunIdRef.current === runId && eventSourceRef.current) return;
@@ -110,6 +189,7 @@ export default function AstrologerChat({
       eventSourceRef.current = source;
       source.addEventListener('answer.ready', () => void loadDetail());
       source.addEventListener('phase.changed', () => void loadDetail());
+      source.addEventListener('tool.started', () => void loadDetail());
       source.addEventListener('tool.completed', () => void loadDetail());
       source.addEventListener('run.completed', () => {
         source.close();
@@ -134,17 +214,30 @@ export default function AstrologerChat({
   );
 
   useEffect(() => {
-    if (detail?.profile?.initializationStatus === 'pending' && detail.latestRun?.kind === 'intake') {
+    if ((detail?.profile?.initializationStatus === 'pending' && detail.latestRun?.kind === 'intake')
+      || (detail?.latestRun?.kind === 'question' && detail.latestRun.status === 'active')) {
       connectEvents(detail.latestRun.id);
     }
   }, [connectEvents, detail]);
 
   const send = useCallback(
-    async (text: string, answerToQuestionId?: string) => {
-      if (sendState !== 'idle') return;
+    async (text: string, answerToQuestionId?: string, retryClientMessageId?: string) => {
+      if (sendState !== 'idle' || requestInFlightRef.current) return;
+      requestInFlightRef.current = true;
       setSendState('sending');
       setError(null);
-      const clientMessageId = crypto.randomUUID();
+      const clientMessageId = retryClientMessageId ?? crypto.randomUUID();
+      setMessages((current) => retryClientMessageId
+        ? current.map((message) => message.clientMessageId === clientMessageId ? { ...message, delivery: 'sending' } : message)
+        : [...current, {
+          id: clientMessageId, clientMessageId, role: 'user', content: text,
+          createdAt: new Date().toISOString(), runId: null, delivery: 'sending', answerToQuestionId,
+        }]);
+      const failed = () => {
+        setMessages((current) => current.map((message) => message.clientMessageId === clientMessageId
+          ? { ...message, delivery: 'failed' } : message));
+        setSendState('idle');
+      };
       try {
         const response = await fetch('/api/astrologer/chat', {
           method: 'POST',
@@ -156,30 +249,37 @@ export default function AstrologerChat({
             ...(answerToQuestionId ? { answerToQuestionId } : {}),
           }),
         });
+        if (sessionIdRef.current !== sessionId) return;
         if (!response.ok) {
           const payload = (await response.json().catch(() => null)) as ApiErrorDto | null;
           setError(payload ?? { code: 'internal', message: 'Could not send message.' });
-          setSendState('idle');
+          failed();
           return;
         }
         const started = (await response.json()) as StartRunResponse;
-        setSendState('streaming');
+        if (sessionIdRef.current !== sessionId) return;
+        setMessages((current) => acknowledgeMessage(current, clientMessageId, started));
+        setSendState(started.status === 'active' ? 'streaming' : 'idle');
         setFocusedQuestion(null);
-        connectEvents(started.runId);
+        if (started.status === 'active') connectEvents(started.runId);
+        void loadDetail();
       } catch {
+        if (sessionIdRef.current !== sessionId) return;
         setError({ code: 'internal', message: 'Network error.' });
-        setSendState('idle');
+        failed();
+      } finally {
+        if (sessionIdRef.current === sessionId) requestInFlightRef.current = false;
       }
     },
-    [connectEvents, sendState, sessionId],
+    [connectEvents, loadDetail, sendState, sessionId],
   );
 
   const submitDraft = useCallback(() => {
     const text = draft.trim();
-    if (!text) return;
+    if (!text || sendState !== 'idle' || requestInFlightRef.current) return;
     setDraft('');
     void send(text, focusedQuestion?.id);
-  }, [draft, focusedQuestion?.id, send]);
+  }, [draft, focusedQuestion?.id, send, sendState]);
 
   if (loading) {
     return (
@@ -289,13 +389,22 @@ export default function AstrologerChat({
               ) : null}
               <div
                 className={cn(
-                  'max-w-[75%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap',
+                  'min-w-0 max-w-[75%] rounded-lg px-3 py-2 text-sm [overflow-wrap:anywhere]',
                   message.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-primary text-primary-foreground whitespace-pre-wrap'
                     : 'bg-muted',
                 )}
               >
-                {message.content}
+                {message.role === 'assistant' ? <AssistantMarkdown content={message.content} /> : message.content}
+                {message.delivery === 'sending' ? <p className="mt-1 text-xs opacity-75">Sending…</p> : null}
+                {message.delivery === 'failed' ? (
+                  <div className="mt-2 flex items-center gap-2 text-xs">
+                    <span>Could not confirm delivery.</span>
+                    <Button variant="secondary" size="sm" disabled={busy} onClick={() => void send(message.content, message.answerToQuestionId, message.clientMessageId)}>
+                      Retry
+                    </Button>
+                  </div>
+                ) : null}
               </div>
             </div>
           ))}
@@ -309,8 +418,9 @@ export default function AstrologerChat({
             </section>
           ) : null}
           {busy ? (
-            <div className="text-xs text-muted-foreground">{personalOnly ? 'Thinking with your current personal context…' : 'Consulting your context and chart…'}</div>
+            <div className="text-xs text-muted-foreground">{currentPersonalOnly ? 'Thinking with your current personal context…' : 'Consulting your context and chart…'}</div>
           ) : null}
+          <div ref={messageEndRef} />
         </div>
       </ScrollArea>
 
@@ -378,7 +488,7 @@ export default function AstrologerChat({
 
       <div className="flex items-center gap-2 border-t p-3">
         <Input
-          placeholder={personalOnly ? 'Tell me what you are exploring…' : 'Ask your companion…'}
+          placeholder={currentPersonalOnly ? 'Tell me what you are exploring…' : 'Ask your companion…'}
           value={draft}
           disabled={busy || !canChat || resumableFailed}
           onChange={(e) => setDraft(e.target.value)}

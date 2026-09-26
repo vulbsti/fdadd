@@ -145,31 +145,60 @@ export async function GET(
     }
 
     const readable = workflowRun.getReadable<WorkflowChunk>({ startIndex: after + 1 });
+    const reader = readable.getReader();
+    let cancellation: Promise<void> | undefined;
+    const cancelReader = () => cancellation ??= reader.cancel().catch(() => {});
+    let disconnected = false;
+    let notifyDisconnect: () => void = () => {};
+    const disconnectNotice = new Promise<void>((resolve) => { notifyDisconnect = resolve; });
+    const disconnect = () => {
+      disconnected = true;
+      notifyDisconnect();
+      void cancelReader();
+    };
     const stream = new ReadableStream<Uint8Array>({
       async start(controller) {
-        const reader = readable.getReader();
         let index = after;
+        let terminalSent = false;
+        request.signal.addEventListener('abort', disconnect, { once: true });
+        // End this connection before the hosting deadline. EventSource resumes
+        // by cursor; neither disconnect nor renewal cancels the durable run.
+        const renewal = setTimeout(disconnect, 240_000);
         try {
+          if (request.signal.aborted) disconnect();
           for (;;) {
             const { done, value } = await reader.read();
             if (done) break;
             index += 1;
             const event = chunkToEvent(value ?? {}, runId);
             if (event) controller.enqueue(sseFrame(index, event));
+            if (event?.event === 'run.completed' || event?.event === 'run.failed') {
+              terminalSent = true;
+              break;
+            }
           }
           // Stream closed: synthesize terminal from Supabase if the workflow
           // finished while we were reading.
-          const status = await workflowRun.status;
-          if (status === 'completed' || status === 'failed') {
-            controller.enqueue(sseFrame(index + 1, await synthesizeTerminal(auth.store, runId)));
+          if (!terminalSent && !disconnected) {
+            const status = await Promise.race([workflowRun.status, disconnectNotice.then(() => null)]);
+            if (!disconnected && (status === 'completed' || status === 'failed')) {
+              const terminal = await Promise.race([synthesizeTerminal(auth.store, runId), disconnectNotice.then(() => null)]);
+              if (terminal && !disconnected) controller.enqueue(sseFrame(index + 1, terminal));
+            }
           }
         } catch {
           // Stream interrupted; client reconnects with Last-Event-ID.
         } finally {
-          controller.close();
+          clearTimeout(renewal);
+          request.signal.removeEventListener('abort', disconnect);
+          // Cancel once, but do not hold the SSE response open for a stalled
+          // upstream cancel acknowledgment. The read has already settled here.
+          void cancelReader();
+          try { controller.close(); } catch { /* Consumer already disconnected. */ }
           reader.releaseLock();
         }
       },
+      cancel: disconnect,
     });
 
     return new Response(stream, {
