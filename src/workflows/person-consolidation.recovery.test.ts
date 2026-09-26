@@ -16,12 +16,18 @@ type FailureStage = 'compose' | 'verify';
 
 const mocks = vi.hoisted(() => ({
   callPersonStage: vi.fn(),
+  sleep: vi.fn(async (_until: Date) => undefined),
   Store: class {
     constructor() {
       return mocks.store as object;
     }
   },
   store: undefined as object | undefined,
+}));
+
+vi.mock('workflow', () => ({
+  FatalError: class FatalError extends Error {},
+  sleep: mocks.sleep,
 }));
 
 vi.mock('@/lib/person-model/consolidation', async () => {
@@ -34,6 +40,7 @@ vi.mock('@/lib/person-model/consolidation-store', () => ({
 }));
 
 import { personConsolidationWorkflow } from './person-consolidation';
+import { PersonLeaseLostError } from '@/lib/person-model/consolidation-errors';
 
 interface RecoveryState {
   failureStage: FailureStage;
@@ -48,6 +55,10 @@ interface RecoveryState {
   publications: Array<{ revision: number; candidateId: string }>;
   activeRevision: number;
   activeModelVersion: string;
+  availableAt: string | null;
+  retryScheduled: boolean;
+  loadError?: Error;
+  noClaim?: boolean;
 }
 
 function makeState(failureStage: FailureStage): RecoveryState {
@@ -64,6 +75,8 @@ function makeState(failureStage: FailureStage): RecoveryState {
     publications: [],
     activeRevision: 1,
     activeModelVersion: 'prior-valid-model-v1',
+    availableAt: null,
+    retryScheduled: true,
   };
 }
 
@@ -194,11 +207,14 @@ function stageValue(stage: string): unknown {
 function installStore(state: RecoveryState) {
   mocks.store = {
     claimJob: async () => {
-      if (state.state === 'published') return null;
+      if (state.state === 'published' || state.noClaim) return null;
       state.state = 'running';
       return claim(state);
     },
-    loadContext: async () => context(state),
+    loadContext: async () => {
+      if (state.loadError) throw state.loadError;
+      return context(state);
+    },
     renew: async () => undefined,
     assertFresh: async () => undefined,
     recordStage: async (_claim: unknown, input: { stageKey: string; state: string; metrics?: Record<string, number> }) => {
@@ -238,9 +254,11 @@ function installStore(state: RecoveryState) {
     fail: async (_claim: unknown, stage: string) => {
       state.failed = true;
       state.state = 'pending';
+      state.availableAt = state.retryScheduled ? '2026-09-26T12:00:00.000Z' : null;
       state.failureReceipts.push({ stage, retryable: true });
       state.fence += 1;
     },
+    pendingRetryAt: async () => state.availableAt,
     rebase: async () => ({ requeued: true }),
   };
 }
@@ -248,6 +266,7 @@ function installStore(state: RecoveryState) {
 describe('person consolidation deterministic recovery seam', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.sleep.mockResolvedValue(undefined);
   });
 
   it.each(['compose', 'verify'] as const)(
@@ -264,19 +283,14 @@ describe('person consolidation deterministic recovery seam', () => {
         return { value: stageValue(stage), metadata: { provider: 'deterministic-fixture', model: 'fail-once-fixture' } };
       });
 
-      await expect(personConsolidationWorkflow(ids.job)).rejects.toThrow(/failed safely/);
+      const result = await personConsolidationWorkflow(ids.job);
+      expect(result.status).toBe('published');
+      expect(mocks.sleep).toHaveBeenCalledTimes(1);
+      expect(mocks.sleep).toHaveBeenCalledWith(new Date('2026-09-26T12:00:00.000Z'));
       expect(state.failed).toBe(true);
-      expect(state.state).toBe('pending');
-      expect(state.activeRevision).toBe(1);
-      expect(state.activeModelVersion).toBe('prior-valid-model-v1');
-      expect(state.failureReceipts).toEqual([{ stage: failureStage, retryable: true }]);
-      expect(state.candidates).toHaveLength(0);
-      expect(state.publications).toHaveLength(0);
-      expect(state.sourceOutcomes).toHaveLength(0);
-
-      const retry = await personConsolidationWorkflow(ids.job);
-      expect(retry.status).toBe('published');
+      expect(state.state).toBe('published');
       expect(state.activeRevision).toBe(2);
+      expect(state.failureReceipts).toEqual([{ stage: failureStage, retryable: true }]);
       expect(state.candidates).toHaveLength(1);
       expect(state.publications).toHaveLength(1);
       expect(state.sourceOutcomes).toEqual([{ sourceId: ids.source, outcome: 'handled', code: null }]);
@@ -298,4 +312,31 @@ describe('person consolidation deterministic recovery seam', () => {
       expect(state.sourceOutcomes).toHaveLength(1);
     },
   );
+
+  it('does not sleep when a failed attempt has no database-scheduled retry', async () => {
+    const state = makeState('compose');
+    installStore(state);
+    state.retryScheduled = false;
+    mocks.callPersonStage.mockImplementation(async ({ stage }: { stage: string }) => {
+      if (stage === 'compose') throw new Error('terminal failure');
+      return { value: stageValue(stage), metadata: { provider: 'fixture', model: 'fixture' } };
+    });
+
+    await expect(personConsolidationWorkflow(ids.job)).rejects.toThrow(/failed safely/);
+    expect(mocks.sleep).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['not_claimed', null],
+    ['lease_lost', new PersonLeaseLostError()],
+  ] as const)('does not sleep for %s', async (status, error) => {
+    const state = makeState('compose');
+    installStore(state);
+    if (status === 'not_claimed') state.noClaim = true;
+    else state.loadError = error!;
+
+    const result = await personConsolidationWorkflow(ids.job);
+    expect(result.status).toBe(status);
+    expect(mocks.sleep).not.toHaveBeenCalled();
+  });
 });

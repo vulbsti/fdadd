@@ -18,9 +18,12 @@
     "test:e2e:p2-visual:local": "NEXT_DIST_DIR=.next-p2-visual npm run build && NEXT_DIST_DIR=.next-p2-visual E2E_BASE_URL=http://localhost:9014 E2E_FORCE_NEW_SERVER=1 E2E_WEB_SERVER_COMMAND='npm exec -- next start -p 9014' node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-p2-visual.spec.ts --workers=1",
     "test:e2e:p2-visual:staging": "playwright test tests/e2e/astrologer-p2-visual.spec.ts --config=playwright.p2-staging.config.ts --workers=1",
     "test:e2e:provider:local": "node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-conversation.spec.ts --project=laptop",
+    "test:e2e:system:local": "P3_REAL_PROVIDER_E2E=1 node scripts/with-local-supabase-env.mjs playwright test --config=playwright.system-local.config.ts",
+    "test:e2e:system:staging": "P3_REAL_PROVIDER_E2E=1 P3_STAGING_E2E=1 playwright test --config=playwright.system-staging.config.ts",
     "test:e2e:provider-recovery:local": "P1_PROVIDER_RECOVERY_PROXY=1 OPENGO_BASE_URL=http://127.0.0.1:19082 NEXT_DIST_DIR=.next-recovery E2E_BASE_URL=http://localhost:9012 E2E_FORCE_NEW_SERVER=1 node scripts/with-local-supabase-env.mjs playwright test tests/e2e/astrologer-recovery.spec.ts --project=laptop",
     "test:e2e:staging-recovery": "playwright test tests/e2e/astrologer-staging-recovery.spec.ts --config=playwright.staging.config.ts --workers=1",
-    "test:p2:staging": "node scripts/p2-staging-canary.mjs"
+    "test:p2:staging": "node scripts/p2-staging-canary.mjs",
+    "test:release-preflight": "node --test scripts/release-preflight.test.mjs"
   },
   "engines": {
     "node": "22.x"

@@ -1,5 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
+import { parseEnv } from 'node:util';
 
 const command = process.argv.slice(2);
 if (command.length === 0) {
@@ -32,10 +34,27 @@ if (!values.PUBLISHABLE_KEY || !values.SECRET_KEY) {
   process.exit(1);
 }
 
+// Sandbox OIDC credentials expire. A fresh `vercel pull --environment=preview`
+// can supply only this credential without replacing the local database config
+// with the remote environment or loading redacted provider secrets.
+let sandboxEnv = {};
+if (process.env.E2E_VERCEL_ENV_FILE) {
+  try {
+    const token = parseEnv(readFileSync(process.env.E2E_VERCEL_ENV_FILE, 'utf8')).VERCEL_OIDC_TOKEN;
+    const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8'));
+    if (!Number.isFinite(claims.exp) || claims.exp * 1000 <= Date.now()) throw new Error('expired');
+    sandboxEnv = { VERCEL_OIDC_TOKEN: token };
+  } catch {
+    console.error('Sandbox OIDC credential is missing or expired. Pull fresh Preview settings first.');
+    process.exit(1);
+  }
+}
+
 const child = spawnSync(command[0], command.slice(1), {
   stdio: 'inherit',
   env: {
     ...process.env,
+    ...sandboxEnv,
     NEXT_PUBLIC_SUPABASE_URL: values.API_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: values.PUBLISHABLE_KEY,
     SUPABASE_SECRET_KEY: values.SECRET_KEY,

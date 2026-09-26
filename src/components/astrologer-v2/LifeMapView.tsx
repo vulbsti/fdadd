@@ -88,7 +88,7 @@ export default function LifeMapView({ projection }: { projection: PersonProjecti
                       role="region"
                       tabIndex={0}
                     >
-                      <ol aria-label="Earlier experiences, in chronological order" className={`relative flex flex-col gap-5 border-l border-[#9ca9b6] pl-4 md:min-w-full md:gap-0 md:border-0 md:pl-0 md:pt-6 ${compactPastTimeline ? 'md:grid md:grid-cols-3' : 'md:w-max md:flex-row'}`}>
+                      <ol aria-label="Earlier experiences, in chronological order" className={`relative flex flex-col gap-5 border-l border-[#9ca9b6] pl-4 md:min-w-full md:gap-0 md:border-0 md:pl-0 md:pt-6 ${compactPastTimeline ? `md:grid ${pastEvents.length === 1 ? 'md:grid-cols-1' : pastEvents.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}` : 'md:w-max md:flex-row'}`}>
                         <span aria-hidden className="absolute left-2 right-2 top-[6px] hidden h-px bg-[#163e67] md:block" />
                         {pastEvents.map((node) => (
                           <li key={node.id} className={`relative w-full min-w-0 pb-1 md:px-3 md:pb-0 first:md:pl-2 last:md:pr-5 ${compactPastTimeline ? 'md:w-auto' : 'md:w-[132px] md:shrink-0 xl:w-[165px]'}`}>

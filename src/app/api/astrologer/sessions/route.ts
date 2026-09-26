@@ -9,14 +9,14 @@
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { errorResponse, requireAuth, startAndAttach, unconfigured } from '@/lib/astro/api-helpers';
+import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { AgentStoreError } from '@/lib/astro/agent-store';
 import {
   AstrologerSessionSummarySchema,
   BirthInputSchema,
   type AstrologerSessionSummary,
 } from '@/lib/astro/contracts';
-import { astrologerIntakeWorkflow } from '@/workflows/astrologer-intake';
+import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
 
 export const runtime = 'nodejs';
 
@@ -85,9 +85,7 @@ export async function POST(request: Request) {
         parsed.data.birth,
         parsed.data.clientRequestId,
       );
-      if (!intake.replayed) {
-        await startAndAttach(astrologerIntakeWorkflow, intake.runId, auth.store);
-      }
+      await dispatchAstrologerRunBestEffort(intake.runId);
       return NextResponse.json(
         {
           sessionId: intake.sessionId,

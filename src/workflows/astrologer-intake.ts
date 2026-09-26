@@ -6,7 +6,7 @@
  * user JWTs, Supabase secrets, birth payloads, or person-map data. Every
  * database/model/Atros/side-effect boundary is a separate `'use step'`.
  */
-import { FatalError } from 'workflow';
+import { FatalError, getWorkflowMetadata } from 'workflow';
 import { atrosChart, atrosSensitivity } from '@/lib/astro/tools';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore } from '@/lib/astro/agent-store';
@@ -20,6 +20,13 @@ interface FrozenCalculation {
   profileId: string;
   kind: 'chart' | 'sensitivity';
   result: unknown;
+}
+
+async function claimIntakeExecution(runId: string) {
+  'use step';
+  const { workflowRunId } = getWorkflowMetadata();
+  const admin = createAdminClient();
+  return new AgentStore(admin, admin).claimRunExecution(runId, workflowRunId);
 }
 
 /** Load the pending intake run and the birth data frozen on its profile. */
@@ -111,6 +118,8 @@ async function failIntake(input: { runId: string; message: string }): Promise<vo
 export async function astrologerIntakeWorkflow(runId: string) {
   'use workflow';
 
+  const execution = await claimIntakeExecution(runId);
+  if (!execution.won) return { status: 'duplicate' as const, workflowRunId: execution.workflowRunId };
   const intake = await loadIntakeRun(runId);
 
   let chart: FrozenCalculation;

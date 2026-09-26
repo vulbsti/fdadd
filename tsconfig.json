@@ -39,7 +39,9 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".next-recovery/types/**/*.ts",
-    ".next-recovery/dev/types/**/*.ts"
+    ".next-recovery/dev/types/**/*.ts",
+    ".next-system-proof/types/**/*.ts",
+    ".next-system-proof/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

@@ -310,6 +310,13 @@ export class PersonConsolidationStore {
     }));
   }
 
+  async pendingRetryAt(jobId: string): Promise<string | null> {
+    const result = await this.admin.from('person_jobs').select('state,available_at')
+      .eq('id', jobId).maybeSingle();
+    if (result.error) must(result);
+    return result.data?.state === 'pending' ? result.data.available_at : null;
+  }
+
   async claimOutbox(): Promise<Row | null> {
     const item = row(must(await this.admin.rpc('person_claim_outbox', { p_lease_seconds: 90 })));
     return item.claimed === true ? item : null;

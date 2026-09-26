@@ -22,7 +22,7 @@ import { getErrorMessage } from '@/lib/astro/workflow-errors';
 import { selectedContextBlock, type SelectedSource } from '@/lib/astro/selected-context';
 import { parseFinishProposal } from '@/lib/astro/finish-proposal';
 import { resolveAgentFinishMode, type AgentFinishMode } from '@/lib/astro/agent-budget';
-import { verificationNeedsRetry } from '@/lib/astro/verification-policy';
+import { draftRevisionInstruction, verificationNeedsRetry } from '@/lib/astro/verification-policy';
 import { loadAgentPersonContext, personAgentContextBlock } from '@/lib/astro/person-agent-context';
 import {
   parsePersonRunMode,
@@ -1231,6 +1231,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       }
       // Budget remains: append actionable gaps, persist the rewind, and let the
       // outer loop execute the plan again in this same workflow run.
+      modelTranscript.push({ role: 'system', content: draftRevisionInstruction(verification) });
       const gapKey = stepKeyFor(plan.steps.length, rejectedDraftCount, 0, 'retrieval_gap');
       const gapItems = await retrieveContext({
         runId,

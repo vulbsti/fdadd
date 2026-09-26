@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { start, getRun } from 'workflow/api';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
@@ -14,6 +13,19 @@ export function unconfigured(): NextResponse {
 }
 
 export function errorResponse(error: unknown, fallbackStatus = 500): NextResponse {
+  // PostgREST returns plain objects. Preserve a safe diagnostic classification
+  // without exposing database details or private row values to the browser.
+  if (!(error instanceof Error) && error && typeof error === 'object' && 'code' in error) {
+    const databaseCode = String(error.code);
+    console.error('[astrologer-api] database request failed', { databaseCode });
+    const unavailable = ['PGRST202', 'PGRST205', '42P01', '42883', '42703'].includes(databaseCode);
+    return NextResponse.json({
+      code: unavailable ? 'unconfigured' : 'internal',
+      message: unavailable
+        ? 'This feature is temporarily unavailable. Please try again after the service is updated.'
+        : 'We could not save your request. Please try again.',
+    } satisfies ApiErrorDto, { status: unavailable ? 503 : fallbackStatus });
+  }
   if (error instanceof AgentStoreError) {
     const status =
       error.code === 'not_found' ? 404
@@ -48,21 +60,4 @@ export async function requireAuth(): Promise<AuthedContext | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
   return { userId: user.id, store: new AgentStore(supabase, createAdminClient()) };
-}
-
-/**
- * Start a workflow for a run and CAS-attach its ID. When another request
- * already won, the loser cancels its duplicate and returns the winning ID.
- */
-export async function startAndAttach(
-  workflow: (runId: string) => Promise<unknown>,
-  runId: string,
-  store: AgentStore,
-): Promise<{ workflowRunId: string; won: boolean }> {
-  const run = await start(workflow, [runId]);
-  const attach = await store.attachWorkflowRun(runId, run.runId);
-  if (!attach.won) {
-    await getRun(run.runId).cancel().catch(() => undefined);
-  }
-  return { workflowRunId: attach.workflowRunId, won: attach.won };
 }
