@@ -6,6 +6,8 @@ export default defineConfig([
   globalIgnores([
     '.next/**',
     '.next-recovery/**',
+    '.next-system-proof/**',
+    '.next-p2-visual/**',
     'out/**',
     'build/**',
     'next-env.d.ts',

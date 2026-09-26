@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   // A second local E2E server needs an isolated Next lock/build directory.
   // Keep the production/default artifact at `.next`.
-  distDir: process.env.NEXT_DIST_DIR === '.next-recovery' ? '.next-recovery' : '.next',
+  distDir: ['.next-recovery', '.next-system-proof', '.next-p2-visual'].includes(process.env.NEXT_DIST_DIR ?? '')
+    ? process.env.NEXT_DIST_DIR : '.next',
   images: {
     remotePatterns: [
       {

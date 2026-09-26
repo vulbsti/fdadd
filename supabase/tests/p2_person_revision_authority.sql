@@ -4,7 +4,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = extensions, public;
 
-select plan(43);
+select plan(69);
 
 \set user_a a2000000-0000-4000-8000-000000000001
 \set user_b b2000000-0000-4000-8000-000000000002
@@ -273,5 +273,140 @@ select is((select current_revision from public.person_model_heads where user_id=
   3::bigint, 'correction resolution atomically publishes the next revision');
 select is((select count(*) from public.person_current_objects where user_id=:'user_a'::uuid),
   1::bigint, 'resolved correction restores the newly published version to current view');
+
+-- Existing-person birth setup is revisioned, owner-scoped, and fenced from
+-- concurrent or stale calculation writes.
+select has_table('public', 'person_birth_revisions', 'birth input revisions are durably stored');
+select has_column('public', 'astro_profiles', 'birth_revision', 'profile points at its latest birth revision');
+select has_function('public', 'begin_person_birth_setup', array['uuid','jsonb','uuid']);
+select ok(not has_function_privilege('anon', 'public.person_mark_model_stale_on_source()', 'execute')
+  and not has_function_privilege('authenticated', 'public.person_mark_model_stale_on_source()', 'execute'),
+  'source-staleness trigger helper cannot be called directly by API roles');
+select id as birth_profile_id from public.astro_profiles
+  where user_id=:'user_a'::uuid and name='P2 A' \gset
+-- An unanswered, already-published conversation is parked rather than active.
+set local role postgres;
+insert into public.astro_agent_runs (user_id, profile_id, session_id, kind, status, client_request_id)
+select :'user_a'::uuid, :'birth_profile_id'::uuid, s.id, 'question', 'waiting_for_user',
+  'a2000000-0000-4000-8000-000000000060'::uuid
+from public.astro_sessions s where s.profile_id=:'birth_profile_id'::uuid
+order by s.created_at limit 1;
+update public.astro_sessions set status='waiting_for_user',
+  current_question='{"id":"a2000000-0000-4000-8000-000000000061","prompt":"Would you like to say more?"}'::jsonb
+where id=(select session_id from public.astro_agent_runs
+  where client_request_id='a2000000-0000-4000-8000-000000000060'::uuid);
+select is((select count(*) from public.astro_agent_runs where client_request_id='a2000000-0000-4000-8000-000000000060'::uuid
+  and status='waiting_for_user'), 1::bigint, 'parked conversation fixture remains visible');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a2000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select public.begin_person_birth_setup(
+  :'birth_profile_id'::uuid,
+  '{"date":"1991-04-12","time":"06:35","latitude":12.97,"longitude":77.59,
+    "timezone":"Asia/Kolkata","place_name":"Bengaluru, Karnataka, India",
+    "time_source":"family","time_confidence":"approximate"}'::jsonb,
+  'a2000000-0000-4000-8000-000000000050'::uuid) as birth_setup \gset
+select is(:'birth_setup'::jsonb->>'profileId', :'birth_profile_id',
+  'birth setup updates the existing person instead of creating a profile');
+select is((select astro_status from public.astro_profiles where id=:'birth_profile_id'::uuid),
+  'pending', 'astrology stays unavailable until calculations complete');
+select is((select astrology_enabled from public.person_preferences where profile_id=:'birth_profile_id'::uuid),
+  false, 'birth recalculation turns astrology off while preserving personal mode');
+select is((select count(*) from public.person_birth_revisions where profile_id=:'birth_profile_id'::uuid
+  and revision_no=1 and birth_date='1991-04-12' and time_confidence='approximate' and status='pending'),
+  1::bigint, 'the submitted date, place and uncertainty are durably captured');
+set local role service_role;
+select is((select count(*) from public.astro_run_dispatches d
+  join public.astro_agent_runs r on r.id=d.run_id and r.user_id=d.user_id and r.profile_id=d.profile_id
+  where d.run_id=(:'birth_setup'::jsonb->>'runId')::uuid and d.user_id=:'user_a'::uuid
+    and d.profile_id=:'birth_profile_id'::uuid and r.kind='intake' and r.status='active'),
+  1::bigint, 'birth setup enqueues one owner- and person-scoped intake dispatch');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a2000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select is((public.begin_person_birth_setup(
+  :'birth_profile_id'::uuid,
+  '{"date":"1991-04-12","time":"06:35","latitude":12.97,"longitude":77.59,
+    "timezone":"Asia/Kolkata","place_name":"Bengaluru, Karnataka, India",
+    "time_source":"family","time_confidence":"approximate"}'::jsonb,
+  'a2000000-0000-4000-8000-000000000050'::uuid)->>'replayed')::boolean,
+  true, 'retrying the same request returns the existing durable intake');
+select is((public.begin_person_birth_setup(
+  :'birth_profile_id'::uuid,
+  '{"date":"1991-04-12","time":"06:35","latitude":12.97,"longitude":77.59,
+    "timezone":"Asia/Kolkata","place_name":"Bengaluru, Karnataka, India",
+    "time_source":"family","time_confidence":"approximate"}'::jsonb,
+  'a2000000-0000-4000-8000-000000000050'::uuid)->>'birthRevision')::bigint,
+  1::bigint, 'idempotent replay returns the original birth revision');
+set local role service_role;
+select is((select count(*) from public.astro_run_dispatches
+  where run_id=(:'birth_setup'::jsonb->>'runId')::uuid),
+  1::bigint, 'idempotent intake replay does not duplicate the dispatch outbox row');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a2000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select throws_ok($$select public.begin_person_birth_setup(
+  (select id from public.astro_profiles where user_id='a2000000-0000-4000-8000-000000000001'::uuid and name='P2 A'),
+  '{"date":"1991-04-12","time":"06:35","latitude":12.97,"longitude":77.59,"timezone":"Asia/Kolkata"}'::jsonb,
+  'a2000000-0000-4000-8000-000000000051'::uuid)$$,
+  'ACF01', null, 'another birth edit is fenced while intake is active');
+set local role service_role;
+select throws_ok(format($$insert into public.astro_agent_runs
+  (user_id,profile_id,session_id,kind,status,client_request_id)
+  values (%L::uuid,%L::uuid,%L::uuid,'question','active','a2000000-0000-4000-8000-000000000062'::uuid)$$,
+  :'user_a', :'birth_profile_id', (:'birth_setup'::jsonb->>'sessionId')),
+  'ACF01', null, 'profile lock rechecks active runs after a concurrent wait');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"b2000000-0000-4000-8000-000000000002","role":"authenticated"}';
+select throws_ok(format($$select public.begin_person_birth_setup(%L::uuid,
+  '{"date":"1991-04-12","time":"06:35","latitude":12.97,"longitude":77.59,"timezone":"Asia/Kolkata"}'::jsonb,
+  'a2000000-0000-4000-8000-000000000052'::uuid)$$, :'birth_profile_id'),
+  'ANF01', null, 'another user cannot update this person birth data');
+select is((select count(*) from public.person_birth_revisions where profile_id=:'birth_profile_id'::uuid),
+  0::bigint, 'another user cannot read the owner birth revision');
+set local role service_role;
+select is((public.worker_finish_astro_intake(
+  (:'birth_setup'::jsonb->>'runId')::uuid,
+  '{"chart":"revision-one"}'::jsonb, '{"sensitivity":"revision-one"}'::jsonb,
+  'Your chart is ready.') ->> 'status'),
+  'complete', 'the durable intake workflow completes for the existing person');
+select is((select status from public.person_birth_revisions where profile_id=:'birth_profile_id'::uuid
+  and revision_no=1), 'ready', 'chart and sensitivity completion marks that birth revision ready');
+select throws_ok(format($$update public.person_birth_revisions set birth_time='07:00' where profile_id=%L::uuid$$,
+  :'birth_profile_id'), 'PST02', null, 'historical birth inputs cannot be overwritten');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a2000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select public.begin_person_birth_setup(
+  :'birth_profile_id'::uuid,
+  '{"date":"1991-04-13","time":"06:35","latitude":12.97,"longitude":77.59,
+    "timezone":"Asia/Kolkata","place_name":"Bengaluru, Karnataka, India",
+    "time_source":"family","time_confidence":"approximate"}'::jsonb,
+  'a2000000-0000-4000-8000-000000000053'::uuid) as second_birth_setup \gset
+select is((:'second_birth_setup'::jsonb->>'birthRevision')::bigint, 2::bigint,
+  'correcting birth details creates a second immutable revision');
+set local role service_role;
+select is((public.worker_fail_astro_intake(
+  (:'second_birth_setup'::jsonb->>'runId')::uuid,
+  'test_atros_unavailable', 'Atros is temporarily unavailable') ->> 'status'),
+  'failed', 'a calculation error is durably reported for the new revision');
+select is((select status from public.person_birth_revisions where profile_id=:'birth_profile_id'::uuid
+  and revision_no=2), 'failed', 'the failed revision remains visible in history');
+set local role authenticated;
+select public.begin_person_birth_setup(
+  :'birth_profile_id'::uuid,
+  '{"date":"1991-04-13","time":"06:35","latitude":12.97,"longitude":77.59,
+    "timezone":"Asia/Kolkata","place_name":"Bengaluru, Karnataka, India",
+    "time_source":"family","time_confidence":"approximate"}'::jsonb,
+  'a2000000-0000-4000-8000-000000000054'::uuid) as retry_birth_setup \gset
+select is((:'retry_birth_setup'::jsonb->>'birthRevision')::bigint, 3::bigint,
+  'retry after a failed calculation creates a fresh revision on the same person');
+select is((select count(*) from public.person_birth_revisions where profile_id=:'birth_profile_id'::uuid
+  and status='failed'), 1::bigint, 'retry preserves the earlier failed revision');
+set local role service_role;
+update public.astro_agent_runs set birth_revision=1
+where id=(:'retry_birth_setup'::jsonb->>'runId')::uuid;
+select throws_ok(format($$update public.astro_profiles set initialization_status='ready',
+  chart_json='{"chart":"stale"}'::jsonb, sensitivity_json='{"sensitivity":"stale"}'::jsonb
+  where id=%L::uuid$$, :'birth_profile_id'),
+  'ASV01', null, 'a stale birth revision cannot publish over the current calculation');
+set local role authenticated;
+
 select * from finish();
 rollback;

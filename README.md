@@ -83,13 +83,38 @@ opencode run "help me debug the astrologer chat route"
 ## Deployment
 
 `.github/workflows/deploy-production.yml` runs for pushes to `main` and for a
-manual dispatch. It uses Node 22, runs `npm ci`, typecheck, lint, and unit
-tests before pulling Vercel settings, building, and deploying. A separate P0
-quality workflow runs local database and browser smoke checks on PRs and main.
-These checks do not yet prove the v3 guided-update loop. Vercel production and
-preview environment variables must be
-configured separately; use the provider setup document for Supabase and
-Razorpay callback URLs and server-only variables.
+manual dispatch from `main`. It calls the full local quality workflow, deploys
+this commit to an isolated Preview configured for staging, and runs the hosted
+person-model browser journey. It then checks the production migration ledger
+and required person-model tables and RPC grants before creating a staged
+production deployment and promoting it. Vercel Git deployment is disabled for `main` so it cannot
+race that gated release path. The hosted test uses real configured providers
+and can incur provider cost; CI retains screenshot artifacts, while its
+authenticated Playwright trace remains on the ephemeral runner to avoid
+publishing session cookies or deployment-bypass headers. It does not replace
+human comparison against the approved visual mocks or prove every v3 acceptance
+case. The [system-pipeline operator notes](docs/operations/system-pipeline.md)
+cover the local and hosted test commands, artifact handling, and migration
+operator gate.
+
+Configure the repository secrets `SUPABASE_ACCESS_TOKEN`, `VERCEL_TOKEN`,
+`P3_STAGING_SUPABASE_REF`, `P3_STAGING_SUPABASE_URL`, `P3_STAGING_SUPABASE_IP`,
+`P3_STAGING_SUPABASE_SECRET_KEY`, `P3_STAGING_SUPABASE_PUBLISHABLE_KEY`,
+`P3_STAGING_CRON_SECRET`, and `VERCEL_AUTOMATION_BYPASS_SECRET`. Configure the
+Vercel Preview environment for the same staging Supabase project and a working
+provider key; configure Production environment variables separately. The
+read-only schema check targets Supabase project ref `ezanfqbewuqttatrkvhf`
+through the CLI Management API; it never applies migrations. Missing migration
+versions block promotion until they have been reviewed and applied through the
+separate database release process.
+Vercel Production must have a non-empty `CRON_SECRET`; this is checked before
+building. The protected dispatch and consolidation recovery sweeps run daily
+as an orphan-recovery safety net. Normal consolidation retries are scheduled
+from the database's durable `available_at` time and self-wake the existing
+workflow; they do not depend on a chat request or frequent cron polling. Chat
+and run-event requests can also attempt orphan recovery. Vercel Hobby only
+permits daily cron jobs, so the daily schedule is not a fast orphan-recovery
+guarantee. See the person-model evaluation guide for hosted test details.
 
 ## Documentation map
 

@@ -173,6 +173,10 @@ export interface BeginIntakeResult {
   replayed: boolean;
 }
 
+export interface BeginBirthSetupResult extends BeginIntakeResult {
+  birthRevision: number;
+}
+
 export interface BeginRunResult {
   runId: string;
   messageId: string | null;
@@ -249,6 +253,20 @@ export class AgentStore {
     });
     if (error) throw normalizeDbError(error);
     return data as unknown as BeginIntakeResult;
+  }
+
+  async beginExistingProfileBirthSetup(
+    profileId: string,
+    birth: Omit<BirthInput, 'name'>,
+    clientRequestId: string,
+  ): Promise<BeginBirthSetupResult> {
+    const { data, error } = await this.user.rpc('begin_person_birth_setup', {
+      p_profile_id: profileId,
+      p_birth: birth as unknown as Record<string, unknown>,
+      p_client_request_id: clientRequestId,
+    });
+    if (error) throw normalizeDbError(error);
+    return data as unknown as BeginBirthSetupResult;
   }
 
   async createSession(profileId: string): Promise<{ sessionId: string; profileId: string }> {

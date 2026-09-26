@@ -252,6 +252,18 @@ describe('person consolidation stage contracts', () => {
     }])).toThrow(/uniquely match/);
   });
 
+  it('normalizes an overlong end offset even when String.slice clamps to the exact quote', () => {
+    const source = makeSource({ body: 'A new experience. That is a useful counterexample to my usual delay.' });
+    const exactQuote = 'That is a useful counterexample to my usual delay.';
+    const drifted = { ...makeObservation('self'), exactQuote,
+      spanStart: source.body.indexOf(exactQuote), spanEnd: source.body.length + 1 };
+    expect(source.body.slice(drifted.spanStart, drifted.spanEnd)).toBe(exactQuote);
+    expect(() => validateObservationSpans([source], [drifted])).toThrow(/did not match/);
+    const normalized = normalizeObservationSpans([source], [drifted]);
+    expect(normalized[0]?.spanEnd).toBe(source.body.length);
+    expect(() => validateObservationSpans([source], normalized)).not.toThrow();
+  });
+
   it('requires explicit disposition of retrieved counterexamples and preserves qualification', () => {
     const counter: CountercontextItem[] = [{
       observationId: ids.observation, sourceId: ids.otherSource, subjectKind: 'self',

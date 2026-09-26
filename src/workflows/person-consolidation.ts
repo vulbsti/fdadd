@@ -2,7 +2,7 @@
  * Durable ordinary-chat learning pipeline. The workflow input is only the
  * internal job id; every DB read/write and provider call is a replayable step.
  */
-import { FatalError } from 'workflow';
+import { FatalError, sleep } from 'workflow';
 import { createHash, randomUUID } from 'node:crypto';
 import {
   callPersonStage,
@@ -296,9 +296,25 @@ async function rebaseStep(claim: PersonJobClaim) {
   return new PersonConsolidationStore().rebase(claim);
 }
 
+async function pendingRetryAtStep(jobId: string) {
+  'use step';
+  return new PersonConsolidationStore().pendingRetryAt(jobId);
+}
+
 /** Ordinary accepted sources consolidate without waiting for an answer run. */
 export async function personConsolidationWorkflow(jobId: string) {
   'use workflow';
+  while (true) {
+    const result = await consolidatePersonAttempt(jobId);
+    if (result.status !== 'retry_pending') return result;
+    // The database owns retry eligibility, attempt limits, and backoff. A
+    // durable timer wakes this existing workflow without requiring another
+    // user message, a browser test, or a frequent paid cron schedule.
+    await sleep(new Date(result.availableAt));
+  }
+}
+
+async function consolidatePersonAttempt(jobId: string) {
   const claim = await claimPersonJob(jobId);
   if (!claim) return { status: 'not_claimed' as const };
   let currentStage = 'load';
@@ -443,6 +459,8 @@ export async function personConsolidationWorkflow(jobId: string) {
     if (isPersonLeaseLostError(error)) return { status: 'lease_lost' as const };
     if (error instanceof Error && /freshness tuple changed|freshness or lease fence changed/i.test(error.message)) {
       const rebased = await rebaseStep(claim);
+      const availableAt = await pendingRetryAtStep(jobId);
+      if (availableAt) return { status: 'retry_pending' as const, availableAt };
       return { status: 'requeued_or_cancelled' as const, rebase: rebased };
     }
     try {
@@ -454,6 +472,8 @@ export async function personConsolidationWorkflow(jobId: string) {
       }
       throw failureError;
     }
+    const availableAt = await pendingRetryAtStep(jobId);
+    if (availableAt) return { status: 'retry_pending' as const, availableAt };
     throw new FatalError('Person consolidation failed safely and the source remains available for retry.');
   }
 }

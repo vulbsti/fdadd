@@ -8,48 +8,147 @@ on:
 
 concurrency:
   group: aidoraa-production
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Build and deploy
+  quality:
+    name: Required local quality suite
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/p0-quality.yml
+    secrets: inherit
+
+  production-schema:
+    name: Production schema compatibility
+    if: github.ref == 'refs/heads/main'
+    needs: [staging-browser]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Compare production migration history and required objects
+        run: node scripts/check-remote-schema.mjs
+
+  candidate-preview:
+    name: Build candidate with staging settings
+    if: github.ref == 'refs/heads/main'
+    needs: [quality]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+      host: ${{ steps.deploy.outputs.host }}
     env:
       VERCEL_ORG_ID: team_t689qVHC6ycaHamXLceV4yu5
       VERCEL_PROJECT_ID: prj_T6xLcx3lfm7KjpLk4co1lCgkSMnK
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-
     steps:
-      - name: Check out main
-        uses: actions/checkout@v4
-
-      - name: Use Node.js 22
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+      - run: npm ci
+      - name: Load Preview settings
+        run: npx --yes vercel@latest pull --yes --environment=preview --token="$VERCEL_TOKEN"
+      - name: Build Preview candidate
+        run: npx --yes vercel@latest build --token="$VERCEL_TOKEN"
+      - name: Deploy isolated Preview candidate
+        id: deploy
+        shell: bash
+        run: |
+          deployment_url="$(npx --yes vercel@latest deploy --prebuilt --yes --meta codex_commit="$GITHUB_SHA" --token="$VERCEL_TOKEN")"
+          if [[ ! "$deployment_url" =~ ^https://[A-Za-z0-9.-]+\.vercel\.app/?$ ]]; then
+            echo "Vercel did not return an isolated vercel.app deployment URL."
+            exit 1
+          fi
+          printf 'url=%s\n' "${deployment_url%/}" >> "$GITHUB_OUTPUT"
+          printf 'host=%s\n' "${deployment_url#https://}" | sed 's:/*$::' >> "$GITHUB_OUTPUT"
 
-      - name: Install dependencies
-        run: npm ci
+  staging-browser:
+    name: Hosted staging full person-model journey
+    if: github.ref == 'refs/heads/main'
+    needs: [quality, candidate-preview]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      P3_REAL_PROVIDER_E2E: '1'
+      P3_STAGING_E2E: '1'
+      P3_STAGING_PREVIEW_URL: ${{ needs.candidate-preview.outputs.url }}
+      P3_STAGING_APPROVED_HOST: ${{ needs.candidate-preview.outputs.host }}
+      E2E_BASE_URL: ${{ needs.candidate-preview.outputs.url }}
+      P3_STAGING_SUPABASE_REF: ${{ secrets.P3_STAGING_SUPABASE_REF }}
+      P3_STAGING_SUPABASE_URL: ${{ secrets.P3_STAGING_SUPABASE_URL }}
+      P3_STAGING_SUPABASE_IP: ${{ secrets.P3_STAGING_SUPABASE_IP }}
+      P3_STAGING_SUPABASE_SECRET_KEY: ${{ secrets.P3_STAGING_SUPABASE_SECRET_KEY }}
+      P3_STAGING_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.P3_STAGING_SUPABASE_PUBLISHABLE_KEY }}
+      P3_STAGING_CRON_SECRET: ${{ secrets.P3_STAGING_CRON_SECRET }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium for the hosted browser proof
+        run: npm exec -- playwright install --with-deps chromium
+      - name: Run real staging person-model journey on this commit
+        run: >-
+          npm exec -- playwright test tests/e2e/system-pipeline.spec.ts
+          --config=playwright.system-staging.config.ts --workers=1
+      - name: Save staging screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p3-staging-evidence-${{ github.sha }}
+          path: test-results/system-pipeline-staging/**/*.png
+          if-no-files-found: warn
+          retention-days: 14
 
-      - name: Type-check
-        run: npm run typecheck
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Unit tests
-        run: npm test
-
-      - name: Load Vercel production settings
+  promote-production:
+    name: Build and promote production release
+    if: github.ref == 'refs/heads/main'
+    needs: [quality, production-schema, staging-browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VERCEL_ORG_ID: team_t689qVHC6ycaHamXLceV4yu5
+      VERCEL_PROJECT_ID: prj_T6xLcx3lfm7KjpLk4co1lCgkSMnK
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Load production environment
         run: npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
-
-      - name: Build with Vercel
+      - name: Require the production recovery secret
+        run: node scripts/assert-vercel-env-keys.mjs .vercel/.env.production.local CRON_SECRET
+      - name: Build production environment candidate
         run: npx --yes vercel@latest build --prod --token="$VERCEL_TOKEN"
-
-      - name: Deploy to production
-        run: npx --yes vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+      - name: Create staged production deployment
+        id: deploy
+        shell: bash
+        run: |
+          deployment_url="$(npx --yes vercel@latest deploy --prebuilt --prod --skip-domain --yes --meta codex_commit="$GITHUB_SHA" --token="$VERCEL_TOKEN")"
+          if [[ ! "$deployment_url" =~ ^https://[A-Za-z0-9.-]+\.vercel\.app/?$ ]]; then
+            echo "Vercel did not return the staged production deployment URL."
+            exit 1
+          fi
+          printf 'url=%s\n' "${deployment_url%/}" >> "$GITHUB_OUTPUT"
+      - name: Promote the gated production deployment
+        env:
+          STAGED_PRODUCTION_URL: ${{ steps.deploy.outputs.url }}
+        run: npx --yes vercel@latest promote "$STAGED_PRODUCTION_URL" --yes --token="$VERCEL_TOKEN"

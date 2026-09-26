@@ -1,9 +1,10 @@
-/** Durable outbox dispatcher for question workflows. */
+/** Durable outbox dispatcher for question and birth-calculation workflows. */
 
 import { getRun, start } from 'workflow/api';
 import { AgentStore } from './agent-store';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { astrologerRunWorkflow } from '@/workflows/astrologer-run';
+import { astrologerIntakeWorkflow } from '@/workflows/astrologer-intake';
 import { getErrorMessage } from './workflow-errors';
 
 interface StartedWorkflow {
@@ -33,7 +34,11 @@ function safeDispatchError(error: unknown): string {
 }
 
 async function defaultStartWorkflow(runId: string): Promise<StartedWorkflow> {
-  const workflow = await start(astrologerRunWorkflow, [runId]);
+  const admin = createAdminClient();
+  const run = await new AgentStore(admin, admin).getRun(runId);
+  const workflow = run.kind === 'intake'
+    ? await start(astrologerIntakeWorkflow, [runId])
+    : await start(astrologerRunWorkflow, [runId]);
   return {
     runId: workflow.runId,
     cancel: () => getRun(workflow.runId).cancel(),

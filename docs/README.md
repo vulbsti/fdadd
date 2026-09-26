@@ -8,6 +8,11 @@ document and the code disagree.
 
 - [`../README.md`](../README.md) — local development, current product
   boundaries, checks, and deployment workflow.
+- [`operations/system-pipeline.md`](operations/system-pipeline.md) — local and
+  hosted system-proof commands, private artifacts, and the manual migration
+  gate.
+- [`qa/2026-09-26-pipeline-repair.md`](qa/2026-09-26-pipeline-repair.md) — observed
+  pipeline failures, repairs, hosted test evidence, and remaining acceptance.
 - [`supabase-razorpay-setup.md`](supabase-razorpay-setup.md) — Supabase/Razorpay
   configuration, callback URLs, environment variables,
   verification cases, and rollout notes.
@@ -24,6 +29,9 @@ document and the code disagree.
   — accepted P2 person/revision authority, staging and browser evidence, visual-infrastructure status, and explicit P3 boundary.
 - [`design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md`](design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md)
   — the approved visual direction and the four retained reference images.
+- [`qa/2026-09-26-visual-comparison.md`](qa/2026-09-26-visual-comparison.md)
+  — P2 fixture screenshots at desktop, laptop, and mobile widths, with observed
+  differences from the approved references.
 
 ## Status boundaries
 
@@ -34,9 +42,10 @@ separates revision-backed contract-fixture UI proof from learned-model proof.
 
 The current source has real Supabase authentication and payment routes, while
 FashionDaddy, DatePlanner, blog, and RSS still contain sample or in-memory
-behavior. The production workflow now runs typecheck, ESLint, and unit tests;
-the separate P0 quality workflow adds local two-user database and authenticated
-browser smoke gates. A passing smoke test is not v3 design or reasoning parity.
+behavior. The production workflow calls the P0 code/database/browser checks,
+requires a same-commit hosted staging journey, then compares production schema
+state before promotion. Those gates do not establish complete v3
+design or reasoning parity.
 
 ## Design references
 

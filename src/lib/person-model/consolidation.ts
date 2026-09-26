@@ -988,7 +988,11 @@ export function normalizeObservationSpans<T extends PersonObservationDraft>(
     if (observation.spanStart === null || observation.spanEnd === null || observation.exactQuote === null) {
       throw new MalformedPersonStageOutputError('Observation requires a resolvable evidence span.');
     }
-    if (source.body.slice(observation.spanStart, observation.spanEnd) === observation.exactQuote) return observation;
+    // String.slice silently clamps an overlong end offset. A matching slice
+    // alone must not preserve an out-of-bounds provider span that the evidence
+    // validator will (correctly) reject afterwards.
+    if (observation.spanEnd <= source.body.length
+      && source.body.slice(observation.spanStart, observation.spanEnd) === observation.exactQuote) return observation;
 
     const first = source.body.indexOf(observation.exactQuote);
     if (first < 0 || source.body.indexOf(observation.exactQuote, first + 1) >= 0) {

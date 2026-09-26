@@ -3,9 +3,7 @@ name: P0 quality and local integration
 on:
   workflow_dispatch:
   pull_request:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 permissions:
   contents: read
@@ -25,6 +23,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - run: npm run test:release-preflight
       - run: npm run build
 
   local-integration:
@@ -43,9 +42,19 @@ jobs:
         run: npm exec -- supabase start > /dev/null
       - name: Two-user database/RLS integration
         run: npm run test:db:local
+      - name: Upgrade a populated legacy schema in an isolated local database
+        run: AIDORAA_LOCAL_UPGRADE_REPRO=1 node scripts/test-local-atomic-upgrade.mjs
       - name: Selected-context storage integration
         run: npm run test:integration:local
       - name: Install Chromium for browser verification
         run: npm exec -- playwright install --with-deps chromium > /dev/null
       - name: Authenticated browser smoke and screenshots
         run: npm run test:e2e:local
+      - name: Save browser screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-browser-evidence-${{ github.sha }}
+          path: test-results/**/*.png
+          if-no-files-found: warn
+          retention-days: 14
