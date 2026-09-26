@@ -66,6 +66,7 @@ captured webhook is the payment source of truth.
      - `https://www.aidoraa.com/auth/confirm`
      - `http://localhost:9002/auth/callback`
      - `http://localhost:9002/auth/confirm`
+     - `https://fdadd-*-vulbstis-projects.vercel.app/**`
 4. Keep email confirmation enabled for production.
 5. The signup call supplies `/auth/callback?next=/profile` as its
    `emailRedirectTo`. The default hosted email template therefore returns with
@@ -103,6 +104,32 @@ The deployment workflow is configured for the repository's Vercel project:
 feature branches may create Preview deployments, while changes merged to
 `main` trigger the production workflow. Verify the project and environment
 scopes in Vercel rather than relying on this document as a live receipt.
+
+### Shared accounts across normal previews
+
+Production and the project-wide Preview defaults use Supabase project
+`ezanfqbewuqttatrkvhf`. Set `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` together.
+Branch overrides must target that same project. This shares login credentials,
+person setup, and other saved product data. Sessions remain separate per website;
+sign in with the same credentials on each. Changes made in a normal preview
+affect the same saved data used by production.
+
+Supabase's allowed redirect URLs include
+`https://fdadd-*-vulbstis-projects.vercel.app/**`, so each new deployment and
+branch alias can use its own `/auth/callback` and `/auth/confirm` routes. Keep
+the production Site URL at `https://www.aidoraa.com`. An unallowed redirect falls
+back to the Site URL; a staging project left at `http://localhost:3000` therefore
+sends confirmation emails there. See [Supabase redirect configuration](https://supabase.com/docs/guides/auth/redirect-urls).
+
+Vercel configuration changes apply to new builds. Rebuild existing previews;
+old immutable deployment URLs keep their original environment. Use a stable
+branch alias to follow the latest deployment.
+
+The release workflow's disposable automated test deployment explicitly uses
+`wtloawiwntyjiidjbmuk` at both build and runtime. This is the test-only exception,
+not the project-wide Preview default. Never run the full disposable staging
+journey against a normal shared-data preview.
 
 | Variable | Browser visible | Environments |
 |---|---:|---|

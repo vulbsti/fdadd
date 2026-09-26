@@ -101,8 +101,10 @@ Configure the repository secrets `SUPABASE_ACCESS_TOKEN`, `VERCEL_TOKEN`,
 `P3_STAGING_SUPABASE_REF`, `P3_STAGING_SUPABASE_URL`, `P3_STAGING_SUPABASE_IP`,
 `P3_STAGING_SUPABASE_SECRET_KEY`, `P3_STAGING_SUPABASE_PUBLISHABLE_KEY`,
 `P3_STAGING_CRON_SECRET`, and `VERCEL_AUTOMATION_BYPASS_SECRET`. Configure the
-Vercel Preview environment for the same staging Supabase project and a working
-provider key; configure Production environment variables separately. The
+Vercel Preview defaults with production's Supabase project so normal previews
+share login and saved setup, plus a working provider key. The workflow overrides
+the database and recovery secret for its disposable test candidate at build and
+runtime using the `P3_STAGING_*` secrets. Configure Production variables separately. The
 read-only schema check targets Supabase project ref `ezanfqbewuqttatrkvhf`
 through the CLI Management API; it never applies migrations. Missing migration
 versions block promotion until they have been reviewed and applied through the

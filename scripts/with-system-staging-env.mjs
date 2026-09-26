@@ -3,6 +3,7 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { randomBytes } from 'node:crypto';
+import { configureStagingBuild, deployStagingCandidate } from './configure-isolated-staging-env.mjs';
 
 const project = 'prj_T6xLcx3lfm7KjpLk4co1lCgkSMnK';
 const team = 'team_t689qVHC6ycaHamXLceV4yu5';
@@ -19,20 +20,26 @@ function api(path, method = 'GET', body) {
 try {
   if (process.argv[2] === '--prepare-cron') {
     const secret = randomBytes(32).toString('hex');
-    const { envs } = api(`/v9/projects/${project}/env`);
-    const matches = envs.filter((entry) => entry.key === 'CRON_SECRET' && entry.target.includes('preview'));
-    if (matches.some((entry) => entry.target.some((target) => target !== 'preview'))) {
-      throw new Error('Refusing to modify a recovery secret shared outside Preview.');
-    }
-    for (const entry of matches) {
-      api(`/v9/projects/${project}/env/${entry.id}`, 'PATCH', { value: secret, type: entry.type, target: entry.target });
-    }
-    if (!matches.some((entry) => !entry.gitBranch)) {
-      api(`/v10/projects/${project}/env`, 'POST', { key: 'CRON_SECRET', value: secret, type: 'sensitive', target: ['preview'] });
-    }
     mkdirSync('.vercel', { recursive: true });
     writeFileSync(stateFile, JSON.stringify({ secret }), { mode: 0o600 });
-    console.log('Preview recovery secret prepared. Deploy Preview before running the hosted system proof.');
+    console.log('Test-only recovery secret prepared. Run --deploy to create the isolated test candidate.');
+  } else if (process.argv[2] === '--deploy') {
+    const { secret } = JSON.parse(readFileSync(stateFile, 'utf8'));
+    const keys = JSON.parse(execFileSync('npx', ['supabase', 'projects', 'api-keys', '--project-ref', ref, '--reveal', '--output', 'json'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }));
+    const env = {
+      ...process.env,
+      P3_STAGING_SUPABASE_REF: ref,
+      P3_STAGING_SUPABASE_URL: `https://${ref}.supabase.co`,
+      P3_STAGING_SUPABASE_SECRET_KEY: keys.find((entry) => entry.type === 'secret')?.api_key,
+      P3_STAGING_SUPABASE_PUBLISHABLE_KEY: keys.find((entry) => entry.type === 'publishable')?.api_key,
+      P3_STAGING_CRON_SECRET: secret,
+    };
+    execFileSync('vercel', ['pull', '--yes', '--environment=preview'], { stdio: ['ignore', 'pipe', 'pipe'] });
+    configureStagingBuild(env);
+    console.log('Building isolated test candidate…');
+    execFileSync('vercel', ['build', '--yes'], { stdio: ['ignore', 'pipe', 'pipe'] });
+    console.log(deployStagingCandidate(env));
   } else {
     const [url, ...command] = process.argv.slice(2);
     const parsed = new URL(url);
@@ -64,6 +71,6 @@ try {
   }
 } catch {
   // Do not print CLI exceptions: they can embed credential-bearing stdin/args.
-  console.error('Staging helper failed. Check CLI access, the isolated Preview URL, and whether --prepare-cron was run.');
+  console.error('Staging helper failed. Check CLI access, the isolated Preview URL, and whether --prepare-cron and --deploy were run.');
   process.exitCode = 1;
 }

@@ -51,6 +51,11 @@ jobs:
       VERCEL_ORG_ID: team_t689qVHC6ycaHamXLceV4yu5
       VERCEL_PROJECT_ID: prj_T6xLcx3lfm7KjpLk4co1lCgkSMnK
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      P3_STAGING_SUPABASE_REF: ${{ secrets.P3_STAGING_SUPABASE_REF }}
+      P3_STAGING_SUPABASE_URL: ${{ secrets.P3_STAGING_SUPABASE_URL }}
+      P3_STAGING_SUPABASE_SECRET_KEY: ${{ secrets.P3_STAGING_SUPABASE_SECRET_KEY }}
+      P3_STAGING_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.P3_STAGING_SUPABASE_PUBLISHABLE_KEY }}
+      P3_STAGING_CRON_SECRET: ${{ secrets.P3_STAGING_CRON_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -60,13 +65,15 @@ jobs:
       - run: npm ci
       - name: Load Preview settings
         run: npx --yes vercel@latest pull --yes --environment=preview --token="$VERCEL_TOKEN"
+      - name: Override shared Preview defaults for the isolated test build
+        run: node scripts/configure-isolated-staging-env.mjs
       - name: Build Preview candidate
         run: npx --yes vercel@latest build --token="$VERCEL_TOKEN"
       - name: Deploy isolated Preview candidate
         id: deploy
         shell: bash
         run: |
-          deployment_url="$(npx --yes vercel@latest deploy --prebuilt --yes --meta codex_commit="$GITHUB_SHA" --token="$VERCEL_TOKEN")"
+          deployment_url="$(node scripts/configure-isolated-staging-env.mjs --deploy)"
           if [[ ! "$deployment_url" =~ ^https://[A-Za-z0-9.-]+\.vercel\.app/?$ ]]; then
             echo "Vercel did not return an isolated vercel.app deployment URL."
             exit 1
