@@ -5,6 +5,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
@@ -48,10 +49,12 @@ export async function POST(request: Request) {
     // Answering and learning are independent durable workflows. The message,
     // person source, jobs, and both outbox rows have already committed, so a
     // provider or dispatch failure on either side cannot roll back the input.
-    await Promise.all([
-      dispatchAstrologerRunBestEffort(begun.runId),
-      dispatchPersonJobBestEffort(),
-    ]);
+    after(async () => {
+      await Promise.all([
+        dispatchAstrologerRunBestEffort(begun.runId),
+        dispatchPersonJobBestEffort(),
+      ]);
+    });
 
     return NextResponse.json(
       {

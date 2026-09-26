@@ -39,6 +39,20 @@ export default function WorkspaceShell({ person, people, conversations, children
   const isChat = pathname.includes('/chat/');
 
   useEffect(() => {
+    // Settings may have changed in another tab. Revalidate the server-owned
+    // shell as well as chat state without replacing the mounted conversation.
+    const refresh = () => {
+      if (document.visibilityState === 'visible') router.refresh();
+    };
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [router]);
+
+  useEffect(() => {
     const query = search.trim();
     if (query.length < 2) return;
     const controller = new AbortController();

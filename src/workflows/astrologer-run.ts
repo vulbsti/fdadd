@@ -11,7 +11,7 @@
  * returns prior committed state instead of duplicating effects.
  */
 
-import { FatalError, getWorkflowMetadata, getWritable } from 'workflow';
+import { FatalError, getWorkflowMetadata, getWritable, sleep } from 'workflow';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore, parseCheckpoint, parsePlan, parseVerification, type RunRow } from '@/lib/astro/agent-store';
 import { loadContextManifest, selectRelevantContext, recordSelectedContext } from '@/lib/astro/agent-context';
@@ -24,6 +24,9 @@ import { parseFinishProposal } from '@/lib/astro/finish-proposal';
 import { resolveAgentFinishMode, type AgentFinishMode } from '@/lib/astro/agent-budget';
 import { draftRevisionInstruction, verificationNeedsRetry } from '@/lib/astro/verification-policy';
 import { loadAgentPersonContext, personAgentContextBlock } from '@/lib/astro/person-agent-context';
+import { piRuntimeEnabled, type PiAuthority } from '@/lib/astro/pi-authority';
+import { preparePiWorkspace, startPiWorkspace, pollPiWorkspace, stopPiWorkspace } from '@/lib/astro/pi-runtime';
+import { publishPiAnswer } from '@/lib/astro/pi-publish';
 import {
   parsePersonRunMode,
   filterAtrosTools,
@@ -775,7 +778,9 @@ export async function astrologerRunWorkflow(runId: string) {
       };
     }
     await emit({ event: 'run.started', runId, phase: 'planning', status: 'active', summary: 'run started' });
-    const result = await astrologerRunWorkflowBody(runId, emit);
+    const result = await selectPiRuntime()
+      ? await piWorkspaceWorkflowBody(runId, emit)
+      : await astrologerRunWorkflowBody(runId, emit);
     if (result.status === 'failed') {
       const current = await loadCurrentRun(runId);
       await emit({
@@ -831,6 +836,61 @@ export async function astrologerRunWorkflow(runId: string) {
       },
     });
     return { status: 'failed' as const, errorCode: failure.code };
+  }
+}
+
+async function selectPiRuntime() {
+  'use step';
+  return piRuntimeEnabled();
+}
+
+async function preparePiStep(runId: string) {
+  'use step';
+  return preparePiWorkspace(runId);
+}
+
+async function startPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>) {
+  'use step';
+  await startPiWorkspace(input);
+}
+
+async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number) {
+  'use step';
+  const writer = getWritable<RunEventChunk>().getWriter();
+  try {
+    return await pollPiWorkspace(input, cursor, async (event) => { await writer.write({ type: event.event, payload: event }); });
+  } finally {
+    writer.releaseLock();
+  }
+}
+
+async function publishPiStep(authority: PiAuthority) {
+  'use step';
+  return publishPiAnswer(authority);
+}
+
+async function stopPiStep(sandboxName: string) {
+  'use step';
+  await stopPiWorkspace(sandboxName);
+}
+
+async function piWorkspaceWorkflowBody(runId: string, emit: RunEventSink) {
+  await emit({ event: 'phase.changed', runId, phase: 'analysis', status: 'active', summary: 'Opening your isolated Pi workspace' });
+  const prepared = await preparePiStep(runId);
+  try {
+    await startPiStep(prepared);
+    let cursor = 0;
+    while (true) {
+      const progress = await pollPiStep(prepared, cursor);
+      cursor = progress.cursor;
+      if (progress.done) break;
+      await sleep('3s');
+    }
+    const result = await publishPiStep(prepared.authority);
+    await emit({ event: 'answer.ready', runId, phase: 'responding', summary: 'Answer and workspace saved' });
+    return result;
+  } finally {
+    await stopPiStep(prepared.sandboxName);
   }
 }
 

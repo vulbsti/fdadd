@@ -9,6 +9,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:pi:workspace": "node --test runtime/pi/workspace-tools.test.mjs",
+    "test:e2e:pi:staging": "playwright test --config=playwright.pi-staging.config.ts --workers=1",
     "test:db:local": "bash scripts/test-p0-db.sh",
     "test:integration:local": "P1_LOCAL_INTEGRATION=1 node scripts/with-local-supabase-env.mjs npm exec -- vitest run src/lib/astro/selected-context.local.test.ts",
     "test:integration:atros": "P1_ATROS_SANDBOX_INTEGRATION=1 vitest run src/lib/astro/atros-commands.integration.test.ts",

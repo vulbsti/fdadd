@@ -175,7 +175,7 @@ async function collectVendorFiles(): Promise<{ path: string; content: string }[]
   await walk(root, '');
   return files;
 }
-async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
+export async function ensureAtrosInstalled(sandbox: Sandbox): Promise<void> {
   const ready = await sandbox.runCommand('bash', [
     '-lc',
     `${VENV_BIN}/pip show atros >/dev/null 2>&1 && test -f '${SETUP_MARKER}'`,

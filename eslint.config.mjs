@@ -5,6 +5,7 @@ export default defineConfig([
   ...nextVitals,
   globalIgnores([
     '.next/**',
+    '.vercel/**',
     '.next-recovery/**',
     '.next-system-proof/**',
     '.next-p2-visual/**',

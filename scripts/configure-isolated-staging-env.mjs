@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { inspectPrebuiltFunctions } from './check-prebuilt-functions.mjs';
 
 export const STAGING_REF = 'wtloawiwntyjiidjbmuk';
 
@@ -19,6 +20,10 @@ export function isolatedStagingValues(env) {
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.P3_STAGING_SUPABASE_PUBLISHABLE_KEY,
     SUPABASE_SECRET_KEY: env.P3_STAGING_SUPABASE_SECRET_KEY,
     CRON_SECRET: env.P3_STAGING_CRON_SECRET,
+    ...(env.ASTROLOGER_RUNTIME === 'pi' ? {
+      ASTROLOGER_RUNTIME: 'pi',
+      ...(env.VERCEL_AUTOMATION_BYPASS_SECRET ? { VERCEL_AUTOMATION_BYPASS_SECRET: env.VERCEL_AUTOMATION_BYPASS_SECRET } : {}),
+    } : {}),
   };
 }
 
@@ -37,7 +42,21 @@ export function configureStagingBuild(env = process.env) {
   writeFileSync(path, stagingBuildEnvironment(readFileSync(path, 'utf8'), env), { mode: 0o600 });
 }
 
-export function deployStagingCandidate(env = process.env) {
+export function deploymentURL(output) {
+  // CLI agent-mode releases may emit a JSON result instead of a bare URL.
+  const matches = [...output.matchAll(/https:\/\/fdadd-[a-z0-9-]+-vulbstis-projects\.vercel\.app\b/g)].map((match) => match[0]);
+  if (new Set(matches).size === 1) return matches[0];
+  try {
+    const result = JSON.parse(output);
+    const raw = result.url ?? result.deployment?.url;
+    if (typeof raw === 'string' && /^fdadd-[a-z0-9-]+-vulbstis-projects\.vercel\.app$/.test(raw)) return `https://${raw}`;
+  } catch { /* Reject ambiguous/unrecognized output below. */ }
+  throw new Error('Vercel did not return one owner-scoped immutable Preview URL.');
+}
+
+export function deployStagingCandidate(env = process.env, cwd = process.cwd()) {
+  const artifact = inspectPrebuiltFunctions(`${cwd}/.vercel/output/functions`, cwd);
+  if (artifact.issues.length) throw new Error(`Unsafe or incomplete prebuilt output: ${artifact.issues.join('; ')}`);
   const values = isolatedStagingValues(env);
   const args = ['--yes', 'vercel@latest', 'deploy', '--prebuilt', '--yes'];
   if (env.VERCEL_TOKEN) args.push('--token', env.VERCEL_TOKEN);
@@ -45,15 +64,12 @@ export function deployStagingCandidate(env = process.env) {
   for (const [key, value] of Object.entries(values)) args.push('--env', `${key}=${value}`);
   let url;
   try {
-    url = execFileSync('npx', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+    url = execFileSync('npx', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
   } catch {
     // CLI exceptions can embed credential-bearing arguments. Never print them.
     throw new Error('Isolated staging deployment failed; check Vercel access and the prebuilt candidate.');
   }
-  if (!/^https:\/\/fdadd-[a-z0-9-]+-vulbstis-projects\.vercel\.app\/?$/.test(url)) {
-    throw new Error('Vercel did not return an owner-scoped immutable Preview URL.');
-  }
-  return url.replace(/\/$/, '');
+  return deploymentURL(url);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

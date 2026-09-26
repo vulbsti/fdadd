@@ -21,7 +21,10 @@ const nextConfig: NextConfig = {
   // Atros is loaded with fs.readdir at runtime, so Next's static tracer cannot
   // discover the vendored Python package without an explicit include.
   outputFileTracingIncludes: {
-    '/*': ['./vendor/atros/**/*'],
+    '/*': ['./vendor/atros/**/*', './runtime/pi/*.mjs', './runtime/pi/*.md', './runtime/pi/package*.json'],
+  },
+  outputFileTracingExcludes: {
+    '/*': ['./.env*', './.vercel/.env*', './runtime/pi/node_modules/**/*'],
   },
 };
 
