@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { notifyPersonStateChanged } from '@/components/astrologer/person-state-sync';
 
 interface BirthValues {
   date: string;
@@ -171,6 +172,7 @@ export default function SettingsForm({ personId, name, astrologyEnabled, modeEpo
         return;
       }
       birthRequestId.current = null;
+      notifyPersonStateChanged(personId);
       setAstroStatus('pending');
       setEnabled(false);
       setStatusMessage('Birth details saved. Calculating the chart and sensitivity profile…');
@@ -194,6 +196,7 @@ export default function SettingsForm({ personId, name, astrologyEnabled, modeEpo
     });
     const body = (await response.json().catch(() => null)) as { message?: string } | null;
     if (!response.ok) { setSettingsMessage(body?.message ?? 'Could not save this setting.'); return; }
+    notifyPersonStateChanged(personId);
     setEnabled(next);
     setSettingsMessage(next ? 'Astrology layer enabled.' : 'Personal-only mode enabled.');
     window.location.reload();

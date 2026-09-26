@@ -22,6 +22,7 @@ import type {
   StartRunResponse,
 } from '@/lib/astro/contracts';
 import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, type ChatMessage } from './chat-message-state';
+import { subscribePersonState } from './person-state-sync';
 
 interface AstrologerChatProps {
   sessionId: string;
@@ -136,6 +137,12 @@ function AstrologerChatSession({
       document.removeEventListener('visibilitychange', refresh);
     };
   }, [loadDetail]);
+
+  const personId = detail?.session.profileId;
+  useEffect(() => {
+    if (!personId) return;
+    return subscribePersonState(personId, () => { void loadDetail(); });
+  }, [personId, loadDetail]);
 
   useEffect(() => {
     let cancelled = false;

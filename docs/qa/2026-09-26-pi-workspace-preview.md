@@ -27,7 +27,8 @@ sessions are not reused as current model context.
 
 ## Local verification
 
-- Vitest: **205 passed, 4 skipped**, including nine stream-lifecycle tests.
+- Vitest: **208 passed, 4 skipped**, including nine stream-lifecycle tests and
+  three person-scoped cross-tab invalidation tests.
 - Filesystem and release-preflight Node tests: **19 passed**.
 - Local database contract suite: **183 passed across 8 files**, including 13
   Pi-specific checkpoint/publication/authority tests.
@@ -52,7 +53,10 @@ Failures found during this implementation, rather than hidden by test doubles:
    explicit owner/session-scoped run and receipt queries.
 4. The real cross-tab test caught an enum mismatch: the API returns
    `astrology`, while chat refresh accepted `astrology_enabled`. Presentation
-   now uses the shared projection schema; the shell revalidates on tab focus.
+   now uses the shared projection schema. A second browser pass showed focus
+   events alone were insufficient: committed preference/birth changes now
+   explicitly invalidate other tabs through a person-scoped storage event.
+   Receivers re-fetch authenticated server state; event values are not authority.
 5. Browser disconnects left some SSE readers alive until Vercel's 300-second
    deadline. Readers now cancel on disconnect, stop on terminal events, and
    renew the connection before the hosting deadline without stopping the run.
