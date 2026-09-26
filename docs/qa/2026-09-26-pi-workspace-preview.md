@@ -40,7 +40,7 @@ sessions are not reused as current model context.
 - The Pi database migration was applied to local and staging only, not production.
 - PR CI passed code quality/build, local RLS/database integration, populated
   legacy-schema upgrade, selected-context integration, and authenticated browser
-  smoke on implementation commit `f9128a9`.
+  smoke on commit `488901c` ([CI run](https://github.com/vulbsti/fdadd/actions/runs/36252750026)).
 
 ## Hosted investigation
 
@@ -86,9 +86,47 @@ Failures found during this implementation, rather than hidden by test doubles:
    is disabled, unsafe link protocols are stripped, and model-provided images
    are represented by alt text rather than fetched automatically.
 
-Hosted acceptance results and final Preview URL will be added after the running
-browser journey finishes. A deployment being Ready is not evidence that Pi
-completed an answer.
+## Final hosted result: PASS, with explicit limits
+
+[Isolated staging Preview](https://fdadd-aj4m18dla-vulbstis-projects.vercel.app).
+The build contains application/runtime changes committed as `62d169e`;
+`488901c` subsequently restores two optional npm-10 Workflow lockfile entries.
+Neither the ordinary PR Preview nor `www.aidoraa.com` is this Pi test target.
+
+The real-provider browser journey passed in **13.4 minutes** on September 26:
+
+- Name-only onboarding and immediate optimistic bubble while POST was held.
+- Real Pi personal answer, persisted session, and successful browser reload.
+- Published source consolidation and source-backed recall in a fresh chat.
+- Real birth setup and chart/sensitivity calculation.
+- Another tab enabled astrology; the original mounted chat and sidebar updated
+  without reload and did not reuse the old disabled model context.
+- Pi independently called `atros_timeline` for maha and antar periods. Both
+  succeeded; the answer contained the actual returned dates and rendered tables.
+- Complete calculation JSON/receipts and answer were verified against private
+  checkpoint bytes and their digest, not a 300-character summary.
+- A follow-up ran in a new VM, restored the prior session/calculation file
+  unchanged, and answered which period covers 2026-01-01.
+- All four Pi runs completed with **zero failed tool receipts**. The captured
+  application requests have no HTTP 4xx/5xx; Playwright recorded no browser
+  errors. The exact Preview's Vercel error-level log queries returned no logs
+  during the run and after completion. This does not assert all info logs are
+  error-free or that untested fault cases work.
+- The disposable owner and private objects were removed after its work settled;
+  the passing test includes this cleanup gate. No real user data was removed.
+
+[Safe proof metadata](artifacts/2026-09-26-pi-workspace/proof.json) contains only
+allowlisted statuses, tool names, authority epochs, answer hashes, and network
+paths/statuses. The same directory retains **32 screenshots**. Representative
+captures: [desktop](artifacts/2026-09-26-pi-workspace/08-atros-2026-answer-reloaded-desktop.png),
+[laptop](artifacts/2026-09-26-pi-workspace/08-atros-2026-answer-reloaded-laptop.png),
+[mobile](artifacts/2026-09-26-pi-workspace/09-restored-calculation-followup-mobile-scrolled-bottom.png).
+
+Luna reviewed the personal response, dated tables, and restored follow-up at
+all widths against the approved shell/chat styling. No horizontal overflow or
+composer occlusion was found. Mobile tables wrap tightly; initial reload can
+show the top of the transcript rather than the newest answer, which remains
+reachable by scrolling. These screenshots do not cover every approved mock.
 
 ## Snapshot cleanup
 
@@ -102,9 +140,12 @@ or production database data was deleted by this cleanup.
 ## Evidence handling and remaining gates
 
 Screenshots cover desktop 1586×992, laptop 1366×768, and mobile 390×844.
-Authenticated Playwright traces stay in ignored local `test-results`; do not
+Authenticated Playwright traces stay in ignored local `test-results` and a
+mode-0600 stable copy at `.vercel/pi-proofs/2026-09-26/SENSITIVE-LOCAL-ONLY-after-auth-trace.zip`; do not
 publish them, because they can contain cookies and private request data.
 Safe receipts and network metadata exclude authentication headers and bodies.
+`node scripts/persist-pi-proof.mjs` persists the screenshots and allowlisted
+metadata only after a passed test and synthetic-profile checks.
 
 No claim is made yet for forced-crash recovery, mid-run consent revocation in
 the browser, two live synthetic owners attacking each other's workspaces, or
@@ -117,7 +158,10 @@ continues to own accepted personal memory.
 The hosted timing receipts also expose substantial checkpoint overhead: one
 personal answer produced 20 checkpoints approximately 5–6 seconds apart.
 Coalescing pending snapshots while preserving every receipt and final file is a
-next optimization; this prototype does not yet provide low-latency turns.
+next optimization; this prototype does not yet provide low-latency turns. In
+the final proof, the first two personal turns took approximately **172 and 186
+seconds**, and the dated calculation turn took **202 seconds**, including VM
+setup, model/tool work, checkpoints, and publication.
 
 ### Separate Atros engine defect found during verification
 

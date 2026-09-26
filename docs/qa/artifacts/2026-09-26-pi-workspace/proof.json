@@ -1,0 +1,963 @@
+{
+  "preview": "https://fdadd-aj4m18dla-vulbstis-projects.vercel.app",
+  "status": "passed",
+  "synthetic": true,
+  "viewports": [
+    {
+      "width": 1586,
+      "height": 992
+    },
+    {
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "runs": [
+    {
+      "id": "2f3e6199-6671-44f3-94b8-c4d4997af6dd",
+      "kind": "question",
+      "status": "complete",
+      "startedAt": "2026-09-26T15:40:21.1349+00:00",
+      "updatedAt": "2026-09-26T15:43:13.402014+00:00",
+      "authority": {
+        "modeEpoch": 0,
+        "privacyEpoch": 0,
+        "birthRevision": 0
+      },
+      "tools": [
+        {
+          "tool": "person_state",
+          "status": "started"
+        },
+        {
+          "tool": "person_state",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_list",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_list",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        }
+      ],
+      "answers": [
+        {
+          "bytes": 676,
+          "sha256": "7f67dd26563a762405cdfc89dce0cf8fa8133db97cf912f7759ecadbbe3ce0fb"
+        }
+      ]
+    },
+    {
+      "id": "a7dfdccf-a2fe-4af1-865d-b073ca9d4666",
+      "kind": "question",
+      "status": "complete",
+      "startedAt": "2026-09-26T15:43:26.2525+00:00",
+      "updatedAt": "2026-09-26T15:46:32.26421+00:00",
+      "authority": {
+        "modeEpoch": 0,
+        "privacyEpoch": 0,
+        "birthRevision": 0
+      },
+      "tools": [
+        {
+          "tool": "person_state",
+          "status": "started"
+        },
+        {
+          "tool": "person_state",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_list",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_search",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_search",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_list",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_search",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_search",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        }
+      ],
+      "answers": [
+        {
+          "bytes": 272,
+          "sha256": "a320076ec01883ccd520b001384a0e5af08ce627a28093183507d2c0c3ceacad"
+        }
+      ]
+    },
+    {
+      "id": "5100df09-b3e8-4fd3-afd3-7e6433a586fc",
+      "kind": "question",
+      "status": "complete",
+      "startedAt": "2026-09-26T15:47:02.637568+00:00",
+      "updatedAt": "2026-09-26T15:50:25.117495+00:00",
+      "authority": {
+        "modeEpoch": 1,
+        "privacyEpoch": 0,
+        "birthRevision": 1
+      },
+      "tools": [
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "person_state",
+          "status": "started"
+        },
+        {
+          "tool": "atros_timeline",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        },
+        {
+          "tool": "person_state",
+          "status": "succeeded"
+        },
+        {
+          "tool": "atros_timeline",
+          "status": "succeeded"
+        },
+        {
+          "tool": "atros_timeline",
+          "status": "started"
+        },
+        {
+          "tool": "atros_timeline",
+          "status": "succeeded"
+        }
+      ],
+      "answers": [
+        {
+          "bytes": 1141,
+          "sha256": "6826813b5d66617f321ef636a3b48c02cc87c1693f3c9dd3f64950e6171fa703"
+        }
+      ]
+    },
+    {
+      "id": "64234764-4768-4506-97a5-e1be0f10a9ea",
+      "kind": "question",
+      "status": "complete",
+      "startedAt": "2026-09-26T15:50:34.015418+00:00",
+      "updatedAt": "2026-09-26T15:53:05.822438+00:00",
+      "authority": {
+        "modeEpoch": 1,
+        "privacyEpoch": 0,
+        "birthRevision": 1
+      },
+      "tools": [
+        {
+          "tool": "workspace_list",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_list",
+          "status": "succeeded"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "started"
+        },
+        {
+          "tool": "workspace_read",
+          "status": "succeeded"
+        }
+      ],
+      "answers": [
+        {
+          "bytes": 159,
+          "sha256": "69584cccb2119f9d831650d13ab52081b904d109ccfa4d21db0fa02d2b7bb99e"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    "01-name-only-onboarding-desktop.png",
+    "01-name-only-onboarding-laptop.png",
+    "01-name-only-onboarding-mobile.png",
+    "02-personal-life-map-desktop.png",
+    "02-personal-life-map-laptop.png",
+    "02-personal-life-map-mobile.png",
+    "03-optimistic-before-post-desktop.png",
+    "03-optimistic-before-post-laptop.png",
+    "03-optimistic-before-post-mobile-scrolled-bottom.png",
+    "03-optimistic-before-post-mobile.png",
+    "04-personal-answer-reloaded-desktop.png",
+    "04-personal-answer-reloaded-laptop.png",
+    "04-personal-answer-reloaded-mobile-scrolled-bottom.png",
+    "04-personal-answer-reloaded-mobile.png",
+    "05-fresh-chat-personal-memory-desktop.png",
+    "05-fresh-chat-personal-memory-laptop.png",
+    "05-fresh-chat-personal-memory-mobile-scrolled-bottom.png",
+    "05-fresh-chat-personal-memory-mobile.png",
+    "06-birth-settings-desktop.png",
+    "06-birth-settings-laptop.png",
+    "06-birth-settings-mobile.png",
+    "07-astrology-enabled-desktop.png",
+    "07-astrology-enabled-laptop.png",
+    "07-astrology-enabled-mobile.png",
+    "08-atros-2026-answer-reloaded-desktop.png",
+    "08-atros-2026-answer-reloaded-laptop.png",
+    "08-atros-2026-answer-reloaded-mobile-scrolled-bottom.png",
+    "08-atros-2026-answer-reloaded-mobile.png",
+    "09-restored-calculation-followup-desktop.png",
+    "09-restored-calculation-followup-laptop.png",
+    "09-restored-calculation-followup-mobile-scrolled-bottom.png",
+    "09-restored-calculation-followup-mobile.png"
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/astrologer/profiles",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/astrologer/sessions",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/astrologer/chat",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/runs/2f3e6199-6671-44f3-94b8-c4d4997af6dd/events",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/astrologer/sessions",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/astrologer/chat",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/runs/a7dfdccf-a2fe-4af1-865d-b073ca9d4666/events",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/c94b10b9-4938-47cd-b87c-ab5c155f9a3d",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/places",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/birth",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/birth",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/birth",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/birth",
+      "status": 200
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/preferences",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/astrologer/chat",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/runs/5100df09-b3e8-4fd3-afd3-7e6433a586fc/events",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/astrologer/chat",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/runs/64234764-4768-4506-97a5-e1be0f10a9ea/events",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/sessions/15541ba5-e971-4360-9ae4-c66bf5d5af07",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": -1
+    },
+    {
+      "method": "GET",
+      "path": "/api/astrologer/profiles/8093a039-00f6-4490-bd18-14cca524e700/model",
+      "status": -1
+    }
+  ]
+}

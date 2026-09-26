@@ -1,8 +1,9 @@
 # Pi workspace runtime on Vercel
 
-Date: 2026-09-26. Status: implementation behind the isolated staging Preview
-switch; the live Preview end-to-end test is still running, with no hosted pass
-claimed. Production continues to use the legacy runtime until a later explicit
+Date: 2026-09-26. Status: the real-provider isolated staging Preview journey
+passed in 13.4 minutes, including full calculation/session restore. See
+`../../qa/2026-09-26-pi-workspace-preview.md` for artifacts and remaining gates.
+Production continues to use the legacy runtime until a later explicit
 rollout. Implemented code, local checks, and unproven acceptance gates are
 separated below.
 
@@ -223,30 +224,35 @@ attributed summaries, and explicit incomplete/paused states. Replace the custom
 detection; preserve useful work when pausing. The host enforces authority, not
 the model's sequence of reasoning steps.
 
-## Hosted acceptance gates (not yet proven)
+## Hosted acceptance gates
 
 Implementation exists behind a staging-only switch with one pinned Luna model.
-The staged test is written to exercise name-only onboarding, immediate optimistic sending,
+The passed staged test exercised name-only onboarding, immediate optimistic sending,
 astrology-off chat, fresh-chat personal recall, birth setup, enabling astrology
 in another tab while the original chat remains mounted, a real dated 2026
-Atros timeline, full checkpoint receipts, and three viewport sizes. The live
-Preview run is in progress: none of the following boxes is marked proven by
-the existence of that test or by local checks. Additional destructive/failure
-fixtures are still required for the gates beyond its coverage.
+Atros timeline, full checkpoint receipts, and three viewport sizes. Its four Pi
+runs completed without failed tools; saved calculation bytes survived a fresh
+sandbox for the follow-up. This is one synthetic happy-path journey, not a
+production, scale, or precision-calculation acceptance claim.
 
-- [ ] Pin and smoke-test Pi RPC, the OpenCode Go model adapter, event handling,
+- [x] Pin and smoke-test Pi RPC, the OpenCode Go model adapter, event handling,
   file tools, full-output retrieval, and session reopen in a real Vercel Sandbox.
 - [ ] Create two synthetic owners' isolated workspaces; verify neither can read,
   request, publish, or resume the other's files/session, including path escapes.
-- [ ] Hydrate one person's Markdown/JSON context and wire scoped structured reads.
-- [ ] Ask a dated question; let Pi independently call Atros, save a complete
+- [x] Hydrate one person's Markdown/JSON context and wire scoped structured reads.
+- [x] Ask a dated question; let Pi independently call Atros, save a complete
   result, read the relevant table, and answer without user-supplied calculations.
-- [ ] Ask a follow-up requiring a second read/tool call. Persist a source-backed
-  profile update, restart the sandbox, and verify recall plus the website revision.
-- [ ] In the same chat test astrology off/on/off, mid-run disable, stale resumed
-  sessions, duplicate sends, runner crash, and browser reconnection.
-- [ ] Capture desktop/laptop/mobile screenshots and traces; check immediate user
-  message echo, progress, final answer, profile freshness, and approved styling.
+  The answer exposed, rather than fabricated around, the existing Atros date gap.
+- [x] Publish ordinary source consolidation, verify fresh-chat recall, and restore
+  a completed session/calculation into a new sandbox for a dated follow-up.
+- [x] Enable astrology in another tab and answer in the original mounted chat
+  without carrying the old disabled capability into the new model context.
+- [ ] Test on-to-off changes, mid-run disable, stale resumed sessions, duplicate
+  sends, runner crash, and interrupted browser reconnection end-to-end.
+- [x] Persist 32 screenshots at desktop/laptop/mobile widths and the private trace;
+  review immediate echo, Markdown tables, scrolling, and ordinary-chat styling.
+- [ ] Establish parity for guided context, pattern detail, and meaning-change
+  states not represented in this journey's screenshots.
 - [ ] Only then replace the production custom loop. Reuse audit acceptance
   tests; do not port every old planner/verifier stage into mandatory Pi steps.
 
@@ -267,10 +273,10 @@ UI quality, or a correct dated answer.
 
 Pi 0.87.1 is pinned in the separate runtime package, and runtime, broker,
 checkpoint migration, Workflow, and chat changes are implemented. The main
-application manifest is not the Pi installation location. Documentation and
-local checks establish neither a hosted pass nor account entitlement to every
-Sandbox persistence feature. End-to-end provider compatibility, full checkpoint
-transport on Preview, recovery/replay under faults, cross-owner isolation,
-mid-run authority changes, responsive presentation, and final answer quality
-remain unproven until their specific acceptance evidence is recorded. Production
+application manifest is not the Pi installation location. The hosted proof
+establishes provider compatibility, normal checkpoint publication/restore, and
+the specific responsive journey above. Recovery under faults, live cross-owner
+attacks, mid-run authority changes, large hosted archives, broader answer
+quality, and the Atros calendar-boundary defect remain separate gates. Turns
+still take minutes because of installation/checkpoint overhead. Production
 rollout remains a separate explicit decision after those gates.
