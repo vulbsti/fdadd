@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import test from 'node:test';
 import {
   compareRemoteSchema,
@@ -9,6 +11,69 @@ import {
 } from './check-remote-schema.mjs';
 import { findMissingEnvironmentKeys } from './assert-vercel-env-keys.mjs';
 import { isolatedStagingValues, stagingBuildEnvironment, STAGING_REF } from './configure-isolated-staging-env.mjs';
+import { inspectPrebuiltFunctions } from './check-prebuilt-functions.mjs';
+
+function withArtifact(run) {
+  const root = mkdtempSync(join(tmpdir(), 'aidoraa-prebuilt-test-'));
+  const functions = join(root, 'functions');
+  const fn = join(functions, 'page.func');
+  mkdirSync(fn, { recursive: true });
+  try { run({ root, functions, fn }); } finally { rmSync(root, { recursive: true, force: true }); }
+}
+
+test('prebuilt guard accepts normal functions and deduplicated directory links', () => {
+  withArtifact(({ functions, fn }) => {
+    writeFileSync(join(fn, 'index.js'), '');
+    symlinkSync('page.func', join(functions, 'alias.func'));
+    assert.deepEqual(inspectPrebuiltFunctions(functions), { functionCount: 1, issues: [] });
+  });
+});
+
+test('prebuilt guard rejects templates and real dotenv files, even behind a renamed link', () => {
+  for (const name of ['.env.example', '.env', '.env.local', '.env.production']) {
+    withArtifact(({ root, functions, fn }) => {
+      writeFileSync(join(fn, name), '');
+      assert.match(inspectPrebuiltFunctions(functions).issues.join('\n'), /Environment file/);
+      rmSync(join(fn, name));
+      writeFileSync(join(root, name), '');
+      symlinkSync(join(root, name), join(fn, 'renamed-config'));
+      assert.match(inspectPrebuiltFunctions(functions).issues.join('\n'), /points to an environment file/);
+    });
+  }
+});
+
+test('prebuilt guard rejects dangling links and absent build output', () => {
+  withArtifact(({ root, functions, fn }) => {
+    symlinkSync('missing.js', join(fn, 'index.js'));
+    assert.match(inspectPrebuiltFunctions(functions).issues.join('\n'), /Missing or unreadable/);
+    assert.match(inspectPrebuiltFunctions(join(root, 'absent')).issues.join('\n'), /No prebuilt functions/);
+  });
+});
+
+test('prebuilt guard checks external filePathMap references, not only physical function files', () => {
+  withArtifact(({ root, functions, fn }) => {
+    const config = join(fn, '.vc-config.json');
+    writeFileSync(join(root, '.env.example'), 'CRON_SECRET=');
+    writeFileSync(config, JSON.stringify({ filePathMap: { '.env.example': '.env.example' } }));
+    assert.deepEqual(inspectPrebuiltFunctions(functions, root).issues, []);
+    rmSync(join(root, '.env.example'));
+    assert.match(inspectPrebuiltFunctions(functions, root).issues.join('\n'), /Missing filePathMap source/);
+    writeFileSync(config, JSON.stringify({ filePathMap: { 'config': '.env.local' } }));
+    assert.match(inspectPrebuiltFunctions(functions, root).issues.join('\n'), /Environment file in filePathMap/);
+    writeFileSync(join(root, '.env.local'), '');
+    symlinkSync('.env.local', join(root, '.env.example'));
+    writeFileSync(config, JSON.stringify({ filePathMap: { '.env.example': '.env.example' } }));
+    assert.match(inspectPrebuiltFunctions(functions, root).issues.join('\n'), /points to an environment file/);
+  });
+});
+
+test('deployment ignore blocks dotenv files but permits only the checked-in example', () => {
+  const rules = readFileSync(new URL('../.vercelignore', import.meta.url), 'utf8')
+    .split(/\r?\n/).map((line) => line.trim()).filter((line) => line && !line.startsWith('#'));
+  assert.ok(rules.includes('.env*'));
+  assert.ok(rules.indexOf('!.env.example') > rules.indexOf('.env*'));
+  assert.deepEqual(rules.filter((line) => line.startsWith('!')), ['!.env.example']);
+});
 
 const versions = ['202609090001', '202609140001', '20260922064955'];
 

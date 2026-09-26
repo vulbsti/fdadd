@@ -5,6 +5,8 @@ test-results
 playwright-report
 coverage
 .env*
+# Vercel's prebuilt filePathMap references this checked-in, secret-free template.
+!.env.example
 .vercel
 .swc
 *.tsbuildinfo
