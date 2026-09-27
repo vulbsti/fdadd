@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "NotebookEdit",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "ask": [
+      "Bash(sudo *)",
+      "Bash(rm /*)",
+      "Bash(rm * /*)",
+      "Bash(rm ~*)",
+      "Bash(rm * ~*)",
+      "Bash(rm *..*)",
+      "Bash(rm $HOME*)",
+      "Bash(rm * $HOME*)"
+    ]
+  }
+}
