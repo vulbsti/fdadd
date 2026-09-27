@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { piArtifactPrefix, type PiAuthority } from './pi-authority';
-import { assertPiAuthority, PI_BUCKET, readPiRecovery } from './pi-store';
+import { assertPiAuthority, assertPiAuthorityRecent, PI_BUCKET, readPiBlob, readPiRecovery, writePiBlob } from './pi-store';
 
 export const PI_CHUNK_BYTES = 1024 * 1024;
 export const PI_MAX_ARCHIVE_BYTES = 50 * PI_CHUNK_BYTES;
@@ -96,7 +96,7 @@ async function assertStoredManifest(authority: PiAuthority, manifest: PiTransfer
 }
 
 export async function uploadPiTransferPart(authority: PiAuthority, input: z.infer<typeof PiTransferPartSchema>) {
-  await assertPiAuthority(authority);
+  await assertPiAuthorityRecent(authority);
   const manifest = parseManifest(input.manifest);
   const bytes = decodePart(manifest, input.index, input.content);
   await storeManifest(authority, manifest);
@@ -104,7 +104,7 @@ export async function uploadPiTransferPart(authority: PiAuthority, input: z.infe
 }
 
 export async function readPiTransferPart(authority: PiAuthority, input: PiTransferManifest, index: number) {
-  await assertPiAuthority(authority);
+  await assertPiAuthorityRecent(authority);
   const manifest = parseManifest(input);
   if (!Number.isInteger(index) || index < 0 || index >= manifest.parts) throw new PiTransferError('Invalid checkpoint transfer index.');
   await assertStoredManifest(authority, manifest);
@@ -129,9 +129,24 @@ export async function preparePiRestore(authority: PiAuthority) {
   const transfer = encodePiTransfer(Buffer.from(JSON.stringify(recovery.checkpoint)));
   await storeManifest(authority, transfer.manifest);
   for (let index = 0; index < transfer.chunks.length; index++) {
-    await assertPiAuthority(authority);
     await uploadImmutable(`${prefix(authority, transfer.manifest)}/${index}`,
       decodePart(transfer.manifest, index, transfer.chunks[index]), 'application/octet-stream');
   }
   return { ...transfer.manifest, sameRun: recovery.sameRun };
+}
+
+/** Store an uploaded transfer as a person-scoped, content-addressed file blob. */
+export async function commitPiBlob(authority: PiAuthority, input: PiTransferManifest) {
+  const manifest = parseManifest(input);
+  const bytes = await assemblePiTransfer(authority, manifest);
+  await writePiBlob(authority, bytes, manifest.digest);
+}
+
+/** Page one stored blob back to a fresh sandbox during restore. */
+export async function readPiBlobPart(authority: PiAuthority, digest: string, index: number) {
+  await assertPiAuthorityRecent(authority);
+  const bytes = await readPiBlob(authority, digest);
+  const parts = Math.max(1, Math.ceil(bytes.length / PI_CHUNK_BYTES));
+  if (!Number.isInteger(index) || index < 0 || index >= parts) throw new PiTransferError('Invalid blob part index.');
+  return { content: bytes.subarray(index * PI_CHUNK_BYTES, (index + 1) * PI_CHUNK_BYTES).toString('base64'), byteLength: bytes.length, parts };
 }

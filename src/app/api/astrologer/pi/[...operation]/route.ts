@@ -1,17 +1,34 @@
 import { z } from 'zod';
 import { verifyPiAuthority, piRuntimeEnabled } from '@/lib/astro/pi-authority';
-import { assertPiAuthority, writePiCheckpoint } from '@/lib/astro/pi-store';
-import { assemblePiTransfer, isPiArtifactPath, PiTransferError, PiTransferManifestSchema, PiTransferPartSchema,
-  preparePiRestore, readPiTransferPart, uploadPiTransferPart } from '@/lib/astro/pi-transfer';
+import { assertPiAuthority, assertPiAuthorityRecent, PI_DIGEST, recordPiRunEvents, writePiCheckpoint } from '@/lib/astro/pi-store';
+import { assemblePiTransfer, commitPiBlob, isPiArtifactPath, PiTransferError, PiTransferManifestSchema, PiTransferPartSchema,
+  preparePiRestore, readPiBlobPart, readPiTransferPart, uploadPiTransferPart } from '@/lib/astro/pi-transfer';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
-const eventSchema = z.object({ type: z.enum(['tool_execution_start', 'tool_execution_end']), toolName: z.string().regex(/^[a-z_]+$/), toolCallId: z.string(), isError: z.boolean() });
+const toolNameSchema = z.string().regex(/^[a-z_]{1,80}$/);
+const eventSchema = z.object({ type: z.enum(['tool_execution_start', 'tool_execution_end']), toolName: toolNameSchema, toolCallId: z.string(), isError: z.boolean() });
+const artifactPath = z.string().refine(isPiArtifactPath);
 const checkpointSchema = z.object({
   sequence: z.number().int().positive(), final: z.boolean(), session: z.string(),
-  files: z.array(z.object({ path: z.string().refine(isPiArtifactPath), content: z.string() })),
+  files: z.array(z.union([
+    z.object({ path: artifactPath, content: z.string() }).strict(),
+    z.object({ path: artifactPath, digest: z.string().regex(PI_DIGEST), bytes: z.number().int().nonnegative() }).strict(),
+  ])),
   events: z.array(eventSchema), answer: z.object({ content: z.array(z.object({ type: z.string(), text: z.string().optional() }).passthrough()).optional(), stopReason: z.string().optional() }).passthrough().nullable(),
 });
+const liveEventsSchema = z.object({
+  events: z.array(z.object({
+    seq: z.number().int().positive(), kind: z.enum(['text_delta', 'tool_start', 'tool_end', 'exit']),
+    segment: z.number().int().nonnegative().default(0), toolName: toolNameSchema.nullable().default(null),
+    toolCallId: z.string().max(200).nullable().default(null), isError: z.boolean().default(false),
+    text: z.string().max(16000).nullable().default(null),
+  }).strict()).max(200),
+}).strict();
+
+function isAstrologyPath(file: { path: string }) {
+  return file.path.startsWith('astrology/');
+}
 
 export async function POST(request: Request, { params }: { params: Promise<{ operation: string[] }> }) {
   try {
@@ -19,29 +36,46 @@ export async function POST(request: Request, { params }: { params: Promise<{ ope
     const secret = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!secret) throw new Error('Missing broker configuration.');
     const authority = verifyPiAuthority(request.headers.get('x-aidoraa-run-capability') ?? '', secret);
-    await assertPiAuthority(authority);
     const operation = (await params).operation.join('/');
-    if (operation === 'state') return Response.json(authority, { headers: { 'Cache-Control': 'no-store' } });
-    if (operation === 'restore') return Response.json(await preparePiRestore(authority), { headers: { 'Cache-Control': 'no-store' } });
+    // Commits and restores re-check authority against the database every time;
+    // high-frequency calls reuse a check from the last few seconds.
+    const fullCheck = operation === 'checkpoint' || operation === 'checkpoint/commit' || operation === 'restore';
+    if (fullCheck) await assertPiAuthority(authority);
+    else await assertPiAuthorityRecent(authority);
+    const noStore = { headers: { 'Cache-Control': 'no-store' } };
+    if (operation === 'state') return Response.json(authority, noStore);
+    if (operation === 'events') {
+      await recordPiRunEvents(authority, liveEventsSchema.parse(await request.json()).events);
+      return Response.json({ accepted: true });
+    }
+    if (operation === 'restore') return Response.json(await preparePiRestore(authority), noStore);
     if (/^restore\/\d+$/.test(operation)) {
       const manifest = PiTransferManifestSchema.parse(await request.json());
-      return Response.json({ content: await readPiTransferPart(authority, manifest, Number(operation.split('/')[1])) }, { headers: { 'Cache-Control': 'no-store' } });
+      return Response.json({ content: await readPiTransferPart(authority, manifest, Number(operation.split('/')[1])) }, noStore);
+    }
+    if (/^restore\/blob\/[a-f0-9]{64}\/\d+$/.test(operation)) {
+      const [, , digest, index] = operation.split('/');
+      return Response.json(await readPiBlobPart(authority, digest, Number(index)), noStore);
     }
     if (operation === 'checkpoint/part') {
       await uploadPiTransferPart(authority, PiTransferPartSchema.parse(await request.json()));
+      return Response.json({ accepted: true });
+    }
+    if (operation === 'blob/commit') {
+      await commitPiBlob(authority, PiTransferManifestSchema.parse(await request.json()));
       return Response.json({ accepted: true });
     }
     if (operation === 'checkpoint/commit') {
       const manifest = PiTransferManifestSchema.parse(await request.json());
       const bytes = await assemblePiTransfer(authority, manifest);
       const parsed = checkpointSchema.parse(JSON.parse(bytes.toString('utf8')));
-      if (!authority.astrologyEnabled && parsed.files.some((file) => file.path.startsWith('astrology/'))) throw new Error('Disabled calculation artifacts.');
+      if (!authority.astrologyEnabled && parsed.files.some(isAstrologyPath)) throw new Error('Disabled calculation artifacts.');
       await writePiCheckpoint(authority, parsed);
       return Response.json({ accepted: true });
     }
     if (operation === 'checkpoint') {
       const parsed = checkpointSchema.parse(await request.json());
-      if (!authority.astrologyEnabled && parsed.files.some((file) => file.path.startsWith('astrology/'))) throw new Error('Disabled calculation artifacts.');
+      if (!authority.astrologyEnabled && parsed.files.some(isAstrologyPath)) throw new Error('Disabled calculation artifacts.');
       await writePiCheckpoint(authority, parsed);
       return Response.json({ accepted: true });
     }

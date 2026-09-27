@@ -1,7 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore, type RunRow } from './agent-store';
 import { PiAuthoritySchema, piArtifactPrefix, type PiAuthority } from './pi-authority';
-import { assertPiAuthority, readPiCheckpoint, type PiCheckpoint } from './pi-store';
+import { assertPiAuthority, queuePiMemoryProposals, readPiCheckpoint, resolvePiCheckpointFiles, type PiCheckpoint } from './pi-store';
 
 type PublicationRun = Pick<RunRow, 'id' | 'user_id' | 'profile_id' | 'session_id' | 'status' | 'version' | 'output_message_id'>;
 type FinalReceipt = { status: string; refs: Record<string, unknown> };
@@ -12,6 +12,8 @@ export interface PiPublishDependencies {
   assertAuthority(authority: PiAuthority): Promise<unknown>;
   readCheckpoint(authority: PiAuthority): Promise<PiCheckpoint | null>;
   finish(args: Record<string, unknown>): Promise<{ error: { code?: string } | null }>;
+  /** Queue proposals/ files as reviewable memory candidates after publication. */
+  queueProposals?(authority: PiAuthority, checkpoint: PiCheckpoint): Promise<unknown>;
 }
 
 function dependencies(): PiPublishDependencies {
@@ -34,7 +36,20 @@ function dependencies(): PiPublishDependencies {
       const result = await admin.rpc('worker_finish_pi_run', args);
       return { error: result.error };
     },
+    async queueProposals(authority, checkpoint) {
+      const proposals = checkpoint.files.filter((file) => file.path.startsWith('proposals/'));
+      return queuePiMemoryProposals(authority, await resolvePiCheckpointFiles(authority, { files: proposals }));
+    },
   };
+}
+
+async function queueProposalsBestEffort(authority: PiAuthority, checkpoint: PiCheckpoint, deps: PiPublishDependencies) {
+  try {
+    await deps.queueProposals?.(authority, checkpoint);
+  } catch (error) {
+    // The answer is already published; a proposal is a candidate, not part of it.
+    console.error('[pi-publish] memory proposals were not queued', { runId: authority.runId, message: error instanceof Error ? error.message : 'unknown' });
+  }
 }
 
 function assertRunScope(run: PublicationRun, authority: PiAuthority) {
@@ -98,5 +113,6 @@ export async function publishPiAnswer(input: PiAuthority, provided?: PiPublishDe
     if (await completedPublication(authority, deps)) return { status: 'complete' as const };
     throw new Error(`Pi publication failed (${result.error.code ?? 'database'}).`);
   }
+  await queueProposalsBestEffort(authority, checkpoint, deps);
   return { status: 'complete' as const };
 }

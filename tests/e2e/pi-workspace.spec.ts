@@ -158,11 +158,20 @@ async function checkpoint(admin: SupabaseClient, scope: Scope, runId: string) {
   if (artifact.error || !artifact.data) throw new Error('Complete workspace archive cannot be downloaded.');
   const bytes = await artifact.data.text();
   expect(createHash('sha256').update(bytes).digest('hex')).toBe(receipt.data.digest);
-  const saved = JSON.parse(bytes) as PiCheckpoint;
-  expect(saved.final).toBe(true);
-  expect(saved.sequence).toBe(receipt.data.sequence);
-  expect(saved.session.length).toBeGreaterThan(0);
-  return { saved, receipt: receipt.data };
+  const archived = JSON.parse(bytes) as PiCheckpoint;
+  expect(archived.final).toBe(true);
+  expect(archived.sequence).toBe(receipt.data.sequence);
+  expect(archived.session.length).toBeGreaterThan(0);
+  // Larger files are stored once per person as content-addressed blobs.
+  const files = await Promise.all(archived.files.map(async (file) => {
+    if ('content' in file) return file;
+    const blob = await admin.storage.from('pi-workspaces').download(`${scope.userId}/${scope.personId}/blobs/${file.digest}`);
+    if (blob.error || !blob.data) throw new Error(`Checkpoint file ${file.path} has no durable blob.`);
+    const content = await blob.data.text();
+    expect(createHash('sha256').update(content).digest('hex')).toBe(file.digest);
+    return { path: file.path, content };
+  }));
+  return { saved: { ...archived, files }, receipt: receipt.data };
 }
 
 async function consolidation(admin: SupabaseClient, scope: Scope, messageId: string) {

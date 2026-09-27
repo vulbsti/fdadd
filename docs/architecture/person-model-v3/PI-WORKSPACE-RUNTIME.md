@@ -7,6 +7,44 @@ Production continues to use the legacy runtime until a later explicit
 rollout. Implemented code, local checks, and unproven acceptance gates are
 separated below.
 
+## 2026-09-27 revision: one workspace per person
+
+This supersedes the per-run sandbox and tool bullets in "Implemented slice"
+where they differ. Staging only; production still runs the legacy loop.
+
+- **Sandbox per person, not per run.** The name is derived from owner, person,
+  authority epochs, birth revision, astrology mode, runtime bundle hash,
+  protocol and Atros version, with no run ID. Consecutive turns reuse the warm
+  VM, its Pi session file and its workspace; a changed epoch or bundle yields a
+  new name, so stale authority never reaches a new turn. The VM is no longer
+  stopped after each turn and expires on its own timeout (45 min, extended
+  best-effort). Before a new runner starts, earlier runners are killed and the
+  firewall capability is replaced.
+- **Base snapshot.** `scripts/build-pi-base-snapshot.mts` builds a snapshot with
+  pinned Pi and Atros preinstalled; set its ID as `PI_BASE_SNAPSHOT_ID` on
+  staging. Without it the universal image plus a first-run install is used.
+- **Restore only when cold.** Storage restore runs only when the VM has no Pi
+  session. `person/`, the manifest and skills are refreshed every turn.
+- **Pi's full toolset.** read, bash, edit, write, grep, find and ls are enabled
+  alongside the workspace, person-state and Atros tools. Skills are real Pi
+  skills (`runtime/pi/skills/*/SKILL.md`) passed with `--skill`; automatic
+  discovery of user-supplied skills, extensions and context files stays off.
+  The appended system prompt carries no IDs.
+- **Live streaming.** The runner batches text deltas and tool events to the
+  broker `events` operation (`pi_run_events`). The workflow polls them and
+  emits `answer.delta` and tool events; the chat renders a streaming draft and
+  falls back to reloading the run every 5 s if the event stream stalls.
+- **Fewer uploads.** Checkpoints happen at most every 45 s on `turn_end` and
+  once at the end. Files over 2 KiB are content-addressed blobs
+  (`<user>/<person>/blobs/<sha256>`) uploaded once; checkpoints reference them.
+  Authority is rechecked fully for checkpoint commit and restore, and at most
+  every 10 s for high-frequency calls.
+- **Loop detector.** Three identical tool calls steer the agent; five stop the
+  run with work kept. Four consecutive tool failures steer; eight stop.
+- **Memory proposals.** Files written under `proposals/` are queued in
+  `pi_memory_proposals` (pending, owner-readable, service-role writes). Pi
+  cannot overwrite accepted facts; consolidation does not yet consume the queue.
+
 ## Implemented slice
 
 - `ASTROLOGER_RUNTIME=pi` selects headless Pi 0.87.1 and one brokered Go Luna

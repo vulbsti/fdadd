@@ -25,7 +25,7 @@ import { resolveAgentFinishMode, type AgentFinishMode } from '@/lib/astro/agent-
 import { draftRevisionInstruction, verificationNeedsRetry } from '@/lib/astro/verification-policy';
 import { loadAgentPersonContext, personAgentContextBlock } from '@/lib/astro/person-agent-context';
 import { piRuntimeEnabled, type PiAuthority } from '@/lib/astro/pi-authority';
-import { preparePiWorkspace, startPiWorkspace, pollPiWorkspace, stopPiWorkspace } from '@/lib/astro/pi-runtime';
+import { preparePiWorkspace, startPiWorkspace, pollPiWorkspace } from '@/lib/astro/pi-runtime';
 import { publishPiAnswer } from '@/lib/astro/pi-publish';
 import {
   parsePersonRunMode,
@@ -854,11 +854,11 @@ async function startPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>
   await startPiWorkspace(input);
 }
 
-async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number) {
+async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number, probeSandbox: boolean) {
   'use step';
   const writer = getWritable<RunEventChunk>().getWriter();
   try {
-    return await pollPiWorkspace(input, cursor, async (event) => { await writer.write({ type: event.event, payload: event }); });
+    return await pollPiWorkspace(input, cursor, async (event) => { await writer.write({ type: event.event, payload: event }); }, { probeSandbox });
   } finally {
     writer.releaseLock();
   }
@@ -869,29 +869,22 @@ async function publishPiStep(authority: PiAuthority) {
   return publishPiAnswer(authority);
 }
 
-async function stopPiStep(sandboxName: string) {
-  'use step';
-  await stopPiWorkspace(sandboxName);
-}
-
 async function piWorkspaceWorkflowBody(runId: string, emit: RunEventSink) {
   await emit({ event: 'phase.changed', runId, phase: 'analysis', status: 'active', summary: 'Opening your isolated Pi workspace' });
   const prepared = await preparePiStep(runId);
-  try {
-    await startPiStep(prepared);
-    let cursor = 0;
-    while (true) {
-      const progress = await pollPiStep(prepared, cursor);
-      cursor = progress.cursor;
-      if (progress.done) break;
-      await sleep('3s');
-    }
-    const result = await publishPiStep(prepared.authority);
-    await emit({ event: 'answer.ready', runId, phase: 'responding', summary: 'Answer and workspace saved' });
-    return result;
-  } finally {
-    await stopPiStep(prepared.sandboxName);
+  await startPiStep(prepared);
+  // Live events are small database rows, so a short interval is cheap. The
+  // per-person VM is left running for the next message and expires when idle.
+  let cursor = 0;
+  for (let poll = 1; ; poll++) {
+    const progress = await pollPiStep(prepared, cursor, poll % 5 === 0);
+    cursor = progress.cursor;
+    if (progress.done) break;
+    await sleep('2s');
   }
+  const result = await publishPiStep(prepared.authority);
+  await emit({ event: 'answer.ready', runId, phase: 'responding', summary: 'Answer and workspace saved' });
+  return result;
 }
 
 /**

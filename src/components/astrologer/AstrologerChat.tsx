@@ -24,6 +24,7 @@ import type {
 import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, type ChatMessage } from './chat-message-state';
 import { subscribePersonState } from './person-state-sync';
 import { AssistantMarkdown } from './AssistantMarkdown';
+import { applyRunEvent, parseRunEventData, startRunStream, type RunStreamState } from './run-stream-state';
 
 interface AstrologerChatProps {
   sessionId: string;
@@ -60,6 +61,7 @@ function AstrologerChatSession({
   const eventSourceRef = useRef<EventSource | null>(null);
   const eventRunIdRef = useRef<string | null>(null);
   const messageEndRef = useRef<HTMLDivElement | null>(null);
+  const [stream, setStream] = useState<RunStreamState | null>(null);
   const requestInFlightRef = useRef(false);
   const sessionIdRef = useRef<string | null>(sessionId);
   const [confirmedPersonalOnly, setConfirmedPersonalOnly] = useState<boolean | null>(null);
@@ -111,6 +113,7 @@ function AstrologerChatSession({
       if (data.latestRun?.kind === 'question' && data.latestRun.status === 'active') {
         setSendState('streaming');
       }
+      if (data.latestRun?.status !== 'active') setStream(null);
       if (eventRunIdRef.current === data.latestRun?.id && data.latestRun?.status !== 'active') {
         eventSourceRef.current?.close();
         eventSourceRef.current = null;
@@ -187,10 +190,15 @@ function AstrologerChatSession({
       const url = `/api/astrologer/runs/${runId}/events${after ? `?after=${after}` : ''}`;
       const source = new EventSource(url);
       eventSourceRef.current = source;
+      setStream((current) => current?.runId === runId ? current : startRunStream(runId));
+      // Progress and streamed text apply directly; only a finished answer
+      // needs the persisted conversation.
+      const applyLive = (message: MessageEvent) => {
+        const event = parseRunEventData(message.data);
+        if (event) setStream((current) => applyRunEvent(current, event));
+      };
+      for (const name of ['answer.delta', 'phase.changed', 'tool.started', 'tool.completed']) source.addEventListener(name, applyLive);
       source.addEventListener('answer.ready', () => void loadDetail());
-      source.addEventListener('phase.changed', () => void loadDetail());
-      source.addEventListener('tool.started', () => void loadDetail());
-      source.addEventListener('tool.completed', () => void loadDetail());
       source.addEventListener('run.completed', () => {
         source.close();
         eventRunIdRef.current = null;
@@ -212,6 +220,15 @@ function AstrologerChatSession({
     },
     [loadDetail],
   );
+
+  useEffect(() => {
+    // The stream is best-effort. While a run is active, also re-read the
+    // durable conversation, so a missed or expired event can never leave a
+    // stored answer unseen.
+    if (sendState !== 'streaming') return;
+    const timer = setInterval(() => void loadDetail(), 5000);
+    return () => clearInterval(timer);
+  }, [loadDetail, sendState]);
 
   useEffect(() => {
     if ((detail?.profile?.initializationStatus === 'pending' && detail.latestRun?.kind === 'intake')
@@ -417,8 +434,18 @@ function AstrologerChatSession({
               </div>
             </section>
           ) : null}
+          {busy && stream?.draft ? (
+            <div className="flex justify-start gap-2" aria-live="polite" data-testid="streaming-answer">
+              <Avatar className="h-7 w-7">
+                <AvatarFallback>☉</AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 max-w-[75%] rounded-lg bg-muted px-3 py-2 text-sm opacity-90 [overflow-wrap:anywhere]">
+                <AssistantMarkdown content={stream.draft} />
+              </div>
+            </div>
+          ) : null}
           {busy ? (
-            <div className="text-xs text-muted-foreground">{currentPersonalOnly ? 'Thinking with your current personal context…' : 'Consulting your context and chart…'}</div>
+            <div className="text-xs text-muted-foreground">{stream?.activity ?? (currentPersonalOnly ? 'Thinking with your current personal context…' : 'Consulting your context and chart…')}</div>
           ) : null}
           <div ref={messageEndRef} />
         </div>
