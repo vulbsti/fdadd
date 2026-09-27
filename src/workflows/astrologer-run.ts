@@ -22,7 +22,7 @@ import { getErrorMessage } from '@/lib/astro/workflow-errors';
 import { selectedContextBlock, type SelectedSource } from '@/lib/astro/selected-context';
 import { parseFinishProposal } from '@/lib/astro/finish-proposal';
 import { resolveAgentFinishMode, type AgentFinishMode } from '@/lib/astro/agent-budget';
-import { draftRevisionInstruction, verificationNeedsRetry } from '@/lib/astro/verification-policy';
+import { draftRevisionInstruction, verificationNeedsRetry, verifierSystemPrompt } from '@/lib/astro/verification-policy';
 import { loadAgentPersonContext, personAgentContextBlock } from '@/lib/astro/person-agent-context';
 import { piRuntimeEnabled, type PiAuthority } from '@/lib/astro/pi-authority';
 import { preparePiWorkspace, startPiWorkspace, pollPiWorkspace } from '@/lib/astro/pi-runtime';
@@ -527,13 +527,13 @@ async function verifyDraft(input: {
   runContext: string;
   selectedContext: string;
   toolRefs: string;
+  astrologyEnabled: boolean;
 }): Promise<{ verification: RunVerification; provider?: string; model?: string }> {
   'use step';
   const messages: ChatMessage[] = [
       {
         role: 'system',
-        content:
-          'You are a strict verification model. Judge ONLY concrete factual claims in the draft against the supplied run/profile context, selected context, and tool references, then call astro_record_verification exactly once. The run/profile context includes the accepted current user message, which is valid direct support for claims explicitly stated in that message. Questions, acknowledgements, intentions, uncertainty statements, and polite framing are not factual claims and need no evidence. A statement that context is absent is supported when the supplied context is empty. A statement that information was recorded is supported by a successful evidence/fact tool receipt. Do not reject a focused question merely because the answer is intentionally waiting for the user to provide missing information.',
+        content: verifierSystemPrompt(input.astrologyEnabled),
       },
       {
         role: 'user',
@@ -1239,6 +1239,7 @@ async function astrologerRunWorkflowBody(runId: string, emit: RunEventSink) {
       runContext: `${snapshot.manifestSummary}\n\nAccepted current user message:\n${question}`,
       selectedContext: selectedContextBlock(await loadSelectedItems(runId)),
       toolRefs: toolRefs.join('\n') || 'none',
+      astrologyEnabled: snapshot.profile.astrologyEnabled,
     });
     const verification = verified.verification;
     agentSteps++;
