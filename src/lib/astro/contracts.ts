@@ -324,6 +324,7 @@ export const RunEventName = [
   'tool.completed',
   'question.ready',
   'answer.ready',
+  'answer.delta',
   'run.completed',
   'run.failed',
 ] as const;
@@ -340,6 +341,9 @@ export const AstrologerRunEventSchema = z.object({
   question: FocusedQuestionSchema.nullable().optional(),
   status: z.enum(['active', 'waiting_for_user', 'complete', 'failed']).optional(),
   error: z.object({ code: agentErrorCodeSchema, message: z.string().max(300), resumable: z.boolean() }).optional(),
+  /** Streamed draft text. A new segment starts a new assistant message and replaces the draft. */
+  delta: z.string().max(16000).optional(),
+  segment: z.number().int().nonnegative().optional(),
 });
 export type AstrologerRunEvent = z.infer<typeof AstrologerRunEventSchema>;
 

@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server';
 import { after } from 'next/server';
 import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
-import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
+import { dispatchAstrologerRunBestEffort, sweepAstrologerDispatchesBestEffort } from '@/lib/astro/run-dispatch';
 import { dispatchPersonJobBestEffort } from '@/lib/person-model/consolidation-dispatch';
 
 export const runtime = 'nodejs';
@@ -54,6 +54,9 @@ export async function POST(request: Request) {
         dispatchAstrologerRunBestEffort(begun.runId),
         dispatchPersonJobBestEffort(),
       ]);
+      // The scheduled sweeper runs daily on this plan; each accepted message
+      // also recovers a few other runs whose dispatch is overdue.
+      await sweepAstrologerDispatchesBestEffort(3);
     });
 
     return NextResponse.json(

@@ -29,6 +29,18 @@ select throws_ok(format('select public.worker_save_pi_checkpoint(%L,2,%s,%s,%s,%
 select throws_ok(format('select public.worker_save_pi_checkpoint(%L,2,%s,%s,%s,%L,%L,false)',:'run',:mode,:privacy,:birth,'another-owner/file.json',repeat('a',64)), 'P0001','invalid artifact address','artifact path must belong to the run');
 select lives_ok(format('select public.worker_save_pi_checkpoint(%L,2,%s,%s,%s,%L,%L,true)',:'run',:mode,:privacy,:birth,:'artifact',repeat('a',64)),'final checkpoint commits');
 select throws_ok(format('select public.worker_save_pi_checkpoint(%L,3,%s,%s,%s,%L,%L,false)',:'run',:mode,:privacy,:birth,:'artifact',repeat('a',64)), 'P0001','stale checkpoint','a final checkpoint cannot regress');
+select ok(not has_table_privilege('authenticated','public.pi_run_events','select'),'live run events are not browser-readable');
+select ok(not has_table_privilege('authenticated','public.pi_memory_proposals','insert'),'browser cannot write memory proposals');
+select lives_ok(format('insert into public.pi_run_events(run_id,seq,user_id,profile_id,kind,text) values (%L,1,%L,%L,%L,%L)',:'run',:'owner',:'person','text_delta','Hello'),'worker records a live text delta');
+select throws_ok(format('insert into public.pi_run_events(run_id,seq,user_id,profile_id,kind) values (%L,1,%L,%L,%L)',:'run',:'owner',:'person','tool_start'),'23505',null,'live event sequence cannot be rewritten');
+select throws_ok(format('insert into public.pi_run_events(run_id,seq,user_id,profile_id,kind) values (%L,2,%L,%L,%L)',:'run',:'owner',:'person','reasoning'),'23514',null,'only public event kinds are stored');
+select lives_ok(format('insert into public.pi_memory_proposals(run_id,user_id,profile_id,path,digest,content) values (%L,%L,%L,%L,%L,%L)',:'run',:'owner',:'person','proposals/help.md',repeat('c',64),'candidate'),'worker queues a memory proposal');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"4a300000-0000-4000-8000-000000000001","role":"authenticated"}';
+select is((select count(*)::int from public.pi_memory_proposals),1,'owner can read their pending proposals');
+set local request.jwt.claims = '{"sub":"4a300000-0000-4000-8000-0000000000ff","role":"authenticated"}';
+select is((select count(*)::int from public.pi_memory_proposals),0,'another user cannot read proposals');
+set local role service_role;
 select version as version from public.astro_agent_runs where id=:'run'::uuid \gset
 select throws_ok(format('select public.worker_finish_pi_run(%L,%s,%s,%s,%s,%L,%L)',:'run',:version,:mode,:privacy+1,:birth,'answer','{}'),'ASV01','workspace authority changed','stale publication is rejected');
 select public.worker_finish_pi_run(:'run',:version,:mode,:privacy,:birth,repeat('x',9000)||'FULL-END','{}');

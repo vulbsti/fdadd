@@ -119,3 +119,13 @@ export async function dispatchAstrologerRunBestEffort(runId: string): Promise<Di
     return null;
   }
 }
+
+/** Opportunistic recovery of overdue dispatches; never fails the caller. */
+export async function sweepAstrologerDispatchesBestEffort(max: number): Promise<DispatchSweepResult | null> {
+  try {
+    return await sweepAstrologerDispatches({ max });
+  } catch (error) {
+    console.error('[astrologer-dispatch] opportunistic sweep failed', { message: safeDispatchError(error) });
+    return null;
+  }
+}

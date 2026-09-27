@@ -35,6 +35,7 @@ function chunkToEvent(chunk: WorkflowChunk, runId: string): AstrologerRunEvent |
     case 'tool.completed':
     case 'question.ready':
     case 'answer.ready':
+    case 'answer.delta':
     case 'run.completed':
     case 'run.failed':
       return AstrologerRunEventSchema.parse({
@@ -47,6 +48,8 @@ function chunkToEvent(chunk: WorkflowChunk, runId: string): AstrologerRunEvent |
         question: payload.question ?? undefined,
         status: payload.status,
         error: payload.error,
+        delta: payload.delta,
+        segment: payload.segment,
       });
     default:
       return null;

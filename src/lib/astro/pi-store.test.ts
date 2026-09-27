@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { loadPiFiles } from './pi-store';
+import { assertPiAuthorityRecent, classifyProposalSources, loadPiFiles } from './pi-store';
 import type { PiAuthority } from './pi-authority';
 
 type Row = Record<string, unknown>;
@@ -25,17 +25,24 @@ const authority: PiAuthority = {
 const owned = (row: Row) => ({ user_id: authority.userId, profile_id: authority.personId, ...row });
 
 function query(table: string) {
-  const call = { table, columns: '*', filters: [] as Array<[string, unknown]> };
+  const call = { table, columns: '*', filters: [] as Array<[string, unknown]>, inFilters: [] as Array<[string, unknown[]]> };
   state.calls.push(call);
-  const rows = () => (state.tables[table] ?? [])
+  const rows = () => (table === 'astro_agent_runs' ? [state.run] : state.tables[table] ?? [])
     .filter((row) => call.filters.every(([key, value]) => row[key] === value))
+    .filter((row) => call.inFilters.every(([key, values]) => values.includes(row[key])))
     .map((row) => call.columns === '*' ? { ...row }
       : Object.fromEntries(call.columns.split(',').map((key) => [key, row[key]])));
   const builder = {
     select(columns: string) { call.columns = columns; return builder; },
     eq(key: string, value: unknown) { call.filters.push([key, value]); return builder; },
+    in(key: string, values: unknown[]) { call.inFilters.push([key, values]); return builder; },
+    then(resolve: (value: { data: Row[]; error: null }) => unknown) { return Promise.resolve({ data: rows(), error: null }).then(resolve); },
     order() { return builder; },
     async range(from: number, to: number) { return { data: rows().slice(from, to + 1), error: null }; },
+    async maybeSingle() {
+      const selected = rows();
+      return selected.length <= 1 ? { data: selected[0] ?? null, error: null } : { data: null, error: { code: 'PGRST116' } };
+    },
     async single() {
       const selected = rows();
       return selected.length === 1 ? { data: selected[0], error: null }
@@ -126,5 +133,43 @@ describe('Pi owner-scoped graph and source hydration', () => {
     ];
     const { files } = await loadPiFiles(authority);
     expect(files.some((file) => file.path.startsWith('person/sources/'))).toBe(false);
+  });
+
+  it('reads object graphs with a fixed number of queries, not one per object', async () => {
+    const extra = Array.from({ length: 30 }, (_, index) => `object-x${index}`);
+    state.tables.person_revision_objects.push(...extra.map((id) => owned({ revision_no: 5, object_id: id, object_version_id: `${id}-v` })));
+    state.tables.person_objects.push(...extra.map((id) => owned({ id, kind: 'pattern' })));
+    state.tables.person_object_versions.push(...extra.map((id) => owned({ id: `${id}-v`, object_id: id, epistemic_class: 'reported', lifecycle: 'active', typed_payload: {} })));
+    const { files } = await loadPiFiles(authority);
+    expect(files.filter((file) => file.path.startsWith('person/structured/objects/'))).toHaveLength(32);
+    expect(state.calls.filter((call) => call.table === 'person_object_versions')).toHaveLength(1);
+    expect(state.calls.filter((call) => call.table === 'person_objects')).toHaveLength(1);
+  });
+});
+
+describe('Pi authority checks', () => {
+  it('reuses a recent database check for high-frequency calls and re-checks after it ages', async () => {
+    const now = Date.now();
+    await assertPiAuthorityRecent(authority, 10_000, now);
+    const afterFirst = state.calls.length;
+    await assertPiAuthorityRecent(authority, 10_000, now + 5_000);
+    expect(state.calls.length).toBe(afterFirst);
+    await assertPiAuthorityRecent(authority, 10_000, now + 11_000);
+    expect(state.calls.length).toBeGreaterThan(afterFirst);
+  });
+
+  it('rejects a changed consent epoch', async () => {
+    const runId = '10000000-0000-4000-8000-0000000000aa';
+    state.run = { ...state.run, id: runId };
+    state.tables.person_preferences[0].mode_epoch = 9;
+    await expect(assertPiAuthorityRecent({ ...authority, runId })).rejects.toThrow('authority changed');
+  });
+});
+
+describe('memory proposal source validation', () => {
+  it('separates known person sources from unknown references', () => {
+    const known = new Set(['0a1b2c3d-0000-4000-8000-000000000001']);
+    const result = classifyProposalSources('Supported by 0A1B2C3D-0000-4000-8000-000000000001 and 99999999-0000-4000-8000-000000000009.', known);
+    expect(result).toEqual({ sourceIds: ['0a1b2c3d-0000-4000-8000-000000000001'], unknownSourceRefs: ['99999999-0000-4000-8000-000000000009'] });
   });
 });

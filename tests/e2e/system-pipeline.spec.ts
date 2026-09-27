@@ -116,8 +116,21 @@ async function sendMessage(page: Page, admin: SupabaseClient, text: string) {
   const answer = await admin.from('astro_messages').select('content').eq('id', run.output_message_id!).single();
   if (answer.error || !answer.data) throw answer.error ?? new Error('Assistant response was not durably stored.');
   expect(answer.data.content.trim().length).toBeGreaterThan(0);
-  await expect(page.getByText(answer.data.content, { exact: true })).toBeVisible({ timeout: 30_000 });
-  return { runId: payload.runId, messageId: payload.messageId, answer: answer.data.content };
+  await expectAnswerVisible(page, run.output_message_id!, answer.data.content);
+  return { runId: payload.runId, messageId: payload.messageId, answer: answer.data.content, outputMessageId: run.output_message_id! };
+}
+
+/**
+ * Answers render as Markdown, so the stored text is not the DOM text. Find the
+ * persisted message by its id and compare its rendered words, ignoring syntax.
+ */
+async function expectAnswerVisible(page: Page, outputMessageId: string, content: string) {
+  const bubble = page.locator(`[id="message-${outputMessageId}"]`);
+  await expect(bubble).toBeVisible({ timeout: 30_000 });
+  // Word tokens without numbers: list markers, emphasis and table pipes vanish
+  // when rendered, but the prose words stay in order.
+  const words = (text: string) => (text.match(/[\p{L}’']+/gu) ?? []).join(' ');
+  await expect.poll(async () => words(await bubble.innerText())).toContain(words(content).split(' ').slice(0, 8).join(' '));
 }
 
 async function createVisibleConversation(page: Page, personId: string, admin: SupabaseClient, userId: string) {
@@ -283,7 +296,7 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
     expect(storedFirstResponse.data.status).toMatch(/^(waiting_for_user|complete)$/);
     expect(storedFirstResponse.data.output_message_id).toBeTruthy();
     await page.reload();
-    await expect(page.getByText(firstAnswer.answer, { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expectAnswerVisible(page, firstAnswer.outputMessageId, firstAnswer.answer);
     await captureThreeWidths(page, testInfo, '03-personal-answer-reloaded', visualIssues);
 
     failureStage = 'counterexample chat and second memory publication';
@@ -310,7 +323,7 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
     if (plan.error || !plan.data) throw plan.error ?? new Error('Fresh-chat model revision receipt missing.');
     const planRefs = plan.data.refs as { personRevision?: number };
     expect(planRefs.personRevision).toBeGreaterThanOrEqual(secondSource.revision);
-    await expect(page.getByText(recall.answer, { exact: true })).toBeVisible();
+    await expectAnswerVisible(page, recall.outputMessageId, recall.answer);
     await captureThreeWidths(page, testInfo, '05-fresh-chat-recall', visualIssues);
 
     failureStage = 'birth details, chart, and sensitivity setup';
@@ -386,7 +399,7 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
     expect(tool.data.refs).toMatchObject({ tool: 'atros_current_dasha', args: {} });
     expect(dasha.answer.length).toBeGreaterThan(0);
     await page.reload();
-    await expect(page.getByText(dasha.answer, { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expectAnswerVisible(page, dasha.outputMessageId, dasha.answer);
     await captureThreeWidths(page, testInfo, '09-atros-current-dasha-answer', visualIssues);
     await testInfo.attach('responsive-visual-issues', { body: JSON.stringify(visualIssues, null, 2), contentType: 'application/json' });
     expect(visualIssues, 'Responsive page overflow was detected; screenshots and authenticated trace were preserved.').toEqual([]);
