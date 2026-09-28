@@ -94,7 +94,12 @@ export async function preparePiWorkspace(runId: string) {
       if (released.exitCode !== 0) throw new Error('Could not release Pi sandbox preparation lock.');
     },
   }, async () => {
-    const origin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.PI_BROKER_ORIGIN;
+    // Production deployment URLs are behind Vercel authentication; the sandbox
+    // reaches the broker through the public production domain instead.
+    const origin = process.env.PI_BROKER_ORIGIN
+      ?? (process.env.VERCEL_ENV === 'production' && process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
     if (!origin || new URL(origin).protocol !== 'https:') throw new Error('Pi requires a reachable HTTPS broker origin.');
     const secret = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!secret) throw new Error('Missing runner signing configuration.');
