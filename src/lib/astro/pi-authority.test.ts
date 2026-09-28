@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { piRuntimeEnabled, signPiAuthority, verifyPiAuthority, type PiAuthority } from './pi-authority';
+import { signPiAuthority, verifyPiAuthority, type PiAuthority } from './pi-authority';
 
 const scope: PiAuthority = { runId: '40000000-0000-4000-8000-000000000001', userId: '40000000-0000-4000-8000-000000000002',
   personId: '40000000-0000-4000-8000-000000000003', sessionId: '40000000-0000-4000-8000-000000000004',
@@ -15,12 +15,5 @@ describe('Pi capability authority', () => {
     expect(() => verifyPiAuthority(`${token}.extra`, 'test-secret', 999)).toThrow();
     const changed = Buffer.from(JSON.stringify({ ...scope, astrologyEnabled: false })).toString('base64url');
     expect(() => verifyPiAuthority(`${changed}.${token.split('.')[1]}`, 'test-secret', 999)).toThrow();
-  });
-  it('cannot opt production into the preview runtime', () => {
-    const staging = { NODE_ENV: 'test', ASTROLOGER_RUNTIME: 'pi', NEXT_PUBLIC_SUPABASE_URL: 'https://wtloawiwntyjiidjbmuk.supabase.co', VERCEL_ENV: 'preview' } as NodeJS.ProcessEnv;
-    expect(piRuntimeEnabled(staging)).toBe(true);
-    expect(piRuntimeEnabled({ ...staging, ASTROLOGER_RUNTIME: '' })).toBe(false);
-    expect(() => piRuntimeEnabled({ ...staging, VERCEL_ENV: 'production' })).toThrow();
-    expect(() => piRuntimeEnabled({ ...staging, NEXT_PUBLIC_SUPABASE_URL: 'https://ezanfqbewuqttatrkvhf.supabase.co' })).toThrow();
   });
 });

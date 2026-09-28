@@ -49,19 +49,19 @@ describe('OpenCode/Pi tool protocol compatibility', () => {
   });
 
   it('normalizes named Responses choices to automatic selection for OpenCode Go', () => {
-    expect(toResponsesToolChoice('opencode-go', { name: 'astro_record_plan' })).toBe('auto');
-    expect(toResponsesToolChoice('openrouter', { name: 'astro_record_plan' })).toEqual({
+    expect(toResponsesToolChoice('opencode-go', { name: 'example_tool' })).toBe('auto');
+    expect(toResponsesToolChoice('openrouter', { name: 'example_tool' })).toEqual({
       type: 'function',
-      name: 'astro_record_plan',
+      name: 'example_tool',
     });
   });
 
   it('preserves named choices except on OpenCode Go Chat Completions', () => {
-    expect(toChatCompletionsToolChoice('openrouter', { name: 'astro_finish_run' })).toEqual({
+    expect(toChatCompletionsToolChoice('openrouter', { name: 'example_tool' })).toEqual({
       type: 'function',
-      function: { name: 'astro_finish_run' },
+      function: { name: 'example_tool' },
     });
-    expect(toChatCompletionsToolChoice('opencode-go', { name: 'astro_finish_run' })).toBe('auto');
+    expect(toChatCompletionsToolChoice('opencode-go', { name: 'example_tool' })).toBe('auto');
   });
 
   it('normalizes provider null tool calls to an empty list', () => {

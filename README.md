@@ -19,7 +19,10 @@ those boundaries explicitly.
   Razorpay order/verification/webhook routes. Provider configuration is in
   [`docs/supabase-razorpay-setup.md`](docs/supabase-razorpay-setup.md).
 - **Astrologer** — an authenticated chart and conversation surface backed by
-  Supabase, Workflow, the provider adapter, and Atros. The approved v3 person
+  Supabase, Workflow, and Atros. Every chat turn runs in the per-person Pi
+  workspace runtime on Vercel Sandbox
+  ([`PI-WORKSPACE-RUNTIME.md`](docs/architecture/person-model-v3/PI-WORKSPACE-RUNTIME.md));
+  there is no other chat runtime. The approved v3 person
   model remains a proposed implementation contract; it is not delivered by the
   current source tree.
 
@@ -29,7 +32,7 @@ those boundaries explicitly.
 - Node.js 22.x and npm.
 - Tailwind CSS, Radix UI primitives, and the existing component library.
 - Supabase Auth/Postgres, Vercel Workflow, and Vercel Sandbox for Atros.
-- The astrologer provider resolves keys in this order:
+- The provider adapter (used by person-model consolidation) resolves keys in this order:
   `OPENCODE_API_KEY`, `OPENGO_API`, then `OPENROUTER_API_KEY`. OpenCode Go
   uses `muse-spark-1.3-contributor` by default; `ASTROLOGER_MODEL` and then
   `OPENROUTER_MODEL` can override the model.

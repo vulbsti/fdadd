@@ -67,7 +67,7 @@ describe('Pi answer publication replay', () => {
     expect(deps.finish).toHaveBeenCalledWith({
       p_run_id: authority.runId, p_expected_version: run.version, p_mode_epoch: authority.modeEpoch,
       p_privacy_epoch: authority.privacyEpoch, p_birth_revision: authority.birthRevision,
-      p_answer: 'Saved answer.', p_refs: receipt.refs,
+      p_answer: 'Saved answer.', p_focused_question: null, p_refs: receipt.refs,
     });
   });
 
@@ -97,6 +97,26 @@ describe('Pi answer publication replay', () => {
     const deps = dependencies();
     deps.assertAuthority.mockRejectedValue(new Error('settings changed'));
     await expect(publishPiAnswer(authority, deps)).rejects.toThrow('settings changed');
+    expect(deps.finish).not.toHaveBeenCalled();
+  });
+});
+
+describe('Pi focused questions', () => {
+  const question = { prompt: 'Did work feel different around March?', responseKind: 'single_choice' as const, allowFreeText: true,
+    options: [{ id: 'option-1', label: 'Yes, noticeably', kind: 'answer' as const }, { id: 'option-2', label: 'No change', kind: 'control' as const }] };
+
+  it('publishes the question and waits for the person', async () => {
+    const deps = dependencies();
+    deps.readCheckpoint.mockResolvedValue({ sequence: 2, final: true, session: '', files: [], events: [], question,
+      answer: { content: [{ type: 'text', text: 'Here is why I am asking.' }], stopReason: 'stop' } });
+    await expect(publishPiAnswer(authority, deps)).resolves.toEqual({ status: 'waiting_for_user' });
+    expect(deps.finish).toHaveBeenCalledWith(expect.objectContaining({ p_focused_question: question }));
+  });
+
+  it('treats a replayed question publication as published', async () => {
+    const deps = dependencies();
+    deps.getRun.mockResolvedValue({ ...completed, status: 'waiting_for_user' as never });
+    await expect(publishPiAnswer(authority, deps)).resolves.toEqual({ status: 'waiting_for_user' });
     expect(deps.finish).not.toHaveBeenCalled();
   });
 });

@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server';
 import { sweepAstrologerDispatches } from '@/lib/astro/run-dispatch';
 import { sweepPersonConsolidationOutbox } from '@/lib/person-model/consolidation-dispatch';
+import { sweepIdleReflections } from '@/lib/astro/reflection-dispatch';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -37,9 +38,10 @@ export async function GET(request: Request) {
     );
   }
 
-  const [answers, learning] = await Promise.all([
+  const [answers, learning, reflection] = await Promise.all([
     sweepAstrologerDispatches({ max: 10 }),
     sweepPersonConsolidationOutbox({ max: 10 }),
+    sweepIdleReflections(),
   ]);
-  return NextResponse.json({ answers, learning });
+  return NextResponse.json({ answers, learning, reflection });
 }

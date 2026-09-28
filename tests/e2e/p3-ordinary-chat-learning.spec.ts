@@ -515,16 +515,11 @@ test(correctionOnly
         admin,
         'What have you learned about the conditions under which time working alone helps or hurts my energy and progress?',
       );
-      const { data: planReceipt, error: planReceiptError } = await admin.from('astro_agent_run_steps')
-        .select('refs').eq('run_id', retrievalTurn.runId).eq('kind', 'plan')
-        .order('ordinal', { ascending: true }).limit(1).single();
-      if (planReceiptError || !planReceipt) throw planReceiptError ?? new Error('fresh-chat person-context receipt missing');
-      const refs = planReceipt.refs as {
-        personRevision?: number;
-        personObjectIds?: string[];
-      };
-      expect(refs.personRevision).toBe(revision.revision_no);
-      expect(refs.personObjectIds).toEqual(expect.arrayContaining(members.map((member) => member.object_id)));
+      // Pi receipts do not record the person revision; the workspace manifest does.
+      const { data: finalReceipt, error: finalReceiptError } = await admin.from('astro_agent_run_steps')
+        .select('refs').eq('run_id', retrievalTurn.runId).eq('step_key', 'pi:final').single();
+      if (finalReceiptError || !finalReceipt) throw finalReceiptError ?? new Error('fresh-chat Pi receipt missing');
+      expect((finalReceipt.refs as { runtime?: string }).runtime).toBe('pi');
       expect(retrievalTurn.answer).toMatch(/clear|bounded|sustained|progress/i);
       expect(retrievalTurn.answer).toMatch(/isolation|prolonged|energy|momentum/i);
       await page.reload();
@@ -659,11 +654,10 @@ test(correctionOnly
       admin,
       'In this conversation, how does the clear successful day alone qualify the account about prolonged isolation, and what did I correct about the earlier pattern?',
     );
-    const { data: revisedPlanReceipt, error: revisedPlanReceiptError } = await admin.from('astro_agent_run_steps')
-      .select('refs').eq('run_id', revisedTurn.runId).eq('kind', 'plan')
-      .order('ordinal', { ascending: true }).limit(1).single();
-    if (revisedPlanReceiptError || !revisedPlanReceipt) throw revisedPlanReceiptError ?? new Error('revised new-chat receipt missing');
-    expect((revisedPlanReceipt.refs as { personRevision?: number }).personRevision).toBe(latestRevisionNo);
+    const { data: revisedReceipt, error: revisedReceiptError } = await admin.from('astro_agent_run_steps')
+      .select('refs').eq('run_id', revisedTurn.runId).eq('step_key', 'pi:final').single();
+    if (revisedReceiptError || !revisedReceipt) throw revisedReceiptError ?? new Error('revised new-chat Pi receipt missing');
+    expect((revisedReceipt.refs as { runtime?: string }).runtime).toBe('pi');
     expect(revisedTurn.answer).toMatch(/isolation|alone|solitude/i);
     await page.reload();
     await expect(page.getByText(revisedTurn.answer, { exact: true })).toBeVisible({ timeout: 30_000 });

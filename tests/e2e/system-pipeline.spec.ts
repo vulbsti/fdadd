@@ -10,7 +10,6 @@ type RunResult = {
   status: string;
   output_message_id: string | null;
   error_code: string | null;
-  plan_json?: { steps?: Array<{ kind?: string; calculation?: { tool?: string; args?: unknown } }> };
 };
 
 async function signIn(page: Page, email: string, password: string) {
@@ -85,7 +84,7 @@ async function waitForRun(admin: SupabaseClient, runId: string, timeout = 600_00
     return result.data.status;
   }, { timeout, intervals: [1_000, 2_000, 4_000] }).toMatch(/^(waiting_for_user|complete|failed)$/);
   const result = await admin.from('astro_agent_runs')
-    .select('status,output_message_id,error_code,plan_json').eq('id', runId).single();
+    .select('status,output_message_id,error_code').eq('id', runId).single();
   if (result.error || !result.data) throw result.error ?? new Error(`Run ${runId} has no terminal receipt.`);
   if (result.data.status === 'failed') {
     const steps = await admin.from('astro_agent_run_steps')
@@ -318,11 +317,11 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
     const recall = await sendMessage(page, admin, 'What have I said about asking for help, and what happened when I asked a friend last week?');
     expect(recall.answer).toMatch(/help/i);
     expect(recall.answer).toMatch(/friend|asked|last week/i);
-    const plan = await admin.from('astro_agent_run_steps').select('refs').eq('run_id', recall.runId).eq('kind', 'plan')
-      .order('ordinal', { ascending: true }).limit(1).single();
-    if (plan.error || !plan.data) throw plan.error ?? new Error('Fresh-chat model revision receipt missing.');
-    const planRefs = plan.data.refs as { personRevision?: number };
-    expect(planRefs.personRevision).toBeGreaterThanOrEqual(secondSource.revision);
+    // Pi receipts do not record the person revision; the workspace manifest does.
+    const finalReceipt = await admin.from('astro_agent_run_steps').select('refs').eq('run_id', recall.runId)
+      .eq('step_key', 'pi:final').single();
+    if (finalReceipt.error || !finalReceipt.data) throw finalReceipt.error ?? new Error('Fresh-chat Pi receipt missing.');
+    expect((finalReceipt.data.refs as { runtime?: string }).runtime).toBe('pi');
     await expectAnswerVisible(page, recall.outputMessageId, recall.answer);
     await captureThreeWidths(page, testInfo, '05-fresh-chat-recall', visualIssues);
 
@@ -387,16 +386,16 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
     const astroSessionId = await createVisibleConversation(page, personId, admin, userId);
     const dasha = await sendMessage(page, admin, 'What is my current dasha? Explain it as a reflective lens, not a deterministic prediction.');
     const dashaRun = await waitForRun(admin, dasha.runId);
-    expect(dashaRun.plan_json?.steps).toEqual(expect.arrayContaining([
-      expect.objectContaining({ kind: 'calculate', calculation: { tool: 'atros_current_dasha', args: {} } }),
-    ]));
-    const tool = await admin.from('astro_agent_run_steps').select('status,tool_name,refs,cache_hit')
-      .eq('run_id', dasha.runId).eq('kind', 'tool').eq('tool_name', 'atros_current_dasha')
+    expect(dashaRun.status).toBe('complete');
+    // Dasha periods are precomputed at birth setup; the agent reads them rather than recalculating.
+    const stored = await admin.from('astro_profile_calculations').select('birth_revision')
+      .eq('profile_id', personId).limit(1).single();
+    if (stored.error || !stored.data) throw stored.error ?? new Error('Precomputed calculations missing.');
+    const tool = await admin.from('astro_agent_run_steps').select('status,tool_name,refs')
+      .eq('run_id', dasha.runId).eq('kind', 'tool').in('tool_name', ['read', 'grep', 'bash']).eq('status', 'succeeded')
       .order('ordinal', { ascending: true }).limit(1).single();
-    if (tool.error || !tool.data) throw tool.error ?? new Error('Current dasha tool receipt missing.');
-    expect(tool.data.status).toBe('succeeded');
-    expect(tool.data.cache_hit).toBe(false);
-    expect(tool.data.refs).toMatchObject({ tool: 'atros_current_dasha', args: {} });
+    if (tool.error || !tool.data) throw tool.error ?? new Error('The agent did not read its workspace.');
+    expect(tool.data.refs).toMatchObject({ runtime: 'pi' });
     expect(dasha.answer.length).toBeGreaterThan(0);
     await page.reload();
     await expectAnswerVisible(page, dasha.outputMessageId, dasha.answer);
@@ -404,7 +403,7 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
     await testInfo.attach('responsive-visual-issues', { body: JSON.stringify(visualIssues, null, 2), contentType: 'application/json' });
     expect(visualIssues, 'Responsive page overflow was detected; screenshots and authenticated trace were preserved.').toEqual([]);
     expect(browserErrors).toEqual([]);
-    testInfo.annotations.push({ type: 'pipeline-receipt', description: JSON.stringify({ personId, firstSessionId, secondSessionId, thirdSessionId, astroSessionId, personRevision: planRefs.personRevision, astrologyRunId: dasha.runId, tool: 'atros_current_dasha', memoryJobsObservedWithoutCronNudge: 2 }) });
+    testInfo.annotations.push({ type: 'pipeline-receipt', description: JSON.stringify({ personId, firstSessionId, secondSessionId, thirdSessionId, astroSessionId, sourceRevision: secondSource.revision, astrologyRunId: dasha.runId, tool: tool.data.tool_name, memoryJobsObservedWithoutCronNudge: 2 }) });
   } catch (error) {
     primaryFailure = error;
     testInfo.annotations.push({ type: 'failed-stage', description: failureStage });

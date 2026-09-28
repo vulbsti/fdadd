@@ -1,26 +1,23 @@
 /**
- * Durable intake workflow: chart + sensitivity calculation and frozen-profile
- * finalization for a new person.
+ * Durable birth-setup workflow: every deterministic calculation the agent
+ * reads later (chart, sensitivity, lifetime dasha timeline, monthly transits),
+ * stored per birth revision, then frozen-profile finalization.
  *
  * Inputs contain only the internal `astro_agent_runs.id` — never cookies,
  * user JWTs, Supabase secrets, birth payloads, or person-map data. Every
  * database/model/Atros/side-effect boundary is a separate `'use step'`.
  */
 import { FatalError, getWorkflowMetadata } from 'workflow';
-import { atrosChart, atrosSensitivity } from '@/lib/astro/tools';
+import { calculate, loadProfileBirth, storeProfileCalculations } from '@/lib/astro/profile-calculations';
+import { TimelineSchema, TransitSnapshotSchema } from '@/lib/astro/calculations';
+import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore } from '@/lib/astro/agent-store';
 import { ensureAtrosReady } from '@/lib/astro/atros-commands';
 import { getErrorMessage, isMissingAtrosAssetError } from '@/lib/astro/workflow-errors';
 
 const INTAKE_GREETING =
-  'Your chart is calculated and frozen. Ask me about timing, transits, or the patterns shaping this period — or tell me a life event with its date so I can test it against your dasha chain.';
-
-interface FrozenCalculation {
-  profileId: string;
-  kind: 'chart' | 'sensitivity';
-  result: unknown;
-}
+  'Your chart is ready. Tell me what is on your mind, or ask about any period of your life, and I will read it against what you share with me.';
 
 async function claimIntakeExecution(runId: string) {
   'use step';
@@ -47,27 +44,27 @@ async function loadIntakeRun(runId: string) {
   };
 }
 
-/** One frozen Atros calculation. Independent steps run via Promise.all. */
-async function calculateFrozen(input: {
-  runId: string;
-  profileId: string;
-  sessionId: string;
-  userId: string;
-  kind: 'chart' | 'sensitivity';
-}): Promise<FrozenCalculation> {
+/**
+ * Every calculation for the profile's current birth revision, stored in one
+ * step so large results (the lifetime timeline) never pass through Workflow
+ * state. Returns only the small frozen chart copies for finalization.
+ */
+async function calculateAndStore(input: { profileId: string; userId: string }) {
   'use step';
-
-  const outcome =
-    input.kind === 'chart'
-      ? await atrosChart(createAdminClient(), input.userId, input.sessionId, input.profileId)
-      : await atrosSensitivity(createAdminClient(), input.userId, input.sessionId, input.profileId);
-
-  if (!outcome.ok) {
-    const error = new Error(`atros ${input.kind} failed: ${outcome.error.code} ${outcome.error.message}`);
-    if (isMissingAtrosAssetError(error)) throw new FatalError(error.message);
+  try {
+    const admin = createAdminClient();
+    const profile = await loadProfileBirth(admin, input.profileId, input.userId);
+    const [chart, sensitivity, timeline, transits] = await Promise.all(
+      (['chart', 'sensitivity', 'timeline', 'transits'] as const).map((kind) => calculate(kind, profile.birth)));
+    await storeProfileCalculations(admin, profile, {
+      chart: chart as Record<string, unknown>, sensitivity: sensitivity as Record<string, unknown>,
+      timeline: TimelineSchema.parse(timeline), transits: z.array(TransitSnapshotSchema).parse(transits),
+    });
+    return { chart, sensitivity };
+  } catch (error) {
+    if (isMissingAtrosAssetError(error)) throw new FatalError(getErrorMessage(error, 'birth calculations failed'));
     throw error;
   }
-  return { profileId: input.profileId, kind: input.kind, result: outcome.data };
 }
 
 /** Install/warm Atros before chart and sensitivity branches share the sandbox. */
@@ -122,19 +119,10 @@ export async function astrologerIntakeWorkflow(runId: string) {
   if (!execution.won) return { status: 'duplicate' as const, workflowRunId: execution.workflowRunId };
   const intake = await loadIntakeRun(runId);
 
-  let chart: FrozenCalculation;
-  let sensitivity: FrozenCalculation;
   try {
     await prepareAtros();
-    [chart, sensitivity] = await Promise.all([
-      calculateFrozen({ ...intake, kind: 'chart' }),
-      calculateFrozen({ ...intake, kind: 'sensitivity' }),
-    ]);
-    await finalizeIntake({
-      runId: intake.runId,
-      chart: chart.result,
-      sensitivity: sensitivity.result,
-    });
+    const frozen = await calculateAndStore({ profileId: intake.profileId, userId: intake.userId });
+    await finalizeIntake({ runId: intake.runId, chart: frozen.chart, sensitivity: frozen.sensitivity });
   } catch (error) {
     const message = getErrorMessage(error, 'intake failed');
     console.error('[astrologer-intake] failed', { runId: intake.runId, message });

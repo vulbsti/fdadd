@@ -15,7 +15,8 @@ Sequence: Mangala(Moon,1) -> Pingala(Sun,2) -> Dhanya(Jupiter,3) -> Bhramari(Mar
 """
 
 import math
-from datetime import date, timedelta
+import math
+from datetime import date
 from typing import List, Tuple
 
 from ..core.constants import YOGINI_DASHAS, YOGINI_TOTAL_YEARS
@@ -78,10 +79,17 @@ def generate_yogini_timeline(
     timeline: List[YoginiDashaPeriod] = []
     current_date = birth_date
 
+    # Boundaries = birth + cumulative years, each rounded to a day once, so
+    # rounding error does not accumulate across successive periods.
+    birth_ord = birth_date.toordinal()
+
+    def boundary(cumulative_years: float) -> date:
+        return date.fromordinal(math.floor(birth_ord + cumulative_years * 365.25 + 0.5))
+
     # First period: use balance as duration
     yogini_name, planet, full_duration = YOGINI_DASHAS[starting_yogini]
-    balance_days = int(balance * 365.25)
-    end_date = current_date + timedelta(days=balance_days)
+    cumulative = balance
+    end_date = boundary(cumulative)
 
     timeline.append(
         YoginiDashaPeriod(
@@ -101,8 +109,8 @@ def generate_yogini_timeline(
 
     for _ in range(total_periods):
         yogini_name, planet, duration = YOGINI_DASHAS[yogini_idx]
-        duration_days = int(duration * 365.25)
-        end_date = current_date + timedelta(days=duration_days)
+        cumulative += duration
+        end_date = boundary(cumulative)
 
         timeline.append(
             YoginiDashaPeriod(

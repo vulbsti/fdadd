@@ -20,10 +20,10 @@ export function isolatedStagingValues(env) {
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.P3_STAGING_SUPABASE_PUBLISHABLE_KEY,
     SUPABASE_SECRET_KEY: env.P3_STAGING_SUPABASE_SECRET_KEY,
     CRON_SECRET: env.P3_STAGING_CRON_SECRET,
-    ...(env.ASTROLOGER_RUNTIME === 'pi' ? {
-      ASTROLOGER_RUNTIME: 'pi',
-      ...(env.VERCEL_AUTOMATION_BYPASS_SECRET ? { VERCEL_AUTOMATION_BYPASS_SECRET: env.VERCEL_AUTOMATION_BYPASS_SECRET } : {}),
-    } : {}),
+    // The Pi sandbox calls back into this protected Preview deployment.
+    ...(env.VERCEL_AUTOMATION_BYPASS_SECRET ? { VERCEL_AUTOMATION_BYPASS_SECRET: env.VERCEL_AUTOMATION_BYPASS_SECRET } : {}),
+    // Prebuilt Pi base image (runtime, Atros, workspace tools); optional.
+    ...(/^snap_[A-Za-z0-9_-]+$/.test(env.PI_BASE_SNAPSHOT_ID ?? '') ? { PI_BASE_SNAPSHOT_ID: env.PI_BASE_SNAPSHOT_ID } : {}),
   };
 }
 

@@ -14,6 +14,7 @@ The dasha sequence: Ketu (7) -> Venus (20) -> Sun (6) -> Moon (10) -> Mars (7)
                    = 120 years total
 """
 
+import math
 from datetime import date, timedelta
 from typing import List, Optional, Tuple
 
@@ -74,7 +75,7 @@ def calculate_dasha_balance(
     elapsed_years = dasha_years - balance_years
 
     # Calculate when this dasha actually started (before birth)
-    elapsed_days = int(elapsed_years * 365.25)
+    elapsed_days = math.floor(elapsed_years * 365.25 + 0.5)
     dasha_start = birth_date - timedelta(days=elapsed_days)
 
     return lord, dasha_start, balance_years
@@ -96,21 +97,37 @@ def generate_mahadasha_timeline(
     Returns:
         List of DashaPeriod objects for each Mahadasha
     """
-    starting_lord, first_dasha_start, balance_years = calculate_dasha_balance(
+    starting_lord, _first_dasha_start, balance_years = calculate_dasha_balance(
         moon_longitude, birth_date
     )
 
     sequence = calculate_mahadasha_sequence(starting_lord)
     timeline = []
-    current_start = first_dasha_start
+
+    # Boundaries are computed from an exact (fractional) day anchor plus
+    # cumulative dasha years, and each boundary is rounded to a day once, so
+    # rounding never accumulates across successive Mahadashas. The anchor is the
+    # (fractional) start of the first Mahadasha: birth minus its elapsed portion.
+    first_years = VIMSHOTTARI_YEARS.get(starting_lord, 7)
+    anchor = birth_date.toordinal() - (first_years - balance_years) * 365.25
+
+    def boundary(cumulative_years: float) -> date:
+        return date.fromordinal(math.floor(anchor + cumulative_years * 365.25 + 0.5))
 
     # End date for calculations
     end_limit = birth_date + timedelta(days=int(years_forward * 365.25))
 
-    for i, lord in enumerate(sequence):
+    # Always emit the first full 9-dasha cycle, then continue until end_limit
+    # is covered (max 3 cycles = 360 years).
+    cumulative = 0.0
+    current_start = boundary(0.0)
+    for i in range(27):
+        if i >= 9 and current_start >= end_limit:
+            break
+        lord = sequence[i % 9]
         years = VIMSHOTTARI_YEARS.get(lord, 7)
-        duration_days = int(years * 365.25)
-        end_date = current_start + timedelta(days=duration_days)
+        cumulative += years
+        end_date = boundary(cumulative)
 
         timeline.append(
             DashaPeriod(
@@ -121,35 +138,7 @@ def generate_mahadasha_timeline(
                 duration_years=years,
             )
         )
-
         current_start = end_date
-
-        # Continue for another full cycle if needed
-        if current_start >= end_limit and i >= 8:
-            break
-
-    # If we need more years, continue with the sequence
-    cycle = 1
-    while current_start < end_limit and cycle < 3:  # Max 3 cycles (360 years)
-        for lord in sequence:
-            years = VIMSHOTTARI_YEARS.get(lord, 7)
-            duration_days = int(years * 365.25)
-            end_date = current_start + timedelta(days=duration_days)
-
-            timeline.append(
-                DashaPeriod(
-                    planet=lord,
-                    start_date=current_start,
-                    end_date=end_date,
-                    level=1,
-                    duration_years=years,
-                )
-            )
-
-            current_start = end_date
-            if current_start >= end_limit:
-                break
-        cycle += 1
 
     return timeline
 

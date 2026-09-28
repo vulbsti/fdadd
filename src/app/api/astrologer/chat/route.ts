@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { dispatchAstrologerRunBestEffort, sweepAstrologerDispatchesBestEffort } from '@/lib/astro/run-dispatch';
 import { dispatchPersonJobBestEffort } from '@/lib/person-model/consolidation-dispatch';
+import { reflectOtherSessionsBestEffort } from '@/lib/astro/reflection-dispatch';
 
 export const runtime = 'nodejs';
 
@@ -53,6 +54,9 @@ export async function POST(request: Request) {
       await Promise.all([
         dispatchAstrologerRunBestEffort(begun.runId),
         dispatchPersonJobBestEffort(),
+        // Writing here ends the person's other conversations: reflect on them.
+        auth.store.getSession(parsed.data.sessionId).then((session) => typeof session?.profile_id === 'string'
+          ? reflectOtherSessionsBestEffort({ profileId: session.profile_id, currentSessionId: parsed.data.sessionId }) : 0).catch(() => 0),
       ]);
       // The scheduled sweeper runs daily on this plan; each accepted message
       // also recovers a few other runs whose dispatch is overdue.
