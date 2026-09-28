@@ -14,8 +14,9 @@ Example: Venus Mahadasha (20 years) contains:
 ... and so on
 """
 
+import math
 from datetime import date, timedelta
-from typing import List
+from typing import List, Sequence
 
 from ..core.constants import VIMSHOTTARI_SEQUENCE, VIMSHOTTARI_YEARS
 from ..core.models import DashaPeriod
@@ -67,9 +68,70 @@ def get_antardasha_sequence(mahadasha_lord: str) -> List[str]:
     return sequence
 
 
+def _round_half_up(x: float) -> int:
+    """Deterministic rounding (Python's round() is banker's rounding)."""
+    return math.floor(x + 0.5)
+
+
+def tile_boundaries(start: date, end: date, weights: Sequence[float]) -> List[date]:
+    """Split [start, end] into len(weights) contiguous pieces proportional to weights.
+
+    Boundaries are computed from the *cumulative* fraction of the parent span
+    and rounded to a whole day once each, so rounding error never accumulates.
+    The first boundary is ``start`` and the last is pinned to ``end`` exactly.
+
+    Returns:
+        List of len(weights) + 1 dates (non-decreasing).
+    """
+    total_days = (end - start).days
+    total_weight = float(sum(weights))
+    bounds = [start]
+    cumulative = 0.0
+    for w in weights[:-1]:
+        cumulative += w
+        offset = _round_half_up(total_days * cumulative / total_weight)
+        bounds.append(start + timedelta(days=offset))
+    bounds.append(end)
+    return bounds
+
+
+def subdivide_dasha(period: DashaPeriod, child_level: int) -> List[DashaPeriod]:
+    """Subdivide any dasha period into its 9 Vimshottari children.
+
+    Child span = parent span x (child_years / 120), sequence starting from the
+    parent's lord. Children are contiguous and exactly tile the parent: the
+    first starts at parent.start_date and the last ends at parent.end_date.
+    """
+    sequence = get_antardasha_sequence(period.planet)
+    weights = [VIMSHOTTARI_YEARS.get(lord, 7) for lord in sequence]
+    bounds = tile_boundaries(period.start_date, period.end_date, weights)
+    total_years = float(sum(VIMSHOTTARI_YEARS.values()))  # 120
+
+    children = []
+    for i, lord in enumerate(sequence):
+        if child_level == 2:
+            # Traditional Antardasha length in years: (MD_years x AD_years) / 120
+            duration_years = calculate_antardasha_duration(period.planet, lord)
+        else:
+            duration_years = (bounds[i + 1] - bounds[i]).days / 365.25
+        children.append(
+            DashaPeriod(
+                planet=lord,
+                start_date=bounds[i],
+                end_date=bounds[i + 1],
+                level=child_level,
+                duration_years=duration_years,
+            )
+        )
+    return children
+
+
 def generate_antardasha_timeline(mahadasha: DashaPeriod) -> List[DashaPeriod]:
     """
     Generate Antardasha periods within a Mahadasha.
+
+    Duration = (MD_years x AD_years) / 120, i.e. the Mahadasha span split in
+    proportion AD_years / 120. The 9 Antardashas exactly tile the Mahadasha.
 
     Args:
         mahadasha: The parent Mahadasha period
@@ -77,46 +139,15 @@ def generate_antardasha_timeline(mahadasha: DashaPeriod) -> List[DashaPeriod]:
     Returns:
         List of Antardasha periods
     """
-    md_lord = mahadasha.planet
-    sequence = get_antardasha_sequence(md_lord)
-
-    antardashas = []
-    current_start = mahadasha.start_date
-
-    for ad_lord in sequence:
-        duration_years = calculate_antardasha_duration(md_lord, ad_lord)
-        duration_days = int(duration_years * 365.25)
-
-        end_date = current_start + timedelta(days=duration_days)
-
-        # Don't exceed Mahadasha end
-        if end_date > mahadasha.end_date:
-            end_date = mahadasha.end_date
-
-        antardashas.append(
-            DashaPeriod(
-                planet=ad_lord,
-                start_date=current_start,
-                end_date=end_date,
-                level=2,  # Antardasha
-                duration_years=duration_years,
-            )
-        )
-
-        current_start = end_date
-
-        if current_start >= mahadasha.end_date:
-            break
-
-    return antardashas
+    return subdivide_dasha(mahadasha, 2)
 
 
 def generate_pratyantardasha_timeline(antardasha: DashaPeriod) -> List[DashaPeriod]:
     """
     Generate Pratyantardasha (sub-sub-period) within an Antardasha.
 
-    Formula: Duration = (AD_years × PAD_years) / 120
-    where AD_years is the original dasha years for the Antardasha lord
+    PAD span = AD span x (PAD_years / 120). The 9 Pratyantardashas exactly
+    tile the Antardasha.
 
     Args:
         antardasha: The parent Antardasha period
@@ -124,51 +155,7 @@ def generate_pratyantardasha_timeline(antardasha: DashaPeriod) -> List[DashaPeri
     Returns:
         List of Pratyantardasha periods
     """
-    ad_lord = antardasha.planet
-    sequence = get_antardasha_sequence(ad_lord)
-
-    # Get the original dasha years for the AD lord (not the actual AD duration)
-    ad_years = VIMSHOTTARI_YEARS.get(ad_lord, 7)
-
-    pratyantardashas = []
-    current_start = antardasha.start_date
-
-    for pad_lord in sequence:
-        pad_years = VIMSHOTTARI_YEARS.get(pad_lord, 7)
-
-        # Duration in terms of the Antardasha's time scale
-        # PAD duration = (AD_duration_actual × PAD_years) / AD_years
-        actual_ad_duration_days = (antardasha.end_date - antardasha.start_date).days
-        duration_fraction = pad_years / 120.0  # Fraction of full cycle
-        duration_days = int(actual_ad_duration_days * (pad_years / sum(VIMSHOTTARI_YEARS.values())))
-
-        if duration_days < 1:
-            duration_days = 1
-
-        end_date = current_start + timedelta(days=duration_days)
-
-        # Don't exceed Antardasha end
-        if end_date > antardasha.end_date:
-            end_date = antardasha.end_date
-
-        duration_years = duration_days / 365.25
-
-        pratyantardashas.append(
-            DashaPeriod(
-                planet=pad_lord,
-                start_date=current_start,
-                end_date=end_date,
-                level=3,  # Pratyantardasha
-                duration_years=duration_years,
-            )
-        )
-
-        current_start = end_date
-
-        if current_start >= antardasha.end_date:
-            break
-
-    return pratyantardashas
+    return subdivide_dasha(antardasha, 3)
 
 
 def find_current_antardasha(

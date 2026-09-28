@@ -5,14 +5,13 @@ window. Pure functions over moon_longitude + birth_date; no I/O, no Click.
 Any agent harness can import this or call `atros timeline --output json`.
 """
 
-from datetime import date, timedelta
+from datetime import date
 from typing import Dict, List, Optional
 from .antardasha import (
     generate_antardasha_timeline,
     generate_pratyantardasha_timeline,
-    get_antardasha_sequence,
+    subdivide_dasha,
 )
-from ..core.constants import VIMSHOTTARI_YEARS
 from ..core.models import DashaPeriod
 from .vimshottari import generate_mahadasha_timeline
 
@@ -24,31 +23,11 @@ def _overlaps(a_start: date, a_end: date, b_start: date, b_end: date) -> bool:
 def subdivide_period(period: DashaPeriod, child_level: int) -> List[DashaPeriod]:
     """Generic subdivision of a dasha period into 9 children.
 
-    Child duration = parent_actual_days * (child_years / 120).
-    Same math as generate_pratyantardasha_timeline, extended to any level
+    Child span = parent span * (child_years / 120); children exactly tile the
+    parent (see antardasha.subdivide_dasha). Extends to any level
     (pratyantar -> sookshma -> praana).
     """
-    sequence = get_antardasha_sequence(period.planet)
-    parent_days = (period.end_date - period.start_date).days
-    children: List[DashaPeriod] = []
-    current = period.start_date
-    for lord in sequence:
-        frac = VIMSHOTTARI_YEARS.get(lord, 7) / 120.0
-        days = max(1, int(parent_days * frac))
-        end = min(current + timedelta(days=days), period.end_date)
-        children.append(
-            DashaPeriod(
-                planet=lord,
-                start_date=current,
-                end_date=end,
-                level=child_level,
-                duration_years=days / 365.25,
-            )
-        )
-        current = end
-        if current >= period.end_date:
-            break
-    return children
+    return subdivide_dasha(period, child_level)
 
 
 def chain_for_date(moon_longitude: float, birth_date: date, on: date) -> Dict[str, Optional[DashaPeriod]]:

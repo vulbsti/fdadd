@@ -28,12 +28,3 @@ export function verifyPiAuthority(token: string, secret: string, now = Date.now(
 export function piArtifactPrefix(authority: PiAuthority): string {
   return `${authority.userId}/${authority.personId}/${authority.runId}`;
 }
-
-export function piRuntimeEnabled(env = process.env): boolean {
-  if (env.ASTROLOGER_RUNTIME !== 'pi') return false;
-  // New runtime remains isolated until the Preview acceptance gate is complete.
-  if (env.VERCEL_ENV === 'production' || env.NEXT_PUBLIC_SUPABASE_URL !== 'https://wtloawiwntyjiidjbmuk.supabase.co') {
-    throw new Error('Pi runtime currently requires the isolated staging database and a non-production deployment.');
-  }
-  return true;
-}

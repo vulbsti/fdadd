@@ -5,12 +5,8 @@
  * supplies argv, paths, or shell strings — every command below is built from
  * zod-validated `BirthData` fields via the allowlisted builders.
  *
- * NOTE (Step-4 spike decision): the Eve agent framework (`eve` on npm) was
- * evaluated and deferred — it is a filesystem-first durable-agent runtime
- * with its own server (`eve init` scaffold, `eve/tools`), not a tool-loop
- * adapter for Next.js route handlers. The astrologer loop is therefore a
- * manual OpenRouter tool loop (see `src/lib/astro/loop.ts`); Atros still
- * executes in Vercel Sandbox, never as a local subprocess.
+ * Birth-setup calculations run in one shared sandbox with no user files; the
+ * Pi workspace installs its own copy for rectification.
  */
 
 import { promises as fs } from 'node:fs';
@@ -21,7 +17,7 @@ import { Sandbox } from '@vercel/sandbox';
 /**
  * Bump on any vendored Atros behavior change: it keys the calculation cache.
  */
-export const ATROS_ENGINE_VERSION = '0.1.0+aidoraa.20260914';
+export const ATROS_ENGINE_VERSION = '0.1.0+aidoraa.20260928';
 
 export const BirthDataSchema = z.object({
   name: z.string().min(1).max(200),
@@ -392,3 +388,25 @@ export async function runAtros(
 }
 
 export { invalidBirthData };
+
+const shellQuote = (value: string) => `'${value.replace(/'/g, `'\\''`)}'`;
+
+/**
+ * Run several allowlisted JSON commands in one sandbox call. Used for the
+ * precomputed transit series, where per-command round trips dominate.
+ */
+export async function runAtrosBatch(argvs: string[][], timeoutMs = 240_000): Promise<unknown[]> {
+  if (!argvs.every((argv) => argv.includes('--output') && argv.includes('json'))) throw new Error('Batch commands must request JSON output.');
+  const sandbox = await getAtrosSandbox();
+  await ensureAtrosInstalled(sandbox);
+  const script = argvs.map((argv) => `${VENV_BIN}/atros ${argv.map(shellQuote).join(' ')} || exit 3; printf '\\036'`).join('\n');
+  const result = await sandbox.runCommand('bash', ['-c', script], { timeoutMs });
+  const stdout = await result.stdout();
+  if (result.exitCode !== 0) {
+    const stderr = await result.stderr().catch(() => '');
+    throw new Error(`atros batch failed: ${(stderr || `exit ${result.exitCode}`).slice(0, 500)}`);
+  }
+  const outputs = stdout.split('\u001e').slice(0, argvs.length);
+  if (outputs.length !== argvs.length) throw new Error('atros batch returned an incomplete result set.');
+  return outputs.map((output) => JSON.parse(output));
+}

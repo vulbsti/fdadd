@@ -47,9 +47,9 @@ where they differ. Staging only; production still runs the legacy loop.
 
 ## Implemented slice
 
-- `ASTROLOGER_RUNTIME=pi` selects headless Pi 0.87.1 and one brokered Go Luna
-  model. The switch refuses production and any database other than the approved
-  staging project. The regular production deployment does not enable it.
+- Headless Pi 0.87.1 with one brokered Go Luna model is the only chat runtime,
+  in every environment including production. The former planner/verifier loop
+  and its `ASTROLOGER_RUNTIME` switch were removed.
 - A separate Vercel Sandbox is created for each owner/person/run and authority
   epoch, with `persistent: false`. The VM is an ephemeral working copy, not the
   persistence boundary. The explicit Ubuntu managed image supports the Atros

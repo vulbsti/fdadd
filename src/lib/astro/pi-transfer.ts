@@ -8,7 +8,7 @@ export const PI_CHUNK_BYTES = 1024 * 1024;
 export const PI_MAX_ARCHIVE_BYTES = 50 * PI_CHUNK_BYTES;
 
 export function isPiArtifactPath(value: string): boolean {
-  return /^(work|proposals|outputs|astrology\/calculations)\//.test(value)
+  return /^(work|proposals|outputs|astrology\/(hypotheses|calculations))\//.test(value)
     && !/[\0\\]/.test(value)
     && value.split('/').every((part) => part !== '' && part !== '.' && part !== '..');
 }

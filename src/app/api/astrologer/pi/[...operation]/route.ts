@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { verifyPiAuthority, piRuntimeEnabled } from '@/lib/astro/pi-authority';
-import { assertPiAuthority, assertPiAuthorityRecent, PI_DIGEST, recordPiRunEvents, writePiCheckpoint } from '@/lib/astro/pi-store';
+import { verifyPiAuthority } from '@/lib/astro/pi-authority';
+import { assertPiAuthority, assertPiAuthorityRecent, PI_DIGEST, PiQuestionSchema, recordPiRunEvents, writePiCheckpoint } from '@/lib/astro/pi-store';
 import { assemblePiTransfer, commitPiBlob, isPiArtifactPath, PiTransferError, PiTransferManifestSchema, PiTransferPartSchema,
   preparePiRestore, readPiBlobPart, readPiTransferPart, uploadPiTransferPart } from '@/lib/astro/pi-transfer';
 
@@ -16,6 +16,7 @@ const checkpointSchema = z.object({
     z.object({ path: artifactPath, digest: z.string().regex(PI_DIGEST), bytes: z.number().int().nonnegative() }).strict(),
   ])),
   events: z.array(eventSchema), answer: z.object({ content: z.array(z.object({ type: z.string(), text: z.string().optional() }).passthrough()).optional(), stopReason: z.string().optional() }).passthrough().nullable(),
+  question: PiQuestionSchema.nullable().optional(),
 });
 const liveEventsSchema = z.object({
   events: z.array(z.object({
@@ -32,7 +33,6 @@ function isAstrologyPath(file: { path: string }) {
 
 export async function POST(request: Request, { params }: { params: Promise<{ operation: string[] }> }) {
   try {
-    if (!piRuntimeEnabled()) return Response.json({ error: 'Runtime unavailable.' }, { status: 404 });
     const secret = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!secret) throw new Error('Missing broker configuration.');
     const authority = verifyPiAuthority(request.headers.get('x-aidoraa-run-capability') ?? '', secret);

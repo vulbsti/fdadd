@@ -21,14 +21,6 @@ class KerykeionAdapter:
     Provides sidereal planetary positions with Lahiri Ayanamsa.
     """
 
-    # Mapping from Kerykeion house strings to integers
-    HOUSE_MAP = {
-        "First_House": 1, "Second_House": 2, "Third_House": 3,
-        "Fourth_House": 4, "Fifth_House": 5, "Sixth_House": 6,
-        "Seventh_House": 7, "Eighth_House": 8, "Ninth_House": 9,
-        "Tenth_House": 10, "Eleventh_House": 11, "Twelfth_House": 12,
-    }
-
     # Mapping from Kerykeion abbreviated sign names to full names
     SIGN_ABBREV_MAP = {
         "Ari": "Aries", "Tau": "Taurus", "Gem": "Gemini", "Can": "Cancer",
@@ -60,6 +52,20 @@ class KerykeionAdapter:
     def _normalize_sign_name(self, sign: str) -> str:
         """Convert abbreviated sign name to full name."""
         return self.SIGN_ABBREV_MAP.get(sign, sign)
+
+    def _asc_sign_index(self, subject: AstrologicalSubject) -> int:
+        """Sign index (0-11) of the ascendant (Lagna) for a Kerykeion subject."""
+        first_house = subject.first_house
+        sign_name = self._normalize_sign_name(first_house.sign)
+        try:
+            return RASHI_NAMES.index(sign_name)
+        except ValueError:
+            return first_house.sign_num if hasattr(first_house, "sign_num") else 0
+
+    @staticmethod
+    def whole_sign_house(sign_index: int, asc_sign_index: int) -> int:
+        """Whole-sign (Rashi) house (1-12) of a sign counted from the Lagna sign."""
+        return ((sign_index - asc_sign_index) % 12) + 1
 
     def _create_subject(
         self, birth_data: BirthData, use_sidereal: bool = True
@@ -118,6 +124,7 @@ class KerykeionAdapter:
             }
         """
         subject = self._create_subject(birth_data, use_sidereal=True)
+        asc_sign_index = self._asc_sign_index(subject)
 
         planets = {}
 
@@ -135,12 +142,10 @@ class KerykeionAdapter:
                 # Handle potential sign name variations
                 sign_index = planet_obj.sign_num if hasattr(planet_obj, "sign_num") else 0
 
-            # Convert house string to int (e.g., "Eleventh_House" -> 11)
-            house_raw = planet_obj.house
-            if isinstance(house_raw, str):
-                house_num = self.HOUSE_MAP.get(house_raw, 1)
-            else:
-                house_num = int(house_raw) if house_raw else 1
+            # Whole-sign (Rashi) house counted from the Lagna sign. Kerykeion's
+            # own `planet_obj.house` is a quadrant (Placidus) house and must not
+            # be used: the lagna chart's house cusps are whole-sign.
+            house_num = self.whole_sign_house(sign_index, asc_sign_index)
 
             planets[planet_name] = {
                 "sign": sign_name,
@@ -157,7 +162,7 @@ class KerykeionAdapter:
             ketu_abs = (rahu["abs_pos"] + 180) % 360
             ketu_sign_index = int(ketu_abs / 30)
             ketu_degree = ketu_abs % 30
-            ketu_house = ((rahu["house"] + 6 - 1) % 12) + 1  # 7th from Rahu
+            ketu_house = self.whole_sign_house(ketu_sign_index, asc_sign_index)
 
             planets["Ketu"] = {
                 "sign": RASHI_NAMES[ketu_sign_index],

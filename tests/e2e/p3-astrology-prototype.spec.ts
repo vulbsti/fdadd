@@ -21,7 +21,7 @@ async function waitForRun(admin: SupabaseClient, runId: string) {
     return result.data.status;
   }, { timeout: 600_000, intervals: [1_000, 2_000, 4_000] }).toMatch(/^(waiting_for_user|complete|failed)$/);
   const result = await admin.from('astro_agent_runs')
-    .select('status,phase,error_code,output_message_id,plan_json').eq('id', runId).single();
+    .select('status,phase,error_code,output_message_id').eq('id', runId).single();
   if (result.error || !result.data) throw result.error ?? new Error('terminal run missing');
   if (result.data.status === 'failed') {
     const steps = await admin.from('astro_agent_run_steps')
@@ -101,21 +101,15 @@ liveIt('Luna plans and completes a cold current-dasha run through real Atros', a
     expect(payload.runId).toMatch(/^[0-9a-f-]{36}$/i);
 
     const run = await waitForRun(admin, payload.runId!);
-    const plan = run.plan_json as { steps?: Array<{ kind?: string; calculation?: { tool?: string; args?: unknown } }> };
-    expect(plan.steps).toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        kind: 'calculate',
-        calculation: { tool: 'atros_current_dasha', args: {} },
-      }),
-    ]));
-    const toolStep = await admin.from('astro_agent_run_steps')
-      .select('status,tool_name,refs,cache_hit')
-      .eq('run_id', payload.runId!).eq('kind', 'tool').eq('tool_name', 'atros_current_dasha')
+    // Dasha periods are precomputed at birth setup; the agent reads them.
+    const stored = await admin.from('astro_profile_calculations').select('timeline')
+      .eq('profile_id', profile.data.id).eq('user_id', userId).limit(1).single();
+    if (stored.error || !stored.data) throw stored.error ?? new Error('Precomputed calculations missing');
+    const readStep = await admin.from('astro_agent_run_steps').select('status,tool_name,refs')
+      .eq('run_id', payload.runId!).eq('kind', 'tool').in('tool_name', ['read', 'grep', 'bash']).eq('status', 'succeeded')
       .order('ordinal', { ascending: true }).limit(1).single();
-    if (toolStep.error || !toolStep.data) throw toolStep.error ?? new Error('Atros current-dasha receipt missing');
-    expect(toolStep.data.status).toBe('succeeded');
-    expect(toolStep.data.cache_hit).toBe(false);
-    expect(toolStep.data.refs).toMatchObject({ tool: 'atros_current_dasha', args: {} });
+    if (readStep.error || !readStep.data) throw readStep.error ?? new Error('The agent did not read its workspace');
+    expect(readStep.data.refs).toMatchObject({ runtime: 'pi' });
 
     const answer = await admin.from('astro_messages').select('content').eq('id', run.output_message_id).single();
     if (answer.error || !answer.data) throw answer.error ?? new Error('astrology answer missing');

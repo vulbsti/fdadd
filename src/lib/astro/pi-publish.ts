@@ -1,7 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore, type RunRow } from './agent-store';
 import { PiAuthoritySchema, piArtifactPrefix, type PiAuthority } from './pi-authority';
-import { assertPiAuthority, queuePiMemoryProposals, readPiCheckpoint, resolvePiCheckpointFiles, type PiCheckpoint } from './pi-store';
+import { assertPiAuthority, PiQuestionSchema, queuePiMemoryProposals, readPiCheckpoint, resolvePiCheckpointFiles, type PiCheckpoint } from './pi-store';
 
 type PublicationRun = Pick<RunRow, 'id' | 'user_id' | 'profile_id' | 'session_id' | 'status' | 'version' | 'output_message_id'>;
 type FinalReceipt = { status: string; refs: Record<string, unknown> };
@@ -59,10 +59,12 @@ function assertRunScope(run: PublicationRun, authority: PiAuthority) {
   }
 }
 
-async function completedPublication(authority: PiAuthority, deps: PiPublishDependencies): Promise<boolean> {
+type Published = 'complete' | 'waiting_for_user';
+
+async function completedPublication(authority: PiAuthority, deps: PiPublishDependencies): Promise<Published | null> {
   const run = await deps.getRun(authority.runId);
   assertRunScope(run, authority);
-  if (run.status !== 'complete') return false;
+  if (run.status !== 'complete' && run.status !== 'waiting_for_user') return null;
   const receipt = await deps.getFinalReceipt(authority);
   const refs = receipt?.refs;
   if (!run.output_message_id || receipt?.status !== 'succeeded' || refs?.runtime !== 'pi'
@@ -71,20 +73,22 @@ async function completedPublication(authority: PiAuthority, deps: PiPublishDepen
     || refs.birthRevision !== authority.birthRevision) {
     throw new Error('Completed run does not have a matching published Pi receipt.');
   }
-  return true;
+  return run.status as Published;
 }
 
 /** A lost Workflow acknowledgment can replay an already committed publication. */
 export async function publishPiAnswer(input: PiAuthority, provided?: PiPublishDependencies) {
   const authority = PiAuthoritySchema.parse(input);
   const deps = provided ?? dependencies();
-  if (await completedPublication(authority, deps)) return { status: 'complete' as const };
+  const done = await completedPublication(authority, deps);
+  if (done) return { status: done };
 
   try {
     await deps.assertAuthority(authority);
   } catch (error) {
     // A competing publication may commit between our first read and this fence.
-    if (await completedPublication(authority, deps)) return { status: 'complete' as const };
+    const done = await completedPublication(authority, deps);
+    if (done) return { status: done };
     throw error;
   }
   const checkpoint = await deps.readCheckpoint(authority);
@@ -97,6 +101,7 @@ export async function publishPiAnswer(input: PiAuthority, provided?: PiPublishDe
     p_run_id: authority.runId, p_expected_version: run.version,
     p_mode_epoch: authority.modeEpoch, p_privacy_epoch: authority.privacyEpoch,
     p_birth_revision: authority.birthRevision, p_answer: answer,
+    p_focused_question: checkpoint.question ? PiQuestionSchema.parse(checkpoint.question) : null,
     p_refs: { runtime: 'pi', artifactPrefix: piArtifactPrefix(authority), modeEpoch: authority.modeEpoch,
       privacyEpoch: authority.privacyEpoch, birthRevision: authority.birthRevision },
   };
@@ -104,15 +109,17 @@ export async function publishPiAnswer(input: PiAuthority, provided?: PiPublishDe
   try {
     result = await deps.finish(args);
   } catch (error) {
-    if (await completedPublication(authority, deps)) return { status: 'complete' as const };
+    const done = await completedPublication(authority, deps);
+    if (done) return { status: done };
     throw error;
   }
   if (result.error) {
     // The RPC's transaction may have succeeded before transport/step reporting
     // failed, or another worker may have published the same authority first.
-    if (await completedPublication(authority, deps)) return { status: 'complete' as const };
+    const done = await completedPublication(authority, deps);
+    if (done) return { status: done };
     throw new Error(`Pi publication failed (${result.error.code ?? 'database'}).`);
   }
   await queueProposalsBestEffort(authority, checkpoint, deps);
-  return { status: 'complete' as const };
+  return { status: (checkpoint.question ? 'waiting_for_user' : 'complete') as Published };
 }

@@ -4,6 +4,9 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore } from './agent-store';
 import { PiAuthoritySchema, type PiAuthority, piArtifactPrefix } from './pi-authority';
 import { parsePersonRunMode } from './run-mode';
+import { z } from 'zod';
+import { astrologyWorkspaceFiles, chartSummaryMarkdown, TimelineSchema, TransitSnapshotSchema, type ProfileCalculations } from './calculations';
+import { loadConversationHistory } from './conversation-history';
 
 export const PI_BUCKET = 'pi-workspaces';
 export interface WorkspaceFile { path: string; content: string }
@@ -13,10 +16,19 @@ export interface PiLiveEvent {
   seq: number; kind: 'text_delta' | 'tool_start' | 'tool_end' | 'exit'; segment: number;
   toolName: string | null; toolCallId: string | null; isError: boolean; text: string | null;
 }
+/** A focused question the agent asked with `ask_person`, shown after its answer. */
+export const PiQuestionSchema = z.object({
+  prompt: z.string().min(1).max(2000),
+  responseKind: z.enum(['free_text', 'single_choice']),
+  allowFreeText: z.boolean(),
+  options: z.array(z.object({ id: z.string().min(1).max(100), label: z.string().min(1).max(300), kind: z.enum(['answer', 'control']) }).strict()).max(12),
+}).strict();
+export type PiQuestion = z.infer<typeof PiQuestionSchema>;
 export interface PiCheckpoint {
   sequence: number; final: boolean; session: string; files: Array<WorkspaceFile | WorkspaceFileRef>;
   events: Array<{ type: string; toolName: string; toolCallId: string; isError: boolean }>;
   answer: { content?: Array<{ type: string; text?: string }>; stopReason?: string } | null;
+  question?: PiQuestion | null;
 }
 
 const AUTHORITY_KEYS = ['userId', 'personId', 'sessionId', 'modeEpoch', 'privacyEpoch', 'birthRevision', 'astrologyEnabled'] as const;
@@ -100,7 +112,7 @@ function groupBy<T extends Record<string, unknown>>(rows: T[], key: string) {
   return groups;
 }
 
-export async function loadPiFiles(authority: PiAuthority): Promise<{ files: WorkspaceFile[]; birth: Record<string, unknown> | null }> {
+export async function loadPiFiles(authority: PiAuthority) {
   await assertPiAuthority(authority);
   const admin = createAdminClient();
   const store = new AgentStore(admin, admin);
@@ -155,7 +167,8 @@ export async function loadPiFiles(authority: PiAuthority): Promise<{ files: Work
         relation_kind: relation.relation_kind, from_object_id: relation.from_object_id, to_object_id: relation.to_object_id });
     }
   }
-  const sources = await ownedRows(admin, 'person_source_items', '*', authority, (q) => q.eq('inclusion_status', 'included').eq('speaker_role', 'user').order('source_seq'));
+  const sourcesAll = await ownedRows(admin, 'person_source_items', '*', authority, (q) => q.eq('speaker_role', 'user').order('source_seq'));
+  const sources = sourcesAll.filter((source) => source.inclusion_status === 'included');
   const messageIds = sources.map((source) => source.source_message_id).filter((id): id is string => typeof id === 'string');
   const changeSourceIds = sources.filter((source) => !source.source_message_id).map((source) => String(source.id));
   const messages = new Map<unknown, Record<string, unknown>>();
@@ -178,9 +191,56 @@ export async function loadPiFiles(authority: PiAuthority): Promise<{ files: Work
     }
   }
   const birth = authority.astrologyEnabled && profile.birth_date && profile.birth_time && profile.lat != null && profile.lng != null && profile.tz
-    ? { date: profile.birth_date, time: String(profile.birth_time).slice(0, 5), latitude: Number(profile.lat), longitude: Number(profile.lng), timezone: profile.tz } : null;
-  if (birth) { add('astrology/birth.json', birth); add('astrology/chart.json', profile.chart_json); }
-  return { files, birth };
+    ? { date: String(profile.birth_date), time: String(profile.birth_time).slice(0, 5), latitude: Number(profile.lat), longitude: Number(profile.lng), timezone: String(profile.tz) } : null;
+  const today = todayIn(typeof profile.tz === 'string' ? profile.tz : 'UTC');
+  if (birth) {
+    add('astrology/birth.json', birth);
+    const calculations = await loadProfileCalculations(admin, authority);
+    if (calculations) {
+      for (const file of astrologyWorkspaceFiles(calculations, today, { timeSource: profile.time_source as string, timeConfidence: profile.time_confidence as string })) files.push(file);
+    } else {
+      // Profiles saved before precomputation keep a usable chart until backfilled.
+      add('astrology/chart.json', profile.chart_json);
+      if (profile.sensitivity_json) add('astrology/sensitivity.json', profile.sensitivity_json);
+      add('astrology/chart-summary.md', chartSummaryMarkdown({ chart: profile.chart_json as Record<string, unknown>, sensitivity: (profile.sensitivity_json ?? null) as Record<string, unknown> | null }));
+    }
+  }
+  const history = await loadConversationHistory(admin, authority, excludedMessageIds(sourcesAll));
+  for (const file of history.files) files.push(file);
+  const theory = await loadTheoryOfMind(admin, authority);
+  add('notes/theory-of-mind.md', theory ?? '# Theory of mind\n\nNothing yet: this is an early conversation with this person. It will be written from what they share.\n');
+  return { files, birth, today, historyFile: history.fileFor(authority.sessionId), conversation: history.earlierTurns(authority.sessionId) };
+}
+
+function todayIn(timeZone: string) {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
+
+export async function loadProfileCalculations(admin: SupabaseClient, authority: PiAuthority): Promise<ProfileCalculations | null> {
+  const result = await admin.from('astro_profile_calculations').select('birth_revision,engine_version,chart,sensitivity,timeline,transits')
+    .eq('profile_id', authority.personId).eq('user_id', authority.userId).eq('birth_revision', authority.birthRevision).maybeSingle();
+  if (result.error) throw new Error(`Workspace calculations read failed (${result.error.code ?? 'database'}).`);
+  if (!result.data) return null;
+  return { birthRevision: Number(result.data.birth_revision), engineVersion: String(result.data.engine_version), chart: result.data.chart,
+    sensitivity: result.data.sensitivity, timeline: TimelineSchema.parse(result.data.timeline), transits: z.array(TransitSnapshotSchema).parse(result.data.transits) };
+}
+
+/** User messages the person excluded from their model are never shown again. */
+function excludedMessageIds(sources: Record<string, unknown>[]) {
+  return new Set(sources.filter((source) => source.inclusion_status !== 'included' && source.source_message_id).map((source) => String(source.source_message_id)));
+}
+
+async function loadTheoryOfMind(admin: SupabaseClient, authority: PiAuthority) {
+  const result = await admin.from('person_theory_of_mind').select('content,privacy_epoch,revision,created_at')
+    .eq('profile_id', authority.personId).eq('user_id', authority.userId).order('revision', { ascending: false }).limit(1).maybeSingle();
+  if (result.error) throw new Error(`Theory of mind read failed (${result.error.code ?? 'database'}).`);
+  // A privacy change (for example an excluded source) invalidates the old theory.
+  if (!result.data || Number(result.data.privacy_epoch) !== authority.privacyEpoch) return null;
+  return String(result.data.content);
 }
 
 export async function readPiCheckpoint(authority: PiAuthority): Promise<PiCheckpoint | null> {

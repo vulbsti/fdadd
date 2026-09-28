@@ -355,33 +355,31 @@ test('Pi workspace: optimistic personal chat, fresh-chat memory, same-chat 2026 
     await settingsPage.close();
     settingsPage = null;
     const dasha = await send(page, admin, scope, 'Tell me about my Vimshottari maha and antar dashas for calendar year 2026, from 2026-01-01 through 2026-12-31. Calculate from my saved birth details and give the actual dated period boundaries as YYYY-MM-DD dates. Explain them as a reflective lens rather than a deterministic prediction.', info, visualIssues);
-    expect(dasha.steps).toEqual(expect.arrayContaining([expect.objectContaining({ tool_name: 'atros_timeline', status: 'succeeded' })]));
+    // The lifetime timeline is precomputed at birth setup; the answer must use its dates, not a recalculation.
+    expect(dasha.steps.some((step) => step.tool_name === 'recalculate')).toBe(false);
     expect(dasha.answer).toMatch(/2026-\d{2}-\d{2}/);
     const archive = await checkpoint(admin, scope, dasha.runId);
-    const calculationReceipt = archive.saved.files.find((file) => file.path.startsWith(`astrology/calculations/${dasha.runId}-`) && file.path.endsWith('/receipt.json')
-      && (JSON.parse(file.content) as { name?: string }).name === 'atros_timeline');
-    expect(calculationReceipt, 'The complete timeline calculation and its receipt must survive outside the VM.').toBeTruthy();
-    const calculation = JSON.parse(calculationReceipt!.content) as { name: string; args: string[]; result: string };
-    expect(calculation.args).toEqual(expect.arrayContaining(['--from', '2026-01-01', '--to', '2026-12-31']));
-    const fullResult = archive.saved.files.find((file) => file.path === calculation.result);
-    expect(fullResult).toBeTruthy();
-    const result = JSON.parse(fullResult!.content) as unknown;
-    expect(JSON.stringify(result)).toMatch(/2026-\d{2}-\d{2}/);
+    const stored = await admin.from('astro_profile_calculations').select('timeline').eq('profile_id', personId).eq('user_id', userId).single();
+    if (stored.error || !stored.data) throw new Error('Precomputed calculations are missing for the saved birth details.');
+    const boundaries2026 = new Set(JSON.stringify(stored.data.timeline).match(/2026-\d{2}-\d{2}/g) ?? []);
+    const quoted = dasha.answer.match(/2026-\d{2}-\d{2}/g) ?? [];
+    expect(quoted.length).toBeGreaterThan(0);
+    expect(quoted.every((date) => boundaries2026.has(date) || date === '2026-01-01' || date === '2026-12-31'),
+      'Every 2026 date in the answer must be a stored dasha boundary.').toBe(true);
     expect(archive.saved.answer?.content?.filter((part) => part.type === 'text').map((part) => part.text ?? '').join('\n').trim()).toBe(dasha.answer);
     await page.reload();
     await expect(page.locator(`#message-${dasha.outputMessageId}`)).toBeVisible();
     await screenshots(page, info, '08-atros-2026-answer-reloaded', visualIssues);
-    stage = 'same-mode session and calculation-file restore';
-    const followup = await send(page, admin, scope, 'Use the timeline result you just saved: which maha and antar period includes 2026-01-01? Repeat its dated boundaries and keep this answer concise.', info, visualIssues);
-    const continued = await checkpoint(admin, scope, followup.runId);
-    expect(continued.saved.files.find((file) => file.path === calculation.result)?.content).toBe(fullResult!.content);
+    stage = 'same-conversation follow-up';
+    const followup = await send(page, admin, scope, 'Which maha and antar period includes 2026-01-01? Repeat its dated boundaries and keep this answer concise.', info, visualIssues);
+    expect(followup.steps.some((step) => step.tool_name === 'recalculate')).toBe(false);
     expect(followup.answer).toMatch(/\d{4}-\d{2}-\d{2}/);
     await screenshots(page, info, '09-restored-calculation-followup', visualIssues);
     await info.attach('pi-workspace-proof', { body: JSON.stringify({ userId, personId, firstSessionId, recallSessionId,
       personalRunId: personal.runId, recallRunId: recall.runId, astrologyRunId: dasha.runId,
       followupRunId: followup.runId,
       checkpointSequence: archive.receipt.sequence, checkpointDigest: archive.receipt.digest,
-      timelineResultBytes: Buffer.byteLength(fullResult!.content), successfulTool: 'atros_timeline' }, null, 2), contentType: 'application/json' });
+      quotedBoundaries: quoted }, null, 2), contentType: 'application/json' });
     expect(visualIssues).toEqual([]);
     expect(browserErrors).toEqual([]);
   } catch (error) {

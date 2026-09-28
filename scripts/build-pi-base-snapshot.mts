@@ -1,6 +1,6 @@
-// Operator tool: build the Pi base snapshot (pinned Pi runtime + Atros, no user
-// data) that per-person workspaces start from. Prints the snapshot ID to set as
-// PI_BASE_SNAPSHOT_ID on the staging deployment. Requires Vercel Sandbox
+// Operator tool: build the Pi base snapshot (pinned Pi runtime, Atros, fd,
+// ripgrep and jq; no user data) that per-person workspaces start from. Prints
+// the snapshot ID to set as PI_BASE_SNAPSHOT_ID on staging and production. Requires Vercel Sandbox
 // credentials (VERCEL_OIDC_TOKEN, or VERCEL_TOKEN + team/project IDs).
 //
 //   npx tsx scripts/build-pi-base-snapshot.mts
@@ -9,7 +9,7 @@
 // every run, and a stale snapshot only costs a reinstall, never wrong code.
 import { Sandbox } from '@vercel/sandbox';
 import { ensureAtrosInstalled } from '../src/lib/astro/atros-commands';
-import { piRuntimeBundleHash, readPiRuntimeFiles } from '../src/lib/astro/pi-runtime';
+import { installWorkspacePackages, piRuntimeBundleHash, readPiRuntimeFiles } from '../src/lib/astro/pi-runtime';
 import { PI_INITIALIZATION_PROTOCOL } from '../src/lib/astro/pi-initialization';
 import { ATROS_ENGINE_VERSION } from '../src/lib/astro/atros-commands';
 
@@ -22,6 +22,9 @@ try {
   await sandbox.writeFiles(files);
   const install = await sandbox.runCommand('npm', ['ci', '--ignore-scripts', '--prefix', RUNTIME], { timeoutMs: 240_000 });
   if (install.exitCode !== 0) throw new Error('Pinned Pi installation failed.');
+  // fd, ripgrep and jq: Pi's find/grep and the agent's shell need them, and the
+  // sealed per-person VM cannot download them later.
+  await installWorkspacePackages(sandbox);
   await ensureAtrosInstalled(sandbox);
   // Same marker shape preparePiWorkspace expects for a VM with birth data.
   await sandbox.writeFiles([{ path: `${STATE}/install-ready.json`, content: JSON.stringify({

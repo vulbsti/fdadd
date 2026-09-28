@@ -113,6 +113,12 @@ test('test-only build replaces all shared database defaults and preserves unrela
   }
 });
 
+test('isolated test builds always receive the Preview protection bypass for Pi callbacks', () => {
+  const values = isolatedStagingValues({ ...stagingEnv, VERCEL_AUTOMATION_BYPASS_SECRET: 'synthetic-bypass' });
+  assert.equal(values.VERCEL_AUTOMATION_BYPASS_SECRET, 'synthetic-bypass');
+  assert.ok(!('ASTROLOGER_RUNTIME' in values));
+});
+
 test('accepts the two verified historical ledger aliases and required objects', () => {
   const output = [
     'MIGRATION|20260915101436',

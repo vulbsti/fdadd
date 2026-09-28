@@ -7,7 +7,7 @@
  * GET returns camelCase session summaries ordered by server activity.
  */
 
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { AgentStoreError } from '@/lib/astro/agent-store';
@@ -17,6 +17,7 @@ import {
   type AstrologerSessionSummary,
 } from '@/lib/astro/contracts';
 import { dispatchAstrologerRunBestEffort } from '@/lib/astro/run-dispatch';
+import { reflectOtherSessionsBestEffort } from '@/lib/astro/reflection-dispatch';
 
 export const runtime = 'nodejs';
 
@@ -100,6 +101,8 @@ export async function POST(request: Request) {
     }
 
     const created = await auth.store.createSession(parsed.data.profileId);
+    // A new conversation ends the earlier ones: reflect on them in the background.
+    after(() => reflectOtherSessionsBestEffort({ profileId: created.profileId, currentSessionId: created.sessionId }));
     return NextResponse.json(
       { sessionId: created.sessionId, profileId: created.profileId },
       { status: 201 },

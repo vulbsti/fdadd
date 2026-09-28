@@ -58,6 +58,8 @@ export interface ChatCompletionOptions {
   responseFormat?: { type: 'json_object' };
   /** Disable optional model reasoning when a bounded structured job needs predictable latency. */
   reasoningMode?: 'default' | 'disabled';
+  /** Reasoning depth for Responses-API reasoning models (OpenCode Go GPT family). */
+  reasoningEffort?: 'low' | 'medium' | 'high';
   /** Forwarded as `x-opencode-session` so Go can route + cache per conversation. */
   sessionId?: string;
   /** Bounded fetch timeout in milliseconds. */
@@ -424,6 +426,7 @@ export async function chatCompletion(options: ChatCompletionOptions): Promise<Ch
           ? { tool_choice: toResponsesToolChoice(provider.name, options.toolChoice) }
           : {}),
         ...(temperature !== undefined ? { temperature } : {}),
+        ...(options.reasoningEffort ? { reasoning: { effort: options.reasoningEffort } } : {}),
         // Reasoning models burn budget before emitting: default generously.
         max_output_tokens: options.maxTokens ?? 4096,
       }),

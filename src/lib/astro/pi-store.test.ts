@@ -38,6 +38,7 @@ function query(table: string) {
     in(key: string, values: unknown[]) { call.inFilters.push([key, values]); return builder; },
     then(resolve: (value: { data: Row[]; error: null }) => unknown) { return Promise.resolve({ data: rows(), error: null }).then(resolve); },
     order() { return builder; },
+    limit() { return builder; },
     async range(from: number, to: number) { return { data: rows().slice(from, to + 1), error: null }; },
     async maybeSingle() {
       const selected = rows();
@@ -144,6 +145,29 @@ describe('Pi owner-scoped graph and source hydration', () => {
     expect(files.filter((file) => file.path.startsWith('person/structured/objects/'))).toHaveLength(32);
     expect(state.calls.filter((call) => call.table === 'person_object_versions')).toHaveLength(1);
     expect(state.calls.filter((call) => call.table === 'person_objects')).toHaveLength(1);
+  });
+});
+
+describe('Pi conversation history and theory of mind', () => {
+  it('writes every conversation, the current one first-class, and the latest theory of mind', async () => {
+    state.tables.astro_sessions = [owned({ id: authority.sessionId, title: 'Notebook', created_at: '2026-09-28T09:00:00.000Z' })];
+    state.tables.astro_messages.push(
+      { id: 'message-b', user_id: authority.userId, session_id: authority.sessionId, role: 'user', content: 'Earlier question', created_at: '2026-09-28T09:01:00.000Z' },
+      { id: 'message-c', user_id: authority.userId, session_id: authority.sessionId, role: 'assistant', content: 'Earlier answer', created_at: '2026-09-28T09:02:00.000Z' },
+      { id: 'message-d', user_id: authority.userId, session_id: authority.sessionId, role: 'user', content: 'Current question', created_at: '2026-09-28T09:03:00.000Z' },
+    );
+    state.tables.person_theory_of_mind = [{ profile_id: authority.personId, user_id: authority.userId, revision: 2, privacy_epoch: 3, content: '# Theory\nDelays asking for help.' }];
+    const loaded = await loadPiFiles(authority);
+    expect(loaded.historyFile).toBe('2026-09-28-notebook-40000000.md');
+    expect(loaded.files.find((file) => file.path === `history/${loaded.historyFile}`)?.content).toContain('Current question');
+    expect(loaded.files.find((file) => file.path === 'notes/theory-of-mind.md')?.content).toContain('Delays asking for help.');
+    expect(loaded.conversation).toEqual([{ role: 'user', content: 'Earlier question' }, { role: 'assistant', content: 'Earlier answer' }]);
+  });
+
+  it('drops a theory of mind written before a privacy change', async () => {
+    state.tables.person_theory_of_mind = [{ profile_id: authority.personId, user_id: authority.userId, revision: 1, privacy_epoch: 2, content: 'Stale theory' }];
+    const { files } = await loadPiFiles(authority);
+    expect(files.find((file) => file.path === 'notes/theory-of-mind.md')?.content).not.toContain('Stale theory');
   });
 });
 

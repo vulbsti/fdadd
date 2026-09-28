@@ -56,6 +56,8 @@ jobs:
       P3_STAGING_SUPABASE_SECRET_KEY: ${{ secrets.P3_STAGING_SUPABASE_SECRET_KEY }}
       P3_STAGING_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.P3_STAGING_SUPABASE_PUBLISHABLE_KEY }}
       P3_STAGING_CRON_SECRET: ${{ secrets.P3_STAGING_CRON_SECRET }}
+      # The Pi sandbox calls back into the protected isolated Preview.
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

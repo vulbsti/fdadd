@@ -11,7 +11,24 @@ import type { AstrologerRunEvent } from './contracts';
 import { PI_INITIALIZATION_PROTOCOL, preparePiInitialization, withPiPreparationLock } from './pi-initialization';
 
 export const PI_RUNTIME_ASSETS = ['package.json', 'package-lock.json', 'runner.mjs', 'runner-state.mjs', 'extension.mjs', 'workspace-tools.mjs',
-  'skills/person-context/SKILL.md', 'skills/atros/SKILL.md'];
+  'hypotheses.mjs', 'system-prompt.md', 'skills/person-context/SKILL.md', 'skills/chart-reading/SKILL.md', 'skills/rectify/SKILL.md',
+  'skills/chart-reading/references/ascendant-profiles.md', 'skills/chart-reading/references/dasha-signatures.md',
+  'skills/chart-reading/references/house-themes.md', 'skills/chart-reading/references/questioning-framework.md'];
+/** Command-line tools Pi's find/grep and the agent's shell rely on; the VM cannot download them later. */
+export const PI_WORKSPACE_PACKAGES = ['fd-find', 'ripgrep', 'jq'];
+const WORKSPACE_TOOLS_READY = 'command -v rg >/dev/null && command -v jq >/dev/null && (command -v fd >/dev/null || command -v fdfind >/dev/null)';
+/** Workspace files regenerated from durable storage before every run. */
+const CANONICAL_PATHS = ['person', 'manifest.json', 'history', 'notes', 'runtime-skills', 'astrology/birth.json', 'astrology/chart.json',
+  'astrology/chart-summary.md', 'astrology/sensitivity.json', 'astrology/dasha', 'astrology/transits.md'];
+
+/** Install the workspace command-line tools. Only called before private data is written. */
+export async function installWorkspacePackages(sandbox: Sandbox) {
+  const install = () => sandbox.runCommand('sudo', ['apt-get', 'install', '-y', '-qq', ...PI_WORKSPACE_PACKAGES], { timeoutMs: 300_000 });
+  if ((await install()).exitCode !== 0) {
+    await sandbox.runCommand('sudo', ['apt-get', 'update', '-qq'], { timeoutMs: 300_000 });
+    if ((await install()).exitCode !== 0) throw new Error('Workspace tool installation failed.');
+  }
+}
 const ROOT = '/vercel/sandbox/aidoraa';
 const WORKSPACE = `${ROOT}/workspace`;
 const STATE = `${ROOT}/state`;
@@ -103,7 +120,9 @@ export async function preparePiWorkspace(runId: string) {
       if (pkg.version !== '0.87.1') process.exit(1);
       const api = await import('${RUNTIME}/node_modules/@earendil-works/pi-coding-agent/dist/index.js');
       if (typeof api.RpcClient !== 'function') process.exit(1);
-      await readFile('${RUNTIME}/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js');`;
+      await readFile('${RUNTIME}/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js');
+      const { execSync } = await import('node:child_process');
+      execSync(${JSON.stringify(WORKSPACE_TOOLS_READY)}, { shell: '/bin/bash', stdio: 'ignore' });`;
     const assertCleanForInstallation = async () => {
       const state = await readInitializationState();
       if (state.prepared || state.dataPhase || state.hasWorkspaceData) throw new Error('Refusing Pi installation after private data was written.');
@@ -120,6 +139,7 @@ export async function preparePiWorkspace(runId: string) {
         await sandbox.writeFiles(runtimeFiles);
         const install = await sandbox.runCommand('npm', ['ci', '--ignore-scripts', '--prefix', RUNTIME], { timeoutMs: 240000 });
         if (install.exitCode !== 0) throw new Error('Pinned Pi installation failed.');
+        await installWorkspacePackages(sandbox);
       },
       installAtros: async () => { await assertCleanForInstallation(); await ensureAtrosInstalled(sandbox); },
       writeReadyMarker: async (marker) => { await sandbox.writeFiles([{ path: READY_MARKER, content: marker }]); },
@@ -151,9 +171,13 @@ export async function preparePiWorkspace(runId: string) {
     }
     // Refresh only the generated canonical view; editable work and complete
     // calculation artifacts persist in the VM between messages.
-    const reset = await sandbox.runCommand('rm', ['-rf', `${WORKSPACE}/person`, `${WORKSPACE}/manifest.json`, `${WORKSPACE}/runtime-skills`]);
+    const canonical = CANONICAL_PATHS.map((relative) => `'${WORKSPACE}/${relative}'`).join(' ');
+    const reset = await sandbox.runCommand('bash', ['-lc', `chmod -R u+w ${canonical} 2>/dev/null; rm -rf ${canonical}`]);
     if (reset.exitCode !== 0) throw new Error('Could not refresh canonical workspace files.');
     await sandbox.writeFiles(loaded.files.map((file) => ({ path: `${WORKSPACE}/${file.path}`, content: file.content })));
+    // Canonical files are read-only to the agent: durable changes go through
+    // proposals and the session reflection, never through edits in the VM.
+    await sandbox.runCommand('bash', ['-lc', `mkdir -p '${WORKSPACE}/astrology/hypotheses' '${WORKSPACE}/work' '${WORKSPACE}/proposals'; chmod -R a-w ${canonical} 2>/dev/null; true`]);
     const sessionDirectory = `${STATE}/sessions/${authority.sessionId}`;
     const admin = createAdminClient();
     const run = await new AgentStore(admin, admin).getRun(runId);
@@ -177,7 +201,7 @@ export async function preparePiWorkspace(runId: string) {
         const checkpoint = await readPiCheckpoint({ ...authority, runId: refs.artifactPrefix.split('/').at(-1) });
         if (!checkpoint) throw new Error('Prior Pi session archive unavailable.');
         if (checkpoint.session) await sandbox.writeFiles([{ path: `${sessionDirectory}/restored.jsonl`, content: checkpoint.session }]);
-        const restorable = (await resolvePiCheckpointFiles(authority, checkpoint)).filter((file) => /^(work|proposals|outputs|astrology\/calculations)\//.test(file.path)
+        const restorable = (await resolvePiCheckpointFiles(authority, checkpoint)).filter((file) => /^(work|proposals|outputs|astrology\/(hypotheses|calculations))\//.test(file.path)
           && !/[\0\\]/.test(file.path) && !file.path.split('/').some((part) => ['', '.', '..'].includes(part))
           && (authority.astrologyEnabled || !file.path.startsWith('astrology/')));
         await sandbox.writeFiles(restorable.map((file) => ({ path: `${WORKSPACE}/${file.path}`, content: file.content })));
@@ -188,6 +212,7 @@ export async function preparePiWorkspace(runId: string) {
       broker: `${origin}/api/astrologer/pi`, astrologyEnabled: authority.astrologyEnabled,
       birth: loaded.birth, birthRevision: authority.birthRevision,
       prompt: message.data.content, deadlineMs: 15 * 60 * 1000,
+      today: loaded.today, historyFile: loaded.historyFile, conversation: loaded.conversation,
     }) }]);
     return { sandboxName: sandbox.name, configPath, authority };
   });

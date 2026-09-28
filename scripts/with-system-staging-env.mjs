@@ -1,7 +1,7 @@
 // Local operator helper. Credentials remain in process memory except a temporary,
 // private recovery secret needed across the deploy and browser-test commands.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync, mkdtempSync, copyFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, mkdtempSync, copyFileSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { randomBytes } from 'node:crypto';
@@ -37,9 +37,8 @@ try {
       P3_STAGING_SUPABASE_SECRET_KEY: keys.find((entry) => entry.type === 'secret')?.api_key,
       P3_STAGING_SUPABASE_PUBLISHABLE_KEY: keys.find((entry) => entry.type === 'publishable')?.api_key,
       P3_STAGING_CRON_SECRET: secret,
-      ...(process.env.ASTROLOGER_RUNTIME === 'pi' ? {
-        VERCEL_AUTOMATION_BYPASS_SECRET: Object.keys(api(`/v9/projects/${project}`).protectionBypass ?? {})[0],
-      } : {}),
+      // The Pi sandbox calls back into the protected Preview deployment.
+      VERCEL_AUTOMATION_BYPASS_SECRET: Object.keys(api(`/v9/projects/${project}`).protectionBypass ?? {})[0],
     };
     execFileSync('vercel', ['pull', '--yes', '--environment=preview'], { stdio: ['ignore', 'pipe', 'pipe'] });
     configureStagingBuild(env);
@@ -51,6 +50,8 @@ try {
       const files = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], { encoding: 'utf8' }).split('\0').filter(Boolean);
       for (const file of files) {
         if (file.split('/').some((part) => part.startsWith('.env') && part !== '.env.example')) continue;
+        // Tracked files deleted in the working tree are not part of the candidate.
+        if (!existsSync(file)) continue;
         const target = join(candidate, file);
         mkdirSync(dirname(target), { recursive: true });
         copyFileSync(file, target);
