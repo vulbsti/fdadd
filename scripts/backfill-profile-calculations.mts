@@ -1,5 +1,5 @@
 // Operator tool: compute the stored calculation set for existing profiles, and
-// refresh their frozen chart with the current Atros engine.
+// replace rows made by an older Atros engine.
 //
 //   NEXT_PUBLIC_SUPABASE_URL=… SUPABASE_SECRET_KEY=… VERCEL_OIDC_TOKEN=… \
 //     npx tsx scripts/backfill-profile-calculations.mts [--dry-run]

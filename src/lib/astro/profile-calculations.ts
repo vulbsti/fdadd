@@ -77,9 +77,7 @@ export async function recomputeProfileCalculations(admin: SupabaseClient, profil
   const results = { chart: chart as Record<string, unknown>, sensitivity: sensitivity as Record<string, unknown>,
     timeline: TimelineSchema.parse(timeline), transits: z.array(TransitSnapshotSchema).parse(transits) };
   await storeProfileCalculations(admin, profile, results);
-  // Keep the profile's frozen copies in step for the UI and older readers.
-  const { error } = await admin.from('astro_profiles').update({ chart_json: results.chart, sensitivity_json: results.sensitivity })
-    .eq('id', profileId).eq('user_id', userId).eq('birth_revision', profile.birthRevision);
-  if (error) throw new Error(`Profile chart could not be refreshed (${error.code ?? 'database'}).`);
+  // The profile's frozen chart copy is immutable by design; the agent reads
+  // this table, which is keyed by birth revision and engine version.
   return { birthRevision: profile.birthRevision };
 }
