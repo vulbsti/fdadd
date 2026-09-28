@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { draftRevisionInstruction, verificationNeedsRetry } from './verification-policy';
+import { draftRevisionInstruction, verificationNeedsRetry, verifierSystemPrompt } from './verification-policy';
 
 it('passes rejected claims and required evidence to the revising model without treating hypotheses as facts', () => {
   const instruction = draftRevisionInstruction({
@@ -45,4 +45,10 @@ describe('verificationNeedsRetry', () => {
   it('retries an unparseable verifier response', () => {
     expect(verificationNeedsRetry(null)).toBe(true);
   });
+});
+
+it('treats traditional astrological meanings as domain knowledge only when astrology is enabled', () => {
+  expect(verifierSystemPrompt(true)).toContain('general domain knowledge and need no tool receipt');
+  expect(verifierSystemPrompt(true)).toContain('must still match the tool references');
+  expect(verifierSystemPrompt(false)).not.toContain('astrolog');
 });
