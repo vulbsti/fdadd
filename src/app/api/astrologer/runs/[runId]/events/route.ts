@@ -50,6 +50,7 @@ function chunkToEvent(chunk: WorkflowChunk, runId: string): AstrologerRunEvent |
         error: payload.error,
         delta: payload.delta,
         segment: payload.segment,
+        seq: payload.seq,
       });
     default:
       return null;

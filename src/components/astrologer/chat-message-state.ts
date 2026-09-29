@@ -9,7 +9,8 @@ export function personalOnlyFromModel(value: unknown): boolean | null {
 
 export type ChatMessage = AstrologerMessage & {
   clientMessageId?: string;
-  delivery?: 'sending' | 'accepted' | 'failed';
+  /** `queued`: written while an answer was running; sent when it finishes. */
+  delivery?: 'queued' | 'sending' | 'accepted' | 'failed';
   answerToQuestionId?: string;
 };
 
@@ -36,4 +37,21 @@ export function acknowledgeMessage(
     if (persisted) return [];
     return [{ ...message, id: started.messageId ?? message.id, runId: started.runId, delivery: 'accepted' as const }];
   });
+}
+
+/**
+ * Messages written during a run go out together as one message once it ends,
+ * so the next answer reads everything the person added. The first queued
+ * bubble carries the joined text; the others fold into it.
+ */
+export function takeQueuedMessages(messages: ChatMessage[]): { messages: ChatMessage[]; send: ChatMessage | null } {
+  const queued = messages.filter((message) => message.delivery === 'queued');
+  if (!queued.length) return { messages, send: null };
+  const [first, ...rest] = queued;
+  const folded = new Set(rest.map((message) => message.id));
+  const send: ChatMessage = { ...first, content: queued.map((message) => message.content).join('\n\n') };
+  return {
+    messages: messages.flatMap((message) => folded.has(message.id) ? [] : message.id === first.id ? [send] : [message]),
+    send,
+  };
 }

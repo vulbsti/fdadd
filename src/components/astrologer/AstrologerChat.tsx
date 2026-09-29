@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, SendHorizonal } from 'lucide-react';
+import { Loader2, SendHorizonal, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type {
   ApiErrorDto,
@@ -21,7 +21,7 @@ import type {
   FocusedQuestion,
   StartRunResponse,
 } from '@/lib/astro/contracts';
-import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, type ChatMessage } from './chat-message-state';
+import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, takeQueuedMessages, type ChatMessage } from './chat-message-state';
 import { subscribePersonState } from './person-state-sync';
 import { AssistantMarkdown } from './AssistantMarkdown';
 import { applyRunEvent, parseRunEventData, startRunStream, type RunStreamState } from './run-stream-state';
@@ -193,7 +193,8 @@ function AstrologerChatSession({
   }, [anchorMessageId, loading, messages]);
 
   useEffect(() => {
-    if (messages.at(-1)?.delivery === 'sending') {
+    const delivery = messages.at(-1)?.delivery;
+    if (delivery === 'sending' || delivery === 'queued') {
       messageEndRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
     }
   }, [messages]);
@@ -259,14 +260,15 @@ function AstrologerChatSession({
   }, [connectEvents, detail]);
 
   const send = useCallback(
-    async (text: string, answerToQuestionId?: string, retryClientMessageId?: string) => {
+    async (text: string, answerToQuestionId?: string, retryClientMessageId?: string, foldQueued = false) => {
       if (sendState !== 'idle' || requestInFlightRef.current) return;
       requestInFlightRef.current = true;
       setSendState('sending');
       setError(null);
       const clientMessageId = retryClientMessageId ?? crypto.randomUUID();
       setMessages((current) => retryClientMessageId
-        ? current.map((message) => message.clientMessageId === clientMessageId ? { ...message, delivery: 'sending' } : message)
+        ? (foldQueued ? takeQueuedMessages(current).messages : current)
+          .map((message) => message.clientMessageId === clientMessageId ? { ...message, delivery: 'sending' } : message)
         : [...current, {
           id: clientMessageId, clientMessageId, role: 'user', content: text,
           createdAt: new Date().toISOString(), runId: null, delivery: 'sending', answerToQuestionId,
@@ -312,12 +314,40 @@ function AstrologerChatSession({
     [connectEvents, loadDetail, sendState, sessionId],
   );
 
+  const canChat = detail?.profile?.initializationStatus === 'ready';
+  const resumableFailed = detail?.latestRun?.kind === 'question' && detail.latestRun.status === 'failed' && detail.latestRun.resumable;
+  const hasQueued = messages.some((message) => message.delivery === 'queued');
+
+  // The composer stays open during an answer. What is written meanwhile shows
+  // at once and goes out, as one message, when the current answer finishes.
   const submitDraft = useCallback(() => {
     const text = draft.trim();
-    if (!text || sendState !== 'idle' || requestInFlightRef.current) return;
+    if (!text || !canChat || resumableFailed) return;
     setDraft('');
-    void send(text, focusedQuestion?.id);
-  }, [draft, focusedQuestion?.id, send, sendState]);
+    if (sendState === 'idle' && !requestInFlightRef.current && !hasQueued) {
+      void send(text, focusedQuestion?.id);
+      return;
+    }
+    const clientMessageId = crypto.randomUUID();
+    setMessages((current) => [...current, {
+      id: clientMessageId, clientMessageId, role: 'user', content: text,
+      createdAt: new Date().toISOString(), runId: null, delivery: 'queued',
+    }]);
+  }, [canChat, draft, focusedQuestion?.id, hasQueued, resumableFailed, send, sendState]);
+
+  useEffect(() => {
+    if (!hasQueued || sendState !== 'idle' || requestInFlightRef.current || !canChat || resumableFailed) return;
+    const { send: next } = takeQueuedMessages(messages);
+    if (!next) return;
+    // Sent from a task, so a render in between cancels it rather than sending twice.
+    // A queued message is not an answer to a focused question asked later.
+    const timer = setTimeout(() => void send(next.content, undefined, next.clientMessageId, true), 0);
+    return () => clearTimeout(timer);
+  }, [canChat, hasQueued, messages, resumableFailed, send, sendState]);
+
+  const removeQueued = useCallback((id: string) => {
+    setMessages((current) => current.filter((message) => message.id !== id || message.delivery !== 'queued'));
+  }, []);
 
   if (loading) {
     return (
@@ -332,8 +362,7 @@ function AstrologerChatSession({
   const busy = sendState !== 'idle';
   const latestRun = detail?.latestRun ?? null;
   const intakeFailed = detail?.profile?.initializationStatus === 'failed' && latestRun?.kind === 'intake';
-  const resumableFailed = latestRun?.kind === 'question' && latestRun.status === 'failed' && latestRun.resumable;
-  const canChat = detail?.profile?.initializationStatus === 'ready';
+  const queued = messages.filter((message) => message.delivery === 'queued');
 
   const resume = async () => {
     if (!latestRun || busy) return;
@@ -410,7 +439,7 @@ function AstrologerChatSession({
 
       <ScrollArea className="min-h-0 flex-1 p-4">
         <div className="flex flex-col gap-3">
-          {messages.map((message) => (
+          {messages.filter((message) => message.delivery !== 'queued').map((message) => (
             <div
               key={message.id}
               id={`message-${message.id}`}
@@ -468,6 +497,19 @@ function AstrologerChatSession({
           {busy ? (
             <div className="text-xs text-muted-foreground">{stream?.activity ?? (currentPersonalOnly ? 'Thinking with your current personal context…' : 'Consulting your context and chart…')}</div>
           ) : null}
+          {queued.map((message) => (
+            <div key={message.id} id={`message-${message.id}`} className="flex justify-end gap-2" data-testid="queued-message">
+              <div className="min-w-0 max-w-[75%] rounded-lg border border-dashed border-primary/60 bg-primary/10 px-3 py-2 text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">
+                {message.content}
+                <div className="mt-1 flex items-center justify-end gap-2 text-xs text-muted-foreground">
+                  <span>Sends when this answer finishes</span>
+                  <button type="button" aria-label="Remove queued message" className="rounded p-0.5 hover:bg-muted" onClick={() => removeQueued(message.id)}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
           <div ref={messageEndRef} />
         </div>
       </ScrollArea>
@@ -538,7 +580,7 @@ function AstrologerChatSession({
         <Input
           placeholder={currentPersonalOnly ? 'Tell me what you are exploring…' : 'Ask your companion…'}
           value={draft}
-          disabled={busy || !canChat || resumableFailed}
+          disabled={!canChat || resumableFailed}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -549,7 +591,8 @@ function AstrologerChatSession({
         />
         <Button
           size="icon"
-          disabled={busy || !canChat || resumableFailed || draft.trim().length === 0}
+          aria-label={busy ? 'Add to the conversation' : 'Send message'}
+          disabled={!canChat || resumableFailed || draft.trim().length === 0}
           onClick={submitDraft}
         >
           <SendHorizonal className="h-4 w-4" />
