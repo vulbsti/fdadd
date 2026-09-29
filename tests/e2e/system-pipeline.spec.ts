@@ -119,13 +119,45 @@ async function sendMessage(page: Page, admin: SupabaseClient, text: string) {
   return { runId: payload.runId, messageId: payload.messageId, answer: answer.data.content, outputMessageId: run.output_message_id! };
 }
 
+/** What the chat showed and what its session read returned, for a failure message. */
+async function describeChatState(page: Page) {
+  const lines = [`url: ${page.url()}`];
+  const sessionId = page.url().match(/\/chat\/([0-9a-f-]{36})/i)?.[1];
+  if (sessionId) {
+    const detail = await page.request.get(`/api/astrologer/sessions/${sessionId}`).catch((error: Error) => error);
+    if (detail instanceof Error) lines.push(`session read failed: ${detail.message}`);
+    else {
+      const body = await detail.text().catch(() => '');
+      lines.push(`session read: HTTP ${detail.status()}`);
+      try {
+        const data = JSON.parse(body) as { messages?: Array<{ id: string; role: string }>; latestRun?: { status?: string } | null; session?: { status?: string } };
+        lines.push(`session status: ${data.session?.status ?? '?'}, latest run: ${data.latestRun?.status ?? 'none'}`);
+        lines.push(`messages: ${(data.messages ?? []).map((m) => `${m.role}:${m.id}`).join(', ') || 'none'}`);
+      } catch {
+        lines.push(`body: ${body.slice(0, 500)}`);
+      }
+    }
+  }
+  const rendered = await page.locator('[id^="message-"]').evaluateAll((nodes) => nodes.map((node) => node.id)).catch(() => []);
+  lines.push(`rendered bubbles: ${rendered.join(', ') || 'none'}`);
+  const alerts = await page.getByRole('alert').allInnerTexts().catch(() => []);
+  if (alerts.length) lines.push(`alerts: ${alerts.join(' | ').slice(0, 500)}`);
+  const main = await page.locator('main').innerText().catch(() => '');
+  lines.push(`visible text: ${main.replace(/\s+/g, ' ').slice(0, 800)}`);
+  return lines.join('\n');
+}
+
 /**
  * Answers render as Markdown, so the stored text is not the DOM text. Find the
  * persisted message by its id and compare its rendered words, ignoring syntax.
  */
 async function expectAnswerVisible(page: Page, outputMessageId: string, content: string) {
   const bubble = page.locator(`[id="message-${outputMessageId}"]`);
-  await expect(bubble).toBeVisible({ timeout: 30_000 });
+  try {
+    await expect(bubble).toBeVisible({ timeout: 30_000 });
+  } catch (error) {
+    throw new Error(`${(error as Error).message}\n\nPage state when the answer was missing:\n${await describeChatState(page)}`);
+  }
   // Word tokens without numbers: list markers, emphasis and table pipes vanish
   // when rendered, but the prose words stay in order.
   const words = (text: string) => (text.match(/[\p{L}’']+/gu) ?? []).join(' ');
