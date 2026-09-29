@@ -7,6 +7,7 @@ import { ATROS_ENGINE_VERSION, ensureAtrosInstalled } from './atros-commands';
 import { piArtifactPrefix, signPiAuthority, type PiAuthority } from './pi-authority';
 import { assertPiAuthority, hasFinalPiCheckpoint, loadPiAuthority, loadPiFiles, readPiCheckpoint, readPiRunEvents,
   resolvePiCheckpointFiles } from './pi-store';
+import { loadImportFiles } from '@/lib/imports/store';
 import type { AstrologerRunEvent } from './contracts';
 import { PI_INITIALIZATION_PROTOCOL, preparePiInitialization, withPiPreparationLock } from './pi-initialization';
 
@@ -183,6 +184,7 @@ export async function preparePiWorkspace(runId: string) {
     // Canonical files are read-only to the agent: durable changes go through
     // proposals and the session reflection, never through edits in the VM.
     await sandbox.runCommand('bash', ['-lc', `mkdir -p '${WORKSPACE}/astrology/hypotheses' '${WORKSPACE}/work' '${WORKSPACE}/proposals'; chmod -R a-w ${canonical} 2>/dev/null; true`]);
+    await refreshImports(sandbox, authority, loaded.imports.signature);
     const sessionDirectory = `${STATE}/sessions/${authority.sessionId}`;
     const admin = createAdminClient();
     const run = await new AgentStore(admin, admin).getRun(runId);
@@ -221,6 +223,31 @@ export async function preparePiWorkspace(runId: string) {
     }) }]);
     return { sandboxName: sandbox.name, configPath, authority };
   });
+}
+
+/**
+ * Imported conversations and documents live in `imports/`, read-only like the
+ * other canonical files. They can be large, so the folder is rewritten only
+ * when what is imported changes, not on every message.
+ */
+async function refreshImports(sandbox: Sandbox, authority: PiAuthority, signature: string) {
+  const marker = `${STATE}/imports-signature`;
+  const current = await sandbox.readFileToBuffer({ path: marker });
+  if (current?.toString() === signature) return;
+  const dir = `${WORKSPACE}/imports`;
+  const reset = await sandbox.runCommand('bash', ['-lc', `chmod -R u+w '${dir}' 2>/dev/null; rm -rf '${dir}'`]);
+  if (reset.exitCode !== 0) throw new Error('Could not refresh imported files.');
+  const files = await loadImportFiles(createAdminClient(), authority);
+  let batch: Array<{ path: string; content: string }> = [];
+  let bytes = 0;
+  for (const file of files) {
+    batch.push({ path: `${WORKSPACE}/${file.path}`, content: file.content });
+    bytes += file.content.length;
+    if (bytes > 8_000_000) { await sandbox.writeFiles(batch); batch = []; bytes = 0; }
+  }
+  if (batch.length) await sandbox.writeFiles(batch);
+  await sandbox.runCommand('bash', ['-lc', `chmod -R a-w '${dir}' 2>/dev/null; true`]);
+  await sandbox.writeFiles([{ path: marker, content: signature }]);
 }
 
 export async function startPiWorkspace(input: Awaited<ReturnType<typeof preparePiWorkspace>>) {
