@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, type ChatMessage } from './chat-message-state';
+import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, takeQueuedMessages, type ChatMessage } from './chat-message-state';
 
 it('recognizes the actual read-model modes without inventing a second enum', () => {
   expect(personalOnlyFromModel({ mode: 'personal' })).toBe(true);
@@ -35,5 +35,26 @@ describe('optimistic chat reconciliation', () => {
   it('keeps repeated identical text distinct', () => {
     const old = { ...persisted, id: 'old-id' };
     expect(acknowledgeMessage([old, optimistic], optimistic.clientMessageId!, ack)).toHaveLength(2);
+  });
+});
+
+describe('messages written during an answer', () => {
+  const queued = (id: string, content: string): ChatMessage => ({
+    id, clientMessageId: id, role: 'user', content, createdAt: optimistic.createdAt, runId: null, delivery: 'queued',
+  });
+
+  it('go out as one message in the first queued bubble, in the order written', () => {
+    const taken = takeQueuedMessages([persisted, queued('a', 'Also, my sister'), queued('b', 'she was born in 1990')]);
+    expect(taken.send).toMatchObject({ id: 'a', clientMessageId: 'a', content: 'Also, my sister\n\nshe was born in 1990' });
+    expect(taken.messages).toEqual([persisted, taken.send]);
+  });
+
+  it('leave the conversation alone when nothing is queued', () => {
+    const messages = [persisted];
+    expect(takeQueuedMessages(messages)).toEqual({ messages, send: null });
+  });
+
+  it('stay visible through detail refreshes until sent', () => {
+    expect(mergePersistedMessages([queued('a', 'later')], [persisted])).toEqual([persisted, queued('a', 'later')]);
   });
 });

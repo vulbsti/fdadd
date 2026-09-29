@@ -206,6 +206,8 @@ export const AstrologerRunEventSchema = z.object({
   /** Streamed draft text. A new segment starts a new assistant message and replaces the draft. */
   delta: z.string().max(16000).optional(),
   segment: z.number().int().nonnegative().optional(),
+  /** Last live-event row a delta covers; a retried poll can repeat rows, and the reader skips them. */
+  seq: z.number().int().nonnegative().optional(),
 });
 export type AstrologerRunEvent = z.infer<typeof AstrologerRunEventSchema>;
 

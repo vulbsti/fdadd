@@ -10,7 +10,7 @@
  * instead of duplicating effects.
  */
 
-import { getWorkflowMetadata, getWritable, sleep } from 'workflow';
+import { getWorkflowMetadata, getWritable } from 'workflow';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore, type RunRow } from '@/lib/astro/agent-store';
 import { ProviderError } from '@/lib/ai/provider';
@@ -186,11 +186,27 @@ async function startPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>
   await startPiWorkspace(input);
 }
 
-async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number, probeSandbox: boolean) {
+/** How long one poll step keeps forwarding live events before handing back to the workflow. */
+const POLL_STEP_MS = 20_000;
+const POLL_INTERVAL_MS = 800;
+
+async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number) {
   'use step';
   const writer = getWritable<RunEventChunk>().getWriter();
+  const write = async (event: AstrologerRunEvent) => { await writer.write({ type: event.event, payload: event }); };
   try {
-    return await pollPiWorkspace(input, cursor, async (event) => { await writer.write({ type: event.event, payload: event }); }, { probeSandbox });
+    // Every step and workflow sleep is a durable round trip of a second or
+    // more, so one short read per step made streamed text arrive in bursts.
+    // Stream writes reach readers at once; stay here and read often instead.
+    // A retry of this step re-sends rows from `cursor`; readers skip by seq.
+    // A killed runner cannot report its exit, so each step checks the VM once.
+    const until = Date.now() + POLL_STEP_MS;
+    let progress = await pollPiWorkspace(input, cursor, write, { probeSandbox: true });
+    while (!progress.done && Date.now() < until) {
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+      progress = await pollPiWorkspace(input, progress.cursor, write);
+    }
+    return progress;
   } finally {
     writer.releaseLock();
   }
@@ -205,14 +221,13 @@ async function piWorkspaceWorkflowBody(runId: string, emit: RunEventSink) {
   await emit({ event: 'phase.changed', runId, phase: 'analysis', status: 'active', summary: 'Opening your isolated Pi workspace' });
   const prepared = await preparePiStep(runId);
   await startPiStep(prepared);
-  // Live events are small database rows, so a short interval is cheap. The
-  // per-person VM is left running for the next message and expires when idle.
+  // Each poll step reads live events for a while itself. The per-person VM
+  // is left running for the next message and expires when idle.
   let cursor = 0;
-  for (let poll = 1; ; poll++) {
-    const progress = await pollPiStep(prepared, cursor, poll % 5 === 0);
+  for (;;) {
+    const progress = await pollPiStep(prepared, cursor);
     cursor = progress.cursor;
     if (progress.done) break;
-    await sleep('2s');
   }
   const result = await publishPiStep(prepared.authority);
   await emit({ event: 'answer.ready', runId, phase: 'responding', summary: 'Answer and workspace saved' });

@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore } from './agent-store';
 import { ATROS_ENGINE_VERSION, ensureAtrosInstalled } from './atros-commands';
 import { piArtifactPrefix, signPiAuthority, type PiAuthority } from './pi-authority';
-import { assertPiAuthority, hasFinalPiCheckpoint, loadPiAuthority, loadPiFiles, readPiCheckpoint, readPiRunEvents,
+import { assertPiAuthority, assertPiAuthorityRecent, hasFinalPiCheckpoint, loadPiAuthority, loadPiFiles, readPiCheckpoint, readPiRunEvents,
   resolvePiCheckpointFiles } from './pi-store';
 import { loadImportFiles } from '@/lib/imports/store';
 import type { AstrologerRunEvent } from './contracts';
@@ -269,23 +269,25 @@ export interface PiPollProgress { done: boolean; cursor: number; exited: boolean
 export async function pollPiWorkspace(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number,
   emit: (event: AstrologerRunEvent) => Promise<void>, options: { probeSandbox?: boolean } = {}): Promise<PiPollProgress> {
   const { authority } = input;
-  await assertPiAuthority(authority);
+  // Polled about once a second; a check from the last few seconds is enough
+  // here, and publication re-checks against the database.
+  await assertPiAuthorityRecent(authority);
   const events = await readPiRunEvents(authority, cursor);
   const store = new AgentStore(createAdminClient(), createAdminClient());
   let exited = false;
   // Adjacent text rows of one message segment become one stream event.
-  const pending: { text: { segment: number; delta: string } | null } = { text: null };
+  const pending: { text: { segment: number; delta: string; seq: number } | null } = { text: null };
   const flushText = async () => {
     const text = pending.text;
     if (!text) return;
     pending.text = null;
-    await emit({ event: 'answer.delta', runId: authority.runId, phase: 'responding', segment: text.segment, delta: text.delta });
+    await emit({ event: 'answer.delta', runId: authority.runId, phase: 'responding', segment: text.segment, delta: text.delta, seq: text.seq });
   };
   for (const event of events) {
     if (event.kind === 'text_delta') {
       const text = pending.text;
       if (text && (text.segment !== event.segment || text.delta.length + (event.text?.length ?? 0) > 16000)) await flushText();
-      pending.text = { segment: event.segment, delta: `${pending.text?.delta ?? ''}${event.text ?? ''}` };
+      pending.text = { segment: event.segment, delta: `${pending.text?.delta ?? ''}${event.text ?? ''}`, seq: event.seq };
       continue;
     }
     await flushText();

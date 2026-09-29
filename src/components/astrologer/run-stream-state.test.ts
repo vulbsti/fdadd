@@ -20,6 +20,14 @@ describe('live run stream state', () => {
     expect(state?.draft).toBe('');
   });
 
+  it('skips rows a retried server poll sends again', () => {
+    let state = startRunStream(runId);
+    state = applyRunEvent(state, { event: 'answer.delta', runId, segment: 1, delta: 'Your ', seq: 3 })!;
+    state = applyRunEvent(state, { event: 'answer.delta', runId, segment: 1, delta: 'Your ', seq: 3 })!;
+    state = applyRunEvent(state, { event: 'answer.delta', runId, segment: 1, delta: 'chart', seq: 5 })!;
+    expect(state.draft).toBe('Your chart');
+  });
+
   it('rejects malformed event data', () => {
     expect(parseRunEventData('{not json')).toBeNull();
     expect(parseRunEventData(JSON.stringify({ runId }))).toBeNull();
