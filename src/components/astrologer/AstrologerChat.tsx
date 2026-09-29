@@ -60,6 +60,11 @@ function AstrologerChatSession({
   const [focusedQuestion, setFocusedQuestion] = useState<FocusedQuestion | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const eventRunIdRef = useRef<string | null>(null);
+  // The question run whose stored answer this view still has to show. It is
+  // cleared only by a session read that sees the run finished, never by the
+  // stream alone, so one lost event or failed read cannot hide the answer.
+  const pendingRunIdRef = useRef<string | null>(null);
+  const detailInFlightRef = useRef<number | null>(null);
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const [stream, setStream] = useState<RunStreamState | null>(null);
   const requestInFlightRef = useRef(false);
@@ -91,6 +96,7 @@ function AstrologerChatSession({
 
   const loadDetail = useCallback(async (): Promise<AstrologerSessionDetail | null> => {
     const requestId = ++detailRequestRef.current;
+    detailInFlightRef.current = Date.now();
     try {
       const response = await fetch(`/api/astrologer/sessions/${sessionId}`, { cache: 'no-store' });
       if (sessionIdRef.current !== sessionId || requestId !== detailRequestRef.current) return null;
@@ -111,14 +117,21 @@ function AstrologerChatSession({
       setLoading(false);
       void refreshMode(data.session.profileId);
       if (data.latestRun?.kind === 'question' && data.latestRun.status === 'active') {
+        pendingRunIdRef.current = data.latestRun.id;
         setSendState('streaming');
       }
       if (data.latestRun?.status !== 'active') setStream(null);
-      if (eventRunIdRef.current === data.latestRun?.id && data.latestRun?.status !== 'active') {
-        eventSourceRef.current?.close();
-        eventSourceRef.current = null;
-        eventRunIdRef.current = null;
-        setSendState('idle');
+      if (data.latestRun && data.latestRun.status !== 'active'
+        && (pendingRunIdRef.current === null || pendingRunIdRef.current === data.latestRun.id)) {
+        if (eventRunIdRef.current === data.latestRun.id) {
+          eventSourceRef.current?.close();
+          eventSourceRef.current = null;
+          eventRunIdRef.current = null;
+        }
+        if (pendingRunIdRef.current !== null) {
+          pendingRunIdRef.current = null;
+          setSendState('idle');
+        }
       }
       return data;
     } catch {
@@ -127,6 +140,8 @@ function AstrologerChatSession({
         setLoading(false);
       }
       return null;
+    } finally {
+      if (requestId === detailRequestRef.current) detailInFlightRef.current = null;
     }
   }, [onSessionUpdated, refreshMode, sessionId]);
 
@@ -167,6 +182,7 @@ function AstrologerChatSession({
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
       eventRunIdRef.current = null;
+      pendingRunIdRef.current = null;
     };
   }, [loadDetail]);
 
@@ -187,6 +203,7 @@ function AstrologerChatSession({
       if (eventRunIdRef.current === runId && eventSourceRef.current) return;
       eventSourceRef.current?.close();
       eventRunIdRef.current = runId;
+      pendingRunIdRef.current = runId;
       const url = `/api/astrologer/runs/${runId}/events${after ? `?after=${after}` : ''}`;
       const source = new EventSource(url);
       eventSourceRef.current = source;
@@ -199,18 +216,16 @@ function AstrologerChatSession({
       };
       for (const name of ['answer.delta', 'phase.changed', 'tool.started', 'tool.completed']) source.addEventListener(name, applyLive);
       source.addEventListener('answer.ready', () => void loadDetail());
-      source.addEventListener('run.completed', () => {
+      // The composer unlocks once a session read shows the finished run and
+      // its stored answer; until then the poll below keeps reading.
+      const finished = () => {
         source.close();
-        eventRunIdRef.current = null;
-        setSendState('idle');
+        if (eventSourceRef.current === source) eventSourceRef.current = null;
+        if (eventRunIdRef.current === runId) eventRunIdRef.current = null;
         void loadDetail();
-      });
-      source.addEventListener('run.failed', () => {
-        source.close();
-        eventRunIdRef.current = null;
-        setSendState('idle');
-        void loadDetail();
-      });
+      };
+      source.addEventListener('run.completed', finished);
+      source.addEventListener('run.failed', finished);
       source.onerror = () => {
         // EventSource reconnects automatically with Last-Event-ID. Refresh
         // the durable row too, so a short-lived stream failure cannot leave
@@ -226,7 +241,13 @@ function AstrologerChatSession({
     // durable conversation, so a missed or expired event can never leave a
     // stored answer unseen.
     if (sendState !== 'streaming') return;
-    const timer = setInterval(() => void loadDetail(), 5000);
+    const timer = setInterval(() => {
+      // A slow read must be allowed to land: starting a newer one would
+      // discard it, and a read slower than the interval would never apply.
+      const started = detailInFlightRef.current;
+      if (started !== null && Date.now() - started < 20_000) return;
+      void loadDetail();
+    }, 5000);
     return () => clearInterval(timer);
   }, [loadDetail, sendState]);
 
