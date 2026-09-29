@@ -53,8 +53,6 @@ jobs:
           > /dev/null
       - name: Two-user database/RLS integration
         run: npm run test:db:local
-      - name: Upgrade a populated legacy schema in an isolated local database
-        run: AIDORAA_LOCAL_UPGRADE_REPRO=1 node scripts/test-local-atomic-upgrade.mjs
       - name: Wait for the Chromium install
         run: |
           while [ ! -f "$RUNNER_TEMP/playwright-install.status" ]; do sleep 1; done

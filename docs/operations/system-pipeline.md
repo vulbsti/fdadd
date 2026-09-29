@@ -103,14 +103,3 @@ contents and runtime constraint defaults; it does not disable validation.
 PostgreSQL documents the transaction-local behavior of
 [SET CONSTRAINTS](https://www.postgresql.org/docs/current/sql-set-constraints.html).
 
-Reproduce the populated upgrade safely before a release:
-
-```bash
-AIDORAA_LOCAL_UPGRADE_REPRO=1 node scripts/test-local-atomic-upgrade.mjs
-```
-
-This creates a uniquely named temporary database inside the verified local
-Supabase container, applies the three legacy migrations, seeds one synthetic
-profile, proves the old failure rolls back, and verifies the corrected upgrade
-preserves the profile/chart and creates its revision head. It drops only that
-temporary database and never connects to a remote project. P0 CI runs it too.
