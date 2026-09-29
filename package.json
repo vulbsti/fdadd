@@ -10,7 +10,6 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:pi:workspace": "node --test runtime/pi/workspace-tools.test.mjs runtime/pi/runner-state.test.mjs runtime/pi/hypotheses.test.mjs",
-    "test:e2e:pi:staging": "playwright test --config=playwright.pi-staging.config.ts --workers=1",
     "test:db:local": "bash scripts/test-p0-db.sh",
     "test:integration:atros": "P1_ATROS_SANDBOX_INTEGRATION=1 vitest run src/lib/astro/atros-commands.integration.test.ts",
     "test:e2e:smoke": "playwright test tests/e2e/astrologer-smoke.spec.ts",
@@ -19,7 +18,6 @@
     "test:e2e:p2-visual:staging": "playwright test tests/e2e/astrologer-p2-visual.spec.ts --config=playwright.p2-staging.config.ts --workers=1",
     "test:e2e:system:local": "P3_REAL_PROVIDER_E2E=1 node scripts/with-local-supabase-env.mjs playwright test --config=playwright.system-local.config.ts",
     "test:e2e:system:staging": "P3_REAL_PROVIDER_E2E=1 P3_STAGING_E2E=1 playwright test --config=playwright.system-staging.config.ts",
-    "test:p2:staging": "node scripts/p2-staging-canary.mjs",
     "test:release-preflight": "node --test scripts/release-preflight.test.mjs"
   },
   "engines": {

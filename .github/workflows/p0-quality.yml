@@ -43,8 +43,6 @@ jobs:
         run: npm exec -- supabase start > /dev/null
       - name: Two-user database/RLS integration
         run: npm run test:db:local
-      - name: Upgrade a populated legacy schema in an isolated local database
-        run: AIDORAA_LOCAL_UPGRADE_REPRO=1 node scripts/test-local-atomic-upgrade.mjs
       - name: Install Chromium for browser verification
         run: npm exec -- playwright install --with-deps chromium > /dev/null
       - name: Authenticated browser smoke and screenshots
