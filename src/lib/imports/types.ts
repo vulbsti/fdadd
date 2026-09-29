@@ -5,7 +5,7 @@
  */
 import { z } from 'zod';
 
-export const IMPORT_PROVIDERS = ['chatgpt', 'claude', 'grok', 'gemini', 'deepseek', 'meta_ai', 'other', 'notion'] as const;
+export const IMPORT_PROVIDERS = ['chatgpt', 'claude', 'grok', 'gemini', 'deepseek', 'meta_ai', 'other', 'notion', 'google_drive', 'google_keep'] as const;
 export type ImportProvider = typeof IMPORT_PROVIDERS[number];
 export const ImportProviderSchema = z.enum(IMPORT_PROVIDERS);
 
@@ -18,6 +18,8 @@ export const PROVIDER_LABELS: Record<ImportProvider, string> = {
   meta_ai: 'Meta AI',
   other: 'Another assistant',
   notion: 'Notion',
+  google_drive: 'Google Drive',
+  google_keep: 'Google Keep',
 };
 
 /**

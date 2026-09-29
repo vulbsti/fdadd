@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { notionConfig, notionConnection } from '@/lib/connectors/notion';
+import { googleConfig, googleConnection, googlePickerConfig } from '@/lib/connectors/google';
 import { importErrorResponse, json, requireOwnedPerson } from '@/lib/imports/http';
 import { createImport, createUploadTarget, IMPORT_BUCKET, listImports } from '@/lib/imports/store';
 import { ImportProviderSchema } from '@/lib/imports/types';
@@ -13,15 +14,20 @@ export async function GET(_request: Request, { params }: Params) {
   const owned = await requireOwnedPerson((await params).personId);
   if (owned instanceof NextResponse) return owned;
   try {
-    const [imports, notion] = await Promise.all([listImports(owned.admin, owned.scope), notionConnection(owned.admin, owned.scope.userId)]);
-    return json({ imports, notion: { configured: Boolean(notionConfig()), connected: Boolean(notion), workspaceName: notion?.workspaceName ?? null } });
+    const [imports, notion, google] = await Promise.all([listImports(owned.admin, owned.scope),
+      notionConnection(owned.admin, owned.scope.userId), googleConnection(owned.admin, owned.scope.userId)]);
+    return json({
+      imports,
+      notion: { configured: Boolean(notionConfig()), connected: Boolean(notion), workspaceName: notion?.workspaceName ?? null },
+      google: { configured: Boolean(googleConfig() && googlePickerConfig()), connected: Boolean(google), email: google?.email ?? null },
+    });
   } catch (error) {
     return importErrorResponse(error);
   }
 }
 
 const createSchema = z.object({
-  provider: ImportProviderSchema.exclude(['notion']),
+  provider: ImportProviderSchema.exclude(['notion', 'google_drive']),
   fileName: z.string().min(1).max(300),
 });
 

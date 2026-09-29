@@ -268,6 +268,38 @@ function parseGemini(entries: JsonObject[]): ImportedItem[] {
   return items.sort((a, b) => (a.startedAt ?? '').localeCompare(b.startedAt ?? ''));
 }
 
+// --- Google Keep (Takeout: one JSON file per note) -----------------------------
+
+function isKeepNote(data: unknown): data is JsonObject {
+  return isObject(data) && ('textContent' in data || 'listContent' in data)
+    && ('userEditedTimestampUsec' in data || 'createdTimestampUsec' in data);
+}
+
+function usecToIso(value: Json | undefined) {
+  const usec = Number(value);
+  return Number.isFinite(usec) && usec > 0 ? new Date(Math.floor(usec / 1000)).toISOString() : null;
+}
+
+function parseKeepNote(note: JsonObject): ImportedItem | null {
+  if (note.isTrashed === true) return null;
+  const lines: string[] = [];
+  const text = str(note.textContent);
+  if (text) lines.push(text);
+  for (const entry of Array.isArray(note.listContent) ? note.listContent : []) {
+    if (isObject(entry) && typeof entry.text === 'string') lines.push(`- [${entry.isChecked ? 'x' : ' '}] ${entry.text}`);
+  }
+  const labels = (Array.isArray(note.labels) ? note.labels : []).map((label) => isObject(label) ? str(label.name) : null).filter(Boolean);
+  if (labels.length) lines.push('', `Labels: ${labels.join(', ')}`);
+  if (note.isArchived === true) lines.push('', '(Archived in Keep)');
+  const body = lines.join('\n');
+  const created = usecToIso(note.createdTimestampUsec);
+  const title = str(note.title)?.trim() || (text ?? '').split('\n')[0].slice(0, 80) || 'Untitled note';
+  return finishItem({
+    externalId: note.createdTimestampUsec !== undefined ? `keep-${String(note.createdTimestampUsec)}` : digest(`${title}\n${body}`),
+    kind: 'document', title, messages: [], body, sourceUrl: null, startedAt: created, endedAt: usecToIso(note.userEditedTimestampUsec) ?? created,
+  });
+}
+
 // --- Any other JSON: find lists of messages by shape ------------------------
 
 const USER_ROLES = /^(user|human|you|me|person|prompt|request|question|client|customer)$/i;
@@ -407,7 +439,7 @@ export function parseTranscript(text: string, title: string, assistantName: stri
 // --- Entry point ---------------------------------------------------------------
 
 const ASSISTANT_NAMES: Record<ImportProvider, string> = {
-  chatgpt: 'ChatGPT', claude: 'Claude', grok: 'Grok', gemini: 'Gemini', deepseek: 'DeepSeek', meta_ai: 'Meta AI', other: 'Assistant', notion: 'Notion',
+  chatgpt: 'ChatGPT', claude: 'Claude', grok: 'Grok', gemini: 'Gemini', deepseek: 'DeepSeek', meta_ai: 'Meta AI', other: 'Assistant', notion: 'Notion', google_drive: 'Google Drive', google_keep: 'Google Keep',
 };
 
 function baseName(name: string) {
@@ -440,7 +472,8 @@ export function parseExport(files: SourceFile[], chosen: ImportProvider): Parsed
     if (/\.json$/i.test(file.name)) {
       const data = jsonOf(file);
       if (data === undefined) { warnings.push(`${file.name} is not valid JSON and was skipped.`); continue; }
-      if (isDeepSeek(data)) { detected ??= 'deepseek'; formats.add('deepseek-conversations'); data.forEach((conv) => keep(parseDeepSeekConversation(conv))); }
+      if (isKeepNote(data)) { detected ??= 'google_keep'; formats.add('google-takeout-keep'); keep(parseKeepNote(data)); }
+      else if (isDeepSeek(data)) { detected ??= 'deepseek'; formats.add('deepseek-conversations'); data.forEach((conv) => keep(parseDeepSeekConversation(conv))); }
       else if (isChatGpt(data)) { detected ??= 'chatgpt'; formats.add('chatgpt-conversations'); data.forEach((conv) => keep(parseChatGptConversation(conv))); }
       else if (isClaude(data)) { detected ??= 'claude'; formats.add('claude-conversations'); data.forEach((conv) => keep(parseClaudeConversation(conv))); }
       else if (isGrok(data)) {
@@ -469,6 +502,8 @@ export function parseExport(files: SourceFile[], chosen: ImportProvider): Parsed
     }
   }
   for (const file of textFiles) {
+    // Keep's Takeout folder lists label names in a side file; labels are already on each note.
+    if (/(^|\/)Keep\/Labels\.txt$/i.test(file.name)) continue;
     const title = baseName(file.name);
     const whatsapp = parseWhatsApp(file.text, title);
     if (whatsapp) { formats.add('whatsapp-chat'); items.push(whatsapp); continue; }

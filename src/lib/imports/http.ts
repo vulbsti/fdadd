@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { NotionError } from '@/lib/connectors/notion';
+import { GoogleError } from '@/lib/connectors/google';
 import { ImportError, type OwnerScope } from './store';
 
 const NO_STORE = { 'cache-control': 'private, no-store' };
@@ -36,8 +37,9 @@ export function importErrorResponse(error: unknown) {
     const status = { not_found: 404, invalid_state: 409, unsupported_import: 422, too_large: 413, internal: 500 }[error.code];
     return json({ code: error.code, message: error.message }, status);
   }
-  if (error instanceof NotionError) {
-    return json({ code: error.status === 401 ? 'notion_disconnected' : 'notion_error', message: error.message }, error.status === 401 ? 409 : error.status >= 500 ? 502 : error.status);
+  if (error instanceof NotionError || error instanceof GoogleError) {
+    const service = error instanceof NotionError ? 'notion' : 'google';
+    return json({ code: error.status === 401 ? `${service}_disconnected` : `${service}_error`, message: error.message }, error.status === 401 ? 409 : error.status >= 500 ? 502 : error.status);
   }
   console.error('[imports] request failed', { message: error instanceof Error ? error.message : 'unknown' });
   return json({ code: 'internal', message: 'Something went wrong. Try again.' }, 500);

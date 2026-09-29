@@ -12,7 +12,7 @@ import { notifyPersonStateChanged } from '@/components/astrologer/person-state-s
 import { PROVIDER_LABELS, type ImportProvider } from '@/lib/imports/types';
 import { buildUpload } from './client-archive';
 
-type FileProvider = Exclude<ImportProvider, 'notion'>;
+type FileProvider = Exclude<ImportProvider, 'notion' | 'google_drive'>;
 
 interface ImportSummary {
   id: string; provider: ImportProvider; status: string; fileName: string | null; warnings: string[];
@@ -24,6 +24,7 @@ interface PreviewItem {
 }
 interface ImportDetail { import: ImportSummary; speakers: string[]; items: PreviewItem[] }
 interface NotionState { configured: boolean; connected: boolean; workspaceName: string | null }
+interface GoogleState { configured: boolean; connected: boolean; email: string | null }
 interface NotionPage { id: string; title: string; url: string | null; lastEditedAt: string | null }
 
 const FILE_CONNECTORS: Array<{ provider: FileProvider; blurb: string; steps: string[] }> = [
@@ -50,6 +51,10 @@ const FILE_CONNECTORS: Array<{ provider: FileProvider; blurb: string; steps: str
     'WhatsApp: open the Meta AI chat, tap the name, choose Export chat, Without media, and upload the .txt or .zip.',
     'Or in Meta Accounts Center, choose Download your information in JSON format and upload the .zip.',
     'Or paste a conversation below.'] },
+  { provider: 'google_keep', blurb: 'Your Google Keep notes and lists.', steps: [
+    'Google does not let apps read Keep for personal accounts, so Keep comes through Google Takeout.',
+    'Go to takeout.google.com, deselect everything, select Keep, and create the export.',
+    'Download the .zip and upload it here as it is.'] },
   { provider: 'other', blurb: 'Copilot, Perplexity, Character.ai or anything else.', steps: [
     'Upload a JSON export, a .txt or .md transcript, or paste the conversation below.',
     'Lines like "You said:" and "ChatGPT said:" or "User:" and "Assistant:" are read as speakers. Anything else is kept as a note in your own words.'] },
@@ -66,7 +71,9 @@ function day(iso: string | null) {
   return iso ? new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Undated';
 }
 
-export default function ImportsView({ personId, personName, notionOutcome }: { personId: string; personName: string; notionOutcome: string | null }) {
+export default function ImportsView({ personId, personName, notionOutcome, googleOutcome }: {
+  personId: string; personName: string; notionOutcome: string | null; googleOutcome: string | null;
+}) {
   const base = `/api/astrologer/profiles/${personId}/imports`;
   const [imports, setImports] = useState<ImportSummary[] | null>(null);
   const [notion, setNotion] = useState<NotionState>({ configured: false, connected: false, workspaceName: null });
@@ -74,16 +81,19 @@ export default function ImportsView({ personId, personName, notionOutcome }: { p
   const [fileProvider, setFileProvider] = useState<FileProvider | null>(null);
   const [review, setReview] = useState<ImportDetail | null>(null);
   const [notionPicker, setNotionPicker] = useState(false);
+  const [google, setGoogle] = useState<GoogleState>({ configured: false, connected: false, email: null });
+  const [driveProgress, setDriveProgress] = useState<string | null>(null);
 
   const [version, setVersion] = useState(0);
   const refresh = useCallback(() => setVersion((current) => current + 1), []);
 
   useEffect(() => {
     let current = true;
-    api<{ imports: ImportSummary[]; notion: NotionState }>(base).then((payload) => {
+    api<{ imports: ImportSummary[]; notion: NotionState; google: GoogleState }>(base).then((payload) => {
       if (!current) return;
       setImports(payload.imports);
       setNotion(payload.notion);
+      setGoogle(payload.google);
     }).catch((reason) => { if (current) setError(reason instanceof Error ? reason.message : 'Could not load imports.'); });
     return () => { current = false; };
   }, [base, version]);
@@ -110,6 +120,43 @@ export default function ImportsView({ personId, personName, notionOutcome }: { p
     refresh();
   }
 
+  async function disconnectGoogle() {
+    if (!window.confirm('Disconnect Google? Files you already imported stay until you remove them.')) return;
+    await api('/api/connectors/google', { method: 'DELETE' }).catch((reason) => setError(reason.message));
+    refresh();
+  }
+
+  async function chooseDriveFiles() {
+    setError(null);
+    try {
+      const config = await api<{ accessToken: string; apiKey: string; appId: string }>(`${base}/google/picker`);
+      const fileIds = await pickDriveFiles(config);
+      if (!fileIds.length) return;
+      let importId: string | null = null;
+      const skipped: string[] = [];
+      for (let index = 0; index < fileIds.length; index += 10) {
+        setDriveProgress(`Fetching files ${index + 1} to ${Math.min(fileIds.length, index + 10)} of ${fileIds.length}`);
+        const result: { importId: string; skipped: string[] } = await api(`${base}/google`, { method: 'POST', body: JSON.stringify({ importId, fileIds: fileIds.slice(index, index + 10) }) });
+        importId = result.importId;
+        skipped.push(...result.skipped);
+      }
+      if (skipped.length) setError(`Skipped: ${skipped.join(' ')}`);
+      if (importId) await openReview(importId);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Could not import from Google Drive.');
+    } finally {
+      setDriveProgress(null);
+      refresh();
+    }
+  }
+
+  const googleMessage = {
+    connected: 'Google is connected. Choose the Drive files to import.',
+    cancelled: 'Google was not connected.',
+    failed: 'Google could not be connected. Make sure you allow Drive access, then try again.',
+    unavailable: 'The Google connector is not set up on this server yet.',
+  }[googleOutcome ?? ''] ?? null;
+
   const notionMessage = {
     connected: 'Notion is connected. Choose the pages to import.',
     cancelled: 'Notion was not connected.',
@@ -121,9 +168,10 @@ export default function ImportsView({ personId, personName, notionOutcome }: { p
     <div className="mx-auto max-w-5xl px-5 py-12 text-[#102d53] md:px-10">
       <h1 className="font-serif text-5xl tracking-[-0.03em]">Bring in your history</h1>
       <p className="mt-4 max-w-2xl leading-7 text-[#52627a]">
-        Import conversations you have had with other assistants, and notes from Notion, so Aidoraa can understand {personName} from everything you have already said.
+        Import conversations you have had with other assistants, and your notes from Notion, Google Drive and Keep, so Aidoraa can understand {personName} from everything you have already said.
         Your own words become evidence Aidoraa can search. Other assistants&apos; replies are kept as what you were told, not as facts about you.
       </p>
+      {googleMessage ? <p className="mt-6 rounded-md border border-[#ded9d0] bg-white/60 px-4 py-3 text-sm">{googleMessage}</p> : null}
       {notionMessage ? <p className="mt-6 rounded-md border border-[#ded9d0] bg-white/60 px-4 py-3 text-sm">{notionMessage}</p> : null}
       {error ? <p role="alert" className="mt-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
 
@@ -137,6 +185,17 @@ export default function ImportsView({ personId, personName, notionOutcome }: { p
                 <Button size="sm" variant="ghost" onClick={disconnectNotion}><Unplug className="mr-1 h-4 w-4" />Disconnect</Button>
               </div>
             ) : <Button size="sm" asChild><a href={`/api/connectors/notion/start?personId=${personId}`}><Link2 className="mr-1 h-4 w-4" />Connect Notion</a></Button>}
+        </ConnectorCard>
+        <ConnectorCard title="Google Drive" badge="Live connection" blurb={google.connected ? `Connected${google.email ? ` as ${google.email}` : ''}. You pick each file; Aidoraa sees nothing else.` : 'Import Docs, Sheets, Slides and text files you pick.'}>
+          {!google.configured ? <p className="text-sm text-[#52627a]">Not set up on this server yet.</p>
+            : google.connected ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <Button size="sm" onClick={chooseDriveFiles} disabled={Boolean(driveProgress)}>
+                  {driveProgress ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : null}{driveProgress ?? 'Choose files'}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={disconnectGoogle}><Unplug className="mr-1 h-4 w-4" />Disconnect</Button>
+              </div>
+            ) : <Button size="sm" asChild><a href={`/api/connectors/google/start?personId=${personId}`}><Link2 className="mr-1 h-4 w-4" />Connect Google</a></Button>}
         </ConnectorCard>
         {FILE_CONNECTORS.map((connector) => (
           <ConnectorCard key={connector.provider} title={PROVIDER_LABELS[connector.provider] === 'Another assistant' ? 'Other chatbots' : PROVIDER_LABELS[connector.provider]} badge="Export file" blurb={connector.blurb}>
@@ -429,4 +488,48 @@ function NotionPickerDialog({ base, onClose, onFetched, onDisconnected }: { base
       </DialogContent>
     </Dialog>
   );
+}
+
+declare global {
+  interface Window {
+    gapi?: { load: (name: string, callback: () => void) => void };
+    google?: { picker: any };
+  }
+}
+
+function loadPickerScript() {
+  return new Promise<void>((resolve, reject) => {
+    if (window.google?.picker) { resolve(); return; }
+    const done = () => window.gapi!.load('picker', () => resolve());
+    if (window.gapi) { done(); return; }
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js';
+    script.onload = done;
+    script.onerror = () => reject(new Error('Could not load the Google file picker.'));
+    document.head.appendChild(script);
+  });
+}
+
+/** Google's own picker: whatever the person picks is shared with Aidoraa, and nothing else. */
+async function pickDriveFiles(config: { accessToken: string; apiKey: string; appId: string }) {
+  await loadPickerScript();
+  const picker = window.google!.picker;
+  return new Promise<string[]>((resolve) => {
+    const view = new picker.DocsView(picker.ViewId.DOCS).setIncludeFolders(true).setSelectFolderEnabled(false)
+      .setMimeTypes(['application/vnd.google-apps.document', 'application/vnd.google-apps.spreadsheet', 'application/vnd.google-apps.presentation',
+        'text/plain', 'text/markdown', 'text/csv', 'application/json'].join(','));
+    new picker.PickerBuilder()
+      .addView(view)
+      .enableFeature(picker.Feature.MULTISELECT_ENABLED)
+      .setOAuthToken(config.accessToken)
+      .setDeveloperKey(config.apiKey)
+      .setAppId(config.appId)
+      .setTitle('Choose files for Aidoraa')
+      .setCallback((data: { action: string; docs?: Array<{ id: string }> }) => {
+        if (data.action === picker.Action.PICKED) resolve((data.docs ?? []).map((doc) => doc.id));
+        else if (data.action === picker.Action.CANCEL) resolve([]);
+      })
+      .build()
+      .setVisible(true);
+  });
 }

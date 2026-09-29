@@ -92,6 +92,24 @@ describe('DeepSeek export', () => {
   });
 });
 
+describe('Google Keep takeout', () => {
+  it('reads one note per file, with checklists and labels, skipping trashed notes', () => {
+    const parsed = parseExport([
+      json('Takeout/Keep/Dreams.json', { title: 'Dreams', textContent: 'Flying again', createdTimestampUsec: 1700000000000000, userEditedTimestampUsec: 1700000100000000,
+        isTrashed: false, isArchived: false, labels: [{ name: 'journal' }] }),
+      json('Takeout/Keep/Groceries.json', { title: '', listContent: [{ text: 'milk', isChecked: true }, { text: 'eggs', isChecked: false }], createdTimestampUsec: 1700000200000000, isTrashed: false }),
+      json('Takeout/Keep/Old.json', { title: 'Old', textContent: 'gone', createdTimestampUsec: 1, isTrashed: true }),
+      { name: 'Takeout/Keep/Labels.txt', text: 'journal' },
+    ], 'google_keep');
+    expect(parsed.provider).toBe('google_keep');
+    expect(parsed.items.map((item) => [item.kind, item.title, item.body])).toEqual([
+      ['document', 'Dreams', 'Flying again\n\nLabels: journal'],
+      ['document', 'Untitled note', '- [x] milk\n- [ ] eggs'],
+    ]);
+    expect(parsed.items[0]).toMatchObject({ externalId: 'keep-1700000000000000', startedAt: '2023-11-14T22:13:20.000Z', endedAt: '2023-11-14T22:15:00.000Z' });
+  });
+});
+
 describe('unknown JSON', () => {
   it('finds message lists by shape and flags unknown speakers', () => {
     const parsed = parseExport([json('meta/your_ai_conversations.json', { threads: [

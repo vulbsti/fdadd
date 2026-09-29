@@ -11,7 +11,7 @@ create table public.person_imports (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null,
   profile_id uuid not null,
-  provider text not null check (provider in ('chatgpt', 'claude', 'grok', 'gemini', 'deepseek', 'meta_ai', 'other', 'notion')),
+  provider text not null check (provider in ('chatgpt', 'claude', 'grok', 'gemini', 'deepseek', 'meta_ai', 'other', 'notion', 'google_drive', 'google_keep')),
   status text not null default 'uploading' check (status in ('uploading', 'awaiting_review', 'imported', 'failed')),
   file_name text check (file_name is null or char_length(file_name) <= 300),
   upload_path text,
@@ -64,13 +64,16 @@ alter table public.person_import_items enable row level security;
 revoke all on public.person_import_items from anon, authenticated;
 grant all on public.person_import_items to service_role;
 
--- OAuth connections (Notion today). Tokens are encrypted by the server before
+-- OAuth connections (Notion, Google). Tokens are encrypted by the server before
 -- they are stored and are never readable by the browser.
 create table public.user_connector_accounts (
   user_id uuid not null references auth.users (id) on delete cascade,
-  provider text not null check (provider in ('notion')),
+  provider text not null check (provider in ('notion', 'google')),
   access_token text not null,
   refresh_token text,
+  token_expires_at timestamptz,
+  scopes text,
+  account_email text,
   workspace_id text,
   workspace_name text,
   bot_id text,
