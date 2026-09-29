@@ -11,6 +11,9 @@ description: Find and weigh what this person has said about their life across co
   is revised between conversations when new evidence refines or breaks it.
 - `history/index.md`: every conversation with its date, title and length.
   `history/<date>-<title>.md` holds each full conversation.
+- `imports/index.md`: conversations with other assistants and documents the
+  person imported (Notion and similar), when there are any.
+  `imports/<source>/<date>-<title>.md` holds each one.
 - `person/profile.md`: the accepted brief. `person/structured/` holds the
   accepted objects (patterns, episodes, people, goals) with their support;
   `person/sources/` holds the original words behind them.
@@ -20,13 +23,16 @@ description: Find and weigh what this person has said about their life across co
 Search broadly first, then read the surrounding exchange:
 
 ```bash
-rg -n -i "priya|notebook" history/ person/
+rg -n -i "priya|notebook" history/ imports/ person/
 rg -n -i -C 3 "job|career|work" history/2026-09-*.md
 ```
 
 Read enough around a hit to know whether they said it about themselves,
 someone else, a hypothetical, or a question they were exploring. Their own
 words outweigh earlier assistant answers; an old answer is not evidence.
+In `imports/`, only the sections headed "Person" are theirs; another
+assistant's reply is what they were told, not what is true of them. Imported
+documents may include text others wrote.
 Note dates: patterns that hold across months weigh more than one remark.
 
 ## Weighing

@@ -7,6 +7,7 @@ import { parsePersonRunMode } from './run-mode';
 import { z } from 'zod';
 import { astrologyWorkspaceFiles, chartSummaryMarkdown, TimelineSchema, TransitSnapshotSchema, type ProfileCalculations } from './calculations';
 import { loadConversationHistory } from './conversation-history';
+import { importedSignature } from '@/lib/imports/store';
 
 export const PI_BUCKET = 'pi-workspaces';
 export interface WorkspaceFile { path: string; content: string }
@@ -208,8 +209,10 @@ export async function loadPiFiles(authority: PiAuthority) {
   const history = await loadConversationHistory(admin, authority, excludedMessageIds(sourcesAll));
   for (const file of history.files) files.push(file);
   const theory = await loadTheoryOfMind(admin, authority);
+  // Imported material can be large; the runtime rewrites imports/ only when this changes.
+  const imports = await importedSignature(admin, authority);
   add('notes/theory-of-mind.md', theory ?? '# Theory of mind\n\nNothing yet: this is an early conversation with this person. It will be written from what they share.\n');
-  return { files, birth, today, historyFile: history.fileFor(authority.sessionId), conversation: history.earlierTurns(authority.sessionId) };
+  return { files, birth, today, imports, historyFile: history.fileFor(authority.sessionId), conversation: history.earlierTurns(authority.sessionId) };
 }
 
 function todayIn(timeZone: string) {
