@@ -29,7 +29,6 @@ jobs:
 
   local-integration:
     name: Local RLS and authenticated browser smoke
-    needs: code
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -39,14 +38,28 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Chromium downloads while Supabase pulls its images; the install is
+      # awaited before the browser smoke below.
+      - name: Start Chromium install in the background
+        run: |
+          (npm exec -- playwright install --with-deps chromium > "$RUNNER_TEMP/playwright-install.log" 2>&1; echo $? > "$RUNNER_TEMP/playwright-install.status") &
+      # The tests need Postgres, auth, REST, storage and realtime only; the
+      # dashboard, analytics, log shipping, image proxy, edge functions and
+      # pooler containers are skipped to cut image pulls and health waits.
       - name: Start disposable local Supabase
-        run: npm exec -- supabase start > /dev/null
+        run: >-
+          npm exec -- supabase start
+          -x studio,postgres-meta,imgproxy,edge-runtime,logflare,vector,supavisor
+          > /dev/null
       - name: Two-user database/RLS integration
         run: npm run test:db:local
       - name: Upgrade a populated legacy schema in an isolated local database
         run: AIDORAA_LOCAL_UPGRADE_REPRO=1 node scripts/test-local-atomic-upgrade.mjs
-      - name: Install Chromium for browser verification
-        run: npm exec -- playwright install --with-deps chromium > /dev/null
+      - name: Wait for the Chromium install
+        run: |
+          while [ ! -f "$RUNNER_TEMP/playwright-install.status" ]; do sleep 1; done
+          status="$(cat "$RUNNER_TEMP/playwright-install.status")"
+          if [ "$status" != 0 ]; then cat "$RUNNER_TEMP/playwright-install.log"; exit "$status"; fi
       - name: Authenticated browser smoke and screenshots
         run: npm run test:e2e:local
       - name: Save browser screenshot evidence
