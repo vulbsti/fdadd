@@ -25,6 +25,7 @@ import { acknowledgeMessage, mergePersistedMessages, personalOnlyFromModel, take
 import { subscribePersonState } from './person-state-sync';
 import { AssistantMarkdown } from './AssistantMarkdown';
 import { applyRunEvent, parseRunEventData, startRunStream, type RunStreamState } from './run-stream-state';
+import { watchLiveText } from './live-text';
 
 interface AstrologerChatProps {
   sessionId: string;
@@ -208,6 +209,13 @@ function AstrologerChatSession({
       const url = `/api/astrologer/runs/${runId}/events${after ? `?after=${after}` : ''}`;
       const source = new EventSource(url);
       eventSourceRef.current = source;
+      // Streamed text also comes straight from the edge, when one is
+      // configured; it is the same events deduplicated by sequence number.
+      // Tying it to close() ends it wherever this source is closed.
+      const live = new AbortController();
+      const closeSource = source.close.bind(source);
+      source.close = () => { live.abort(); closeSource(); };
+      void watchLiveText(runId, (event) => setStream((current) => applyRunEvent(current, event)), live.signal);
       setStream((current) => current?.runId === runId ? current : startRunStream(runId));
       // Progress and streamed text apply directly; only a finished answer
       // needs the persisted conversation.

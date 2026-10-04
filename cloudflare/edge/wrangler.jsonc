@@ -1,0 +1,27 @@
+// Aidoraa edge Worker: private R2 object store and one live stream per run.
+// Deploy with `npm run deploy:edge -- --env staging|production` (see README.md).
+// The only secret is EDGE_SIGNING_SECRET, shared with the Vercel project.
+{
+  "name": "aidoraa-edge",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "observability": { "enabled": true },
+  "durable_objects": { "bindings": [{ "name": "RUN_STREAM", "class_name": "RunStream" }] },
+  // SQLite-backed classes are the only kind available on the Workers Free plan.
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["RunStream"] }],
+  "env": {
+    "staging": {
+      "name": "aidoraa-edge-staging",
+      "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "aidoraa-staging" }],
+      "durable_objects": { "bindings": [{ "name": "RUN_STREAM", "class_name": "RunStream" }] },
+      "vars": { "ALLOWED_ORIGINS": "*" }
+    },
+    "production": {
+      "name": "aidoraa-edge-production",
+      "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "aidoraa-production" }],
+      "durable_objects": { "bindings": [{ "name": "RUN_STREAM", "class_name": "RunStream" }] },
+      "vars": { "ALLOWED_ORIGINS": "https://aidoraa.com,https://www.aidoraa.com" }
+    }
+  }
+}
