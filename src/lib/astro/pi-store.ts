@@ -8,8 +8,9 @@ import { z } from 'zod';
 import { astrologyWorkspaceFiles, chartSummaryMarkdown, TimelineSchema, TransitSnapshotSchema, type ProfileCalculations } from './calculations';
 import { loadConversationHistory } from './conversation-history';
 import { importedSignature } from '@/lib/imports/store';
+import { PI_BUCKET, piObjects } from './pi-objects';
 
-export const PI_BUCKET = 'pi-workspaces';
+export { PI_BUCKET };
 export interface WorkspaceFile { path: string; content: string }
 /** A checkpoint file stored once per person as a content-addressed blob. */
 export interface WorkspaceFileRef { path: string; digest: string; bytes: number }
@@ -246,7 +247,8 @@ async function loadTheoryOfMind(admin: SupabaseClient, authority: PiAuthority) {
   return String(result.data.content);
 }
 
-export async function readPiCheckpoint(authority: PiAuthority): Promise<PiCheckpoint | null> {
+/** The latest checkpoint of a run with the address of its stored archive. */
+export async function readPiCheckpointRecord(authority: PiAuthority): Promise<{ checkpoint: PiCheckpoint; objectPath: string; digest: string } | null> {
   const admin = createAdminClient();
   const receipt = await admin.from('pi_workspace_checkpoints').select('object_path,digest,mode_epoch,privacy_epoch,birth_revision')
     .eq('run_id', authority.runId).eq('user_id', authority.userId).eq('profile_id', authority.personId)
@@ -254,24 +256,56 @@ export async function readPiCheckpoint(authority: PiAuthority): Promise<PiCheckp
   if (receipt.error) throw new Error('Cannot read Pi checkpoint receipt.');
   if (!receipt.data) return null;
   if (receipt.data.mode_epoch !== authority.modeEpoch || receipt.data.privacy_epoch !== authority.privacyEpoch || receipt.data.birth_revision !== authority.birthRevision) return null;
-  const result = await admin.storage.from(PI_BUCKET).download(receipt.data.object_path);
-  if (result.error) throw new Error('Cannot read durable Pi checkpoint.');
-  const bytes = await result.data.text();
+  const bytes = await piObjects().get(receipt.data.object_path);
+  if (!bytes) throw new Error('Cannot read durable Pi checkpoint.');
   if (createHash('sha256').update(bytes).digest('hex') !== receipt.data.digest) throw new Error('Pi checkpoint integrity failure.');
-  return JSON.parse(bytes) as PiCheckpoint;
+  return { checkpoint: JSON.parse(bytes.toString('utf8')) as PiCheckpoint, objectPath: receipt.data.object_path, digest: receipt.data.digest };
 }
 
-export async function writePiCheckpoint(authority: PiAuthority, checkpoint: PiCheckpoint) {
+export async function readPiCheckpoint(authority: PiAuthority): Promise<PiCheckpoint | null> {
+  return (await readPiCheckpointRecord(authority))?.checkpoint ?? null;
+}
+
+export function piCheckpointPath(authority: PiAuthority, digest: string) {
+  if (!PI_DIGEST.test(digest)) throw new Error('Invalid checkpoint digest.');
+  return `${piArtifactPrefix(authority)}/${digest}.json`;
+}
+
+/** Bytes a runner stored directly under its run prefix, before any receipt names them. */
+export async function readStoredPiCheckpointBytes(authority: PiAuthority, digest: string) {
+  const bytes = await piObjects().get(piCheckpointPath(authority, digest));
+  if (!bytes) throw new Error('Stored checkpoint archive is unavailable.');
+  if (createHash('sha256').update(bytes).digest('hex') !== digest) throw new Error('Pi checkpoint integrity failure.');
+  return bytes;
+}
+
+/** Drop an archive that failed validation; nothing references it. */
+export async function discardStoredPiCheckpoint(authority: PiAuthority, digest: string) {
+  await piObjects().remove([piCheckpointPath(authority, digest)]);
+}
+
+/**
+ * Record a checkpoint. Without `stored`, the archive is serialized and saved
+ * here; with it, the runner already stored those exact bytes at their digest
+ * and only the receipt is written.
+ */
+export async function writePiCheckpoint(authority: PiAuthority, checkpoint: PiCheckpoint, stored?: { digest: string }) {
   await assertPiAuthority(authority);
   // A receipt may only name bytes that are already durable.
   const missing = await missingPiBlobs(authority, checkpoint.files.filter(isWorkspaceFileRef).map((file) => file.digest));
   if (missing.length) throw new Error('Checkpoint references workspace files that were not uploaded.');
   const admin = createAdminClient();
-  const bytes = JSON.stringify(checkpoint);
-  const digest = createHash('sha256').update(bytes).digest('hex');
-  const objectPath = `${piArtifactPrefix(authority)}/${digest}.json`;
-  const result = await admin.storage.from(PI_BUCKET).upload(objectPath, bytes, { contentType: 'application/json', upsert: false });
-  if (result.error && !String(result.error.message).toLowerCase().includes('already exists')) throw new Error('Durable Pi checkpoint could not be saved.');
+  let digest = stored?.digest;
+  if (!digest) {
+    const bytes = Buffer.from(JSON.stringify(checkpoint));
+    digest = createHash('sha256').update(bytes).digest('hex');
+    try {
+      await piObjects().put(piCheckpointPath(authority, digest), bytes, 'application/json');
+    } catch {
+      throw new Error('Durable Pi checkpoint could not be saved.');
+    }
+  }
+  const objectPath = piCheckpointPath(authority, digest);
   const committed = await admin.rpc('worker_save_pi_checkpoint', { p_run_id: authority.runId, p_sequence: checkpoint.sequence,
     p_mode_epoch: authority.modeEpoch, p_privacy_epoch: authority.privacyEpoch, p_birth_revision: authority.birthRevision,
     p_object_path: objectPath, p_digest: digest, p_final: checkpoint.final });
@@ -295,10 +329,7 @@ export async function prunePiCheckpoints(authority: PiAuthority, keepSequence: n
   if (!older.data?.length) return 0;
   // Identical bytes share one address; never remove the object the kept receipt names.
   const paths = [...new Set(older.data.map((row) => String(row.object_path)).filter((path) => path !== keepPath))];
-  if (paths.length) {
-    const removed = await admin.storage.from(PI_BUCKET).remove(paths);
-    if (removed.error) throw new Error('Superseded Pi checkpoints could not be removed.');
-  }
+  if (paths.length) await piObjects().remove(paths);
   const deleted = await admin.from('pi_workspace_checkpoints').delete()
     .eq('run_id', authority.runId).eq('user_id', authority.userId).eq('profile_id', authority.personId).lt('sequence', keepSequence);
   if (deleted.error) throw new Error('Superseded Pi checkpoint receipts could not be removed.');
@@ -306,8 +337,8 @@ export async function prunePiCheckpoints(authority: PiAuthority, keepSequence: n
 }
 
 export async function readPiRecovery(authority: PiAuthority) {
-  const current = await readPiCheckpoint(authority);
-  if (current) return { checkpoint: current, sameRun: true };
+  const current = await readPiCheckpointRecord(authority);
+  if (current) return { ...current, sameRun: true };
   const admin = createAdminClient();
   const run = await new AgentStore(admin, admin).getRun(authority.runId);
   if (!run.resume_from_run_id) return null;
@@ -315,8 +346,8 @@ export async function readPiRecovery(authority: PiAuthority) {
     .eq('user_id', authority.userId).eq('profile_id', authority.personId).eq('session_id', authority.sessionId).eq('status', 'failed').maybeSingle();
   if (parent.error) throw new Error('Resume authority unavailable.');
   if (!parent.data) return null;
-  const checkpoint = await readPiCheckpoint({ ...authority, runId: parent.data.id });
-  return checkpoint ? { checkpoint, sameRun: false } : null;
+  const record = await readPiCheckpointRecord({ ...authority, runId: parent.data.id });
+  return record ? { ...record, sameRun: false } : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -338,24 +369,20 @@ export function isWorkspaceFileRef(file: WorkspaceFile | WorkspaceFileRef): file
 export async function writePiBlob(authority: PiAuthority, bytes: Buffer, expectedDigest: string) {
   const digest = createHash('sha256').update(bytes).digest('hex');
   if (digest !== expectedDigest) throw new Error('Workspace blob digest mismatch.');
-  const bucket = createAdminClient().storage.from(PI_BUCKET);
-  const path = piBlobPath(authority, digest);
-  const uploaded = await bucket.upload(path, bytes, { contentType: 'application/octet-stream', upsert: false });
   // Same address means same bytes; an existing blob is a completed upload.
-  if (uploaded.error && !(await bucket.exists(path)).data) throw new Error('Workspace blob could not be saved.');
+  await piObjects().put(piBlobPath(authority, digest), bytes, 'application/octet-stream');
 }
 
 export async function missingPiBlobs(authority: PiAuthority, digests: string[]) {
-  const bucket = createAdminClient().storage.from(PI_BUCKET);
+  const store = piObjects();
   const unique = [...new Set(digests)];
-  const present = await Promise.all(unique.map(async (digest) => (await bucket.exists(piBlobPath(authority, digest))).data === true));
+  const present = await Promise.all(unique.map((digest) => store.exists(piBlobPath(authority, digest))));
   return unique.filter((_, index) => !present[index]);
 }
 
 export async function readPiBlob(authority: Pick<PiAuthority, 'userId' | 'personId'>, digest: string): Promise<Buffer> {
-  const result = await createAdminClient().storage.from(PI_BUCKET).download(piBlobPath(authority, digest));
-  if (result.error || !result.data) throw new Error('Workspace blob unavailable.');
-  const bytes = Buffer.from(await result.data.arrayBuffer());
+  const bytes = await piObjects().get(piBlobPath(authority, digest));
+  if (!bytes) throw new Error('Workspace blob unavailable.');
   if (createHash('sha256').update(bytes).digest('hex') !== digest) throw new Error('Workspace blob integrity failure.');
   return bytes;
 }

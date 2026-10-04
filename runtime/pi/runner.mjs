@@ -35,6 +35,31 @@ async function brokerJson(operation, body) {
   if (!response.ok) throw new Error(`Workspace broker ${operation.split('/')[0]} rejected (${response.status}); no success was published.`);
   return response.json();
 }
+// With an edge store configured, bytes move in one request each and are
+// stored once under their digest; the firewall adds the run's capability.
+const edge = config.edge ?? null;
+const digestOf = (bytes) => createHash('sha256').update(bytes).digest('hex');
+async function storeObject(key, bytes, contentType) {
+  const response = await fetch(`${edge.origin}/o/${key}`, { method: 'PUT', headers: { 'content-type': contentType }, body: bytes });
+  if (!response.ok) throw new Error(`Workspace object store rejected a write (${response.status}); no success was published.`);
+}
+async function fetchObject(key, digest) {
+  const response = await fetch(`${edge.origin}/o/${key}`);
+  if (!response.ok) throw new Error(`Workspace object store read failed (${response.status}).`);
+  const bytes = Buffer.from(await response.arrayBuffer());
+  if (digestOf(bytes) !== digest) throw new Error('Recovered workspace object digest mismatch.');
+  return bytes;
+}
+async function uploadBlob(blob) {
+  if (edge) return storeObject(`${edge.prefix}/blobs/${blob.digest}`, blob.bytes, 'application/octet-stream');
+  await brokerJson('blob/commit', await uploadTransfer(blob.bytes));
+}
+async function commitCheckpoint(bytes) {
+  if (!edge) return brokerJson('checkpoint/commit', await uploadTransfer(bytes));
+  const digest = digestOf(bytes);
+  await storeObject(`${edge.prefix}/${config.runId}/${digest}.json`, bytes, 'application/json');
+  await brokerJson('checkpoint/stored', { digest });
+}
 function isArtifactPath(value) {
   return typeof value === 'string' && ARTIFACT_PATH.test(value)
     && !/[\0\\]/.test(value)
@@ -52,6 +77,7 @@ async function uploadTransfer(bytes) {
   return manifest;
 }
 async function downloadBlob(digest) {
+  if (edge) return fetchObject(`${edge.prefix}/blobs/${digest}`, digest);
   const chunks = [];
   let parts = 1;
   for (let index = 0; index < parts; index++) {
@@ -64,7 +90,19 @@ async function downloadBlob(digest) {
   return bytes;
 }
 
+function decodeCheckpoint(bytes) {
+  try { return JSON.parse(bytes.toString('utf8')); }
+  catch { throw new Error('Durable recovery checkpoint could not be decoded.'); }
+}
 async function restoreCheckpoint() {
+  if (edge) {
+    const located = await brokerJson('restore/stored');
+    if (!located) return null;
+    if (typeof located.key !== 'string' || !located.key.startsWith(`${edge.prefix}/`) || !/^[a-f0-9]{64}$/.test(located.digest) || typeof located.sameRun !== 'boolean') {
+      throw new Error('Invalid durable recovery location.');
+    }
+    return { checkpoint: decodeCheckpoint(await fetchObject(located.key, located.digest)), sameRun: located.sameRun };
+  }
   const received = await brokerJson('restore');
   if (!received) return null;
   const { digest, byteLength, parts, sameRun } = received;
@@ -83,10 +121,7 @@ async function restoreCheckpoint() {
   }
   const bytes = Buffer.concat(chunks, byteLength);
   if (createHash('sha256').update(bytes).digest('hex') !== digest) throw new Error('Recovery transfer digest mismatch.');
-  let checkpoint;
-  try { checkpoint = JSON.parse(bytes.toString('utf8')); }
-  catch { throw new Error('Durable recovery checkpoint could not be decoded.'); }
-  return { checkpoint, sameRun };
+  return { checkpoint: decodeCheckpoint(bytes), sameRun };
 }
 const recovery = await restoreCheckpoint();
 if (recovery?.checkpoint?.final && recovery.sameRun) process.exit(0);
@@ -139,8 +174,25 @@ const client = new RpcClient({
     '--system-prompt', `${directory}/system-prompt.md`, '--append-system-prompt', context],
 });
 
-const live = createEventQueue((events) => brokerJson('events', { events }));
-const flushTimer = setInterval(() => { void live.flush().catch((error) => console.error(error.message)); }, 400);
+// With an edge stream, text goes straight to it and on to the browser; only
+// tool lifecycle and exit rows still go to the broker, which records them
+// durably. If the edge is unreachable the whole batch takes the broker path.
+async function sendLive(events) {
+  if (edge) {
+    try {
+      const response = await fetch(`${edge.origin}/runs/${config.runId}/events`, { method: 'POST',
+        headers: { 'content-type': 'application/json' }, body: JSON.stringify({ events }), signal: AbortSignal.timeout(5000) });
+      if (!response.ok) throw new Error(`edge stream ${response.status}`);
+      events = events.filter((event) => event.kind !== 'text_delta');
+      if (!events.length) return;
+    } catch (error) {
+      console.error(`Live stream fell back to the broker: ${error.message}`);
+    }
+  }
+  await brokerJson('events', { events });
+}
+const live = createEventQueue(sendLive);
+const flushTimer = setInterval(() => { void live.flush().catch((error) => console.error(error.message)); }, edge ? 250 : 400);
 const guard = createLoopGuard();
 let stopReason = null;
 let segment = 0;
@@ -159,7 +211,7 @@ async function checkpoint(final = false) {
   }
   const plan = planCheckpointFiles(files, uploaded);
   for (const blob of plan.toUpload) {
-    await brokerJson('blob/commit', await uploadTransfer(blob.bytes));
+    await uploadBlob(blob);
     uploaded.add(blob.digest);
   }
   if (plan.toUpload.length) await saveUploaded();
@@ -167,7 +219,7 @@ async function checkpoint(final = false) {
   const question = final ? JSON.parse(await readFile(`${config.stateDirectory}/runs/${config.runId}.question.json`, 'utf8').catch(() => 'null')) : null;
   const bytes = Buffer.from(JSON.stringify({ sequence: ++checkpointSequence, final, session, files: plan.entries, events: publicEvents, answer: final ? lastAssistant : null, question }));
   if (bytes.length > MAX_ARCHIVE_BYTES) throw new Error('Checkpoint exceeds the prototype 50 MiB archive budget; no data was truncated.');
-  await brokerJson('checkpoint/commit', await uploadTransfer(bytes));
+  await commitCheckpoint(bytes);
   lastCheckpointAt = Date.now();
 }
 function queueCheckpoint(trigger) {

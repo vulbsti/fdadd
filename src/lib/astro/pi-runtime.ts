@@ -10,6 +10,7 @@ import { assertPiAuthority, assertPiAuthorityRecent, hasFinalPiCheckpoint, loadP
 import { loadImportFiles } from '@/lib/imports/store';
 import type { AstrologerRunEvent } from './contracts';
 import { PI_INITIALIZATION_PROTOCOL, preparePiInitialization, withPiPreparationLock } from './pi-initialization';
+import { edgeConfig, signEdgeRunToken } from '@/lib/edge/client';
 
 export const PI_RUNTIME_ASSETS = ['package.json', 'package-lock.json', 'runner.mjs', 'runner-state.mjs', 'extension.mjs', 'workspace-tools.mjs',
   'hypotheses.mjs', 'system-prompt.md', 'skills/person-context/SKILL.md', 'skills/chart-reading/SKILL.md', 'skills/rectify/SKILL.md',
@@ -105,6 +106,9 @@ export async function preparePiWorkspace(runId: string) {
     const secret = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!secret) throw new Error('Missing runner signing configuration.');
     const token = signPiAuthority(authority, secret);
+    // Optional edge store: the VM reads and writes its own archives and blobs there directly.
+    const edge = edgeConfig();
+    const edgeToken = edge ? await signEdgeRunToken(edge, authority) : null;
     const configPath = `${STATE}/runs/${runId}.json`;
     const readyMarker = JSON.stringify({ protocol: PI_INITIALIZATION_PROTOCOL, bundle,
       atros: loaded.birth ? ATROS_ENGINE_VERSION : null });
@@ -163,7 +167,14 @@ export async function preparePiWorkspace(runId: string) {
             'x-aidoraa-run-capability': token,
             ...(process.env.VERCEL_AUTOMATION_BYPASS_SECRET ? { 'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET } : {}),
           } }],
-        }] } });
+        }], ...(edge && edgeToken ? { [new URL(edge.origin).hostname]: [{
+          // The Worker limits this capability to the run's own keys and stream.
+          match: { path: { startsWith: '/o/' }, method: ['PUT', 'GET'] },
+          transform: [{ headers: { authorization: `Bearer ${edgeToken}` } }],
+        }, {
+          match: { path: { startsWith: `/runs/${runId}/events` }, method: ['POST'] },
+          transform: [{ headers: { authorization: `Bearer ${edgeToken}` } }],
+        }] } : {}) } });
       },
     });
     await assertPiAuthority(authority);
@@ -220,6 +231,7 @@ export async function preparePiWorkspace(runId: string) {
       birth: loaded.birth, birthRevision: authority.birthRevision,
       prompt: message.data.content, deadlineMs: 15 * 60 * 1000,
       today: loaded.today, historyFile: loaded.historyFile, conversation: loaded.conversation,
+      edge: edge ? { origin: edge.origin, prefix: `${authority.userId}/${authority.personId}` } : null,
     }) }]);
     return { sandboxName: sandbox.name, configPath, authority };
   });
