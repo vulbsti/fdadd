@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { verifyPiAuthority } from '@/lib/astro/pi-authority';
-import { assertPiAuthority, assertPiAuthorityRecent, PI_DIGEST, PiQuestionSchema, recordPiRunEvents, writePiCheckpoint } from '@/lib/astro/pi-store';
-import { assemblePiTransfer, commitPiBlob, isPiArtifactPath, PiTransferError, PiTransferManifestSchema, PiTransferPartSchema,
+import { assertPiAuthority, assertPiAuthorityRecent, discardStoredPiCheckpoint, PI_DIGEST, PiQuestionSchema, readStoredPiCheckpointBytes,
+  recordPiRunEvents, writePiCheckpoint } from '@/lib/astro/pi-store';
+import { edgeConfig } from '@/lib/edge/client';
+import { assemblePiTransfer, commitPiBlob, isPiArtifactPath, locatePiRestore, PiTransferError, PiTransferManifestSchema, PiTransferPartSchema,
   preparePiRestore, readPiBlobPart, readPiTransferPart, removePiTransfer, uploadPiTransferPart } from '@/lib/astro/pi-transfer';
 
 export const runtime = 'nodejs';
@@ -39,7 +41,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ ope
     const operation = (await params).operation.join('/');
     // Commits and restores re-check authority against the database every time;
     // high-frequency calls reuse a check from the last few seconds.
-    const fullCheck = operation === 'checkpoint' || operation === 'checkpoint/commit' || operation === 'restore';
+    const fullCheck = ['checkpoint', 'checkpoint/commit', 'checkpoint/stored', 'restore', 'restore/stored'].includes(operation);
     if (fullCheck) await assertPiAuthority(authority);
     else await assertPiAuthorityRecent(authority);
     const noStore = { headers: { 'Cache-Control': 'no-store' } };
@@ -49,6 +51,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ ope
       return Response.json({ accepted: true });
     }
     if (operation === 'restore') return Response.json(await preparePiRestore(authority), noStore);
+    // With the edge store the runner moves bytes itself; the broker only names and validates them.
+    if (operation === 'restore/stored' && edgeConfig()) return Response.json(await locatePiRestore(authority), noStore);
+    if (operation === 'checkpoint/stored' && edgeConfig()) {
+      const { digest } = z.object({ digest: z.string().regex(PI_DIGEST) }).strict().parse(await request.json());
+      const bytes = await readStoredPiCheckpointBytes(authority, digest);
+      const parsed = checkpointSchema.safeParse(JSON.parse(bytes.toString('utf8')));
+      if (!parsed.success || (!authority.astrologyEnabled && parsed.data.files.some(isAstrologyPath))) {
+        // No receipt will ever name these bytes.
+        await discardStoredPiCheckpoint(authority, digest).catch(() => {});
+        throw new Error('Stored checkpoint is invalid.');
+      }
+      await writePiCheckpoint(authority, parsed.data, { digest });
+      return Response.json({ accepted: true });
+    }
     if (/^restore\/\d+$/.test(operation)) {
       const manifest = PiTransferManifestSchema.parse(await request.json());
       return Response.json({ content: await readPiTransferPart(authority, manifest, Number(operation.split('/')[1])) }, noStore);

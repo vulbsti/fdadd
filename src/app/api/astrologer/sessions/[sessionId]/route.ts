@@ -48,10 +48,13 @@ export async function GET(
     }
     const profileId = session.profile_id as string | null;
     const profile = profileId ? await auth.store.getProfile(profileId) : null;
-    const { messages, nextCursor } = await auth.store.listMessages(sessionId, cursor);
+    // Read the run before the messages. These are separate reads, and an
+    // answer published between them must never produce a response that says
+    // the run is finished without its answer: the chat stops re-reading then.
     const latestRun = session.last_run_id
       ? await auth.store.getRun(session.last_run_id as string).catch(() => null)
       : null;
+    const { messages, nextCursor } = await auth.store.listMessages(sessionId, cursor);
     const trace = latestRun ? await auth.store.listRunSteps(latestRun.id) : [];
 
     const profileName = (profile?.name as string | null) ?? null;

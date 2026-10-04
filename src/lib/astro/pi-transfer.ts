@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { piArtifactPrefix, type PiAuthority } from './pi-authority';
-import { assertPiAuthority, assertPiAuthorityRecent, PI_BUCKET, readPiBlob, readPiRecovery, writePiBlob } from './pi-store';
+import { assertPiAuthority, assertPiAuthorityRecent, isWorkspaceFileRef, missingPiBlobs, PI_BUCKET, readPiBlob, readPiRecovery, writePiBlob } from './pi-store';
 
 export const PI_CHUNK_BYTES = 1024 * 1024;
 export const PI_MAX_ARCHIVE_BYTES = 50 * PI_CHUNK_BYTES;
@@ -165,6 +165,20 @@ export async function preparePiRestore(authority: PiAuthority) {
       decodePart(transfer.manifest, index, transfer.chunks[index]), 'application/octet-stream');
   }
   return { ...transfer.manifest, sameRun: recovery.sameRun };
+}
+
+/**
+ * Restore for a runner that reads the object store itself: name the archive
+ * to fetch. Reading it here moves an archive written before the edge existed
+ * across, and the blob probe does the same for the files it references.
+ */
+export async function locatePiRestore(authority: PiAuthority) {
+  await assertPiAuthority(authority);
+  const recovery = await readPiRecovery(authority);
+  if (!recovery) return null;
+  const missing = await missingPiBlobs(authority, recovery.checkpoint.files.filter(isWorkspaceFileRef).map((file) => file.digest));
+  if (missing.length) throw new PiTransferError('Recovery references workspace files that are unavailable.');
+  return { key: recovery.objectPath, digest: recovery.digest, sameRun: recovery.sameRun };
 }
 
 /** Store an uploaded transfer as a person-scoped, content-addressed file blob. */
