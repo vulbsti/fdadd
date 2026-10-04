@@ -8,6 +8,7 @@ import { readArchive, ArchiveError } from './archive';
 import { parseExport, PARSER_VERSION } from './parsers';
 import { importFilePath, renderImportFiles, type RenderableItem } from './render';
 import { speakersOf, type ImportedItem, type ImportedMessage, type ImportProvider } from './types';
+import { decodeImportBody, encodeImportBody, importBodies, importBodyPrefix, inBatches, orphanedImportBodies } from './bodies';
 
 export const IMPORT_BUCKET = 'person-imports';
 export interface OwnerScope { userId: string; personId: string }
@@ -90,14 +91,25 @@ export async function addPendingItems(admin: SupabaseClient, scope: OwnerScope, 
   const existing = new Map<string, { message_count: number; ended_at: string | null; body_digest: string | null }>();
   const externalIds = items.map((item) => item.externalId);
   for (let index = 0; index < externalIds.length; index += 200) {
-    const rows = await admin.from('person_import_items').select('external_id,message_count,ended_at,body')
+    const rows = await admin.from('person_import_items').select('external_id,message_count,ended_at,body,body_digest')
       .eq('user_id', scope.userId).eq('profile_id', scope.personId).eq('provider', provider).eq('status', 'imported')
       .in('external_id', externalIds.slice(index, index + 200));
     if (rows.error) throw fail('Duplicate check', rows.error);
     for (const row of rows.data ?? []) {
       existing.set(String(row.external_id), { message_count: Number(row.message_count), ended_at: row.ended_at as string | null,
-        body_digest: typeof row.body === 'string' ? createHash('sha256').update(row.body).digest('hex') : null });
+        body_digest: (row.body_digest as string | null) ?? (typeof row.body === 'string' ? createHash('sha256').update(row.body).digest('hex') : null) });
     }
+  }
+  // With an object store, the body is written there first; the row then
+  // carries only its address, and is never saved without its body.
+  const bodies = importBodies();
+  const stored = new Map<string, string>();
+  if (bodies) {
+    await inBatches(items, 8, async (item) => {
+      const { key, bytes } = encodeImportBody(scope, importId, { messages: item.messages, body: item.body });
+      await bodies.put(key, bytes, 'application/json');
+      stored.set(item.externalId, key);
+    });
   }
   const rows = items.map((item) => {
     const count = messageCount(item.messages);
@@ -108,8 +120,10 @@ export async function addPendingItems(admin: SupabaseClient, scope: OwnerScope, 
     return {
       import_id: importId, user_id: scope.userId, profile_id: scope.personId, provider, kind: item.kind,
       external_id: item.externalId.slice(0, 300), title: item.title, started_at: item.startedAt, ended_at: item.endedAt,
-      message_count: count.total, person_message_count: count.own, speakers: speakersOf(item), messages: item.messages,
-      body: item.body, source_url: item.sourceUrl, duplicate_state: !prior ? 'new' : unchanged ? 'unchanged' : 'updated',
+      message_count: count.total, person_message_count: count.own, speakers: speakersOf(item),
+      messages: bodies ? [] : item.messages, body: bodies ? null : item.body,
+      body_object: stored.get(item.externalId) ?? null, body_digest: bodyDigest,
+      source_url: item.sourceUrl, duplicate_state: !prior ? 'new' : unchanged ? 'unchanged' : 'updated',
     };
   });
   // Batches by size so one request never carries an unbounded payload.
@@ -195,6 +209,7 @@ export async function confirmImport(admin: SupabaseClient, scope: OwnerScope, im
   if (result.error?.code === 'IMP02') throw new ImportError('invalid_state', 'This import was already confirmed.');
   if (result.error?.code === 'IMP01') throw new ImportError('not_found', 'Import was not found.');
   if (result.error) throw fail('Import confirmation', result.error);
+  await sweepImportBodies(admin, scope);
   return result.data as { importId: string; imported: number };
 }
 
@@ -204,6 +219,42 @@ export async function deleteImport(admin: SupabaseClient, scope: OwnerScope, imp
   if (typeof row.upload_path === 'string') await admin.storage.from(IMPORT_BUCKET).remove([row.upload_path]);
   const removed = await admin.from('person_imports').delete().eq('id', importId).eq('user_id', scope.userId).eq('profile_id', scope.personId);
   if (removed.error) throw fail('Import removal', removed.error);
+  await sweepImportBodies(admin, scope);
+}
+
+/**
+ * Remove stored bodies no row names any more (items left unselected at
+ * confirmation, replaced by a newer copy, or deleted with their import).
+ * Bodies of an import that is still being read or reviewed are left alone:
+ * they are stored before their rows exist. Best effort: a leftover costs
+ * storage and is collected by the next sweep.
+ */
+export async function sweepImportBodies(admin: SupabaseClient, scope: OwnerScope) {
+  const bodies = importBodies();
+  if (!bodies) return 0;
+  try {
+    const stored = await bodies.list(importBodyPrefix(scope));
+    if (!stored.length) return 0;
+    const referenced: string[] = [];
+    for (let offset = 0; ; offset += 1000) {
+      const page = await admin.from('person_import_items').select('body_object').eq('user_id', scope.userId).eq('profile_id', scope.personId)
+        .not('body_object', 'is', null).order('id').range(offset, offset + 999);
+      if (page.error) throw fail('Import body read', page.error);
+      referenced.push(...(page.data ?? []).map((row) => String(row.body_object)));
+      if ((page.data?.length ?? 0) < 1000) break;
+    }
+    const open = await admin.from('person_imports').select('id').eq('user_id', scope.userId).eq('profile_id', scope.personId)
+      .in('status', ['uploading', 'awaiting_review']);
+    if (open.error) throw fail('Imports read', open.error);
+    const inProgress = new Set((open.data ?? []).map((row) => String(row.id)));
+    const prefix = importBodyPrefix(scope);
+    const orphans = orphanedImportBodies(stored.filter((key) => !inProgress.has(key.slice(prefix.length).split('/')[0])), referenced);
+    if (orphans.length) await bodies.remove(orphans);
+    return orphans.length;
+  } catch (error) {
+    console.error('[imports] stored bodies were not swept', { personId: scope.personId, message: error instanceof Error ? error.message : 'unknown' });
+    return 0;
+  }
 }
 
 // --- Workspace --------------------------------------------------------------
@@ -227,6 +278,13 @@ export async function importedSignature(admin: SupabaseClient, scope: OwnerScope
   return { count, signature: `${count}-${hash.digest('hex').slice(0, 24)}` };
 }
 
+/** A workspace is never built with an imported item silently missing its content. */
+async function readImportBody(key: string) {
+  const bytes = await importBodies()?.get(key);
+  if (!bytes) throw new ImportError('internal', 'An imported item\'s stored content is unavailable.');
+  return decodeImportBody(bytes);
+}
+
 export async function loadImportFiles(admin: SupabaseClient, scope: OwnerScope) {
   const imports = await admin.from('person_imports').select('id,person_speaker').eq('user_id', scope.userId).eq('profile_id', scope.personId).eq('status', 'imported');
   if (imports.error) throw fail('Imports read', imports.error);
@@ -234,14 +292,17 @@ export async function loadImportFiles(admin: SupabaseClient, scope: OwnerScope) 
   const items: RenderableItem[] = [];
   // Small pages: a single conversation can be large.
   for (let offset = 0; ; offset += 50) {
-    const page = await admin.from('person_import_items').select('id,import_id,provider,kind,title,started_at,ended_at,messages,body,source_url')
+    const page = await admin.from('person_import_items').select('id,import_id,provider,kind,title,started_at,ended_at,messages,body,body_object,source_url')
       .eq('user_id', scope.userId).eq('profile_id', scope.personId).eq('status', 'imported').order('id').range(offset, offset + 49);
     if (page.error) throw fail('Imported items read', page.error);
-    for (const row of page.data ?? []) {
-      items.push({ id: String(row.id), provider: row.provider as ImportProvider, kind: row.kind, title: String(row.title),
-        startedAt: row.started_at ?? null, endedAt: row.ended_at ?? null, messages: (row.messages ?? []) as ImportedMessage[],
-        body: row.body ?? null, sourceUrl: row.source_url ?? null, personSpeaker: speakerByImport.get(String(row.import_id)) ?? null });
-    }
+    items.push(...await inBatches(page.data ?? [], 8, async (row): Promise<RenderableItem> => {
+      // Rows saved before the object store keep their body inline.
+      const content = row.body_object ? await readImportBody(String(row.body_object))
+        : { messages: (row.messages ?? []) as ImportedMessage[], body: (row.body as string | null) ?? null };
+      return { id: String(row.id), provider: row.provider as ImportProvider, kind: row.kind, title: String(row.title),
+        startedAt: row.started_at ?? null, endedAt: row.ended_at ?? null, messages: content.messages,
+        body: content.body, sourceUrl: row.source_url ?? null, personSpeaker: speakerByImport.get(String(row.import_id)) ?? null };
+    }));
     if ((page.data?.length ?? 0) < 50) break;
   }
   return renderImportFiles(items);

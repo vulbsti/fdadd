@@ -57,6 +57,18 @@ export function edgeObjects(config: EdgeConfig) {
       if (response.status !== 200 && response.status !== 404) throw new Error(`Edge object store probe failed (${response.status}).`);
       return response.status === 200;
     },
+    async list(prefix: string) {
+      const keys: string[] = [];
+      for (let cursor: string | null = null; ;) {
+        const response: Response = await serverFetch(config, `${config.origin}/admin/list`, { method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ prefix, cursor }) });
+        if (!response.ok) throw new Error(`Edge object store list failed (${response.status}).`);
+        const page = await response.json() as { objects: Array<{ key: string }>; cursor: string | null };
+        keys.push(...page.objects.map((object) => object.key));
+        cursor = page.cursor;
+        if (!cursor) return keys;
+      }
+    },
     async remove(keys: string[]) {
       for (let index = 0; index < keys.length; index += 1000) {
         const response = await serverFetch(config, `${config.origin}/admin/delete`, { method: 'POST', headers: { 'content-type': 'application/json' },
