@@ -49,9 +49,20 @@ to Cloudflare R2, live streaming off Postgres. Free tiers only.
 - Staging journey: storage path end to end. Runner to edge stream publish
   confirmed from inside the sandbox (exit frame received by a watcher).
 
+## Verified on staging (2026-10-04, after the provider recovered)
+
+- Full staging journey green on this branch with R2 storage, the edge live
+  stream and the Pi base snapshot (`PI_BASE_SNAPSHOT_ID`, bundle
+  `791846827663`). Live text and tool frames observed on the edge stream for
+  three answers, with no text rows in Postgres.
+- Found on the way: the session route read messages before the run, so an
+  answer published between the reads left the chat idle without it. The
+  route now reads the run first.
+- Deleting old sandbox snapshots also removed the one behind the shared
+  `atros-template` sandbox and broke chart setup until that sandbox was
+  removed and recreated. Rebuild the base snapshot whenever `runtime/pi`
+  changes (`npx tsx scripts/build-pi-base-snapshot.mts`).
+
 ## Pending
 
-- A green staging journey: blocked by the model provider returning 429.
-- Live text seen in a real browser on staging (same blocker).
 - Import bodies to R2.
-- Push and PR: waiting for the owner's approval.
