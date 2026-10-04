@@ -276,6 +276,33 @@ export async function writePiCheckpoint(authority: PiAuthority, checkpoint: PiCh
     p_mode_epoch: authority.modeEpoch, p_privacy_epoch: authority.privacyEpoch, p_birth_revision: authority.birthRevision,
     p_object_path: objectPath, p_digest: digest, p_final: checkpoint.final });
   if (committed.error) throw new Error('Checkpoint receipt rejected stale or conflicting progress.');
+  await prunePiCheckpoints(authority, checkpoint.sequence, objectPath).catch((error) => {
+    // The new receipt is durable; a missed prune only leaves older archives for the next one.
+    console.error('[pi-store] older checkpoints were not pruned', { runId: authority.runId, message: error instanceof Error ? error.message : 'unknown' });
+  });
+}
+
+/**
+ * Every checkpoint carries the whole session, so only the latest one of a run
+ * is ever read. Older archives and their receipts are removed once a newer
+ * receipt is committed.
+ */
+export async function prunePiCheckpoints(authority: PiAuthority, keepSequence: number, keepPath: string) {
+  const admin = createAdminClient();
+  const older = await admin.from('pi_workspace_checkpoints').select('sequence,object_path')
+    .eq('run_id', authority.runId).eq('user_id', authority.userId).eq('profile_id', authority.personId).lt('sequence', keepSequence);
+  if (older.error) throw new Error('Cannot read superseded Pi checkpoints.');
+  if (!older.data?.length) return 0;
+  // Identical bytes share one address; never remove the object the kept receipt names.
+  const paths = [...new Set(older.data.map((row) => String(row.object_path)).filter((path) => path !== keepPath))];
+  if (paths.length) {
+    const removed = await admin.storage.from(PI_BUCKET).remove(paths);
+    if (removed.error) throw new Error('Superseded Pi checkpoints could not be removed.');
+  }
+  const deleted = await admin.from('pi_workspace_checkpoints').delete()
+    .eq('run_id', authority.runId).eq('user_id', authority.userId).eq('profile_id', authority.personId).lt('sequence', keepSequence);
+  if (deleted.error) throw new Error('Superseded Pi checkpoint receipts could not be removed.');
+  return older.data.length;
 }
 
 export async function readPiRecovery(authority: PiAuthority) {
@@ -362,6 +389,13 @@ export async function readPiRunEvents(authority: PiAuthority, afterSeq: number, 
   if (result.error) throw new Error('Cannot read live run events.');
   return (result.data ?? []).map((row) => ({ seq: Number(row.seq), kind: row.kind, segment: Number(row.segment ?? 0),
     toolName: row.tool_name ?? null, toolCallId: row.tool_call_id ?? null, isError: row.is_error === true, text: row.text ?? null }));
+}
+
+/** Live rows only feed the stream of a running answer; a published run no longer needs them. */
+export async function clearPiRunEvents(authority: PiAuthority) {
+  const result = await createAdminClient().from('pi_run_events').delete()
+    .eq('run_id', authority.runId).eq('user_id', authority.userId).eq('profile_id', authority.personId);
+  if (result.error) throw new Error(`Live run events could not be cleared (${result.error.code ?? 'database'}).`);
 }
 
 /** Cheap completion probe: the receipt row, not the archive bytes. */

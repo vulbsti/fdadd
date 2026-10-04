@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { verifyPiAuthority } from '@/lib/astro/pi-authority';
 import { assertPiAuthority, assertPiAuthorityRecent, PI_DIGEST, PiQuestionSchema, recordPiRunEvents, writePiCheckpoint } from '@/lib/astro/pi-store';
 import { assemblePiTransfer, commitPiBlob, isPiArtifactPath, PiTransferError, PiTransferManifestSchema, PiTransferPartSchema,
-  preparePiRestore, readPiBlobPart, readPiTransferPart, uploadPiTransferPart } from '@/lib/astro/pi-transfer';
+  preparePiRestore, readPiBlobPart, readPiTransferPart, removePiTransfer, uploadPiTransferPart } from '@/lib/astro/pi-transfer';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -71,6 +71,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ ope
       const parsed = checkpointSchema.parse(JSON.parse(bytes.toString('utf8')));
       if (!authority.astrologyEnabled && parsed.files.some(isAstrologyPath)) throw new Error('Disabled calculation artifacts.');
       await writePiCheckpoint(authority, parsed);
+      // The archive is now stored once under its digest; drop the staged copy.
+      await removePiTransfer(authority, manifest);
       return Response.json({ accepted: true });
     }
     if (operation === 'checkpoint') {
