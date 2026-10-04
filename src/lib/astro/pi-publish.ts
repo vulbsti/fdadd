@@ -1,7 +1,8 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { AgentStore, type RunRow } from './agent-store';
 import { PiAuthoritySchema, piArtifactPrefix, type PiAuthority } from './pi-authority';
-import { assertPiAuthority, PiQuestionSchema, queuePiMemoryProposals, readPiCheckpoint, resolvePiCheckpointFiles, type PiCheckpoint } from './pi-store';
+import { assertPiAuthority, clearPiRunEvents, PiQuestionSchema, queuePiMemoryProposals, readPiCheckpoint, resolvePiCheckpointFiles, type PiCheckpoint } from './pi-store';
+import { removePiRunTransfers } from './pi-transfer';
 
 type PublicationRun = Pick<RunRow, 'id' | 'user_id' | 'profile_id' | 'session_id' | 'status' | 'version' | 'output_message_id'>;
 type FinalReceipt = { status: string; refs: Record<string, unknown> };
@@ -14,6 +15,8 @@ export interface PiPublishDependencies {
   finish(args: Record<string, unknown>): Promise<{ error: { code?: string } | null }>;
   /** Queue proposals/ files as reviewable memory candidates after publication. */
   queueProposals?(authority: PiAuthority, checkpoint: PiCheckpoint): Promise<unknown>;
+  /** Remove what only a running answer needs: live event rows and staged transfer pieces. */
+  clearScratch?(authority: PiAuthority): Promise<unknown>;
 }
 
 function dependencies(): PiPublishDependencies {
@@ -40,7 +43,17 @@ function dependencies(): PiPublishDependencies {
       const proposals = checkpoint.files.filter((file) => file.path.startsWith('proposals/'));
       return queuePiMemoryProposals(authority, await resolvePiCheckpointFiles(authority, { files: proposals }));
     },
+    clearScratch: (authority) => Promise.all([clearPiRunEvents(authority), removePiRunTransfers(authority)]),
   };
+}
+
+async function clearScratchBestEffort(authority: PiAuthority, deps: PiPublishDependencies) {
+  try {
+    await deps.clearScratch?.(authority);
+  } catch (error) {
+    // The answer is already published; leftovers cost storage, not correctness.
+    console.error('[pi-publish] run scratch was not cleared', { runId: authority.runId, message: error instanceof Error ? error.message : 'unknown' });
+  }
 }
 
 async function queueProposalsBestEffort(authority: PiAuthority, checkpoint: PiCheckpoint, deps: PiPublishDependencies) {
@@ -121,5 +134,6 @@ export async function publishPiAnswer(input: PiAuthority, provided?: PiPublishDe
     throw new Error(`Pi publication failed (${result.error.code ?? 'database'}).`);
   }
   await queueProposalsBestEffort(authority, checkpoint, deps);
+  await clearScratchBestEffort(authority, deps);
   return { status: (checkpoint.question ? 'waiting_for_user' : 'complete') as Published };
 }

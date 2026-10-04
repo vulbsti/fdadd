@@ -95,6 +95,38 @@ async function assertStoredManifest(authority: PiAuthority, manifest: PiTransfer
   }
 }
 
+/**
+ * Staged pieces exist only so a large body can cross several requests. Once
+ * the assembled bytes are durable (or were read back), they are removed.
+ * Best effort: a leftover piece is swept when the run is published.
+ */
+export async function removePiTransfer(authority: PiAuthority, input: PiTransferManifest) {
+  const manifest = parseManifest(input);
+  const base = prefix(authority, manifest);
+  const removed = await createAdminClient().storage.from(PI_BUCKET)
+    .remove([`${base}/manifest.json`, ...Array.from({ length: manifest.parts }, (_, index) => `${base}/${index}`)]);
+  if (removed.error) console.error('[pi-transfer] staged pieces were not removed', { runId: authority.runId });
+}
+
+/** Remove every staged transfer of a run: restore copies and abandoned uploads included. */
+export async function removePiRunTransfers(authority: PiAuthority) {
+  const bucket = createAdminClient().storage.from(PI_BUCKET);
+  const root = `${piArtifactPrefix(authority)}/transfer`;
+  const transfers = await bucket.list(root, { limit: 1000 });
+  if (transfers.error) throw new PiTransferError('Staged transfers could not be listed.');
+  let removed = 0;
+  for (const transfer of transfers.data ?? []) {
+    const pieces = await bucket.list(`${root}/${transfer.name}`, { limit: 1000 });
+    if (pieces.error) throw new PiTransferError('Staged transfer pieces could not be listed.');
+    const paths = (pieces.data ?? []).map((piece) => `${root}/${transfer.name}/${piece.name}`);
+    if (!paths.length) continue;
+    const result = await bucket.remove(paths);
+    if (result.error) throw new PiTransferError('Staged transfer pieces could not be removed.');
+    removed += paths.length;
+  }
+  return removed;
+}
+
 export async function uploadPiTransferPart(authority: PiAuthority, input: z.infer<typeof PiTransferPartSchema>) {
   await assertPiAuthorityRecent(authority);
   const manifest = parseManifest(input.manifest);
@@ -140,6 +172,7 @@ export async function commitPiBlob(authority: PiAuthority, input: PiTransferMani
   const manifest = parseManifest(input);
   const bytes = await assemblePiTransfer(authority, manifest);
   await writePiBlob(authority, bytes, manifest.digest);
+  await removePiTransfer(authority, manifest);
 }
 
 /** Page one stored blob back to a fresh sandbox during restore. */

@@ -71,6 +71,13 @@ describe('Pi answer publication replay', () => {
     });
   });
 
+  it('clears run scratch after publishing, and a failed cleanup does not fail the answer', async () => {
+    const deps = { ...dependencies(), clearScratch: vi.fn<NonNullable<PiPublishDependencies['clearScratch']>>().mockRejectedValue(new Error('storage down')) };
+    await expect(publishPiAnswer(authority, deps)).resolves.toEqual({ status: 'complete' });
+    expect(deps.clearScratch).toHaveBeenCalledWith(authority);
+    expect(deps.finish.mock.invocationCallOrder[0]).toBeLessThan(deps.clearScratch.mock.invocationCallOrder[0]);
+  });
+
   it('accepts a matching commit racing the active authority check', async () => {
     const deps = dependencies();
     deps.getRun.mockResolvedValueOnce(run).mockResolvedValue(completed);
