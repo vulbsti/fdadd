@@ -45,7 +45,7 @@ export default async function ProfilePage() {
             <Link href="/billing">Manage access</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/fashiondaddy">Open FashionDaddy</Link>
+            <Link href="/astrologer">Open Astrologer</Link>
           </Button>
         </CardContent>
       </Card>

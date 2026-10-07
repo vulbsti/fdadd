@@ -11,13 +11,13 @@ export default function Footer() {
               aidoraa
             </Link>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              AI for the oldest journey there is — the one inward.
+              Understand yourself, your life, and how it all connects.
             </p>
           </div>
           <div className="flex flex-col space-y-2 text-sm">
             <h4 className="font-semibold mb-2 text-foreground">Quick Links</h4>
-            <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About Us</Link>
-            <Link href="/blog" className="text-muted-foreground hover:text-foreground transition-colors">Blog</Link>
+            <Link href="/astrologer" className="text-muted-foreground hover:text-foreground transition-colors">Astrologer</Link>
+            <Link href="/mission" className="text-muted-foreground hover:text-foreground transition-colors">Our Mission</Link>
             <Link href="/help" className="text-muted-foreground hover:text-foreground transition-colors">Help Center</Link>
             <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
           </div>

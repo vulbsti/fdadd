@@ -8,12 +8,12 @@ export default function TermsPage() {
 
          <h2 className="text-2xl font-semibold">1. Acceptance of Terms</h2>
          <p>
-           By accessing and using the Aidoraa website and its services, including FashionDaddy and DatePlanner (collectively, the &quot;Services&quot;), you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these particular services, you shall be subject to any posted guidelines or rules applicable to such services. Any participation in this service will constitute acceptance of this agreement. If you do not agree to abide by the above, please do not use this service.
+           By accessing and using the Aidoraa website and its services, including the Astrologer (collectively, the &quot;Services&quot;), you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these particular services, you shall be subject to any posted guidelines or rules applicable to such services. Any participation in this service will constitute acceptance of this agreement. If you do not agree to abide by the above, please do not use this service.
          </p>
 
          <h2 className="text-2xl font-semibold">2. Description of Service</h2>
          <p>
-           Aidoraa provides AI-powered fashion assistance tools. These services are provided &quot;AS IS&quot; and Aidoraa assumes no responsibility for the timeliness, deletion, mis-delivery, or failure to store any user communications or personalization settings. The AI responses are generated based on patterns in data and may not always be accurate, complete, or suitable for your specific needs. Use the information provided by the Services at your own discretion.
+           Aidoraa provides an AI astrologer that reads your Vedic birth chart alongside what you tell it, to help you understand yourself and your life. Astrological readings are interpretations, not facts or predictions, and are not medical, legal, financial or psychological advice. These services are provided &quot;AS IS&quot; and Aidoraa assumes no responsibility for the timeliness, deletion, mis-delivery, or failure to store any user communications or personalization settings. The AI responses are generated based on patterns in data and may not always be accurate, complete, or suitable for your specific needs. Use the information provided by the Services at your own discretion.
          </p>
 
          <h2 className="text-2xl font-semibold">3. User Conduct</h2>

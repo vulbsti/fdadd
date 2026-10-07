@@ -1,19 +1,16 @@
 # Aidoraa
 
-Aidoraa is a Next.js application containing the fashion, date-planning, blog,
-payment, authentication, and astrologer surfaces. The repository is a working
+Aidoraa helps people understand themselves, their lives, and how it all
+connects. The product is the Astrologer; the app also holds the marketing
+pages (home, mission), payment, and authentication surfaces. The repository is a working
 prototype with a real Supabase authentication/payment foundation. Several
 product areas still use sample or in-memory data; the documentation labels
 those boundaries explicitly.
 
 ## Current surfaces
 
-- **FashionDaddy** — a client-side styling UI with sample chat history,
-  wardrobe data, and placeholder replies.
-- **DatePlanner** — a client-side date-plan UI with a small keyword-based
-  placeholder generator.
-- **Aesthetic Quiz** — the style-preference quiz.
-- **Blog and RSS** — sample/in-memory services and route handlers.
+- **Home and Mission** — marketing pages (`/`, `/mission`; `/about`
+  redirects to `/mission`).
 - **Contact form** — a placeholder submission alert; no delivery backend.
 - **Authentication and payments** — Supabase Auth with email/Google flows and
   Razorpay order/verification/webhook routes. Provider configuration is in

@@ -12,15 +12,15 @@ export default function HelpPage() {
 
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">
-          <AccordionTrigger className="text-lg">What is FashionDaddy?</AccordionTrigger>
+          <AccordionTrigger className="text-lg">What is Aidoraa?</AccordionTrigger>
           <AccordionContent className="text-base text-muted-foreground">
-            FashionDaddy is your personal AI stylist. You can chat with it to get outfit suggestions, ask fashion-related questions, get advice on what to wear for specific occasions, and even get help organizing your virtual wardrobe (feature coming soon!).
+            Aidoraa is an AI astrologer that helps you understand yourself, your life, and how it all connects. It reads your Vedic birth chart alongside your own story, and builds an understanding of you that gets truer the more you talk. Read <a href="/mission" className="text-primary underline hover:no-underline">our mission</a> for why we are building it.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
-          <AccordionTrigger className="text-lg">How does DatePlanner work?</AccordionTrigger>
+          <AccordionTrigger className="text-lg">What do I need to start?</AccordionTrigger>
           <AccordionContent className="text-base text-muted-foreground">
-            Simply describe the type of date you&apos;re planning (e.g., occasion, desired vibe, preferences for food or activity). Our AI will analyze your input and generate suggestions for outfits, locations, and activities tailored to your description.
+            Your date, time and place of birth. Your chart is calculated once from them and kept, so every conversation starts from the same ground. If you are unsure of your birth time, say so: when the chart and your life disagree, the Astrologer will suggest checking it with you before changing anything.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
