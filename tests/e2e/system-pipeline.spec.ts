@@ -24,7 +24,8 @@ async function signIn(page: Page, email: string, password: string) {
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: /^sign in$/i }).click();
   await expect(page.getByRole('dialog')).toBeHidden({ timeout: 30_000 });
-  await expect(page.getByRole('button', { name: /logout/i })).toBeVisible({ timeout: 15_000 });
+  // Signing in from the home page lands in the app.
+  await expect(page).toHaveURL(/\/astrologer/, { timeout: 15_000 });
 }
 
 async function startTrace(page: Page, testInfo: TestInfo) {

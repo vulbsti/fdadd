@@ -17,9 +17,9 @@ const fontSerif = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Aidoraa — Know yourself, and how it all connects',
+  title: 'Aidoraa — Understand yourself, and everything that shapes you',
   description:
-    'Aidoraa helps you understand yourself, your life, and how it all connects, by reading your Vedic birth chart alongside your own story.',
+    'Aidoraa brings together astrology, neuroscience, economics, social psychology and ecology into one living picture of your life, so you can see why things unfold the way they do and act in step with what you want.',
 };
 
 export default function RootLayout({

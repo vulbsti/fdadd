@@ -30,18 +30,18 @@ export default function Hero() {
         />
         <p className="rise-in mb-6 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.45em] text-gold-bright/90">
           <Sparkles size={13} aria-hidden="true" />
-          Aidoraa · Know yourself, and how it all connects
+          Aidoraa
         </p>
 
         <h1 className="rise-in rise-in-d1 max-w-3xl font-serif text-4xl font-bold leading-tight tracking-tight text-voyage-foreground md:text-6xl">
-          Some days everything lands.
-          <span className="block text-gold-bright">Some days nothing does.</span>
+          Understand yourself,
+          <span className="block text-gold-bright">and everything that shapes you.</span>
         </h1>
 
         <p className="rise-in rise-in-d2 mt-6 max-w-2xl text-lg leading-relaxed text-voyage-foreground/75">
-          Aidoraa helps you understand yourself, your life, and why it moves the way
-          it does. It reads your Vedic birth chart alongside your own story, and
-          connects the two into a picture of you that keeps getting truer.
+          Your mind, your timing, the people around you, the world you live in.
+          Aidoraa brings them together into one living picture of your life, so you
+          can see why things unfold the way they do, and move with more of it on your side.
         </p>
 
         <div className="rise-in rise-in-d3 mt-10 flex flex-col gap-4 sm:flex-row">
@@ -52,7 +52,7 @@ export default function Hero() {
             variant="outline"
             className="border-white/25 bg-transparent text-voyage-foreground hover:bg-white/10 hover:text-white"
           >
-            <Link href="/mission">Read our mission</Link>
+            <Link href="#lenses">See how it works</Link>
           </Button>
         </div>
       </div>

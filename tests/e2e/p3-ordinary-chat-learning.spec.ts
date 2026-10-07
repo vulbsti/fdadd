@@ -312,7 +312,7 @@ test(correctionOnly
     if (testInfo.project.name === 'mobile') await page.getByRole('button', { name: /toggle menu|open navigation/i }).click();
     await page.getByRole('button', { name: /login/i }).click();
     await signInThroughVisibleUi(page, email, password);
-    await expect(page.getByRole('button', { name: /logout/i })).toBeVisible({ timeout: 15_000 });
+    await expect(page).toHaveURL(/\/astrologer/, { timeout: 15_000 });
     await expect.poll(async () => page.evaluate(async () =>
       (await fetch('/api/astrologer/profiles', { credentials: 'include' })).status), {
       timeout: 30_000,

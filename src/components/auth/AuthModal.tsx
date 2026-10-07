@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { APP_HOME } from '@/lib/app-url';
 import { Loader2, LogIn, UserPlus } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -47,6 +49,7 @@ export default function AuthModal({
   const [name, setName] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
+  const router = useRouter();
   const isSignup = mode === 'signup';
 
   const resetForm = () => {
@@ -79,12 +82,19 @@ export default function AuthModal({
       }
 
       const result = await signUpWithEmail(email.trim(), password, name);
-      if (result.ok && !result.message) onClose();
+      if (result.ok && !result.message) {
+        onClose();
+        router.push(APP_HOME);
+      }
       return;
     }
 
+    // Signing in from the marketing pages takes you straight into the app.
     const result = await signInWithEmail(email.trim(), password);
-    if (result.ok) onClose();
+    if (result.ok) {
+      onClose();
+      router.push(APP_HOME);
+    }
   };
 
   const handleOpenChange = (open: boolean) => {

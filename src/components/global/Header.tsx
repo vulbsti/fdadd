@@ -9,10 +9,11 @@ import { Menu, User, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import AuthModal from '@/components/auth/AuthModal';
-import { cn } from '@/lib/utils'; // Import cn utility
+import { cn } from '@/lib/utils';
+import { APP_HOME } from '@/lib/app-url';
 
 const NAV_LINKS = [
-  { href: '/astrologer', label: 'Astrologer' },
+  { href: '/#lenses', label: 'How it works' },
   { href: '/mission', label: 'Mission' },
   { href: '/help', label: 'Help' },
 ];
@@ -81,6 +82,9 @@ export default function Header() {
                   Profile
                 </Link>
               </Button>
+              <Button size="sm" asChild>
+                <Link href={APP_HOME}>Open Aidoraa</Link>
+              </Button>
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -126,6 +130,9 @@ export default function Header() {
                     <div className="h-10 w-full animate-pulse rounded-md bg-muted"></div>
                  ) : user ? (
                    <>
+                      <Button className="justify-start text-lg" asChild>
+                        <Link href={APP_HOME} onClick={() => setIsMobileMenuOpen(false)}>Open Aidoraa</Link>
+                      </Button>
                       <Button variant="ghost" className="justify-start text-lg" asChild>
                         <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                           <User className="mr-2 h-5 w-5" />

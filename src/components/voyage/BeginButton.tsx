@@ -6,13 +6,14 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
 import { useAuth } from '@/contexts/AuthContext';
+import { APP_HOME } from '@/lib/app-url';
 
 /**
  * BeginButton — the one call to action on the marketing pages. Signed-in
- * people go straight to the Astrologer; everyone else gets the sign-up modal
+ * people go straight to the app; everyone else gets the sign-up modal
  * (the Astrologer route redirects anonymous visitors back home).
  */
-export default function BeginButton({ label = 'Begin with your birth chart' }: { label?: string }) {
+export default function BeginButton({ label = 'Start your picture' }: { label?: string }) {
   const { user } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('signup');
@@ -22,8 +23,8 @@ export default function BeginButton({ label = 'Begin with your birth chart' }: {
   if (user) {
     return (
       <Button asChild size="lg" className={className}>
-        <Link href="/astrologer">
-          {label} <ArrowRight className="ml-2" size={16} />
+        <Link href={APP_HOME}>
+          Open Aidoraa <ArrowRight className="ml-2" size={16} />
         </Link>
       </Button>
     );

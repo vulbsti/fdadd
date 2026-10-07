@@ -48,6 +48,8 @@ test('authenticated astrologer route survives reload and owned profiles API resp
     // navigate until the real auth modal closes; otherwise middleware can race
     // the cookie write and redirect the still-unauthenticated request home.
     await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15_000 });
+    // Signing in from the home page lands in the app.
+    await expect(page).toHaveURL(/\/astrologer/, { timeout: 15_000 });
 
     await page.goto('/astrologer');
     await expect(page).toHaveURL(/\/astrologer$/);

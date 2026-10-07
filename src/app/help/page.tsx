@@ -14,13 +14,13 @@ export default function HelpPage() {
         <AccordionItem value="item-1">
           <AccordionTrigger className="text-lg">What is Aidoraa?</AccordionTrigger>
           <AccordionContent className="text-base text-muted-foreground">
-            Aidoraa is an AI astrologer that helps you understand yourself, your life, and how it all connects. It reads your Vedic birth chart alongside your own story, and builds an understanding of you that gets truer the more you talk. Read <a href="/mission" className="text-primary underline hover:no-underline">our mission</a> for why we are building it.
+            Aidoraa helps you understand yourself and everything that shapes you. It brings together your Vedic birth chart, what neuroscience knows about how we decide and what drives us, how the economy and the people around you affect your life, and your own story, into one picture that gets clearer the more you talk. Read <a href="/mission" className="text-primary underline hover:no-underline">our mission</a> for why we are building it.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
           <AccordionTrigger className="text-lg">What do I need to start?</AccordionTrigger>
           <AccordionContent className="text-base text-muted-foreground">
-            Your date, time and place of birth. Your chart is calculated once from them and kept, so every conversation starts from the same ground. If you are unsure of your birth time, say so: when the chart and your life disagree, the Astrologer will suggest checking it with you before changing anything.
+            Your date, time and place of birth. Your chart is calculated once from them and kept, so every conversation starts from the same ground. If you are unsure of your birth time, say so: when the chart and your life disagree, Aidoraa will suggest checking it with you before changing anything.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">

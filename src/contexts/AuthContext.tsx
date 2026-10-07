@@ -116,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
         options: {
           data: { full_name: name.trim() },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/profile`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/astrologer`,
         },
       });
 
@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearFeedback();
     setLoading(true);
 
-    const redirectTo = `${window.location.origin}/auth/callback?next=/profile`;
+    const redirectTo = `${window.location.origin}/auth/callback?next=/astrologer`;
     const { error: oauthError } = await createClient().auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo },
