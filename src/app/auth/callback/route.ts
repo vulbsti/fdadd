@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { APP_HOME } from '@/lib/app-url';
 import { safeRedirectPath } from '@/lib/auth/redirect';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
   const redirectTo = request.nextUrl.clone();
   redirectTo.pathname = safeRedirectPath(
     request.nextUrl.searchParams.get('next'),
-    '/profile'
+    APP_HOME
   );
   redirectTo.search = '';
 

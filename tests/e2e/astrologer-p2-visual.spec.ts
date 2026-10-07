@@ -178,6 +178,7 @@ test('revision-backed life map, pattern, chapter, and guided chat match the appr
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: /^sign in$/i }).click();
     await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15_000 });
+    await expect(page).toHaveURL(/\/astrologer/, { timeout: 15_000 });
     await page.goto(`/astrologer/p/${personId}/profile/life-map`);
     await expect(page.getByRole('heading', { name: 'The life behind your choices' })).toBeVisible();
     await expect(page.getByText('A question became a direction')).toBeVisible();

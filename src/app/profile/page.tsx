@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
+import { APP_HOME } from '@/lib/app-url';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,7 +46,7 @@ export default async function ProfilePage() {
             <Link href="/billing">Manage access</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/fashiondaddy">Open FashionDaddy</Link>
+            <Link href={APP_HOME}>Open Aidoraa</Link>
           </Button>
         </CardContent>
       </Card>

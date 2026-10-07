@@ -8,7 +8,7 @@ export default function PrivacyPage() {
 
         <h2 className="text-2xl font-semibold">Introduction</h2>
         <p>
-          Aidoraa (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website [Your Website URL] and use our services, including FashionDaddy and DatePlanner (collectively, the &quot;Services&quot;). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site or use our services.
+          Aidoraa (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website [Your Website URL] and use our services, including the Astrologer (collectively, the &quot;Services&quot;). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site or use our services.
         </p>
 
         <h2 className="text-2xl font-semibold">Information We Collect</h2>
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         <ul>
           <li><strong>Personal Data:</strong> Personally identifiable information, such as your name, email address, that you voluntarily give to us when you register with the Services or when you choose to participate in various activities related to the Services, such as chat interactions.</li>
           <li><strong>Derivative Data:</strong> Information our servers automatically collect when you access the Services, such as your IP address, browser type, operating system, access times, and the pages you have viewed directly before and after accessing the Services.</li>
-          <li><strong>Interaction Data:</strong> Information related to your interactions with our AI services, such as chat logs with FashionDaddy and descriptions provided to DatePlanner. This data is used to improve the AI models and provide the service.</li>
+          <li><strong>Interaction Data:</strong> Information related to your interactions with our AI services, such as your conversations with the Astrologer, the birth details used to calculate your chart, and any notes or past conversations you choose to import. This data is used to provide the service, including building an understanding of you that the Astrologer refers back to.</li>
           {/* Add other types of data collection if applicable, e.g., Mobile Device Data, Wardrobe Data */}
         </ul>
 
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
         </p>
          <ul>
            <li>Create and manage your account.</li>
-           <li>Provide and improve our AI-powered services (FashionDaddy, DatePlanner).</li>
+           <li>Provide and improve the Astrologer.</li>
            <li>Personalize your user experience.</li>
            <li>Respond to your inquiries and offer support.</li>
            <li>Monitor and analyze usage and trends to improve your experience with the Services.</li>

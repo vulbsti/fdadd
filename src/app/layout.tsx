@@ -17,9 +17,9 @@ const fontSerif = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Aidoraa — Explore Thyself',
+  title: 'Aidoraa — Understand yourself, and everything that shapes you',
   description:
-    'AI for the grand voyage inward. Pioneering tools for self-exploration — starting with fashion and dating, charting toward the whole self.',
+    'Aidoraa brings together astrology, neuroscience, economics, social psychology and ecology into one living picture of your life, so you can see why things unfold the way they do and act in step with what you want.',
 };
 
 export default function RootLayout({

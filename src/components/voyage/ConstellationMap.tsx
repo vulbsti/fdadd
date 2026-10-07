@@ -4,13 +4,11 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * ConstellationMap — the roadmap rendered as a star chart.
- *
- * "SELF" sits at the center of a constellation; the disciplines Aidoraa
- * will grow into are stars around it. Live instruments (fashion, dating)
- * burn gold; horizon domains stay dim until their expedition begins.
- * Slow drift rotation, pointer parallax, hover raycasting brightens a
- * star and lifts its label.
+ * ConstellationMap — the lenses Aidoraa reads a person through, drawn as a
+ * star chart. "YOU" sits at the center; each discipline is a star linked to
+ * you and to the others it informs, because the picture is in how they
+ * connect. Slow drift rotation, pointer parallax, hover raycasting brightens
+ * a star and lifts its label.
  */
 
 type Star = {
@@ -20,29 +18,26 @@ type Star = {
 };
 
 const STARS: Star[] = [
-  { name: 'SELF', status: 'live', position: [0, 0, 0] },
-  { name: 'Fashion', status: 'live', position: [-2.6, 0.7, 0.9] },
-  { name: 'Dating', status: 'live', position: [2.3, -0.6, 1.1] },
-  { name: 'Health', status: 'horizon', position: [-2.2, -1.4, -1.4] },
-  { name: 'Astrology', status: 'horizon', position: [0.4, 2.3, -1.7] },
-  { name: 'Spirituality', status: 'horizon', position: [3.1, 1.5, -0.8] },
-  { name: 'Neuroscience', status: 'horizon', position: [-0.7, -2.5, -0.6] },
-  { name: 'Behaviour Science', status: 'horizon', position: [1.6, -1.8, 1.9] },
+  { name: 'You', status: 'live', position: [0, 0, 0] },
+  { name: 'Mind', status: 'live', position: [-2.6, 0.7, 0.9] },
+  { name: 'Stars', status: 'live', position: [0.4, 2.3, -1.7] },
+  { name: 'World', status: 'live', position: [3.1, 1.2, -0.8] },
+  { name: 'People', status: 'live', position: [2.3, -1.4, 1.1] },
+  { name: 'Place', status: 'live', position: [-1.6, -2.1, -0.6] },
 ];
 
-// Faint cross-links between horizon stars — a chart still being drawn.
+// Every lens links to you, and to the lenses it shapes.
 const LINKS: Array<[number, number]> = [
   [0, 1],
   [0, 2],
   [0, 3],
   [0, 4],
   [0, 5],
-  [0, 6],
-  [0, 7],
-  [1, 4], // fashion ↔ astrology
-  [2, 7], // dating ↔ behaviour
-  [3, 6], // health ↔ neuroscience
-  [5, 4], // spirituality ↔ astrology
+  [1, 2], // mind ↔ timing and temperament
+  [1, 4], // mind ↔ people
+  [3, 4], // world ↔ people
+  [3, 5], // world ↔ place
+  [4, 5], // people ↔ place
 ];
 
 const GOLD = new THREE.Color('#d9a851');
@@ -115,7 +110,7 @@ export default function ConstellationMap() {
     const lineMat = new THREE.LineBasicMaterial({
       color: CREAM,
       transparent: true,
-      opacity: 0.14,
+      opacity: 0.4,
     });
     world.add(new THREE.LineSegments(lineGeo, lineMat));
 

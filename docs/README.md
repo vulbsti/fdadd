@@ -46,9 +46,8 @@ exist through P2. Source-led learning, suggestion generation, complete guided
 loops, imports/deletion, and release gates remain later phases. The P2 receipt
 separates revision-backed contract-fixture UI proof from learned-model proof.
 
-The current source has real Supabase authentication and payment routes, while
-FashionDaddy, DatePlanner, blog, and RSS still contain sample or in-memory
-behavior. The production workflow calls the P0 code/database/browser checks,
+The current source has real Supabase authentication and payment routes, and the
+contact form is still a placeholder. The production workflow calls the P0 code/database/browser checks,
 requires a same-commit hosted staging journey, then compares production schema
 state before promotion. Those gates do not establish complete v3
 design or reasoning parity.
