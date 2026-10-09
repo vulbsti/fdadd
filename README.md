@@ -7,6 +7,9 @@ prototype with a real Supabase authentication/payment foundation. Several
 product areas still use sample or in-memory data; the documentation labels
 those boundaries explicitly.
 
+What Aidoraa is trying to be, and how its agents should reason, is in
+[`docs/VISION.md`](docs/VISION.md).
+
 ## Current surfaces
 
 - **Home and Mission** — marketing pages (`/`, `/mission`; `/about`

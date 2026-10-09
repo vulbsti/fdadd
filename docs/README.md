@@ -6,6 +6,8 @@ document and the code disagree.
 
 ## Use these first
 
+- [`VISION.md`](VISION.md) — the product goal, how the agents should reason,
+  and the quality check for prompts, skills and answers. Read this first.
 - [`../README.md`](../README.md) — local development, current product
   boundaries, checks, and deployment workflow.
 - [`operations/system-pipeline.md`](operations/system-pipeline.md) — local and
