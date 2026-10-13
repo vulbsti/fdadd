@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { User } from '@supabase/supabase-js';
+import { isAuthSessionMissingError, type User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 
@@ -58,7 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void supabase.auth.getUser().then(({ data, error: userError }) => {
       if (!mounted) return;
       setUser(data.user ?? null);
-      setError(userError?.message ?? null);
+      // Being signed out is not an error; only surface real failures.
+      setError(userError && !isAuthSessionMissingError(userError) ? userError.message : null);
       setLoading(false);
     });
 

@@ -9,7 +9,7 @@ export default async function PersonLayout({ children, params }: { children: Rea
   const { personId } = await params as { personId: string };
   const client = await createClient();
   const { data: { user } } = await client.auth.getUser();
-  if (!user) redirect('/');
+  if (!user) redirect('/?auth=login');
   const [{ data: profile }, { data: profiles }, { data: preferences }, { data: sessions }] = await Promise.all([
     client.from('astro_profiles').select('id,name,astro_status').eq('id', personId).eq('user_id', user.id).eq('person_status', 'active').maybeSingle(),
     client.from('astro_profiles').select('id,name,astro_status').eq('user_id', user.id).eq('person_status', 'active').order('updated_at', { ascending: false }),
