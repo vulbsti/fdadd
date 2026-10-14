@@ -82,3 +82,23 @@ user (everything else cascades), then removes the user's files under
 `<userId>/` in the `pi-workspaces` and `person-imports` buckets and in the edge
 R2 store. Failed file steps, and accounts that had a run in progress, are
 queued in `account_deletion_cleanups` for the daily sweep.
+
+## Connectors, Drive picker and reports from the app
+
+- `POST /api/app/v1/connectors/{notion|google}/start-url {personId}` returns
+  `{url}`. The OAuth state is a one-time ticket (`app_handoff_tickets`, 10
+  minutes, hash only). The existing callbacks finish the connection as on the
+  web and redirect to `aidoraa://connectors/<service>?result=connected|cancelled|failed`.
+  The provider redirect URIs do not change.
+- `POST /api/app/v1/connectors/google/picker-url {personId}` returns `{url}`
+  to `/connectors/google/pick?ticket=…`. That page works without the website
+  cookie, shows Google's picker, fetches the picked files into a pending
+  import and redirects to
+  `aidoraa://imports?result=imported|cancelled|failed&count=N&personId=…&importId=…`.
+  The app then shows the import for review and confirms it through
+  `/api/astrologer/profiles/{personId}/imports/{importId}` and `/confirm`.
+- `POST /api/app/v1/reports` stores a report of an AI reply in
+  `ai_reply_reports` (people can add, never read; 10 per 10 minutes, 50 a day).
+
+Apply `supabase/migrations/20261014150000_app_handoffs_and_reply_reports.sql`
+after the membership migration.

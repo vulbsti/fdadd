@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { connectGoogle, googleRedirectUri } from '@/lib/connectors/google';
 import { requireOwnedPerson } from '@/lib/imports/http';
+import { finishAppConnection } from '@/lib/app/connectors';
+import { parseAppOAuthState } from '@/lib/app/handoff';
 
 export const runtime = 'nodejs';
 const GOOGLE_STATE_COOKIE = 'aidoraa_google_oauth';
@@ -15,6 +17,12 @@ function sameState(a: string, b: string) {
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  // Started from the app: no cookie, and the result goes back to the app.
+  const appToken = parseAppOAuthState(url.searchParams.get('state'));
+  if (appToken !== null) {
+    return finishAppConnection(request, 'google', appToken,
+      (admin, userId, code) => connectGoogle(admin, userId, code, googleRedirectUri(request.url)));
+  }
   const stored = (await cookies()).get(GOOGLE_STATE_COOKIE)?.value ?? '';
   const [state, personId] = stored.split('.');
   const back = (outcome: string) => {
