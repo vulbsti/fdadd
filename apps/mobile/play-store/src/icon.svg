@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#22304a"/>
+      <stop offset="1" stop-color="#101827"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f3d79a" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#e7c174" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g fill="#e7c174" opacity="0.35">
+    <circle cx="96" cy="118" r="2.5"/><circle cx="420" cy="96" r="2"/><circle cx="440" cy="300" r="2.5"/>
+    <circle cx="70" cy="330" r="2"/><circle cx="380" cy="440" r="2"/><circle cx="130" cy="452" r="2.5"/>
+  </g>
+  <g id="mark">
+    <g stroke="#c89641" stroke-width="7" stroke-linecap="round" fill="none">
+      <line x1="256" y1="128" x2="160" y2="384"/>
+      <line x1="256" y1="128" x2="352" y2="384"/>
+      <line x1="196" y1="288" x2="316" y2="288"/>
+      <line x1="196" y1="288" x2="352" y2="384" stroke-opacity="0.45" stroke-width="4"/>
+    </g>
+    <circle cx="256" cy="128" r="40" fill="url(#glow)"/>
+    <g fill="#e7c174">
+      <circle cx="256" cy="128" r="17"/>
+      <circle cx="160" cy="384" r="13"/>
+      <circle cx="352" cy="384" r="13"/>
+      <circle cx="196" cy="288" r="11"/>
+      <circle cx="316" cy="288" r="11"/>
+    </g>
+  </g>
+</svg>
