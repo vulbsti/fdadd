@@ -2,6 +2,7 @@ name: Mobile app
 
 on:
   push:
+    branches: [main]
     paths:
       - "apps/mobile/**"
       - ".github/workflows/mobile.yml"
@@ -34,10 +35,13 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - uses: android-actions/setup-android@v3
-
+      # The runner image already has the Android SDK; only add what it lacks.
       - name: Install Android platform 37
-        run: sdkmanager "platforms;android-37.0" "build-tools;37.0.0" "platform-tools"
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          sdkmanager=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
+          yes | "$sdkmanager" --licenses > /dev/null || true
+          "$sdkmanager" "platforms;android-37.0" "build-tools;37.0.0" "platform-tools"
 
       - uses: gradle/actions/setup-gradle@v4
 
