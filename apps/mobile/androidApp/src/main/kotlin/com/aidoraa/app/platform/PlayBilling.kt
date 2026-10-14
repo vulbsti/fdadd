@@ -33,12 +33,24 @@ import kotlinx.coroutines.withTimeoutOrNull
  */
 internal class PlayBilling(context: Context, private val activity: () -> Activity?) : BillingGateway {
     private var pending: CompletableDeferred<PurchaseOutcome>? = null
+    @Volatile private var background: ((List<StorePurchase>) -> Unit)? = null
 
+    /** Registered once on the app-scoped client, so it hears purchases for as long as the process lives. */
     private val listener = PurchasesUpdatedListener { result, purchases ->
-        val waiting = pending ?: return@PurchasesUpdatedListener
-        pending = null
-        waiting.complete(outcome(result, purchases))
+        val waiting = pending
+        if (waiting != null) {
+            pending = null
+            waiting.complete(outcome(result, purchases))
+            return@PurchasesUpdatedListener
+        }
+        // Not from a purchase flow we started: a pending payment completed, or a purchase made elsewhere.
+        if (result.responseCode == BillingClient.BillingResponseCode.OK && !purchases.isNullOrEmpty()) {
+            val done = purchases.filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }.map { it.toStore() }
+            if (done.isNotEmpty()) background?.invoke(done)
+        }
     }
+
+    override fun setPurchaseListener(listener: (List<StorePurchase>) -> Unit) { background = listener }
 
     private val client = BillingClient.newBuilder(context.applicationContext)
         .setListener(listener)

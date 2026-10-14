@@ -70,6 +70,12 @@ interface BillingGateway {
     suspend fun purchase(productId: String, basePlanId: String, accountId: String): PurchaseOutcome
     suspend fun ownedPurchases(productId: String): List<StorePurchase>
     suspend fun acknowledge(purchaseToken: String)
+
+    /**
+     * Receives purchases the store reports outside a purchase() call, for example a
+     * pending payment that completes later. Set once at start; lives as long as the app.
+     */
+    fun setPurchaseListener(listener: (List<StorePurchase>) -> Unit)
 }
 
 /** Everything the shared UI asks of the host platform. */

@@ -24,6 +24,7 @@ data class ChatMessage(
     val role: String,
     val text: String,
     val delivery: Delivery = Delivery.Sent,
+    val runId: String? = null,
 ) {
     enum class Delivery { Sending, Sent, Failed }
 }
@@ -92,7 +93,7 @@ class ChatController(private val app: AppController) {
     fun clearError() { _state.value = _state.value.copy(error = null) }
 
     private fun mergeMessages(local: List<ChatMessage>, persisted: List<MessageDto>): List<ChatMessage> {
-        val server = persisted.map { ChatMessage(it.id, it.role, it.content) }
+        val server = persisted.map { ChatMessage(it.id, it.role, it.content, runId = it.runId) }
         val serverIds = server.map { it.id }.toSet()
         val serverUserTexts = persisted.filter { it.role == "user" }.map { it.content }.toMutableList()
         val pendingLocal = local.filter { message ->

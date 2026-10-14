@@ -10,18 +10,22 @@ val localProperties = Properties().apply {
     if (file.isFile) file.inputStream().use { load(it) }
 }
 
-/** A public build setting: -P / gradle.properties first, then local.properties, then the default. */
-fun publicSetting(name: String, default: String = ""): String =
+/**
+ * A public build setting: -P / gradle.properties first, then local.properties, then the
+ * environment variable [env], then the default. Only public values belong here.
+ */
+fun publicSetting(name: String, env: String, default: String = ""): String =
     providers.gradleProperty(name).orNull?.trim()?.takeIf { it.isNotEmpty() }
         ?: localProperties.getProperty(name)?.trim()?.takeIf { it.isNotEmpty() }
+        ?: providers.environmentVariable(env).orNull?.trim()?.takeIf { it.isNotEmpty() }
         ?: default
 
 fun String.quoted() = "\"" + replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
-val origin = publicSetting("aidoraaOrigin", "https://www.aidoraa.com").trimEnd('/')
-val supabaseUrl = publicSetting("aidoraaSupabaseUrl", "$origin/sb").trimEnd('/')
-val supabaseKey = publicSetting("aidoraaSupabaseKey")
-val googleWebClientId = publicSetting("aidoraaGoogleWebClientId")
+val origin = publicSetting("aidoraaOrigin", "AIDORAA_ORIGIN", "https://www.aidoraa.com").trimEnd('/')
+val supabaseUrl = publicSetting("aidoraaSupabaseUrl", "AIDORAA_SUPABASE_URL", "$origin/sb").trimEnd('/')
+val supabaseKey = publicSetting("aidoraaSupabaseKey", "AIDORAA_SUPABASE_KEY")
+val googleWebClientId = publicSetting("aidoraaGoogleWebClientId", "AIDORAA_GOOGLE_WEB_CLIENT_ID")
 
 /** Release signing: apps/mobile/keystore.properties, or AIDORAA_UPLOAD_* environment variables. */
 val keystoreProperties = Properties().apply {
@@ -111,4 +115,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(project.dependencies.platform(libs.supabase.bom))
     implementation(libs.supabase.auth)
+    implementation(libs.ktor.client.core)
+    implementation(libs.kotlinx.serialization.json)
+    // Sample-data demo backend (src/debug only; not in release builds).
+    debugImplementation(libs.ktor.client.mock)
+
+    testImplementation(kotlin("test-junit"))
+    testImplementation(libs.kotlinx.coroutines.test)
 }

@@ -92,6 +92,11 @@ fun SignInScreen(app: AppController) {
                 ErrorText(error)
                 Fine("New here? The same buttons create your account.")
                 if (!app.config.signInConfigured) Fine("This build has no sign-in settings. See apps/mobile/README.md.")
+                if (app.demoAvailable) {
+                    Spacer(Modifier.height(18.dp))
+                    GlassButton("Demo: open with sample data", enabled = !busy, color = Palette.GoldSoft) { app.startDemo() }
+                    Fine("Debug builds only. Shows Meera, a made-up person, with no account and no network.")
+                }
             }
             SignInMode.SignIn, SignInMode.SignUp -> {
                 val signUp = mode == SignInMode.SignUp

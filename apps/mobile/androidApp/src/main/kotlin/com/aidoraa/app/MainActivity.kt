@@ -51,11 +51,26 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    /** aidoraa://connectors/<service>?result=connected|cancelled|failed, sent back by the connector start route. */
+    /**
+     * Links the server sends back to after a Custom Tab:
+     * - aidoraa://connectors/<notion|google>?result=connected|cancelled|failed
+     * - aidoraa://imports?result=imported|cancelled|failed&count=N&personId=<id>&importId=<id>
+     */
     private fun handleLink(intent: Intent?) {
         val uri = intent?.data ?: return
-        if (uri.scheme != "aidoraa" || uri.host != "connectors") return
-        val service = uri.pathSegments.firstOrNull()?.takeIf { it == "notion" || it == "google" } ?: return
-        application.controller.imports.connectorReturned(service, uri.getQueryParameter("result"))
+        if (uri.scheme != "aidoraa") return
+        val imports = application.controller.imports
+        when (uri.host) {
+            "connectors" -> {
+                val service = uri.pathSegments.firstOrNull()?.takeIf { it == "notion" || it == "google" } ?: return
+                imports.connectorReturned(service, uri.getQueryParameter("result"))
+            }
+            "imports" -> imports.pickerReturned(
+                result = uri.getQueryParameter("result"),
+                count = uri.getQueryParameter("count")?.toIntOrNull(),
+                personId = uri.getQueryParameter("personId")?.takeIf { it.isNotBlank() },
+                importId = uri.getQueryParameter("importId")?.takeIf { it.isNotBlank() },
+            )
+        }
     }
 }

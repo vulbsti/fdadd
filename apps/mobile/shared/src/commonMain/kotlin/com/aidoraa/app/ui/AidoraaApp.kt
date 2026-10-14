@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -185,6 +186,18 @@ private fun MainShell(app: AppController) {
             }
         }
         if (top == null) TabBar(tab, Modifier.align(Alignment.BottomCenter), app::selectTab)
+        if (app.demo) {
+            // Always visible while the demo runs, so screenshots can't pass for a real account.
+            com.aidoraa.app.ui.components.T(
+                "Sample data",
+                com.aidoraa.app.ui.theme.Type.body(11.5.sp, Palette.Navy, androidx.compose.ui.text.font.FontWeight.SemiBold),
+                Modifier.align(Alignment.TopEnd)
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .padding(top = 4.dp, end = 12.dp)
+                    .background(Palette.GoldSoft, RoundedCornerShape(99.dp))
+                    .padding(horizontal = 10.dp, vertical = 3.dp),
+            )
+        }
     }
 }
 

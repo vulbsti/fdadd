@@ -74,6 +74,7 @@ class AuthRepository(private val config: AppConfig, secureStore: SecureStore, sc
         client?.let { supabase ->
             scope.launch {
                 supabase.auth.sessionStatus.collect { status ->
+                    if (demoMode) return@collect
                     _state.value = when (status) {
                         is SessionStatus.Authenticated -> AuthState.SignedIn(
                             status.session.user?.id ?: supabase.auth.currentUserOrNull()?.id ?: "",
@@ -91,9 +92,19 @@ class AuthRepository(private val config: AppConfig, secureStore: SecureStore, sc
 
     val configured: Boolean get() = client != null
 
+    /** Sample-data demo (debug builds only): signed in locally, no Supabase, no network. */
+    var demoMode: Boolean = false
+        private set
+
+    fun startDemo(userId: String, email: String) {
+        demoMode = true
+        _state.value = AuthState.SignedIn(userId, email)
+    }
+
     val userId: String? get() = (state.value as? AuthState.SignedIn)?.userId
 
     suspend fun accessToken(forceRefresh: Boolean): String? {
+        if (demoMode) return "demo"
         val supabase = client ?: return null
         if (forceRefresh) {
             refreshLock.withLock { runCatching { supabase.auth.refreshCurrentSession() } }
@@ -128,6 +139,11 @@ class AuthRepository(private val config: AppConfig, secureStore: SecureStore, sc
     }
 
     suspend fun signOut(everywhere: Boolean = false) {
+        if (demoMode) {
+            demoMode = false
+            _state.value = AuthState.SignedOut
+            return
+        }
         val supabase = client ?: return
         runCatching { supabase.auth.signOut(if (everywhere) SignOutScope.GLOBAL else SignOutScope.LOCAL) }
         // Even when the network call fails, forget the local session.

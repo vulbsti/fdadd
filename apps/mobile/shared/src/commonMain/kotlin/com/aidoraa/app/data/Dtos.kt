@@ -412,3 +412,26 @@ data class NotionImportRequest(val importId: String?, val pageIds: List<String>)
 
 @Serializable
 data class NotionImportResponse(val importId: String = "", val skipped: List<String> = emptyList())
+
+// ---------------------------------------------------------------------------
+// Connector URLs and reports
+// ---------------------------------------------------------------------------
+
+@Serializable
+data class PersonRequest(val personId: String)
+
+@Serializable
+data class UrlResponse(val url: String = "")
+
+@Serializable
+data class OkResponse(val ok: Boolean = false)
+
+/** reason: wrong | harmful | offensive | other */
+@Serializable
+data class ReportRequest(
+    val sessionId: String? = null,
+    val messageId: String? = null,
+    val runId: String? = null,
+    val reason: String,
+    val note: String? = null,
+)

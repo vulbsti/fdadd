@@ -33,19 +33,36 @@ You need JDK 17+ and an Android SDK with `platforms;android-37.0` and `build-too
 cd apps/mobile
 ./gradlew :androidApp:assembleDebug          # androidApp/build/outputs/apk/debug/androidApp-debug.apk
 ./gradlew :shared:testAndroidHostTest        # commonTest unit tests on the JVM
+./gradlew :androidApp:testDebugUnitTest      # the demo backend through the real ApiClient
 ./gradlew :androidApp:installDebug           # to a connected device
 ```
 
 ## Configuration (public values only)
 
-Each value is read from a Gradle property (`-P`, `~/.gradle/gradle.properties`, or `gradle.properties`), then from `local.properties`. If neither is set, the default below is used.
+Each value is read, in order, from a Gradle property (`-P`, `~/.gradle/gradle.properties`, or `gradle.properties`), then `local.properties`, then an environment variable. If none is set, the default below is used.
 
-| Property | Default | What it is |
-|---|---|---|
-| `aidoraaOrigin` | `https://www.aidoraa.com` | Website and API origin. Point it at a staging or local server for testing. |
-| `aidoraaSupabaseUrl` | `<origin>/sb` | Supabase, reached through the site's `/sb` proxy |
-| `aidoraaSupabaseKey` | empty | Supabase **publishable / anon** key (public) |
-| `aidoraaGoogleWebClientId` | empty | Google OAuth **web** client id, the one Supabase accepts for Google ID tokens |
+| Property | Environment variable | Default | What it is |
+|---|---|---|---|
+| `aidoraaOrigin` | `AIDORAA_ORIGIN` | `https://www.aidoraa.com` | Website and API origin. Point it at a staging or local server for testing. |
+| `aidoraaSupabaseUrl` | `AIDORAA_SUPABASE_URL` | `<origin>/sb` (so `https://www.aidoraa.com/sb`) | Supabase auth base URL; the app calls `<this>/auth/v1` |
+| `aidoraaSupabaseKey` | `AIDORAA_SUPABASE_KEY` | empty | Supabase **publishable / anon** key (public) |
+| `aidoraaGoogleWebClientId` | `AIDORAA_GOOGLE_WEB_CLIENT_ID` | empty | Google OAuth **web** client id, the one Supabase accepts for Google ID tokens |
+
+A test build against staging, for example:
+
+```bash
+# local.properties (gitignored)
+aidoraaOrigin=https://staging.example.com
+aidoraaSupabaseUrl=https://staging.example.com/sb
+aidoraaSupabaseKey=sb_publishable_...
+aidoraaGoogleWebClientId=1234-abc.apps.googleusercontent.com
+```
+
+or the same values as `AIDORAA_*` environment variables in CI.
+
+### Demo with sample data (debug builds only)
+
+Debug builds show **"Demo: open with sample data"** on the sign-in screen. It opens the whole app on Meera, the prototype's made-up person, through an in-memory backend (`androidApp/src/debug/.../DemoBackend.kt`, a Ktor `MockEngine`). It needs no account and makes no network calls; answers in Ask are canned and stream word by word. A "Sample data" badge stays on screen. Purchases, connectors and uploads are turned off. Sign out to leave. The demo code lives only in `src/debug` (release has a stub in `src/release`), so it is not in release builds.
 
 If the key is empty, the app builds and runs, but the sign-in screen says sign-in is not set up in this build.
 
@@ -60,7 +77,7 @@ A `426 update_required` response shows a blocking "Update the app" screen. So do
 
 ## Release signing
 
-Release builds use R8 with minify and resource shrinking. They are signed with the upload key when one is configured, read from either of these:
+Release builds use R8 with minify and resource shrinking. `androidApp/proguard-rules.pro` keeps the kotlinx.serialization serializers of the app's DTOs and supabase-kt's classes, and Ktor's atomic fields, on top of the libraries' own rules. They are signed with the upload key when one is configured, read from either of these:
 
 - `apps/mobile/keystore.properties` (gitignored), with `storeFile`, `storePassword`, `keyAlias` and `keyPassword`. A relative `storeFile` resolves against `apps/mobile`.
 - The environment variables `AIDORAA_UPLOAD_STORE_FILE`, `AIDORAA_UPLOAD_STORE_PASSWORD`, `AIDORAA_UPLOAD_KEY_ALIAS` and `AIDORAA_UPLOAD_KEY_PASSWORD`.

@@ -71,10 +71,60 @@ class ImportsController(private val app: AppController) {
 
     fun connect(service: String) {
         val personId = person() ?: return
-        app.platform.openInAppBrowser(app.api.connectorStartUrl(service, personId))
+        if (app.demo) { app.toast("Not available with sample data"); return }
+        app.scope.launch {
+            busy("Opening ${if (service == "notion") "Notion" else "Google"}")
+            try { app.platform.openInAppBrowser(app.api.connectorStartUrl(service, personId)) }
+            catch (c: CancellationException) { throw c } catch (error: Exception) { _state.value = _state.value.copy(error = error.message) }
+            finally { busy(null) }
+        }
+    }
+
+    /** Opens the Google Drive picker on the website; it returns to aidoraa://imports?result=... */
+    fun chooseDriveFiles() {
+        val personId = person() ?: return
+        if (app.demo) { app.toast("Not available with sample data"); return }
+        app.scope.launch {
+            busy("Opening Google Drive")
+            try { app.platform.openInAppBrowser(app.api.drivePickerUrl(personId)) }
+            catch (c: CancellationException) { throw c } catch (error: Exception) { _state.value = _state.value.copy(error = error.message) }
+            finally { busy(null) }
+        }
+    }
+
+    /**
+     * Called when the browser returns to
+     * aidoraa://imports?result=imported|cancelled|failed&count=N&personId=<id>&importId=<id>.
+     * Drive imports wait for review like on the web, so with an import id the review opens here.
+     */
+    fun pickerReturned(result: String?, count: Int?, personId: String?, importId: String?) {
+        if (app.stack.value.lastOrNull() != Route.Imports) app.push(Route.Imports)
+        when (result) {
+            "cancelled" -> app.toast("Nothing was imported")
+            "failed" -> app.toast("That import didn't work. Please try again.")
+        }
+        val owner = personId ?: person()
+        if (result == "imported" && importId != null && owner != null) {
+            if (owner != person()) app.selectPerson(owner)
+            app.scope.launch {
+                busy("Reading your Drive files")
+                try {
+                    val detail = app.api.importDetail(owner, importId)
+                    if (detail.items.isEmpty()) _state.value = _state.value.copy(error = "Nothing readable was found in those files.")
+                    else _state.value = _state.value.copy(review = detail)
+                } catch (c: CancellationException) { throw c } catch (error: Exception) {
+                    _state.value = _state.value.copy(error = error.message ?: "That import couldn't be opened.")
+                } finally { busy(null) }
+                load()
+            }
+        } else {
+            if (result == "imported") app.toast(if (count != null && count > 0) "Imported $count file${if (count == 1) "" else "s"} from Google Drive" else "Imported from Google Drive")
+            load()
+        }
     }
 
     fun disconnect(service: String) {
+        if (app.demo) { app.toast("Not available with sample data"); return }
         app.scope.launch {
             busy("Disconnecting")
             try { app.api.disconnect(service); app.toast("Disconnected"); load() }
@@ -95,6 +145,7 @@ class ImportsController(private val app: AppController) {
 
     fun upload(source: UploadSource) {
         val personId = person() ?: return
+        if (app.demo) { app.toast("Not available with sample data"); return }
         app.scope.launch {
             try {
                 val files = app.platform.pickFiles(listOf("application/zip", "application/json", "text/plain", "text/markdown", "application/octet-stream"))

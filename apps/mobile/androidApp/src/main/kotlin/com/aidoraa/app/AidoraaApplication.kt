@@ -21,6 +21,7 @@ class AidoraaApplication : Application() {
                 platform = "android",
             ),
             platform,
+            demoEngine = DemoSupport.engineFactory,
         )
     }
 

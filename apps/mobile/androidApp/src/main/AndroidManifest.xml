@@ -31,6 +31,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="aidoraa" android:host="connectors" />
             </intent-filter>
+            <!-- Return from the Google Drive picker: aidoraa://imports?result=...&count=N&personId=...&importId=... -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="aidoraa" android:host="imports" />
+            </intent-filter>
         </activity>
     </application>
 

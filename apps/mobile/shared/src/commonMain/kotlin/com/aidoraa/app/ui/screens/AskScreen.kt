@@ -1,5 +1,19 @@
 package com.aidoraa.app.ui.screens
 
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
+import com.aidoraa.app.data.ReportRequest
+import com.aidoraa.app.ui.components.ErrorText
+import com.aidoraa.app.ui.components.Field
+import com.aidoraa.app.ui.components.SmallButton
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -143,7 +157,7 @@ fun AskScreen(app: AppController) {
                 }
                 items(state.messages, key = { it.id }) { message ->
                     if (message.role == "user") UserBubble(message) { app.chat.retry(message.id) }
-                    else AssistantBubble {
+                    else AssistantBubble(onReport = { sheet.show { ReportSheet(app, state.sessionId, message) } }) {
                         if (message.id == state.handoffMessageId) {
                             RevealText(message.text, Type.body(15.sp), startWords = state.handoffWords, onDone = { app.chat.handoffFinished() })
                         } else T(markdownToAnnotated(message.text), Type.body(15.sp))
@@ -270,10 +284,62 @@ private fun UserBubble(message: ChatMessage, onRetry: () -> Unit) {
 }
 
 @Composable
-private fun AssistantBubble(content: @Composable () -> Unit) {
+private fun AssistantBubble(onReport: (() -> Unit)? = null, content: @Composable () -> Unit) {
     androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) {
-        Box(Modifier.widthIn(max = maxWidth * 0.9f).glass(aiShape).padding(horizontal = 15.dp, vertical = 12.dp)) { content() }
+        val limit = maxWidth * 0.9f
+        val bubble = Modifier.widthIn(max = limit).glass(aiShape)
+            .then(
+                if (onReport == null) Modifier
+                else Modifier
+                    .pointerInput(onReport) { detectTapGestures(onLongPress = { onReport() }) }
+                    .semantics { customActions = listOf(CustomAccessibilityAction("Report this reply") { onReport(); true }) },
+            )
+            .padding(horizontal = 15.dp, vertical = 12.dp)
+        Column {
+            Box(bubble) { content() }
+            if (onReport != null) {
+                Box(Modifier.widthIn(max = limit).fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                    T("•••", Type.body(13.sp, Palette.Ink3),
+                        Modifier.tap("More options for this reply", onClick = onReport).padding(horizontal = 10.dp, vertical = 4.dp))
+                }
+            }
+        }
     }
+}
+
+private val REPORT_REASONS = listOf("wrong" to "Seems wrong", "harmful" to "Harmful", "offensive" to "Offensive", "other" to "Something else")
+
+/** "Report this reply": a reason, an optional note, sent to /api/app/v1/reports. */
+@Composable
+private fun ReportSheet(app: AppController, sessionId: String?, message: ChatMessage) {
+    val sheet = LocalSheet.current
+    var reason by remember(message.id) { mutableStateOf<String?>(null) }
+    var note by remember(message.id) { mutableStateOf("") }
+    var busy by remember(message.id) { mutableStateOf(false) }
+    var error by remember(message.id) { mutableStateOf<String?>(null) }
+    T("Report this reply", Type.display(26.sp))
+    T("Tell us what's wrong with it. Reports are read by people at Aidoraa and help make answers better.", Type.muted(), Modifier.padding(top = 6.dp, bottom = 14.dp))
+    REPORT_REASONS.forEach { (id, label) ->
+        SmallButton(label, Modifier.fillMaxWidth().padding(bottom = 8.dp), on = reason == id) { reason = id }
+    }
+    Field(note, { note = it.take(1000) }, "Add a note (optional)", Modifier.padding(top = 6.dp), singleLine = false)
+    ErrorText(error, Modifier.padding(top = 8.dp))
+    Spacer(Modifier.height(14.dp))
+    PrimaryButton("Send report", enabled = reason != null && !busy, busy = busy) {
+        val chosen = reason ?: return@PrimaryButton
+        busy = true; error = null
+        app.scope.launch {
+            try {
+                app.api.report(ReportRequest(sessionId = sessionId, messageId = message.id, runId = message.runId,
+                    reason = chosen, note = note.trim().ifEmpty { null }))
+                sheet.hide()
+                app.toast("Thanks, we'll look at this")
+            } catch (c: CancellationException) { throw c } catch (e: Exception) {
+                error = e.message ?: "The report didn't send. Please try again."
+            } finally { busy = false }
+        }
+    }
+    TextLink("Cancel", color = Palette.Ink3, modifier = Modifier.padding(top = 6.dp)) { sheet.hide() }
 }
 
 @Composable

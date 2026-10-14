@@ -4,6 +4,7 @@ import com.aidoraa.app.core.AppConfig
 import com.aidoraa.app.domain.VersionGate
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.timeout
@@ -57,8 +58,10 @@ class ApiClient(
     private val config: AppConfig,
     private val accessToken: suspend (forceRefresh: Boolean) -> String?,
     private val onUpdateRequired: (message: String) -> Unit,
+    /** Debug builds pass an in-memory engine for the sample-data demo; null uses the network. */
+    engine: HttpClientEngine? = null,
 ) {
-    val http: HttpClient = createPlatformHttpClient {
+    private val setup: io.ktor.client.HttpClientConfig<*>.() -> Unit = {
         expectSuccess = false
         install(ContentNegotiation) { json(AppJson) }
         install(HttpTimeout) {
@@ -67,6 +70,7 @@ class ApiClient(
             socketTimeoutMillis = 60_000
         }
     }
+    val http: HttpClient = if (engine != null) HttpClient(engine, setup) else createPlatformHttpClient(setup)
 
     private fun url(path: String) = if (path.startsWith("http")) path else config.origin.trimEnd('/') + path
 
@@ -233,8 +237,15 @@ class ApiClient(
         post("${importsBase(personId)}/notion", NotionImportRequest(importId, pageIds))
     suspend fun disconnect(service: String) { raw(HttpMethod.Delete, "/api/connectors/${service.seg()}") }
 
-    fun connectorStartUrl(service: String, personId: String): String =
-        url("/api/connectors/${service.seg()}/start?personId=${personId.seg()}&return=app")
+    /** A one-time sign-in URL for Notion or Google; the server redirects back to aidoraa://connectors/<service>. */
+    suspend fun connectorStartUrl(service: String, personId: String): String =
+        post<UrlResponse>("/api/app/v1/connectors/${service.seg()}/start-url", PersonRequest(personId)).url
+
+    /** A one-time Google Drive picker URL; the server redirects back to aidoraa://imports. */
+    suspend fun drivePickerUrl(personId: String): String =
+        post<UrlResponse>("/api/app/v1/connectors/google/picker-url", PersonRequest(personId)).url
+
+    suspend fun report(request: ReportRequest) { post<OkResponse>("/api/app/v1/reports", request) }
 
     /** Uploads the export ZIP straight to private storage with the one-time signed upload token. */
     suspend fun uploadToSignedUrl(target: UploadTargetDto, bytes: ByteArray) {

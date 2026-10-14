@@ -106,7 +106,7 @@ Category: **"All other app types"**.
 | Shares the user's location with other users | No | Birth place is stored privately; device location is never read. |
 | Purchase of digital goods | Yes | Monthly membership through Google Play Billing. |
 | Unrestricted internet / web browser | No | Web pages (terms, privacy, connector sign-in) open in a Custom Tab. |
-| Generative AI content | Yes | Answers are AI-generated. |
+| Generative AI content | Yes | Answers are AI-generated. Every answer can be reported in the app (long-press or the ••• under it: Seems wrong / Harmful / Offensive / Something else, plus a note). |
 
 **Target audience:** 18+.
 **Ads:** none.
@@ -151,10 +151,9 @@ Based on the native app as built. The app contains no analytics, ads or crash-re
 ## Gaps to fix before submitting
 
 1. **Privacy policy and terms are still templates.** `src/app/privacy/page.tsx` and `src/app/terms/page.tsx` contain `[Your ...]` placeholders. Reviewers reject placeholder policies. The policy should name the processors above, cover birth details, retention, export and deletion.
-2. **Report AI replies.** Google's AI-generated content policy asks for an in-app way to report offensive output. The native app has no "Report this reply" control yet.
-3. **Reviewer access.** Everything is behind sign-in; give reviewers a test account under App content > App access.
-4. **Support email** must be a real, monitored address.
-5. **Play subscription set-up**: create `aidoraa_membership` and the three base plans above, and configure the server's Google Play credentials, before the internal test.
+2. **Reviewer access.** Everything is behind sign-in; give reviewers a test account under App content > App access.
+3. **Support email** must be a real, monitored address.
+4. **Play subscription set-up**: create `aidoraa_membership` and the three base plans above, and configure the server's Google Play credentials, before the internal test.
 
 ---
 

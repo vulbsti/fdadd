@@ -110,13 +110,17 @@ fun ImportsScreen(app: AppController) {
                 sub = when {
                     google == null -> null
                     !google.configured -> "Not available yet"
-                    google.connected -> "Connected" + (google.email?.let { " as $it" } ?: "") + ". Choose files on aidoraa.com."
+                    google.connected -> "Connected" + (google.email?.let { " as $it" } ?: "")
                     else -> "Docs you pick are read once"
                 },
                 chevron = false, divider = false,
                 trailing = {
                     if (google?.configured == true) {
-                        if (google.connected) SmallButton("Disconnect", enabled = state.busy == null) { app.imports.disconnect("google") }
+                        if (google.connected) {
+                            SmallButton("Choose files", enabled = state.busy == null) { app.imports.chooseDriveFiles() }
+                            Spacer(Modifier.width(6.dp))
+                            SmallButton("Disconnect", enabled = state.busy == null) { app.imports.disconnect("google") }
+                        }
                         else SmallButton("Connect", on = true, enabled = state.busy == null) { app.imports.connect("google") }
                     }
                 },
@@ -167,18 +171,28 @@ private fun UploadRow(source: UploadSource, open: Boolean, last: Boolean, enable
 @Composable
 private fun SpeakerSheet(app: AppController, detail: ImportDetailDto) {
     val sheet = LocalSheet.current
-    var choice by remember(detail.import.id) { mutableStateOf(detail.personSpeaker) }
-    T("Which one is you?", Type.display(26.sp))
-    Paragraph("This chat has more than one speaker. Aidoraa will learn from what you said and treat the rest as context.", Modifier.padding(top = 6.dp, bottom = 12.dp))
-    detail.speakers.forEach { speaker ->
-        SmallButton(speaker, Modifier.fillMaxWidth().padding(bottom = 8.dp), on = choice == speaker) { choice = speaker }
+    val needsSpeaker = detail.speakers.size > 1
+    var choice by remember(detail.import.id) { mutableStateOf(detail.personSpeaker ?: detail.speakers.singleOrNull()) }
+    val found = "${detail.items.size} item${if (detail.items.size == 1) "" else "s"} found"
+    if (needsSpeaker) {
+        T("Which one is you?", Type.display(26.sp))
+        Paragraph("This chat has more than one speaker. Aidoraa will learn from what you said and treat the rest as context.", Modifier.padding(top = 6.dp, bottom = 12.dp))
+        detail.speakers.forEach { speaker ->
+            SmallButton(speaker, Modifier.fillMaxWidth().padding(bottom = 8.dp), on = choice == speaker) { choice = speaker }
+        }
+    } else {
+        T("Import these?", Type.display(26.sp))
+        Paragraph("Aidoraa reads their text once. You can delete the import later, and what it added goes with it.", Modifier.padding(top = 6.dp, bottom = 12.dp))
+        detail.items.take(8).forEach { item ->
+            T("•  ${item.title.ifBlank { "Untitled" }}", Type.body(14.sp, Palette.Ink2), Modifier.padding(bottom = 4.dp))
+        }
     }
-    T("${detail.items.size} conversation${if (detail.items.size == 1) "" else "s"} found", Type.body(13.sp, Palette.Ink3), Modifier.padding(top = 4.dp, bottom = 12.dp))
-    PrimaryButton("Import", enabled = choice != null) {
+    T(found, Type.body(13.sp, Palette.Ink3), Modifier.padding(top = 4.dp, bottom = 12.dp))
+    PrimaryButton("Import", enabled = !needsSpeaker || choice != null) {
         sheet.hide()
         app.imports.confirm(detail, choice)
     }
-    TextLink("Cancel and delete this upload", Modifier.padding(top = 12.dp), color = Palette.Ink2) {
+    TextLink("Cancel and delete this import", Modifier.padding(top = 12.dp), color = Palette.Ink2) {
         sheet.hide()
         app.imports.cancelReview()
     }

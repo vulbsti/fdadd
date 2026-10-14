@@ -20,6 +20,7 @@ import com.aidoraa.app.domain.PanelId
 import com.aidoraa.app.domain.PanelLayout
 import com.aidoraa.app.domain.PanelSlot
 import com.aidoraa.app.domain.VersionGate
+import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -73,6 +74,8 @@ enum class InfoKind { Notifications, Appearance, Privacy, Security, Help, Legal 
 class AppController(
     val config: AppConfig,
     val platform: PlatformServices,
+    /** Debug builds only: an in-memory backend with sample data. Null in release builds. */
+    private val demoEngine: (() -> HttpClientEngine)? = null,
 ) {
     /** A last-resort guard: a failure in background work shows a short message instead of closing the app. */
     private val failureGuard = CoroutineExceptionHandler { _, error ->
@@ -81,7 +84,22 @@ class AppController(
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main + failureGuard)
     val cache = JsonCache(platform.keyValueStore)
     val auth = AuthRepository(config, platform.secureStore, scope)
-    val api = ApiClient(config, auth::accessToken) { message -> _phase.value = AppPhase.UpdateRequired(message) }
+    private val liveApi = ApiClient(config, auth::accessToken, onUpdateRequired = { message -> _phase.value = AppPhase.UpdateRequired(message) })
+    var api: ApiClient = liveApi
+        private set
+
+    /** Whether the sample-data demo can be opened (debug builds). */
+    val demoAvailable: Boolean get() = demoEngine != null
+
+    /** True while the app shows sample data instead of an account. */
+    val demo: Boolean get() = auth.demoMode
+
+    /** Opens the app on bundled sample data, without an account or the network. */
+    fun startDemo() {
+        val engine = demoEngine ?: return
+        api = ApiClient(config, auth::accessToken, { message -> _phase.value = AppPhase.UpdateRequired(message) }, engine())
+        auth.startDemo(DEMO_USER_ID, "meera@example.com")
+    }
 
     private val _phase = MutableStateFlow<AppPhase>(AppPhase.Loading)
     val phase: StateFlow<AppPhase> = _phase.asStateFlow()
@@ -214,6 +232,7 @@ class AppController(
                 val fresh = api.bootstrap()
                 cache.write("bootstrap", BootstrapDto.serializer(), fresh)
                 applyBootstrap(fresh, fromCache = false)
+                billing.syncPurchases()
             } catch (cancel: CancellationException) {
                 throw cancel
             } catch (update: UpdateRequiredException) {
@@ -384,8 +403,10 @@ class AppController(
 
     fun signOut(everywhere: Boolean = false) {
         scope.launch {
+            val wasDemo = demo
             auth.signOut(everywhere)
             cache.clearAll()
+            if (wasDemo) api = liveApi
         }
     }
 
@@ -393,6 +414,7 @@ class AppController(
     fun accountDeleted() {
         scope.launch {
             cache.clearAll()
+            if (demo) api = liveApi
             auth.signOut()
         }
     }
@@ -402,3 +424,5 @@ class AppController(
         refresh()
     }
 }
+
+const val DEMO_USER_ID = "demo-sample-user"

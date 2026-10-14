@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   android:
-    name: Android debug build and shared tests
+    name: Android debug build and tests
     runs-on: ubuntu-latest
     timeout-minutes: 40
     defaults:
@@ -47,7 +47,7 @@ jobs:
         run: ./gradlew --no-daemon :androidApp:assembleDebug
 
       - name: Shared unit tests
-        run: ./gradlew --no-daemon :shared:testAndroidHostTest
+        run: ./gradlew --no-daemon :shared:testAndroidHostTest :androidApp:testDebugUnitTest
 
       - name: Upload test reports
         if: failure()
