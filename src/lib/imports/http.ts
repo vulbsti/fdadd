@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { getRequestUser } from '@/lib/supabase/request-auth';
 import { NotionError } from '@/lib/connectors/notion';
 import { GoogleError } from '@/lib/connectors/google';
 import { ImportError, type OwnerScope } from './store';
@@ -15,9 +15,9 @@ export function json(body: unknown, status = 200) {
 /** The signed-in user and one of their active people, or a response to return. */
 export async function requireOwnedPerson(personId: string): Promise<{ scope: OwnerScope; admin: ReturnType<typeof createAdminClient> } | NextResponse> {
   if (!isSupabaseConfigured()) return json({ code: 'unconfigured', message: 'Imports are not configured.' }, 503);
-  const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
-  if (!user) return json({ code: 'forbidden', message: 'Sign in to import.' }, 401);
+  const authed = await getRequestUser();
+  if (!authed) return json({ code: 'forbidden', message: 'Sign in to import.' }, 401);
+  const { client, user } = authed;
   const { data: profile } = await client.from('astro_profiles').select('id')
     .eq('id', personId).eq('user_id', user.id).eq('person_status', 'active').maybeSingle();
   if (!profile) return json({ code: 'not_owned_or_missing', message: 'Person was not found.' }, 404);
@@ -26,10 +26,9 @@ export async function requireOwnedPerson(personId: string): Promise<{ scope: Own
 
 export async function requireUser(): Promise<{ userId: string; admin: ReturnType<typeof createAdminClient> } | NextResponse> {
   if (!isSupabaseConfigured()) return json({ code: 'unconfigured', message: 'Connectors are not configured.' }, 503);
-  const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
-  if (!user) return json({ code: 'forbidden', message: 'Sign in first.' }, 401);
-  return { userId: user.id, admin: createAdminClient() };
+  const authed = await getRequestUser();
+  if (!authed) return json({ code: 'forbidden', message: 'Sign in first.' }, 401);
+  return { userId: authed.user.id, admin: createAdminClient() };
 }
 
 export function importErrorResponse(error: unknown) {

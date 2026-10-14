@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { getRequestUser } from '@/lib/supabase/request-auth';
 
 const querySchema = z.object({
   q: z.string().trim().min(2).max(200),
@@ -24,11 +24,11 @@ export async function GET(
   if (!parsed.success || Boolean(parsed.data?.beforeCreatedAt) !== Boolean(parsed.data?.beforeMessageId)) {
     return NextResponse.json({ code: 'invalid_request', message: 'Invalid search request.' }, { status: 400 });
   }
-  const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
-  if (!user) {
+  const authed = await getRequestUser();
+  if (!authed) {
     return NextResponse.json({ code: 'forbidden', message: 'unauthenticated' }, { status: 401 });
   }
+  const { client, user } = authed;
   const { data, error } = await client.rpc('person_search_conversations', {
     p_profile_id: personId,
     p_query: parsed.data.q,

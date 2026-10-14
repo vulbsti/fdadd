@@ -8,6 +8,8 @@ import { NextResponse } from 'next/server';
 import { sweepAstrologerDispatches } from '@/lib/astro/run-dispatch';
 import { sweepPersonConsolidationOutbox } from '@/lib/person-model/consolidation-dispatch';
 import { sweepIdleReflections } from '@/lib/astro/reflection-dispatch';
+import { retryAccountDeletionCleanups } from '@/lib/app/account-deletion';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -38,10 +40,15 @@ export async function GET(request: Request) {
     );
   }
 
-  const [answers, learning, reflection] = await Promise.all([
+  const [answers, learning, reflection, deletedAccounts] = await Promise.all([
     sweepAstrologerDispatches({ max: 10 }),
     sweepPersonConsolidationOutbox({ max: 10 }),
     sweepIdleReflections(),
+    // Files left behind by account deletions (see src/lib/app/account-deletion.ts).
+    retryAccountDeletionCleanups(createAdminClient()).catch((error) => {
+      console.error('[account-deletion] sweep failed', { message: error instanceof Error ? error.message : 'unknown' });
+      return null;
+    }),
   ]);
-  return NextResponse.json({ answers, learning, reflection });
+  return NextResponse.json({ answers, learning, reflection, deletedAccounts });
 }

@@ -11,6 +11,7 @@ import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helper
 import { dispatchAstrologerRunBestEffort, sweepAstrologerDispatchesBestEffort } from '@/lib/astro/run-dispatch';
 import { dispatchPersonJobBestEffort } from '@/lib/person-model/consolidation-dispatch';
 import { reflectOtherSessionsBestEffort } from '@/lib/astro/reflection-dispatch';
+import { planLimitsEnforced, questionAllowance, quotaExceededMessage } from '@/lib/payments/subscriptions';
 
 export const runtime = 'nodejs';
 
@@ -37,6 +38,22 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Monthly question allowance, off unless PLAN_LIMITS_ENFORCED=true. A
+    // retry of a message that was already accepted is never turned away.
+    if (planLimitsEnforced()) {
+      const { data: accepted } = await auth.client.from('astro_messages').select('id')
+        .eq('session_id', parsed.data.sessionId).eq('client_message_id', parsed.data.clientMessageId).maybeSingle();
+      if (!accepted) {
+        const allowance = await questionAllowance(auth.client, auth.userId);
+        if (!allowance.allowed) {
+          return NextResponse.json(
+            { code: 'quota_exceeded', message: quotaExceededMessage(allowance.summary) },
+            { status: 429 },
+          );
+        }
+      }
+    }
+
     const begun = await auth.store.beginAgentRun({
       sessionId: parsed.data.sessionId,
       message: parsed.data.message,
