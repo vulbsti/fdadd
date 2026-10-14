@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, User, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthModal from '@/components/auth/AuthModal';
 import { cn } from '@/lib/utils';
 import { APP_HOME } from '@/lib/app-url';
@@ -25,6 +25,21 @@ export default function Header() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
+
+  // `?auth=login` or `?auth=signup` (set when a signed-out visitor opens the
+  // app) opens the dialog once, then drops the parameter from the URL.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const requested = url.searchParams.get('auth');
+    if (requested !== 'login' && requested !== 'signup') return;
+    const timer = window.setTimeout(() => {
+      url.searchParams.delete('auth');
+      window.history.replaceState(window.history.state, '', url);
+      setAuthMode(requested);
+      setIsAuthModalOpen(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const openAuthModal = (mode: 'login' | 'signup') => {
     setAuthMode(mode);

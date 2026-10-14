@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,13 @@ export const metadata: Metadata = {
   title: 'Aidoraa — Understand yourself, and everything that shapes you',
   description:
     'Aidoraa brings together astrology, neuroscience, economics, social psychology and ecology into one living picture of your life, so you can see why things unfold the way they do and act in step with what you want.',
+  icons: {
+    apple: '/icons/apple-touch-icon.png',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#101827',
 };
 
 export default function RootLayout({

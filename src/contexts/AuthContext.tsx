@@ -9,9 +9,10 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { User } from '@supabase/supabase-js';
+import { isAuthSessionMissingError, type User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { APP_HOME } from '@/lib/app-url';
 
 type AuthActionResult = {
   ok: boolean;
@@ -58,7 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void supabase.auth.getUser().then(({ data, error: userError }) => {
       if (!mounted) return;
       setUser(data.user ?? null);
-      setError(userError?.message ?? null);
+      // Being signed out is not an error; only surface real failures.
+      setError(userError && !isAuthSessionMissingError(userError) ? userError.message : null);
       setLoading(false);
     });
 
@@ -142,18 +144,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearFeedback();
     setLoading(true);
 
-    const redirectTo = `${window.location.origin}/auth/callback?next=/astrologer`;
-    const { error: oauthError } = await createClient().auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo },
-    });
-
-    if (oauthError) {
-      setLoading(false);
-      setError(oauthError.message);
-      return { ok: false, message: oauthError.message };
-    }
-
+    // The server runs the Google flow so the browser never has to reach
+    // *.supabase.co (blocked by some ISPs' DNS).
+    // A full page load: the start route is a server redirect, not a page.
+    const start = new URL('/auth/google/start', window.location.origin);
+    start.searchParams.set('next', APP_HOME);
+    window.location.assign(start);
     return { ok: true };
   }, [clearFeedback, configured, unavailable]);
 
