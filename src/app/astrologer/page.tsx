@@ -13,8 +13,7 @@ export default async function AstrologerPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Signed-out visitors (including the Android app's first launch) land on the
-  // home page with the sign-in dialog open.
+  // Signed-out visitors land on the home page with the sign-in dialog open.
   if (!user) redirect('/?auth=login');
   const { data: profiles } = await supabase
     .from('astro_profiles')
