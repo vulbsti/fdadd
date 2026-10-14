@@ -419,7 +419,9 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
     const astroSessionId = await createVisibleConversation(page, personId, admin, userId);
     const dasha = await sendMessage(page, admin, 'What is my current dasha? Explain it as a reflective lens, not a deterministic prediction.');
     const dashaRun = await waitForRun(admin, dasha.runId);
-    expect(dashaRun.status).toBe('complete');
+    // Pi may end a full answer with one ask_person question (system prompt invites it),
+    // which publishes the answer and leaves the run waiting_for_user. Both are a finished turn.
+    expect(dashaRun.status).toMatch(/^(waiting_for_user|complete)$/);
     // Dasha periods are precomputed at birth setup; the agent reads them rather than recalculating.
     const stored = await admin.from('astro_profile_calculations').select('birth_revision')
       .eq('profile_id', personId).limit(1).single();
@@ -429,7 +431,7 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
       .order('ordinal', { ascending: true }).limit(1).single();
     if (tool.error || !tool.data) throw tool.error ?? new Error('The agent did not read its workspace.');
     expect(tool.data.refs).toMatchObject({ runtime: 'pi' });
-    expect(dasha.answer.length).toBeGreaterThan(0);
+    expect(dasha.answer.trim().length).toBeGreaterThan(200);
     await page.reload();
     await expectAnswerVisible(page, dasha.outputMessageId, dasha.answer);
     await captureThreeWidths(page, testInfo, '09-atros-current-dasha-answer', visualIssues);
