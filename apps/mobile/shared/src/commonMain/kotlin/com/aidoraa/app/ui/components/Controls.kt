@@ -14,6 +14,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -161,7 +163,13 @@ fun DangerButton(text: String, modifier: Modifier = Modifier, enabled: Boolean =
 
 @Composable
 fun TextLink(text: String, modifier: Modifier = Modifier, color: Color = Palette.GoldSoft, size: Int = 14, onClick: () -> Unit) {
-    T(text, Type.body(size.sp, color, FontWeight.Medium), modifier.tap(text, onClick = onClick).padding(vertical = 8.dp, horizontal = 4.dp))
+    // The layout itself is at least 48dp tall, so neighbouring links never share a touch area.
+    Box(
+        modifier.heightIn(min = 48.dp).widthIn(min = 48.dp).tap(text, onClick = onClick).padding(horizontal = 4.dp),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        T(text, Type.body(size.sp, color, FontWeight.Medium))
+    }
 }
 
 @Composable

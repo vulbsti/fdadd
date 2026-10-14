@@ -171,11 +171,37 @@ class AppController(
         return pop()
     }
 
-    fun selectTab(tab: Tab) { _stack.value = emptyList(); _tab.value = tab }
+    fun selectTab(tab: Tab) { _stack.value = emptyList(); _tab.value = tab; _conversationReturn.value = null }
+
+    /** Set while Ask shows a conversation opened from the list: back returns to that list. */
+    data class ConversationReturn(val sessionId: String, val tab: Tab)
+    private val _conversationReturn = MutableStateFlow<ConversationReturn?>(null)
+    val conversationReturn: StateFlow<ConversationReturn?> = _conversationReturn.asStateFlow()
+
+    /** Opens a past conversation in Ask, remembering the list (and the tab under it) for back. */
+    fun openConversation(sessionId: String) {
+        val origin = _tab.value
+        chat.open(sessionId)
+        _stack.value = emptyList()
+        _tab.value = Tab.Ask
+        _conversationReturn.value = ConversationReturn(sessionId, origin)
+    }
+
+    /** Back from an opened conversation: the list again, on the tab it was opened from. */
+    private fun returnToConversationList(): Boolean {
+        val target = _conversationReturn.value ?: return false
+        _conversationReturn.value = null
+        if (_tab.value != Tab.Ask || _stack.value.isNotEmpty() || chat.state.value.sessionId != target.sessionId) return false
+        _tab.value = target.tab
+        _stack.value = listOf(Route.Conversations)
+        loadSessions()
+        return true
+    }
     fun push(route: Route) { _stack.value = _stack.value + route }
     fun pop(): Boolean {
         val stack = _stack.value
         if (stack.isNotEmpty()) { _stack.value = stack.dropLast(1); return true }
+        if (returnToConversationList()) return true
         if (_tab.value != Tab.Now && _phase.value == AppPhase.Main) { _tab.value = Tab.Now; return true }
         return false
     }

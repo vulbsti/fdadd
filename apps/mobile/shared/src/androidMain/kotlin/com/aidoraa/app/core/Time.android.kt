@@ -12,6 +12,8 @@ actual fun nowMillis(): Long = System.currentTimeMillis()
 
 actual fun localHour(): Int = java.time.LocalTime.now().hour
 
+actual fun localYear(): Int = java.time.LocalDate.now().year
+
 actual fun localWeekdayName(): String =
     java.time.LocalDate.now().dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
 

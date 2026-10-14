@@ -1,5 +1,6 @@
 package com.aidoraa.app.domain
 
+import com.aidoraa.app.core.localYear
 import com.aidoraa.app.data.ProjectionDto
 import com.aidoraa.app.data.SessionSummaryDto
 import com.aidoraa.app.data.ViewNodeDto
@@ -80,6 +81,7 @@ object LifeModelBuilder {
         patterns: ProjectionDto?,
         people: ProjectionDto?,
         brief: String?,
+        currentYear: Int = localYear(),
     ): LifeModel {
         val nodes = lifeMap?.nodes.orEmpty().filter { it.lifecycle == null || it.lifecycle != "retracted" }
         val past = nodes.filter { it.kind in PAST_KINDS }
@@ -115,14 +117,15 @@ object LifeModelBuilder {
             .firstOrNull { it.kind == "gap" && it.text("candidateQuestion") != null }
             ?.text("candidateQuestion")
 
-        val currentYear = past.mapNotNull { yearOf(it.dateLabel) }.maxOrNull()
-        val arc = past.mapNotNull { node -> yearOf(node.dateLabel)?.let { ArcPoint(it, node.title, false) } }
+        // The arc runs from the past chapters to today. "Now" is always this year (from the
+        // injected clock), never the year the current chapter started.
+        val pastPoints = past.mapNotNull { node -> yearOf(node.dateLabel)?.let { ArcPoint(it, node.title, false) } }
+            .filter { it.year <= currentYear }
             .sortedBy { it.year }
-            .let { points ->
-                val nowYear = now.firstNotNullOfOrNull { yearOf(it.dateLabel) }
-                if (nowYear != null) points + ArcPoint(nowYear, now.first().title, true)
-                else points.mapIndexed { index, point -> if (index == points.lastIndex && point.year == currentYear) point.copy(isNow = true) else point }
-            }
+        val arc = if (pastPoints.isEmpty() && now.isEmpty()) emptyList() else {
+            val nowTitle = now.firstOrNull()?.title?.takeIf { it.isNotBlank() } ?: pastPoints.lastOrNull()?.title ?: "Today"
+            pastPoints + ArcPoint(currentYear, nowTitle, true)
+        }
 
         return LifeModel(
             chapters = chapters,

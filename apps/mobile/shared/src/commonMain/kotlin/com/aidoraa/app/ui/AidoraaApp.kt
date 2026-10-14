@@ -17,6 +17,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -153,6 +157,7 @@ fun AidoraaApp(app: AppController) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MainShell(app: AppController) {
     val tab by app.tab.collectAsState()
@@ -163,7 +168,24 @@ private fun MainShell(app: AppController) {
     val mapScroll = rememberScrollState()
     val youScroll = rememberScrollState()
     val top = stack.lastOrNull()
-    Box(Modifier.fillMaxSize()) {
+    // The tab bar steps aside while the keyboard is up, so the composer can sit right above it.
+    val imeVisible = WindowInsets.isImeVisible
+    Column(Modifier.fillMaxSize()) {
+    if (app.demo) {
+        // Its own strip under the status bar: content starts below it, so it never covers
+        // anything and grows with the font size. Debug builds only.
+        Box(
+            Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars).padding(top = 2.dp, bottom = 2.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            com.aidoraa.app.ui.components.T(
+                "Sample data",
+                com.aidoraa.app.ui.theme.Type.body(11.5.sp, Palette.Navy, androidx.compose.ui.text.font.FontWeight.SemiBold),
+                Modifier.background(Palette.GoldSoft, RoundedCornerShape(99.dp)).padding(horizontal = 10.dp, vertical = 2.dp),
+            )
+        }
+    }
+    Box(Modifier.fillMaxWidth().weight(1f).then(if (app.demo) Modifier.consumeWindowInsets(WindowInsets.statusBars) else Modifier)) {
         AnimatedContent(
             targetState = top ?: tab,
             transitionSpec = { fadeIn(tween(if (reduce) 0 else 220)) togetherWith fadeOut(tween(if (reduce) 0 else 160)) },
@@ -185,19 +207,8 @@ private fun MainShell(app: AppController) {
                 else -> Unit
             }
         }
-        if (top == null) TabBar(tab, Modifier.align(Alignment.BottomCenter), app::selectTab)
-        if (app.demo) {
-            // Always visible while the demo runs, so screenshots can't pass for a real account.
-            com.aidoraa.app.ui.components.T(
-                "Sample data",
-                com.aidoraa.app.ui.theme.Type.body(11.5.sp, Palette.Navy, androidx.compose.ui.text.font.FontWeight.SemiBold),
-                Modifier.align(Alignment.TopEnd)
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(top = 4.dp, end = 12.dp)
-                    .background(Palette.GoldSoft, RoundedCornerShape(99.dp))
-                    .padding(horizontal = 10.dp, vertical = 3.dp),
-            )
-        }
+        if (top == null && !imeVisible) TabBar(tab, Modifier.align(Alignment.BottomCenter), app::selectTab)
+    }
     }
 }
 

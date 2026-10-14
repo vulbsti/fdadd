@@ -127,7 +127,12 @@ fun AskScreen(app: AppController) {
 
     Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars)) {
         Column(Modifier.fillMaxSize()) {
+            val returnTo by app.conversationReturn.collectAsState()
             Row(Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (returnTo != null && returnTo?.sessionId == state.sessionId) {
+                    IconCircleButton(Icons.Back, "Back to past conversations") { app.pop() }
+                    Spacer(Modifier.width(12.dp))
+                }
                 Column(Modifier.weight(1f)) {
                     Eyebrow("Ask")
                     T(state.title ?: "A new conversation", Type.display(24.sp), maxLines = 2)
@@ -196,12 +201,16 @@ fun AskScreen(app: AppController) {
             }
         }
 
-        // Focused question options, suggestions and the composer float above the tab bar.
-        Column(
-            Modifier.align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.ime.union(WindowInsets.navigationBars))
-                .padding(bottom = if (WindowInsets.isImeVisible) 8.dp else 92.dp),
-        ) {
+        // Focused question options, suggestions and the composer float above the tab bar and the
+        // keyboard. The tab bar hides while the keyboard is up (MainShell); a keyboard that reports
+        // only a small inset (handwriting toolbar, floating mode) still can't push the composer
+        // under the tab bar, because the larger of the two offsets wins.
+        val density = androidx.compose.ui.platform.LocalDensity.current
+        val imeVisible = WindowInsets.isImeVisible
+        val imeBottom = with(density) { WindowInsets.ime.getBottom(density).toDp() }
+        val navBottom = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+        val composerBottom = composerOffset(imeBottom, navBottom, tabBarShown = !imeVisible)
+        Column(Modifier.align(Alignment.BottomCenter).padding(bottom = composerBottom)) {
             val question = state.focusedQuestion
             val chips = when {
                 question != null && question.options.isNotEmpty() -> question.options.map { it.label }
@@ -379,13 +388,22 @@ fun ConversationsScreen(app: AppController) {
                     sub = listOfNotNull(parseIsoMillis(session.updatedAt)?.let { relativeDay(it) }, session.lastMessagePreview?.take(80)).joinToString(" · "),
                     divider = index < mine.lastIndex,
                 ) {
-                    app.chat.open(session.id)
                     app.pop()
-                    app.selectTab(com.aidoraa.app.state.Tab.Ask)
+                    app.openConversation(session.id)
                 }
             }
         }
         Spacer(Modifier.height(16.dp))
         SmallButton("Start a new conversation") { app.chat.startNew(); app.pop(); app.selectTab(com.aidoraa.app.state.Tab.Ask) }
     }
+}
+
+/** Height the tab bar takes above the navigation bar (68dp bar + 14dp margin + 10dp gap). */
+internal val TAB_BAR_SPACE = 92.dp
+
+/** How far the composer sits from the bottom edge: above the keyboard, and above the tab bar when it shows. */
+internal fun composerOffset(ime: androidx.compose.ui.unit.Dp, nav: androidx.compose.ui.unit.Dp, tabBarShown: Boolean): androidx.compose.ui.unit.Dp {
+    val aboveChrome = nav + if (tabBarShown) TAB_BAR_SPACE else 8.dp
+    val aboveKeyboard = ime + 8.dp
+    return if (aboveKeyboard > aboveChrome) aboveKeyboard else aboveChrome
 }

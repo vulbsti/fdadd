@@ -9,6 +9,9 @@ expect fun nowMillis(): Long
 /** The local hour of the day, 0 to 23. */
 expect fun localHour(): Int
 
+/** The local calendar year, such as 2026. */
+expect fun localYear(): Int
+
 /** The local weekday name, such as "Tuesday". */
 expect fun localWeekdayName(): String
 

@@ -55,7 +55,9 @@ fun SignInScreen(app: AppController) {
     var notice by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
-    BackHandler(enabled = mode != SignInMode.Choose) { mode = SignInMode.Choose; error = null; notice = null }
+    // Every switch of screen or method starts clean: no error or notice from the last attempt.
+    fun go(next: SignInMode) { mode = next; error = null; notice = null }
+    BackHandler(enabled = mode != SignInMode.Choose) { go(SignInMode.Choose) }
 
     fun run(block: suspend () -> Unit) {
         if (busy) return
@@ -88,7 +90,7 @@ fun SignInScreen(app: AppController) {
                 Spacer(Modifier.height(26.dp))
                 LightButton("Continue with Google", leading = { GoogleG() }, enabled = !busy) { google() }
                 Spacer(Modifier.height(10.dp))
-                GlassButton("Continue with email", enabled = !busy) { mode = SignInMode.SignIn }
+                GlassButton("Continue with email", enabled = !busy) { go(SignInMode.SignIn) }
                 ErrorText(error)
                 Fine("New here? The same buttons create your account.")
                 if (!app.config.signInConfigured) Fine("This build has no sign-in settings. See apps/mobile/README.md.")
@@ -106,9 +108,9 @@ fun SignInScreen(app: AppController) {
                     Type.display(40.sp), Modifier.padding(top = 18.dp, bottom = 6.dp),
                 )
                 FieldLabel("Email")
-                Field(email, { email = it }, "you@example.com", keyboardType = KeyboardType.Email)
+                Field(email, { email = it; error = null }, "you@example.com", keyboardType = KeyboardType.Email)
                 FieldLabel("Password")
-                Field(password, { password = it }, if (signUp) "At least 8 characters" else "Your password", password = true, onDone = {})
+                Field(password, { password = it; error = null }, if (signUp) "At least 8 characters" else "Your password", password = true, onDone = {})
                 ErrorText(error)
                 if (notice != null) T(notice!!, Type.body(14.sp, Palette.Ok), Modifier.padding(top = 10.dp))
                 Spacer(Modifier.height(18.dp))
@@ -120,24 +122,24 @@ fun SignInScreen(app: AppController) {
                         } else app.auth.signIn(email, password)
                     }
                 }
-                Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    TextLink(if (signUp) "I have an account" else "Create an account") { mode = if (signUp) SignInMode.SignIn else SignInMode.SignUp; error = null }
-                    if (!signUp) TextLink("Forgot password?", color = Palette.Ink2) { mode = SignInMode.Reset; error = null }
+                Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    TextLink(if (signUp) "I have an account" else "Create an account") { go(if (signUp) SignInMode.SignIn else SignInMode.SignUp) }
+                    if (!signUp) TextLink("Forgot password?", color = Palette.Ink2) { go(SignInMode.Reset) }
                 }
-                TextLink("Back", color = Palette.Ink3) { mode = SignInMode.Choose; error = null }
+                TextLink("Back", Modifier.padding(top = 8.dp), color = Palette.Ink3) { go(SignInMode.Choose) }
             }
             SignInMode.Reset -> {
                 T(com.aidoraa.app.ui.theme.emphasised("Reset your ", "password", Palette.GoldSoft), Type.display(40.sp), Modifier.padding(top = 18.dp, bottom = 6.dp))
                 T("We'll email you a link to choose a new one.", Type.muted())
                 FieldLabel("Email")
-                Field(email, { email = it }, "you@example.com", keyboardType = KeyboardType.Email)
+                Field(email, { email = it; error = null }, "you@example.com", keyboardType = KeyboardType.Email)
                 ErrorText(error)
                 if (notice != null) T(notice!!, Type.body(14.sp, Palette.Ok), Modifier.padding(top = 10.dp))
                 Spacer(Modifier.height(18.dp))
                 PrimaryButton("Send the link", enabled = email.contains('@'), busy = busy) {
                     run { app.auth.sendPasswordReset(email); notice = "If there's an account for $email, a link is on its way." }
                 }
-                TextLink("Back to sign in", color = Palette.Ink3) { mode = SignInMode.SignIn; error = null; notice = null }
+                TextLink("Back to sign in", Modifier.padding(top = 8.dp), color = Palette.Ink3) { go(SignInMode.SignIn) }
             }
         }
         Spacer(Modifier.height(16.dp))

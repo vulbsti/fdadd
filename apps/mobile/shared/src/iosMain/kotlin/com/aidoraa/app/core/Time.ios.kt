@@ -17,6 +17,8 @@ actual fun nowMillis(): Long = (NSDate().timeIntervalSince1970 * 1000).toLong()
 
 actual fun localHour(): Int = NSCalendar.currentCalendar.component(NSCalendarUnitHour, NSDate()).toInt()
 
+actual fun localYear(): Int = NSCalendar.currentCalendar.component(platform.Foundation.NSCalendarUnitYear, NSDate()).toInt()
+
 actual fun localWeekdayName(): String = NSDateFormatter().apply { dateFormat = "EEEE" }.stringFromDate(NSDate())
 
 actual fun parseIsoMillis(iso: String): Long? =
