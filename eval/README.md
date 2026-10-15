@@ -55,6 +55,24 @@ question, knowledge of the future or of the person's identity the inputs never
 gave) and a judge pass with a fixed rubric against the gold data.
 `compare.mjs` lists every metric and verdict that moved between two runs.
 
+## Running another model in the same workflow
+
+`sim.mjs` prepares the same workspace, trusted prompt, skills and question
+the Pi runner uses, so any agent with file tools (for example a Claude Code
+subagent) can play the Astrologer. That keeps the workflow fixed and changes
+only the model.
+
+```bash
+node --experimental-strip-types eval/harness/sim.mjs prepare <case> --out <dir> [--max-words 600]
+# give each <dir>/<q-id>/PROMPT.md to an agent that may read only that folder
+node --experimental-strip-types eval/harness/sim.mjs collect <case> --out <dir> --model <label>
+node eval/harness/score.mjs <case> <dir>
+```
+
+Keep `<dir>` outside the repository so the agent cannot reach the gold files.
+`--max-words` caps answer length: a wordier answer covers more events and
+scores higher on anticipation for that reason alone.
+
 ## Known limits
 
 - A model that recognises a famous person can answer from memorised news

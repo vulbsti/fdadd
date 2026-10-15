@@ -34,5 +34,41 @@
     "model": "gold/model/"
   },
   "provenance": "Research dossier in the project's shared folder (SAMA/SamA_v1, SamA_v2, sam_A_3d_v2 audit), merged and graded on 2026-10-15.",
-  "inputsNote": "masked hides who he is so the model cannot answer from memorised news after the cut-off; named is the same material with real names. The gap between the two measures how much the model leans on what it already knows."
+  "inputsNote": "masked hides who he is so the model cannot answer from memorised news after the cut-off; named is the same material with real names. The gap between the two measures how much the model leans on what it already knows.",
+  "leakTerms": [
+    "ChatGPT",
+    "GPT-4",
+    "GPT-5",
+    "Stargate",
+    "Sora",
+    "board fired",
+    "board ousted",
+    "board removed",
+    "ousted as CEO",
+    "Mulherin",
+    "Nadella",
+    "Murati",
+    "Toner",
+    "Sutskever",
+    "Ilya",
+    "Helen Toner",
+    "Annie Altman",
+    "Worldcoin launch",
+    "io Products",
+    "Jony Ive"
+  ],
+  "identityTerms": [
+    "Altman",
+    "OpenAI",
+    "Y Combinator",
+    "YC",
+    "Loopt",
+    "Paul Graham",
+    "Elon Musk",
+    "Musk",
+    "Microsoft",
+    "Hydrazine",
+    "Helion",
+    "Worldcoin"
+  ]
 }

@@ -58,11 +58,13 @@ function factChecks(question, answer) {
   return out;
 }
 
-/** Knowledge after the cut-off that the inputs never contained. */
-const LEAK_TERMS = /\b(ChatGPT|GPT-4|GPT-5|Stargate|Sora|board (fired|ousted|removed)|ousted as CEO|Mulherin|Nadella|Murati|Toner|Sutskever|Ilya|Helen Toner|Annie Altman|Worldcoin launch|io Products|Jony Ive)\b/gi;
+const escape = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const termsRegex = (terms, flags) => new RegExp(`\\b(${(terms ?? []).map(escape).join('|') || '(?!)'})\\b`, flags);
+/** Knowledge after the cut-off that the inputs never contained (case.json leakTerms). */
+const LEAK_TERMS = termsRegex(kase.leakTerms, 'gi');
+// In a masked run the inputs never name the person; naming them (case.json identityTerms) means the model recognised them.
+const IDENTITY_TERMS = termsRegex(kase.identityTerms, 'g');
 
-// In a masked run the inputs never name him or his companies; naming them means the model recognised him.
-const IDENTITY_TERMS = /\b(Altman|OpenAI|Y Combinator|YC|Loopt|Paul Graham|Elon Musk|Musk|Microsoft|Hydrazine|Helion|Worldcoin)\b/g;
 const run = JSON.parse(await readFile(path.join(runDir, 'run.json'), 'utf8').catch(() => '{}'));
 
 function checks(question, result) {
