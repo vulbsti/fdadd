@@ -1,0 +1,45 @@
+{
+  "asOf": "2022-06-30",
+  "note": "Asked as the person on the cut-off date. Each question names the held-out events a good answer should anticipate (domain, direction and rough timing) and the facts it must get exactly right.",
+  "questions": [
+    {
+      "id": "q-work-next-years",
+      "ask": "What will the next few years bring for my work? I want to know what to focus on.",
+      "window": ["2022-07-01", "2026-06-30"],
+      "anticipate": { "domains": ["career", "reputation", "conflict-legal", "money"], "minMagnitude": 4 },
+      "checks": ["life-terms", "specific-to-person", "past-present-future", "direction", "certainty-stated", "one-testing-question", "no-day-week-level"]
+    },
+    {
+      "id": "q-rough-patch",
+      "ask": "Is there a hard stretch coming? Where should I be careful?",
+      "window": ["2022-07-01", "2026-06-30"],
+      "anticipate": { "valence": ["negative", "mixed"], "minMagnitude": 4 },
+      "checks": ["life-terms", "specific-to-person", "direction", "certainty-stated", "no-day-week-level"]
+    },
+    {
+      "id": "q-personal-life",
+      "ask": "What about my personal life over the next few years, my partner and my family?",
+      "window": ["2022-07-01", "2026-06-30"],
+      "anticipate": { "domains": ["partnership", "family", "home", "health"], "minMagnitude": 3 },
+      "checks": ["life-terms", "specific-to-person", "certainty-stated", "no-day-week-level"]
+    },
+    {
+      "id": "q-dasha-now",
+      "ask": "Which dasha am I in right now, and when does it change?",
+      "facts": ["mahadasha-now", "antardasha-now", "next-mahadasha-start"],
+      "checks": ["facts-from-stored-timeline", "life-terms", "need-behind-question"]
+    },
+    {
+      "id": "q-why-so-far",
+      "ask": "Looking back, why has my life gone the way it has so far?",
+      "gold": ["rules", "natal-verdicts", "calibration"],
+      "checks": ["life-terms", "specific-to-person", "past-present-future", "misses-explained", "certainty-stated"]
+    },
+    {
+      "id": "q-what-holds-me-back",
+      "ask": "What am I really like, and what tends to hold me back?",
+      "gold": ["traits-before-cutoff"],
+      "checks": ["life-terms", "specific-to-person", "evidence-from-their-life", "one-testing-question"]
+    }
+  ]
+}

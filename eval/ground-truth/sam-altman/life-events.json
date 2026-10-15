@@ -1,0 +1,3833 @@
+[
+  {
+    "id": "ev-001",
+    "date": "1985-04-22",
+    "precision": "day",
+    "title": "Born in Chicago",
+    "description": "Samuel Harris Altman is born in Chicago, Illinois, the eldest of four children of dermatologist Connie Gibstine and Jerold (Jerry) Altman in a Reform Jewish family.",
+    "domains": [
+      "family"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:8",
+      "SamA_v1/timeline/14_master_timeline.md:62",
+      "SamA_v2/timeline/08_master_timeline.md:21",
+      "SamA_v2/raw/01_early_life.md:18",
+      "SamA_v2/raw/01_early_life.md:19"
+    ],
+    "notes": "Birth time is not recorded on any certificate in the dossier; the only source is Altman's Dec 6 2023 email to astrologer Jessica Josephine saying 'around 5 am central time' (Astro-Databank Rodden A, from memory). Chicago was on CST (UTC-6); DST began Apr 28 1985."
+  },
+  {
+    "id": "ev-002",
+    "date": "1985-04-22",
+    "endDate": "1989",
+    "precision": "day",
+    "title": "Infancy in Chicago (quiet period)",
+    "description": "First years of life in Chicago before the family's move to Missouri; no dated events are documented for this stretch.",
+    "domains": [
+      "family",
+      "home"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:22",
+      "SamA_v2/raw/01_early_life.md:20"
+    ],
+    "notes": "Quiet stretch; dossier has no dated events."
+  },
+  {
+    "id": "ev-003",
+    "date": "1988",
+    "precision": "approx-year",
+    "title": "Early technical precocity",
+    "description": "In nursery school he grasps the system behind telephone area codes; a later feature says he fixed the family VCR at about age three.",
+    "domains": [
+      "education",
+      "mind-worldview"
+    ],
+    "valence": "positive",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:65",
+      "SamA_v1/timeline/14_master_timeline.md:66",
+      "SamA_v2/timeline/08_master_timeline.md:23",
+      "SamA_v2/raw/01_early_life.md:21",
+      "SamA_v2/raw/01_early_life.md:22"
+    ],
+    "notes": "Area-code anecdote is Altman's own account (New Yorker 2016); VCR story is single-source color. v1 places nursery school in St. Louis (~1988-1991), v2 says late 1980s."
+  },
+  {
+    "id": "ev-004",
+    "date": "1989",
+    "precision": "year",
+    "title": "Family moves to Clayton, Missouri",
+    "description": "The family relocates from Chicago to Clayton, a St. Louis suburb and his father's hometown, when Sam is about four; he grows up in the Hillcrest area near Forest Park.",
+    "domains": [
+      "home",
+      "family"
+    ],
+    "valence": "neutral",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:67",
+      "SamA_v2/timeline/08_master_timeline.md:22",
+      "SamA_v2/raw/01_early_life.md:20",
+      "SamA_v2/raw/01_early_life.md:24",
+      "SamA_v2/raw/05_private_family.md:19"
+    ],
+    "notes": "Year 1989 rests on one Wikipedia citation chain; v2 also gives ~1988-1989. 'Born in St. Louis' variants are errors."
+  },
+  {
+    "id": "ev-005",
+    "date": "1989",
+    "endDate": "1996",
+    "precision": "year",
+    "title": "Childhood in Clayton (quiet period)",
+    "description": "Ordinary childhood years in a two-career household (dermatologist mother, real-estate broker father) with three younger siblings, described as competitive across games, puzzles, sport and school.",
+    "domains": [
+      "family",
+      "home"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/raw/01_early_life.md:25",
+      "SamA_v2/raw/01_early_life.md:26",
+      "SamA_v2/raw/01_early_life.md:27"
+    ],
+    "notes": "Few dated events; household color is from a single 2025 feature (WashU Common Reader)."
+  },
+  {
+    "id": "ev-006",
+    "date": "1993-04-22",
+    "precision": "day",
+    "title": "First computer at eighth birthday",
+    "description": "Receives a Macintosh LC II for his 8th birthday; learns to program and take hardware apart, later calling it a 'dividing line in my life' and a lifeline to the world.",
+    "domains": [
+      "education",
+      "mind-worldview"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:68",
+      "SamA_v1/timeline/14_master_timeline.md:69",
+      "SamA_v2/timeline/08_master_timeline.md:24",
+      "SamA_v2/raw/01_early_life.md:23"
+    ],
+    "notes": "Model is Macintosh (LC II per v1), not Apple II."
+  },
+  {
+    "id": "ev-007",
+    "date": "1994",
+    "precision": "approx-year",
+    "title": "Youngest sibling Ann born",
+    "description": "His sister Ann (Annie), the youngest of the four children, is born; the sibling set is Sam, Max, Jack and Annie.",
+    "domains": [
+      "family"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/raw/08_family_private_life.md:158",
+      "SamA_v2/raw/01_early_life.md:19"
+    ],
+    "notes": "Year derived: the complaint pleads her age as 30 at the Jan 2025 filing and age 3 in ~1997. Max's and Jack's birth years are not in the dossier."
+  },
+  {
+    "id": "ev-008",
+    "date": "1996",
+    "endDate": "1997",
+    "precision": "approx-year",
+    "title": "AOL chat rooms while privately gay",
+    "description": "At about 11-12 he finds AOL chat rooms 'transformative' while privately working out that he is gay; he later says growing up gay in the Midwest 'was not the most awesome thing'.",
+    "domains": [
+      "mind-worldview",
+      "network-mentors"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "period",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:70",
+      "SamA_v2/timeline/08_master_timeline.md:25",
+      "SamA_v2/raw/01_early_life.md:29"
+    ]
+  },
+  {
+    "id": "ev-009",
+    "date": "1998",
+    "endDate": "2003-05",
+    "precision": "approx-year",
+    "title": "Attends John Burroughs School",
+    "description": "Attends John Burroughs School, an elite St. Louis prep school; mentored by CS teacher Georgeann Kepchar (early AI talks), edits the yearbook, plays water polo, builds the school website, does Model UN.",
+    "domains": [
+      "education",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "period",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:26",
+      "SamA_v2/timeline/08_master_timeline.md:29",
+      "SamA_v2/raw/01_early_life.md:30",
+      "SamA_v2/raw/01_early_life.md:34",
+      "SamA_v2/raw/01_early_life.md:35"
+    ],
+    "notes": "Start year not documented ('late 1990s'); teacher Abbott details are REPORTED via BI summary of Bloomberg."
+  },
+  {
+    "id": "ev-010",
+    "date": "2001",
+    "precision": "approx-year",
+    "title": "School assembly coming-out speech",
+    "description": "After students boycott or skip a school assembly about sexuality, he addresses the whole student body, says he is gay, and asks whether the school wants to be repressive or open; a counsellor later says 'What Sam did changed the school.'",
+    "domains": [
+      "reputation",
+      "mind-worldview"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:72",
+      "SamA_v2/timeline/08_master_timeline.md:28",
+      "SamA_v2/raw/01_early_life.md:32",
+      "SamA_v2/raw/01_early_life.md:33"
+    ],
+    "notes": "Trigger wording varies by source (Christian-group boycott vs no-show vs National Coming Out Day speaker); v1 dates ~2001-2003, v2 ~2001-2002."
+  },
+  {
+    "id": "ev-011",
+    "date": "2001",
+    "precision": "approx-year",
+    "title": "Comes out to his parents",
+    "description": "At about 16 he tells his parents he is gay; his mother says she was 'astonished' because he had struck her as 'unisexual and tech-y'.",
+    "domains": [
+      "family",
+      "mind-worldview"
+    ],
+    "valence": "mixed",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:71",
+      "SamA_v2/timeline/08_master_timeline.md:27",
+      "SamA_v2/raw/01_early_life.md:31"
+    ]
+  },
+  {
+    "id": "ev-012",
+    "date": "2003-05",
+    "precision": "season",
+    "title": "Graduates high school",
+    "description": "Graduates from John Burroughs School with the Class of 2003.",
+    "domains": [
+      "education"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:73",
+      "SamA_v2/timeline/08_master_timeline.md:30",
+      "SamA_v2/raw/01_early_life.md:36"
+    ],
+    "notes": "Spring 2003; month approximate."
+  },
+  {
+    "id": "ev-013",
+    "date": "2003-09",
+    "precision": "season",
+    "title": "Enters Stanford, moves to California",
+    "description": "Enrolls at Stanford University to study computer science (reportedly working in the AI lab), leaving Missouri for California.",
+    "domains": [
+      "education",
+      "home"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:74",
+      "SamA_v2/timeline/08_master_timeline.md:31",
+      "SamA_v2/raw/01_early_life.md:37"
+    ],
+    "notes": "Fall 2003; AI-lab detail is REPORTED."
+  },
+  {
+    "id": "ev-014",
+    "date": "2003-09",
+    "endDate": "2005-06",
+    "precision": "season",
+    "title": "Stanford years (quiet period)",
+    "description": "Two undergraduate years in computer science; he plays a lot of poker and later recommends it as training in decision-making.",
+    "domains": [
+      "education"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:32",
+      "SamA_v2/raw/01_early_life.md:38"
+    ],
+    "notes": "Few dated events."
+  },
+  {
+    "id": "ev-015",
+    "date": "2004",
+    "precision": "approx-year",
+    "title": "Relationship with Nick Sivo begins",
+    "description": "Begins a relationship with classmate Nick Sivo, later his Loopt co-founder; it lasts about nine years ('I thought I was going to marry him').",
+    "domains": [
+      "partnership"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:80",
+      "SamA_v2/timeline/08_master_timeline.md:60",
+      "SamA_v2/raw/05_private_family.md:21"
+    ],
+    "notes": "Start year conflict: v1 says sophomore year 2004-2005; v2 gives ~2003-2012. Start is inferred, not stated by Altman."
+  },
+  {
+    "id": "ev-016",
+    "date": "2005",
+    "precision": "year",
+    "title": "Drops out of Stanford at 19",
+    "description": "Leaves Stanford after two years, without a degree, to work on Loopt full time.",
+    "domains": [
+      "education",
+      "career"
+    ],
+    "valence": "mixed",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:10",
+      "SamA_v1/timeline/14_master_timeline.md:87",
+      "SamA_v2/timeline/08_master_timeline.md:33",
+      "SamA_v2/raw/01_early_life.md:39"
+    ],
+    "notes": "v1 grades REPORTED, v2 VERIFIED. Month uncertain: v2 says spring 2005; v1 notes he had 'just finished sophomore year' during YC summer 2005."
+  },
+  {
+    "id": "ev-017",
+    "date": "2005-06",
+    "precision": "season",
+    "title": "Overwork gives him scurvy",
+    "description": "Works so incessantly during the Loopt build summer that he develops scurvy, by his own later account.",
+    "domains": [
+      "health"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:85",
+      "SamA_v2/timeline/08_master_timeline.md:34",
+      "SamA_v2/raw/01_early_life.md:41"
+    ],
+    "notes": "His own anecdote via New Yorker 2016."
+  },
+  {
+    "id": "ev-018",
+    "date": "2005-06",
+    "precision": "season",
+    "title": "Loopt in Y Combinator's first batch",
+    "description": "Loopt (first called Radiate) is funded in YC's inaugural Summer Founders batch in Cambridge, MA ($6k per founder) alongside Reddit; start of his relationship with Paul Graham and YC.",
+    "domains": [
+      "career",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:83",
+      "SamA_v1/timeline/14_master_timeline.md:84",
+      "SamA_v2/timeline/08_master_timeline.md:34",
+      "SamA_v2/raw/01_early_life.md:40"
+    ]
+  },
+  {
+    "id": "ev-019",
+    "date": "2005-11",
+    "precision": "month",
+    "title": "Loopt raises Series A",
+    "description": "Loopt raises about $5M from Sequoia and NEA.",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:35",
+      "SamA_v1/timeline/14_master_timeline.md:89"
+    ],
+    "notes": "v2 dates the round Nov 2005; v1 records it disclosed at the Sep 2006 launch."
+  },
+  {
+    "id": "ev-020",
+    "date": "2006-07-16",
+    "precision": "day",
+    "title": "Joins Twitter as @sama",
+    "description": "Opens the @sama account (user ID 1605), later his main public channel.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:88"
+    ],
+    "notes": "Corrects a common 2007-08 assumption."
+  },
+  {
+    "id": "ev-021",
+    "date": "2006-09-11",
+    "precision": "day",
+    "title": "Loopt launches publicly",
+    "description": "Loopt launches on Boost Mobile; at 21 he is a press-profiled CEO ('21-year-old CEO'), with about 40,000 subscribers by November.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:89",
+      "SamA_v1/timeline/14_master_timeline.md:92",
+      "SamA_v2/timeline/08_master_timeline.md:36"
+    ],
+    "notes": "Launch time differs by ~1 hour across source metadata (vB); evening Sep 11 PT."
+  },
+  {
+    "id": "ev-022",
+    "date": "2006-10",
+    "precision": "month",
+    "title": "Graham calls him 'Bill Gates at 19'",
+    "description": "Paul Graham's essay names Loopt the most promising of his first batch and compares the young Altman to Bill Gates at 19.",
+    "domains": [
+      "reputation",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:91"
+    ]
+  },
+  {
+    "id": "ev-023",
+    "date": "2007-07",
+    "precision": "month",
+    "title": "Loopt Series B and Sprint deal",
+    "description": "Loopt raises a Series B (reported $8.25M) and wins carrier distribution with Sprint.",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:94",
+      "SamA_v1/timeline/14_master_timeline.md:95",
+      "SamA_v2/timeline/08_master_timeline.md:37",
+      "SamA_v2/timeline/08_master_timeline.md:38"
+    ],
+    "notes": "Round size disputed ($8.25M vs $12M authorized)."
+  },
+  {
+    "id": "ev-024",
+    "date": "2008-06-09",
+    "precision": "day",
+    "title": "Demos Loopt at Apple WWDC keynote",
+    "description": "Demonstrates Loopt on stage at Steve Jobs' WWDC keynote; Graham writes that he got there by being 'extremely effective'.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:100",
+      "SamA_v1/timeline/14_master_timeline.md:101",
+      "SamA_v2/timeline/08_master_timeline.md:41"
+    ]
+  },
+  {
+    "id": "ev-025",
+    "date": "2008-07-10",
+    "endDate": "2008-07-17",
+    "precision": "day",
+    "title": "Loopt iPhone launch and SMS-invite backlash",
+    "description": "Loopt for iPhone ships with the App Store; the app mass-texts users' address books and ignores STOP replies, drawing backlash, apologies and a fix a week later.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:103",
+      "SamA_v1/timeline/14_master_timeline.md:104",
+      "SamA_v2/timeline/08_master_timeline.md:42"
+    ]
+  },
+  {
+    "id": "ev-026",
+    "date": "2008-08",
+    "precision": "month",
+    "title": "Graham's 'king of the cannibals' line",
+    "description": "In 'A Fundraising Survival Guide' Graham writes that if Altman were parachuted onto an island of cannibals he would be king within five years.",
+    "domains": [
+      "reputation",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:124",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:22",
+      "https://www.paulgraham.com/fundraising.html"
+    ],
+    "notes": "Quote is Graham's (Aug 2008), not Thiel's."
+  },
+  {
+    "id": "ev-027",
+    "date": "2008-10-03",
+    "endDate": "2009-03",
+    "precision": "day",
+    "title": "Loopt sued for patent infringement",
+    "description": "Earthcomber sues Loopt for patent infringement; the suit is dropped in March 2009.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:106",
+      "SamA_v1/timeline/14_master_timeline.md:109",
+      "SamA_v2/timeline/08_master_timeline.md:44"
+    ]
+  },
+  {
+    "id": "ev-028",
+    "date": "2008-11-11",
+    "precision": "day",
+    "title": "Loopt explores a sale in the financial crisis",
+    "description": "During the 2008 financial crisis Loopt hires Allen & Co. to explore financing or a sale.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:107",
+      "SamA_v2/timeline/08_master_timeline.md:45"
+    ]
+  },
+  {
+    "id": "ev-029",
+    "date": "2009-04",
+    "precision": "month",
+    "title": "Named among Graham's five founders",
+    "description": "Graham names the 24-year-old Altman one of the five most interesting founders, writing 'On questions of strategy or ambition I ask, What would Sama do?'.",
+    "domains": [
+      "reputation",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:110",
+      "SamA_v2/timeline/08_master_timeline.md:46"
+    ]
+  },
+  {
+    "id": "ev-030",
+    "date": "2009-10-19",
+    "endDate": "2009-11-03",
+    "precision": "day",
+    "title": "Loopt pivots: Mix, GraffitiGeo, Pulse",
+    "description": "Loopt spins out its Mix dating feature, buys YC-backed GraffitiGeo and launches Pulse local search, chasing a new product direction.",
+    "domains": [
+      "career"
+    ],
+    "valence": "mixed",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:111",
+      "SamA_v1/timeline/14_master_timeline.md:112",
+      "SamA_v1/timeline/14_master_timeline.md:113",
+      "SamA_v2/timeline/08_master_timeline.md:47"
+    ]
+  },
+  {
+    "id": "ev-031",
+    "date": "2010",
+    "precision": "approx-year",
+    "title": "Begins angel investing",
+    "description": "Starts making angel investments (later 100+ companies, including Stripe and Airbnb-era bets), the base of his later personal wealth.",
+    "domains": [
+      "money",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:53",
+      "SamA_v1/timeline/14_master_timeline.md:124"
+    ],
+    "notes": "Company names are reported; check dates are not."
+  },
+  {
+    "id": "ev-032",
+    "date": "2010-08",
+    "endDate": "2012-03",
+    "precision": "month",
+    "title": "Loopt plateau (slow period)",
+    "description": "Loopt has about 4M users and 45 staff and ships updates but cannot find growth; years of grind before the sale.",
+    "domains": [
+      "career"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:120",
+      "SamA_v1/timeline/14_master_timeline.md:122",
+      "SamA_v2/timeline/08_master_timeline.md:49",
+      "SamA_v2/timeline/08_master_timeline.md:52"
+    ]
+  },
+  {
+    "id": "ev-033",
+    "date": "2010-08-18",
+    "precision": "day",
+    "title": "Facebook Places undercuts Loopt",
+    "description": "Facebook launches Places; Loopt's position collapses and Steve Boom becomes Loopt president while Altman stays CEO.",
+    "domains": [
+      "career"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:118",
+      "SamA_v1/timeline/14_master_timeline.md:119",
+      "SamA_v2/timeline/08_master_timeline.md:50"
+    ],
+    "notes": "Date VERIFIED; competitive impact REPORTED."
+  },
+  {
+    "id": "ev-034",
+    "date": "2011-06-13",
+    "precision": "day",
+    "title": "Becomes part-time YC partner",
+    "description": "Joins Y Combinator as a part-time partner while still running Loopt, alongside Garry Tan, Emmett Shear and Justin Kan.",
+    "domains": [
+      "career",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:123",
+      "SamA_v2/timeline/08_master_timeline.md:54"
+    ],
+    "notes": "v1 REPORTED (roster not re-verified, vB #63); v2 VERIFIED."
+  },
+  {
+    "id": "ev-035",
+    "date": "2012",
+    "precision": "year",
+    "title": "Nine-year relationship ends",
+    "description": "He and Nick Sivo break up after the Loopt sale, ending a nine-year relationship.",
+    "domains": [
+      "partnership"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:131",
+      "SamA_v2/timeline/08_master_timeline.md:60",
+      "SamA_v2/raw/05_private_family.md:21"
+    ]
+  },
+  {
+    "id": "ev-036",
+    "date": "2012-03-09",
+    "precision": "day",
+    "title": "Loopt sold to Green Dot",
+    "description": "Green Dot agrees to buy Loopt for $43.4M cash (incl. ~$9.8M retention); a negative return for VCs, but his first liquidity (he kept about $5M).",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "mixed",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:11",
+      "SamA_v1/timeline/14_master_timeline.md:126",
+      "SamA_v1/timeline/14_master_timeline.md:127",
+      "SamA_v1/timeline/14_master_timeline.md:129",
+      "SamA_v2/timeline/08_master_timeline.md:55",
+      "SamA_v2/timeline/08_master_timeline.md:56"
+    ],
+    "notes": "SEC URL fails (vB #57); terms corroborated via TechCrunch. Closed ~end Mar/Apr 4 2012. 'Help save face' framing is REPORTED (2026)."
+  },
+  {
+    "id": "ev-037",
+    "date": "2012-04",
+    "precision": "month",
+    "title": "Co-founds Hydrazine Capital with brother Jack",
+    "description": "Starts Hydrazine Capital with his brother Jack: a $21M fund mostly from Peter Thiel, with much of his own Loopt proceeds, investing heavily in YC companies.",
+    "domains": [
+      "money",
+      "family",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:130",
+      "SamA_v2/timeline/08_master_timeline.md:57",
+      "SamA_v2/raw/05_private_family.md:22"
+    ],
+    "notes": "Month from Wikipedia only; year confirmed across aggregators."
+  },
+  {
+    "id": "ev-038",
+    "date": "2012-04",
+    "endDate": "2014-02",
+    "precision": "month",
+    "title": "Post-Loopt interregnum (quiet period)",
+    "description": "Low-profile stretch: a post-close role at Green Dot (Loopt tech feeds GoBank), Hydrazine investing and part-time YC work, while Graham courts him as successor.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "period",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:58",
+      "SamA_v2/timeline/08_master_timeline.md:59",
+      "SamA_v1/timeline/14_master_timeline.md:132"
+    ],
+    "notes": "Few dated events."
+  },
+  {
+    "id": "ev-039",
+    "date": "2012-06",
+    "precision": "season",
+    "title": "Graham first approaches him to run YC",
+    "description": "Paul Graham first raises the idea of Altman succeeding him as head of YC; the courtship lasts over a year.",
+    "domains": [
+      "career",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:132",
+      "SamA_v2/timeline/08_master_timeline.md:59"
+    ],
+    "notes": "'Mid-2012'; month approximate."
+  },
+  {
+    "id": "ev-040",
+    "date": "2014-02-21",
+    "precision": "day",
+    "title": "Named president of Y Combinator",
+    "description": "Graham announces Altman, 28, as YC president from the next batch: 'YC needs to get bigger, and I am not really much of a manager. Sam Altman is.'",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:12",
+      "SamA_v1/timeline/14_master_timeline.md:139",
+      "SamA_v1/timeline/14_master_timeline.md:140",
+      "SamA_v2/timeline/08_master_timeline.md:61"
+    ],
+    "notes": "Date confirmed; YC-blog clock time UNVERIFIABLE (vA, vB)."
+  },
+  {
+    "id": "ev-041",
+    "date": "2014-04-22",
+    "precision": "day",
+    "title": "First big YC reform: the 'New Deal'",
+    "description": "On his 29th birthday he announces YC's standard $120k-for-7% deal, his first major policy as president.",
+    "domains": [
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:144",
+      "SamA_v2/timeline/08_master_timeline.md:62"
+    ],
+    "notes": "YC blog body UNVERIFIABLE in vB; terms via TechCrunch."
+  },
+  {
+    "id": "ev-042",
+    "date": "2014-09-16",
+    "precision": "day",
+    "title": "Teaches Stanford's 'How to Start a Startup'",
+    "description": "Co-teaches Stanford CS183B, putting YC's curriculum (and himself) in front of a mass audience.",
+    "domains": [
+      "reputation",
+      "education"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:149",
+      "SamA_v2/timeline/08_master_timeline.md:64"
+    ]
+  },
+  {
+    "id": "ev-043",
+    "date": "2014-09-30",
+    "precision": "day",
+    "title": "Leads Reddit's $50M Series B",
+    "description": "Personally leads Reddit's $50M round (~$500M valuation) and later joins its board; ends up a ~9% pre-IPO holder.",
+    "domains": [
+      "money",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:150",
+      "SamA_v1/timeline/14_master_timeline.md:200",
+      "SamA_v2/timeline/08_master_timeline.md:65"
+    ],
+    "notes": "v1 dates Oct 2014 (month); v2 Sep 30 2014 (TC)."
+  },
+  {
+    "id": "ev-044",
+    "date": "2014-11-13",
+    "endDate": "2014-11-20",
+    "precision": "day",
+    "title": "Eight days as Reddit interim CEO",
+    "description": "After Yishan Wong resigns, he serves as Reddit's interim CEO for about eight days and installs Ellen Pao as interim CEO.",
+    "domains": [
+      "career"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:152",
+      "SamA_v1/timeline/14_master_timeline.md:153",
+      "SamA_v1/timeline/14_master_timeline.md:154",
+      "SamA_v1/timeline/14_master_timeline.md:155",
+      "SamA_v2/timeline/08_master_timeline.md:66"
+    ],
+    "notes": "He preceded Pao (inverted framing corrected in v1)."
+  },
+  {
+    "id": "ev-045",
+    "date": "2015",
+    "precision": "approx-year",
+    "title": "Becomes Helion investor and chairman",
+    "description": "Becomes investor and chairman of fusion company Helion Energy (later also chairs fission startup Oklo).",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/raw/05_openai_2019_2023.md:91",
+      "SamA_v1/raw/11_controversies_ledger.md:235"
+    ],
+    "notes": "Oklo chair start date not in dossier."
+  },
+  {
+    "id": "ev-046",
+    "date": "2015",
+    "precision": "approx-year",
+    "title": "Meets Oliver Mulherin",
+    "description": "Reportedly meets his future husband, Australian software engineer Oliver Mulherin, late at night in Peter Thiel's hot tub.",
+    "domains": [
+      "partnership"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/raw/08_family_private_life.md:21",
+      "SamA_v1/raw/08_family_private_life.md:96",
+      "SamA_v2/timeline/08_master_timeline.md:67",
+      "SamA_v2/raw/05_private_family.md:23"
+    ],
+    "notes": "From Keach Hagey's book via secondary sources; book text not retrieved. A 2026 New Yorker snippet says they met nine years earlier."
+  },
+  {
+    "id": "ev-047",
+    "date": "2015-04-28",
+    "precision": "day",
+    "title": "Turns 30; 'days are long' essay",
+    "description": "Shortly after turning 30 he publishes 'The days are long but the decades are short', a list of life lessons.",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:160"
+    ]
+  },
+  {
+    "id": "ev-048",
+    "date": "2015-05-25",
+    "precision": "day",
+    "title": "Pitches Musk a 'Manhattan Project for AI'",
+    "description": "Emails Elon Musk proposing a YC-led 'Manhattan Project for AI'; Musk replies it is 'probably worth a conversation', the seed of OpenAI.",
+    "domains": [
+      "career",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:206",
+      "SamA_v1/timeline/14_master_timeline.md:207"
+    ],
+    "notes": "Exhibit known via The Verge's trial exhibit log; vB downgrades Verge-log rows to REPORTED and could not re-page Ex.3."
+  },
+  {
+    "id": "ev-049",
+    "date": "2015-07",
+    "precision": "month",
+    "title": "OpenAI founding dinner",
+    "description": "Brokers the Rosewood Sand Hill dinner with Musk, Sutskever and Brockman that starts OpenAI's recruitment.",
+    "domains": [
+      "career",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:208",
+      "SamA_v1/timeline/14_master_timeline.md:209"
+    ]
+  },
+  {
+    "id": "ev-050",
+    "date": "2015-10-07",
+    "precision": "day",
+    "title": "Expands YC: Research, Continuity, Fellowship",
+    "description": "Launches nonprofit YC Research with $10M of his own money, plus the YC Fellowship (Jul 2015) and the ~$700M Continuity growth fund (Oct 2015).",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:163",
+      "SamA_v1/timeline/14_master_timeline.md:166",
+      "SamA_v1/timeline/14_master_timeline.md:167",
+      "SamA_v2/timeline/08_master_timeline.md:68",
+      "SamA_v2/timeline/08_master_timeline.md:69",
+      "SamA_v2/timeline/08_master_timeline.md:70"
+    ],
+    "notes": "Continuity fund size REPORTED."
+  },
+  {
+    "id": "ev-051",
+    "date": "2015-12-11",
+    "precision": "day",
+    "title": "Co-founds OpenAI",
+    "description": "OpenAI is announced as a nonprofit with ~$1B pledged; Altman and Musk are co-chairs, while he remains YC president.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:14",
+      "SamA_v1/timeline/14_master_timeline.md:216",
+      "SamA_v1/timeline/14_master_timeline.md:217",
+      "SamA_v1/timeline/14_master_timeline.md:218",
+      "SamA_v2/timeline/08_master_timeline.md:71"
+    ]
+  },
+  {
+    "id": "ev-052",
+    "date": "2016-05-31",
+    "precision": "day",
+    "title": "Launches basic-income pilot",
+    "description": "Announces YC's unconditional basic-income pilot in Oakland, later his personally funded OpenResearch study.",
+    "domains": [
+      "mind-worldview",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:73",
+      "SamA_v1/timeline/14_master_timeline.md:170"
+    ],
+    "notes": "Research request posted Jan 27 2016."
+  },
+  {
+    "id": "ev-053",
+    "date": "2016-10",
+    "precision": "month",
+    "title": "President of YC Group; Seibel runs core",
+    "description": "Michael Seibel becomes CEO of YC's core program while Altman, now president of YC Group, focuses on expansion and OpenAI.",
+    "domains": [
+      "career"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:173",
+      "SamA_v1/timeline/14_master_timeline.md:174",
+      "SamA_v2/timeline/08_master_timeline.md:75"
+    ]
+  },
+  {
+    "id": "ev-054",
+    "date": "2016-10",
+    "endDate": "2019-03",
+    "precision": "month",
+    "title": "YC Group era (steady period)",
+    "description": "Steady expansion of YC under his presidency: Startup School MOOC (2017), batches growing to 124 then 200+ companies, YC China (Aug 2018), while OpenAI takes more of his time.",
+    "domains": [
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:185",
+      "SamA_v1/timeline/14_master_timeline.md:187",
+      "SamA_v1/timeline/14_master_timeline.md:188",
+      "SamA_v1/timeline/14_master_timeline.md:193",
+      "SamA_v2/timeline/08_master_timeline.md:78",
+      "SamA_v2/timeline/08_master_timeline.md:85"
+    ]
+  },
+  {
+    "id": "ev-055",
+    "date": "2016-10-03",
+    "precision": "day",
+    "title": "New Yorker 'Manifest Destiny' profile",
+    "description": "Tad Friend's New Yorker profile fixes his public image: childhood, coming out, Graham's 'extremely good at becoming powerful', and a prepper inventory that spreads as a 'survivalist' story.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "mixed",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:176",
+      "SamA_v1/timeline/14_master_timeline.md:177",
+      "SamA_v1/timeline/14_master_timeline.md:178",
+      "SamA_v2/timeline/08_master_timeline.md:74",
+      "https://www.newyorker.com/magazine/2016/10/10/sam-altmans-manifest-destiny"
+    ]
+  },
+  {
+    "id": "ev-056",
+    "date": "2016-10-03",
+    "precision": "day",
+    "title": "Prepper posture made public",
+    "description": "Says he keeps 'guns, gold, potassium iodide, antibiotics, batteries, water, gas masks' and land in Big Sur he can fly to, with a fallback plan to fly to Thiel's New Zealand house; also races cars (two McLarens) and flies rented planes.",
+    "domains": [
+      "health",
+      "home",
+      "mind-worldview"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/raw/08_family_private_life.md:22",
+      "SamA_v1/raw/08_family_private_life.md:122",
+      "SamA_v1/raw/08_family_private_life.md:136",
+      "SamA_v1/raw/08_family_private_life.md:140",
+      "https://www.newyorker.com/magazine/2016/10/10/sam-altmans-manifest-destiny"
+    ],
+    "notes": "Big Sur parcel never identified; no later restatement of prepping found. Mother adds he 'keeps an awful lot tied up inside' and has 'cyber-chondria'."
+  },
+  {
+    "id": "ev-057",
+    "date": "2017",
+    "precision": "year",
+    "title": "Publishes 'The Merge'",
+    "description": "Essay arguing that the human-AI merge has already started and is probably the best-case scenario.",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:189",
+      "SamA_v2/timeline/08_master_timeline.md:77"
+    ],
+    "notes": "Date conflict: v1 2017-12-07, v2 2017-03."
+  },
+  {
+    "id": "ev-058",
+    "date": "2017-09-20",
+    "endDate": "2018-02",
+    "precision": "day",
+    "title": "OpenAI control fight with Musk peaks",
+    "description": "Musk demands majority equity and control of a for-profit OpenAI; Sutskever and Brockman refuse ('AGI dictatorship'), Musk writes 'Discussions are over', and Altman says he remains enthusiastic about the nonprofit.",
+    "domains": [
+      "conflict-legal",
+      "career",
+      "network-mentors"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:246",
+      "SamA_v1/timeline/14_master_timeline.md:248",
+      "SamA_v1/timeline/14_master_timeline.md:249",
+      "SamA_v1/timeline/14_master_timeline.md:250",
+      "SamA_v1/timeline/14_master_timeline.md:251"
+    ],
+    "notes": "All exhibit rows downgraded from VERIFIED to REPORTED by vB (Verge-log transmission)."
+  },
+  {
+    "id": "ev-059",
+    "date": "2018-02-20",
+    "precision": "day",
+    "title": "Musk leaves OpenAI board",
+    "description": "Musk leaves the board (Tesla conflict cited) after the control fight and stops funding at about $100M of a ~$1B pledge; Altman takes on the president role, leaving OpenAI short of money.",
+    "domains": [
+      "career",
+      "money",
+      "network-mentors"
+    ],
+    "valence": "mixed",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:264",
+      "SamA_v1/timeline/14_master_timeline.md:265",
+      "SamA_v2/timeline/08_master_timeline.md:80"
+    ],
+    "notes": "Departure VERIFIED; motives and pledge figures REPORTED; Musk's total giving is contested ($38M-$45M+)."
+  },
+  {
+    "id": "ev-060",
+    "date": "2018-04-09",
+    "precision": "day",
+    "title": "OpenAI Charter published",
+    "description": "OpenAI publishes its Charter on broadly distributed benefits, safety and leadership.",
+    "domains": [
+      "career",
+      "mind-worldview"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:267",
+      "SamA_v1/timeline/14_master_timeline.md:268"
+    ]
+  },
+  {
+    "id": "ev-061",
+    "date": "2018-05-25",
+    "precision": "day",
+    "title": "Father dies",
+    "description": "His father, Jerold Donald (Jerry) Altman (b. Oct 4 1950), dies at 67; memorial May 28 at Central Reform Congregation, St. Louis.",
+    "domains": [
+      "family"
+    ],
+    "valence": "negative",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:190",
+      "SamA_v2/timeline/08_master_timeline.md:81",
+      "SamA_v2/raw/01_early_life.md:44"
+    ],
+    "notes": "Full name and dates per vA correction. Cause of death not established (heart-attack claim quarantined). A 2023 NY Mag profile calls it a tipping point for his sister's mental health."
+  },
+  {
+    "id": "ev-062",
+    "date": "2019",
+    "precision": "year",
+    "title": "Co-founds Tools for Humanity / Worldcoin",
+    "description": "Co-founds iris-scanning identity and crypto project Worldcoin (Tools for Humanity) with Alex Blania; he is chairman.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:289",
+      "SamA_v2/timeline/08_master_timeline.md:93"
+    ],
+    "notes": "v1 lists 2019-10-21 at year precision."
+  },
+  {
+    "id": "ev-063",
+    "date": "2019-01-24",
+    "precision": "day",
+    "title": "'How To Be Successful' essay",
+    "description": "Publishes a 13-point manifesto on compounding and self-belief ('Compounding is magic').",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:192",
+      "SamA_v2/timeline/08_master_timeline.md:87"
+    ]
+  },
+  {
+    "id": "ev-064",
+    "date": "2019-03-08",
+    "precision": "day",
+    "title": "Steps down as YC president",
+    "description": "Steps down as YC president to become chairman as he moves to OpenAI.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "mixed",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:194",
+      "SamA_v1/timeline/14_master_timeline.md:195",
+      "SamA_v1/timeline/14_master_timeline.md:275",
+      "SamA_v2/timeline/08_master_timeline.md:89"
+    ],
+    "notes": "Exit framing contested: contemporaneous posts describe a mutual transition; post-2023 anonymous accounts and the 2026 New Yorker say he was pushed out over mistrust; Graham said in May 2024 he 'wasn't fired'."
+  },
+  {
+    "id": "ev-065",
+    "date": "2019-03-11",
+    "precision": "day",
+    "title": "Becomes OpenAI CEO; capped-profit LP",
+    "description": "OpenAI creates a capped-profit LP (100x cap) under nonprofit control, with Altman as CEO; he takes no equity.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:15",
+      "SamA_v1/timeline/14_master_timeline.md:276",
+      "SamA_v1/timeline/14_master_timeline.md:277",
+      "SamA_v2/timeline/08_master_timeline.md:90"
+    ]
+  },
+  {
+    "id": "ev-066",
+    "date": "2019-05-20",
+    "precision": "day",
+    "title": "Leaves YC leadership",
+    "description": "Geoff Ralston becomes YC president and Altman drops from chairman to adviser, ending his formal YC role.",
+    "domains": [
+      "career"
+    ],
+    "valence": "neutral",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:196",
+      "SamA_v1/timeline/14_master_timeline.md:197",
+      "SamA_v1/timeline/14_master_timeline.md:198",
+      "SamA_v2/timeline/08_master_timeline.md:92"
+    ],
+    "notes": "'Chairman into 2021' is stale boilerplate (v1 conflict #9)."
+  },
+  {
+    "id": "ev-067",
+    "date": "2019-07",
+    "endDate": "2022-11",
+    "precision": "month",
+    "title": "Pre-ChatGPT build years (lower-profile period)",
+    "description": "Relatively quiet public years running OpenAI: GPT-3 and the API (2020), DALL-E and Copilot (2021), plus large personal property purchases during the pandemic.",
+    "domains": [
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "period",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:291",
+      "SamA_v1/timeline/14_master_timeline.md:292",
+      "SamA_v1/timeline/14_master_timeline.md:296",
+      "SamA_v1/timeline/14_master_timeline.md:298",
+      "SamA_v2/timeline/08_master_timeline.md:96",
+      "SamA_v2/timeline/08_master_timeline.md:97",
+      "SamA_v2/timeline/08_master_timeline.md:99",
+      "SamA_v2/timeline/08_master_timeline.md:101"
+    ]
+  },
+  {
+    "id": "ev-068",
+    "date": "2019-07-22",
+    "precision": "day",
+    "title": "Microsoft invests $1B",
+    "description": "Microsoft invests $1B in OpenAI with an exclusive Azure partnership, securing compute.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:16",
+      "SamA_v1/timeline/14_master_timeline.md:281",
+      "SamA_v2/timeline/08_master_timeline.md:94"
+    ]
+  },
+  {
+    "id": "ev-069",
+    "date": "2020",
+    "precision": "year",
+    "title": "Buys Napa ranch",
+    "description": "Buys a 950-acre working ranch in Napa for $15.7M, later his weekend home with Mulherin.",
+    "domains": [
+      "home",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:405",
+      "SamA_v1/raw/08_family_private_life.md:26",
+      "SamA_v1/raw/08_family_private_life.md:118"
+    ],
+    "notes": "'Late 2020'."
+  },
+  {
+    "id": "ev-070",
+    "date": "2020-03",
+    "precision": "month",
+    "title": "Buys Russian Hill home in San Francisco",
+    "description": "Buys a $27M Russian Hill compound (950 Lombard) via LLC, later his main San Francisco home.",
+    "domains": [
+      "home",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:405",
+      "SamA_v1/timeline/14_master_timeline.md:463",
+      "SamA_v1/raw/08_family_private_life.md:26",
+      "SamA_v1/raw/08_family_private_life.md:116"
+    ]
+  },
+  {
+    "id": "ev-071",
+    "date": "2020-05-22",
+    "precision": "day",
+    "title": "Large Democratic political donation",
+    "description": "Gives $250,000 to a pro-Biden super PAC, consistent with a Democratic donor record.",
+    "domains": [
+      "mind-worldview",
+      "money"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:95"
+    ]
+  },
+  {
+    "id": "ev-072",
+    "date": "2020-06-11",
+    "precision": "day",
+    "title": "OpenAI's first commercial product",
+    "description": "OpenAI opens the GPT-3 API, its first revenue product, under his CEO tenure.",
+    "domains": [
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:292",
+      "SamA_v2/timeline/08_master_timeline.md:97"
+    ]
+  },
+  {
+    "id": "ev-073",
+    "date": "2021",
+    "precision": "year",
+    "title": "Puts $180M into Retro Biosciences",
+    "description": "Funds longevity startup Retro Biosciences' entire $180M seed; in 2023 says he put 'all my liquid net worth' into Helion and Retro.",
+    "domains": [
+      "money",
+      "health"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:312",
+      "SamA_v2/timeline/08_master_timeline.md:105"
+    ],
+    "notes": "Date conflict: v1 says 2021 checks (revealed Mar 8 2023); v2 says Apr 2022."
+  },
+  {
+    "id": "ev-074",
+    "date": "2021-03-16",
+    "precision": "day",
+    "title": "'Moore's Law for Everything'",
+    "description": "Essay proposing an American Equity Fund taxing companies and land to pay every adult (illustrated at $13,500/yr).",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:297",
+      "SamA_v2/timeline/08_master_timeline.md:100"
+    ]
+  },
+  {
+    "id": "ev-075",
+    "date": "2021-07",
+    "precision": "month",
+    "title": "Buys Hawaii estate",
+    "description": "Buys a $43M Kailua-Kona estate on Hawaii's Big Island, the reported site of his 2024 wedding.",
+    "domains": [
+      "home",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:405",
+      "SamA_v1/raw/08_family_private_life.md:26",
+      "SamA_v1/raw/08_family_private_life.md:120"
+    ],
+    "notes": "Bedroom count conflict 12 (BI) vs 10 (Sotheby's)."
+  },
+  {
+    "id": "ev-076",
+    "date": "2021-10-21",
+    "precision": "day",
+    "title": "Worldcoin unveiled",
+    "description": "Worldcoin is publicly introduced (orb iris scans for a free token share), beginning years of privacy controversy.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:302"
+    ]
+  },
+  {
+    "id": "ev-077",
+    "date": "2021-11-05",
+    "precision": "day",
+    "title": "$375M Helion check",
+    "description": "Leads Helion's $500M Series E with about $375M of his own money, his biggest personal investment.",
+    "domains": [
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:303",
+      "SamA_v2/timeline/08_master_timeline.md:102"
+    ],
+    "notes": "Round VERIFIED; personal ticket REPORTED (CNBC)."
+  },
+  {
+    "id": "ev-078",
+    "date": "2021-11-13",
+    "endDate": "2025-01-06",
+    "precision": "day",
+    "title": "Public family estrangement with sister begins",
+    "description": "His sister Ann begins public social-media accusations against him (date per his later counterclaim); the family says she has been estranged and receiving support.",
+    "domains": [
+      "family",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/raw/08_family_private_life.md:33",
+      "SamA_v1/raw/08_family_private_life.md:158"
+    ],
+    "notes": "Recorded only as start of public estrangement; content not repeated. Date is as alleged in Sam's Mar 2025 counterclaim (Doc 18)."
+  },
+  {
+    "id": "ev-079",
+    "date": "2022",
+    "precision": "year",
+    "title": "Leaves Reddit board",
+    "description": "Leaves Reddit's board, keeping a large stake ahead of its IPO.",
+    "domains": [
+      "career"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "fit",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:200"
+    ]
+  },
+  {
+    "id": "ev-080",
+    "date": "2022-11-30",
+    "precision": "day",
+    "title": "ChatGPT launches",
+    "description": "OpenAI releases ChatGPT; it reaches 1M users in five days and ~100M within two months, making him a global figure.",
+    "domains": [
+      "career",
+      "reputation",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:17",
+      "SamA_v1/timeline/14_master_timeline.md:306",
+      "SamA_v1/timeline/14_master_timeline.md:307",
+      "SamA_v2/timeline/08_master_timeline.md:106"
+    ],
+    "notes": "Toner later says the board learned of the launch on Twitter (disputed)."
+  },
+  {
+    "id": "ev-081",
+    "date": "2023-01-23",
+    "precision": "day",
+    "title": "Microsoft multibillion investment",
+    "description": "Microsoft announces a multiyear, multibillion-dollar investment (reported ~$10B).",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:308",
+      "SamA_v2/timeline/08_master_timeline.md:108"
+    ],
+    "notes": "$10B figure REPORTED only."
+  },
+  {
+    "id": "ev-082",
+    "date": "2023-02-17",
+    "endDate": "2023-03-15",
+    "precision": "day",
+    "title": "Musk turns publicly hostile",
+    "description": "Musk attacks OpenAI as a 'closed maximum-profit' company; Altman texts him 'you're my hero' and that the attacks 'really fucking hurt'.",
+    "domains": [
+      "conflict-legal",
+      "network-mentors"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:309",
+      "SamA_v1/timeline/14_master_timeline.md:310",
+      "SamA_v1/timeline/14_master_timeline.md:314"
+    ],
+    "notes": "Texts known via trial exhibits (REPORTED per vB)."
+  },
+  {
+    "id": "ev-083",
+    "date": "2023-02-24",
+    "precision": "day",
+    "title": "'Planning for AGI and Beyond'",
+    "description": "Publishes OpenAI's AGI strategy, backing iterative deployment and admitting its original openness view was wrong.",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:111"
+    ]
+  },
+  {
+    "id": "ev-084",
+    "date": "2023-03-14",
+    "precision": "day",
+    "title": "GPT-4 launch",
+    "description": "OpenAI launches GPT-4.",
+    "domains": [
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:18",
+      "SamA_v1/timeline/14_master_timeline.md:313",
+      "SamA_v2/timeline/08_master_timeline.md:112"
+    ]
+  },
+  {
+    "id": "ev-085",
+    "date": "2023-05-16",
+    "precision": "day",
+    "title": "Testifies to the US Senate",
+    "description": "Testifies before Senate Judiciary on AI oversight, calling for licensing and warning 'if this technology goes wrong, it can go quite wrong'; seen as the reasonable face of AI.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:20",
+      "SamA_v1/timeline/14_master_timeline.md:319",
+      "SamA_v2/timeline/08_master_timeline.md:119"
+    ]
+  },
+  {
+    "id": "ev-086",
+    "date": "2023-05-22",
+    "endDate": "2023-06-12",
+    "precision": "day",
+    "title": "World tour with heads of state",
+    "description": "Tours Europe, the Middle East and Asia meeting Sánchez, Macron, Sunak, Modi and others; an EU 'cease operating' remark draws rebuke and a walk-back, and an India 'hopeless' remark draws backlash.",
+    "domains": [
+      "reputation",
+      "network-mentors"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:321",
+      "SamA_v1/timeline/14_master_timeline.md:322",
+      "SamA_v1/timeline/14_master_timeline.md:323",
+      "SamA_v1/timeline/14_master_timeline.md:324",
+      "SamA_v1/timeline/14_master_timeline.md:325",
+      "SamA_v1/timeline/14_master_timeline.md:327",
+      "SamA_v1/timeline/14_master_timeline.md:328",
+      "SamA_v2/timeline/08_master_timeline.md:120",
+      "SamA_v2/timeline/08_master_timeline.md:121"
+    ]
+  },
+  {
+    "id": "ev-087",
+    "date": "2023-05-30",
+    "precision": "day",
+    "title": "Signs AI extinction-risk statement",
+    "description": "Signs the CAIS statement that mitigating extinction risk from AI should be a global priority.",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:326"
+    ]
+  },
+  {
+    "id": "ev-088",
+    "date": "2023-06-22",
+    "precision": "day",
+    "title": "Public as a couple at White House dinner",
+    "description": "Attends the White House state dinner for Narendra Modi with Oliver Mulherin, their first notable public appearance as a couple.",
+    "domains": [
+      "partnership"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:330",
+      "SamA_v1/raw/08_family_private_life.md:24"
+    ]
+  },
+  {
+    "id": "ev-089",
+    "date": "2023-07-24",
+    "endDate": "2023-08-02",
+    "precision": "day",
+    "title": "Worldcoin launch and regulatory backlash",
+    "description": "Worldcoin's token and network launch; Kenya suspends it on Aug 2, starting a run of regulator actions across many countries.",
+    "domains": [
+      "career",
+      "reputation",
+      "conflict-legal"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:332",
+      "SamA_v1/timeline/14_master_timeline.md:333",
+      "SamA_v2/timeline/08_master_timeline.md:123",
+      "SamA_v2/timeline/08_master_timeline.md:124",
+      "SamA_v2/timeline/08_master_timeline.md:125"
+    ]
+  },
+  {
+    "id": "ev-090",
+    "date": "2023-09",
+    "precision": "month",
+    "title": "Says he plans children soon",
+    "description": "Tells New York Magazine that he and Mulherin plan to have kids soon; they live at the Napa ranch.",
+    "domains": [
+      "family",
+      "partnership",
+      "home"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:334",
+      "SamA_v1/raw/08_family_private_life.md:25"
+    ]
+  },
+  {
+    "id": "ev-091",
+    "date": "2023-10",
+    "precision": "month",
+    "title": "Board friction over Toner paper",
+    "description": "Board member Helen Toner co-authors a paper that reportedly angers him; executives reportedly bring the board concerns about his conduct, and he reportedly moves to push Toner out.",
+    "domains": [
+      "conflict-legal",
+      "career"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:337",
+      "SamA_v1/timeline/14_master_timeline.md:395",
+      "SamA_v2/timeline/08_master_timeline.md:126"
+    ],
+    "notes": "Exec complaints relayed by Toner; NYT account second-hand. Unadjudicated."
+  },
+  {
+    "id": "ev-092",
+    "date": "2023-10-06",
+    "precision": "day",
+    "title": "High school alumni award",
+    "description": "Receives John Burroughs School's Outstanding Alum Award at an assembly.",
+    "domains": [
+      "reputation",
+      "education"
+    ],
+    "valence": "positive",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:338",
+      "SamA_v2/timeline/08_master_timeline.md:127"
+    ]
+  },
+  {
+    "id": "ev-093",
+    "date": "2023-11-06",
+    "precision": "day",
+    "title": "First DevDay, peak before the fall",
+    "description": "Hosts OpenAI's first DevDay (GPT-4 Turbo, GPTs); ChatGPT has 100M weekly users. Eleven days later he is fired.",
+    "domains": [
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:339",
+      "SamA_v2/timeline/08_master_timeline.md:128"
+    ]
+  },
+  {
+    "id": "ev-094",
+    "date": "2023-11-17",
+    "precision": "day",
+    "title": "Fired as OpenAI CEO",
+    "description": "In a noon video call the board removes him as CEO and director, saying he was 'not consistently candid'; Murati becomes interim CEO and Brockman quits.",
+    "domains": [
+      "career",
+      "reputation",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:23",
+      "SamA_v1/timeline/14_master_timeline.md:26",
+      "SamA_v1/timeline/14_master_timeline.md:350",
+      "SamA_v1/timeline/14_master_timeline.md:352",
+      "SamA_v1/timeline/14_master_timeline.md:355",
+      "SamA_v1/timeline/14_master_timeline.md:357",
+      "SamA_v2/timeline/08_master_timeline.md:131",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:48",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:7",
+      "https://openai.com/index/openai-announces-leadership-transition/"
+    ],
+    "notes": "Board post first archived 20:30:25 UTC. Directors reportedly decided ~Nov 11 (Hao, anonymous). Cause disputed: candor (board) vs safety (denied by WilmerHale) vs Q* (single anonymous Reuters claim, excluded). He was in a Las Vegas hotel room (his 2025 'Reflections')."
+  },
+  {
+    "id": "ev-095",
+    "date": "2023-11-18",
+    "endDate": "2023-11-19",
+    "precision": "day",
+    "title": "Negotiating return over the weekend",
+    "description": "Explores a new AI-chip venture while investors press the board; visits HQ with a guest badge and posts 'i love the openai team so much' (Nov 19), prompting mass staff echoes. His Russian Hill home serves as a war room.",
+    "domains": [
+      "career",
+      "network-mentors"
+    ],
+    "valence": "mixed",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:362",
+      "SamA_v1/timeline/14_master_timeline.md:368",
+      "SamA_v1/timeline/14_master_timeline.md:369",
+      "SamA_v1/timeline/14_master_timeline.md:372",
+      "SamA_v2/timeline/08_master_timeline.md:132",
+      "SamA_v2/timeline/08_master_timeline.md:133",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:49",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:17"
+    ],
+    "notes": "'i love the openai team' is Nov 19 04:47 UTC, not Nov 22 (vB #45)."
+  },
+  {
+    "id": "ev-096",
+    "date": "2023-11-20",
+    "precision": "day",
+    "title": "Microsoft offer and staff revolt",
+    "description": "The board names Emmett Shear interim CEO; Nadella announces Altman will lead a new Microsoft AI team; most of ~770 staff sign a letter threatening to leave unless he returns, and Sutskever says he regrets his role.",
+    "domains": [
+      "career",
+      "network-mentors",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:29",
+      "SamA_v1/timeline/14_master_timeline.md:378",
+      "SamA_v1/timeline/14_master_timeline.md:385",
+      "SamA_v1/timeline/14_master_timeline.md:388",
+      "SamA_v1/timeline/14_master_timeline.md:391",
+      "SamA_v2/timeline/08_master_timeline.md:134",
+      "SamA_v2/timeline/08_master_timeline.md:135",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:50",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:51",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:8",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:9"
+    ],
+    "notes": "Signature counts are dated snapshots only (>500/700+ Axios; 738/~770 Wired; 'vast majority' Guardian); no frozen 745 roll (vA). Murati signed first."
+  },
+  {
+    "id": "ev-097",
+    "date": "2023-11-21",
+    "endDate": "2023-11-29",
+    "precision": "day",
+    "title": "Returns as OpenAI CEO",
+    "description": "An agreement in principle (late Nov 21 PT / Nov 22 UTC) restores him as CEO under a new initial board (Taylor, Summers, D'Angelo) without a board seat; formalized Nov 29, with an independent review promised.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:30",
+      "SamA_v1/timeline/14_master_timeline.md:31",
+      "SamA_v1/timeline/14_master_timeline.md:396",
+      "SamA_v1/timeline/14_master_timeline.md:404",
+      "SamA_v2/timeline/08_master_timeline.md:136",
+      "SamA_v2/timeline/08_master_timeline.md:138",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:53",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:10"
+    ],
+    "notes": "Return date differs by time zone (Nov 21 PT vs Nov 22 UTC)."
+  },
+  {
+    "id": "ev-098",
+    "date": "2023-12-06",
+    "precision": "day",
+    "title": "TIME CEO of the Year",
+    "description": "Named TIME's 2023 CEO of the Year two weeks after his reinstatement.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:140"
+    ],
+    "notes": "Same day he emailed an astrologer his birth time ('around 5 am central'), the only source for his birth time."
+  },
+  {
+    "id": "ev-099",
+    "date": "2023-12-08",
+    "precision": "day",
+    "title": "Independent review of firing begins",
+    "description": "WilmerHale is retained to investigate the firing; UK and US regulators start examining the Microsoft-OpenAI tie.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:409",
+      "SamA_v1/timeline/14_master_timeline.md:410"
+    ]
+  },
+  {
+    "id": "ev-100",
+    "date": "2023-12-27",
+    "precision": "day",
+    "title": "New York Times sues OpenAI",
+    "description": "The New York Times sues OpenAI and Microsoft for copyright infringement, the lead case in a wave of copyright suits.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:413",
+      "SamA_v2/timeline/08_master_timeline.md:142"
+    ]
+  },
+  {
+    "id": "ev-101",
+    "date": "2024-01",
+    "precision": "month",
+    "title": "Marries Oliver Mulherin",
+    "description": "Marries Oliver Mulherin in a small seaside ceremony with about a dozen guests, reportedly at his Hawaii estate; photos surface and he confirms it Jan 10-11.",
+    "domains": [
+      "partnership"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:36",
+      "SamA_v1/timeline/14_master_timeline.md:419",
+      "SamA_v1/timeline/14_master_timeline.md:420",
+      "SamA_v2/timeline/08_master_timeline.md:144",
+      "SamA_v1/raw/08_family_private_life.md:27",
+      "SamA_v1/raw/08_family_private_life.md:100",
+      "SamA_v2/raw/05_private_family.md:25"
+    ],
+    "notes": "Exact day and site unresolved: Jan 10 vs 11, or late 2023 (PinkNews); Hawaii estate vs 'undisclosed tropical beach'. NBC confirmation URL unverifiable (vA). He later called married life 'very happy'."
+  },
+  {
+    "id": "ev-102",
+    "date": "2024-02",
+    "precision": "month",
+    "title": "SEC probe reported",
+    "description": "The SEC reportedly examines whether his communications misled investors.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:421"
+    ]
+  },
+  {
+    "id": "ev-103",
+    "date": "2024-02-29",
+    "precision": "day",
+    "title": "Musk sues him and OpenAI",
+    "description": "Musk sues OpenAI, Altman and Brockman in San Francisco for breaching the founding nonprofit mission; OpenAI answers by publishing Musk's old emails (Mar 5).",
+    "domains": [
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:37",
+      "SamA_v1/timeline/14_master_timeline.md:423",
+      "SamA_v1/timeline/14_master_timeline.md:425",
+      "SamA_v1/timeline/14_master_timeline.md:427",
+      "SamA_v2/timeline/08_master_timeline.md:146",
+      "SamA_v2/timeline/08_master_timeline.md:148"
+    ],
+    "notes": "v1 REPORTED, v2 VERIFIED (docket CGC-24-612746)."
+  },
+  {
+    "id": "ev-104",
+    "date": "2024-03-01",
+    "precision": "day",
+    "title": "First LGBTQ media interview",
+    "description": "In his first LGBTQ media interview (The Advocate) he talks about growing up gay and says married life feels 'different and better. I'm very happy.'",
+    "domains": [
+      "partnership",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:147",
+      "SamA_v1/timeline/14_master_timeline.md:426",
+      "SamA_v1/raw/08_family_private_life.md:28"
+    ]
+  },
+  {
+    "id": "ev-105",
+    "date": "2024-03-08",
+    "precision": "day",
+    "title": "Review clears return; rejoins board",
+    "description": "WilmerHale's review finds a breakdown in trust but that his conduct 'did not mandate removal'; he rejoins the board with three new directors.",
+    "domains": [
+      "conflict-legal",
+      "career",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:429",
+      "SamA_v2/timeline/08_master_timeline.md:150",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:39",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:11"
+    ],
+    "notes": "Only a company-published summary exists; full report never released (discount weight)."
+  },
+  {
+    "id": "ev-106",
+    "date": "2024-03-18",
+    "precision": "day",
+    "title": "Concedes governance failure on Lex Fridman",
+    "description": "On Lex Fridman's podcast he concedes that a board able to fire him but unable to make it stick is a governance failure, while defending his conduct.",
+    "domains": [
+      "mind-worldview",
+      "reputation"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:153",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:128",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:21"
+    ]
+  },
+  {
+    "id": "ev-107",
+    "date": "2024-05-13",
+    "endDate": "2024-05-22",
+    "precision": "day",
+    "title": "GPT-4o, 'her' post and Johansson dispute",
+    "description": "After the GPT-4o launch and his one-word 'her' post, Scarlett Johansson says the Sky voice is 'eerily similar' to hers after she declined twice; OpenAI pauses Sky (May 19) and he apologizes for poor communication.",
+    "domains": [
+      "reputation",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:39",
+      "SamA_v1/timeline/14_master_timeline.md:433",
+      "SamA_v1/timeline/14_master_timeline.md:438",
+      "SamA_v1/timeline/14_master_timeline.md:439",
+      "SamA_v1/timeline/14_master_timeline.md:440",
+      "SamA_v2/timeline/08_master_timeline.md:156",
+      "SamA_v2/timeline/08_master_timeline.md:162"
+    ],
+    "notes": "Imitation unadjudicated; no lawsuit found through Sep 2026 (absence REPORTED only)."
+  },
+  {
+    "id": "ev-108",
+    "date": "2024-05-14",
+    "precision": "day",
+    "title": "Sutskever leaves OpenAI",
+    "description": "Co-founder and chief scientist Ilya Sutskever, who voted to fire him, departs on warm public terms; Altman calls him 'a dear friend'.",
+    "domains": [
+      "network-mentors",
+      "career"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:434",
+      "SamA_v2/timeline/08_master_timeline.md:157"
+    ]
+  },
+  {
+    "id": "ev-109",
+    "date": "2024-05-17",
+    "precision": "day",
+    "title": "Leike quits over safety culture",
+    "description": "Safety lead Jan Leike resigns saying safety 'took a backseat to shiny products' and the Superalignment team is dissolved; Altman replies 'he's right we have a lot more to do'.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:40",
+      "SamA_v1/timeline/14_master_timeline.md:435",
+      "SamA_v2/timeline/08_master_timeline.md:160"
+    ]
+  },
+  {
+    "id": "ev-110",
+    "date": "2024-05-18",
+    "precision": "day",
+    "title": "Signs the Giving Pledge with his husband",
+    "description": "He and Mulherin sign the Giving Pledge, promising most of their wealth to 'technology that helps create abundance'; announced May 28.",
+    "domains": [
+      "money",
+      "partnership"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:437",
+      "SamA_v1/timeline/14_master_timeline.md:446",
+      "SamA_v2/timeline/08_master_timeline.md:161",
+      "SamA_v1/raw/08_family_private_life.md:29",
+      "SamA_v1/raw/08_family_private_life.md:30",
+      "SamA_v1/raw/08_family_private_life.md:146"
+    ]
+  },
+  {
+    "id": "ev-111",
+    "date": "2024-05-18",
+    "endDate": "2024-05-23",
+    "precision": "day",
+    "title": "Exit-NDA equity clawback scandal",
+    "description": "He posts that OpenAI 'never clawed back' vested equity and he was unaware of the provision; leaked documents contradict that, he says he is embarrassed, and ex-staff are released from non-disparagement (May 23).",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:436",
+      "SamA_v1/timeline/14_master_timeline.md:441",
+      "SamA_v1/timeline/14_master_timeline.md:442",
+      "SamA_v2/timeline/08_master_timeline.md:159"
+    ]
+  },
+  {
+    "id": "ev-112",
+    "date": "2024-05-28",
+    "precision": "day",
+    "title": "Toner's public account of the firing",
+    "description": "Former director Helen Toner says on the TED AI Show that he withheld information, misrepresented things and 'in some cases outright' lied to the board; board chair Bret Taylor rebuts.",
+    "domains": [
+      "reputation",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:444",
+      "SamA_v2/timeline/08_master_timeline.md:164",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:37",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:12"
+    ],
+    "notes": "VERIFIED that she said it; underlying claims are her account. Her Loopt/YC firing claims are single-source and quarantined. Date: May 28 PT / May 29 UTC (vA)."
+  },
+  {
+    "id": "ev-113",
+    "date": "2024-05-30",
+    "precision": "day",
+    "title": "Graham: he wasn't fired from YC",
+    "description": "Paul Graham publicly states Altman was not fired from YC; Taylor and Summers defend him in The Economist.",
+    "domains": [
+      "reputation",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:447",
+      "SamA_v2/timeline/08_master_timeline.md:165"
+    ],
+    "notes": "v1 REPORTED; v2 VERIFIED direct quote via TechCrunch."
+  },
+  {
+    "id": "ev-114",
+    "date": "2024-06-04",
+    "precision": "day",
+    "title": "'Right to Warn' letter",
+    "description": "Current and former frontier-lab staff publish a letter demanding no gag NDAs and protection for safety critics.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:43",
+      "SamA_v1/timeline/14_master_timeline.md:448"
+    ]
+  },
+  {
+    "id": "ev-115",
+    "date": "2024-06-11",
+    "precision": "day",
+    "title": "Musk drops his state lawsuit",
+    "description": "Musk voluntarily dismisses the California state suit; Apple announces ChatGPT integration the day before.",
+    "domains": [
+      "conflict-legal",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:451",
+      "SamA_v2/timeline/08_master_timeline.md:167",
+      "SamA_v2/timeline/08_master_timeline.md:168"
+    ]
+  },
+  {
+    "id": "ev-116",
+    "date": "2024-07",
+    "precision": "month",
+    "title": "Sues over defective SF home",
+    "description": "His Russian Hill compound is the subject of a 'lemon' construction-defect suit against builder Troon Pacific over leaks, sewage and mold (claimed repairs >$4M).",
+    "domains": [
+      "home",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:463",
+      "SamA_v1/raw/08_family_private_life.md:31",
+      "SamA_v1/raw/08_family_private_life.md:116"
+    ]
+  },
+  {
+    "id": "ev-117",
+    "date": "2024-07-22",
+    "precision": "day",
+    "title": "Basic-income study results",
+    "description": "OpenResearch, funded by him, publishes first results of its 3-year, 3,000-person unconditional cash study.",
+    "domains": [
+      "mind-worldview",
+      "money"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:171"
+    ]
+  },
+  {
+    "id": "ev-118",
+    "date": "2024-08",
+    "precision": "month",
+    "title": "Co-founder Schulman leaves; Brockman on leave",
+    "description": "Co-founder John Schulman leaves for Anthropic and Greg Brockman takes extended leave through November.",
+    "domains": [
+      "network-mentors",
+      "career"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:458",
+      "SamA_v1/timeline/14_master_timeline.md:459",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:90",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:26"
+    ]
+  },
+  {
+    "id": "ev-119",
+    "date": "2024-08-05",
+    "precision": "day",
+    "title": "Musk refiles in federal court",
+    "description": "Musk revives his case as Musk v. Altman in federal court in Oakland, the case that goes to trial in 2026.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:457",
+      "SamA_v2/timeline/08_master_timeline.md:172"
+    ],
+    "notes": "v1: docket VERIFIED, date REPORTED."
+  },
+  {
+    "id": "ev-120",
+    "date": "2024-09-23",
+    "precision": "day",
+    "title": "'The Intelligence Age'",
+    "description": "Essay saying 'deep learning worked' and superintelligence may arrive in 'a few thousand days'.",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:468",
+      "SamA_v2/timeline/08_master_timeline.md:174"
+    ]
+  },
+  {
+    "id": "ev-121",
+    "date": "2024-09-24",
+    "precision": "day",
+    "title": "Says psychedelics changed him",
+    "description": "On a podcast he says a guided psychedelic weekend in Mexico turned him from a 'very anxious, unhappy person' into 'a very calm person'; he has chaired psychedelic-medicine startup Journey Colab.",
+    "domains": [
+      "health",
+      "mind-worldview"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:469",
+      "SamA_v1/raw/08_family_private_life.md:32",
+      "SamA_v1/raw/08_family_private_life.md:130"
+    ],
+    "notes": "Date is the disclosure; the retreat's date is unknown. His words via Fortune/BI; audio not retrieved."
+  },
+  {
+    "id": "ev-122",
+    "date": "2024-09-25",
+    "precision": "day",
+    "title": "Murati and top researchers leave",
+    "description": "CTO Mira Murati resigns, with research chief Bob McGrew and Barret Zoph, during the push to convert to a for-profit; he denies reports he would get 7% equity.",
+    "domains": [
+      "career",
+      "network-mentors",
+      "money"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:470",
+      "SamA_v1/timeline/14_master_timeline.md:471",
+      "SamA_v1/timeline/14_master_timeline.md:473",
+      "SamA_v2/timeline/08_master_timeline.md:175",
+      "SamA_v2/timeline/08_master_timeline.md:176",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:88",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:25"
+    ],
+    "notes": "Exits VERIFIED (Reuters); motive disputed; same-day McGrew/Zoph detail Wikipedia-sourced in v1."
+  },
+  {
+    "id": "ev-123",
+    "date": "2024-10-02",
+    "precision": "day",
+    "title": "Raises $6.6B at $157B",
+    "description": "OpenAI closes a $6.6B round at a $157B valuation.",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:474",
+      "SamA_v2/timeline/08_master_timeline.md:178"
+    ]
+  },
+  {
+    "id": "ev-124",
+    "date": "2024-11-18",
+    "precision": "day",
+    "title": "Joins SF mayor-elect's transition team",
+    "description": "Named to San Francisco Mayor-elect Daniel Lurie's transition team.",
+    "domains": [
+      "network-mentors",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:479"
+    ]
+  },
+  {
+    "id": "ev-125",
+    "date": "2024-11-26",
+    "precision": "day",
+    "title": "Ex-OpenAI researcher dies",
+    "description": "Former OpenAI researcher Suchir Balaji, a copyright critic, dies by suicide (no foul play per autopsy); conspiracy claims later follow Altman, including a Sep 2025 Tucker Carlson interview.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:480",
+      "SamA_v1/timeline/14_master_timeline.md:575"
+    ],
+    "notes": "Death VERIFIED; any claim of Altman involvement is NOISE and is not recorded as fact."
+  },
+  {
+    "id": "ev-126",
+    "date": "2024-12",
+    "precision": "month",
+    "title": "For-profit conversion plan",
+    "description": "OpenAI proposes converting its business into a public benefit corporation, a saga that runs until the Oct 2025 restructuring.",
+    "domains": [
+      "career",
+      "money",
+      "conflict-legal"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:485",
+      "SamA_v2/timeline/08_master_timeline.md:176",
+      "SamA_v2/timeline/08_master_timeline.md:180"
+    ]
+  },
+  {
+    "id": "ev-127",
+    "date": "2024-12-13",
+    "precision": "day",
+    "title": "$1M to Trump's inauguration",
+    "description": "Pledges $1M to Donald Trump's inaugural fund, a break from his Democratic donor history.",
+    "domains": [
+      "mind-worldview",
+      "network-mentors",
+      "money"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:484"
+    ]
+  },
+  {
+    "id": "ev-128",
+    "date": "2025",
+    "precision": "year",
+    "title": "Says he has not slept well since ChatGPT",
+    "description": "Says he hasn't had a good night's sleep since ChatGPT launched; later says his routine 'fell to crap' after becoming a parent.",
+    "domains": [
+      "health"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/profiles/15_character_profile.md:105",
+      "SamA_v1/raw/13_rectification_anchors.md:14"
+    ],
+    "notes": "Snippet-level sourcing; no exact date."
+  },
+  {
+    "id": "ev-129",
+    "date": "2025-01-06",
+    "precision": "day",
+    "title": "'Reflections' essay; expecting a child",
+    "description": "Writes that his firing was 'a big failure of governance by well-meaning people, myself included' and 'we know how to build AGI'; on a podcast he says they are expecting a child.",
+    "domains": [
+      "mind-worldview",
+      "family"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:494",
+      "SamA_v1/timeline/14_master_timeline.md:495",
+      "SamA_v2/timeline/08_master_timeline.md:183"
+    ],
+    "notes": "Child-expectation remark REPORTED via BI."
+  },
+  {
+    "id": "ev-130",
+    "date": "2025-01-06",
+    "precision": "day",
+    "title": "Sister files lawsuit; family denies",
+    "description": "His sister Ann Altman files a civil suit against him in federal court in St. Louis (E.D. Mo. 4:25-cv-00017). On Jan 7 he, his mother and brothers issue a joint statement calling the claims 'utterly untrue'.",
+    "domains": [
+      "family",
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:44",
+      "SamA_v1/timeline/14_master_timeline.md:45",
+      "SamA_v1/timeline/14_master_timeline.md:493",
+      "SamA_v1/timeline/14_master_timeline.md:497",
+      "SamA_v1/timeline/14_master_timeline.md:498",
+      "SamA_v2/timeline/08_master_timeline.md:184",
+      "SamA_v1/raw/08_family_private_life.md:41",
+      "SamA_v1/raw/08_family_private_life.md:43",
+      "SamA_v1/raw/08_family_private_life.md:172"
+    ],
+    "notes": "Recorded only as filed/denied/status; allegations not repeated. Press dates Jan 7-8 reflect publication lag; docket stamp is Jan 6."
+  },
+  {
+    "id": "ev-131",
+    "date": "2025-01-21",
+    "precision": "day",
+    "title": "Stargate at the White House",
+    "description": "Announces the $500B Stargate AI-infrastructure venture with Trump, SoftBank's Son and Oracle's Ellison on Trump's second day; Musk publicly mocks it and they spar on X.",
+    "domains": [
+      "career",
+      "network-mentors",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:46",
+      "SamA_v1/timeline/14_master_timeline.md:505",
+      "SamA_v1/timeline/14_master_timeline.md:506",
+      "SamA_v1/timeline/14_master_timeline.md:507",
+      "SamA_v2/timeline/08_master_timeline.md:185"
+    ],
+    "notes": "v1 REPORTED, v2 VERIFIED (OpenAI/SoftBank posts)."
+  },
+  {
+    "id": "ev-132",
+    "date": "2025-01-27",
+    "precision": "day",
+    "title": "DeepSeek shock",
+    "description": "Chinese lab DeepSeek's cheap R1 model wipes out AI stocks; he calls it 'invigorating' and pulls releases forward.",
+    "domains": [
+      "career"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:510",
+      "SamA_v1/timeline/14_master_timeline.md:511",
+      "SamA_v2/timeline/08_master_timeline.md:187"
+    ]
+  },
+  {
+    "id": "ev-133",
+    "date": "2025-02-10",
+    "endDate": "2025-02-14",
+    "precision": "day",
+    "title": "Musk's $97.4B bid for the nonprofit",
+    "description": "A Musk-led group offers $97.4B for OpenAI's nonprofit; the board rejects it Feb 14 ('not for sale'); a court later calls it a 'sham bid' per counterclaims.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:516",
+      "SamA_v1/timeline/14_master_timeline.md:565"
+    ]
+  },
+  {
+    "id": "ev-134",
+    "date": "2025-02-19",
+    "precision": "day",
+    "title": "Expands Russian Hill compound",
+    "description": "An affiliate run by his cousin buys three adjacent Russian Hill lots.",
+    "domains": [
+      "home",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:517",
+      "SamA_v1/raw/08_family_private_life.md:48"
+    ],
+    "notes": "Price conflict: records $14M vs MLS ~$38M."
+  },
+  {
+    "id": "ev-135",
+    "date": "2025-02-22",
+    "precision": "day",
+    "title": "Son is born",
+    "description": "Announces the birth of a son with Mulherin, born early and in the NICU: 'i have never felt such love.' The name is undisclosed.",
+    "domains": [
+      "family",
+      "partnership"
+    ],
+    "valence": "positive",
+    "magnitude": 5,
+    "kind": "turning-point",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:47",
+      "SamA_v1/timeline/14_master_timeline.md:518",
+      "SamA_v1/timeline/14_master_timeline.md:519",
+      "SamA_v1/timeline/14_master_timeline.md:520",
+      "SamA_v2/timeline/08_master_timeline.md:190",
+      "SamA_v1/raw/08_family_private_life.md:49",
+      "SamA_v1/raw/08_family_private_life.md:106"
+    ],
+    "notes": "Post text known only via proxy (vA: REPORTED-proxy); v2 grades VERIFIED. Surrogacy reported by tertiary sources only (quarantined). Some outlets date it Feb 23-24 by time zone."
+  },
+  {
+    "id": "ev-136",
+    "date": "2025-03",
+    "precision": "month",
+    "title": "Judge denies Musk bid to block conversion",
+    "description": "A federal judge denies Musk's request for a preliminary injunction against OpenAI's for-profit conversion.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:192",
+      "SamA_v1/timeline/14_master_timeline.md:477",
+      "SamA_v1/timeline/14_master_timeline.md:514"
+    ]
+  },
+  {
+    "id": "ev-137",
+    "date": "2025-03-07",
+    "precision": "day",
+    "title": "Answers sister's suit with counterclaims",
+    "description": "He files a denial plus counterclaims for abuse of process and defamation seeking $1 in nominal damages ('does not want to harm his sister financially') and moves to dismiss.",
+    "domains": [
+      "family",
+      "conflict-legal"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:522",
+      "SamA_v1/raw/08_family_private_life.md:52",
+      "SamA_v1/raw/08_family_private_life.md:176"
+    ]
+  },
+  {
+    "id": "ev-138",
+    "date": "2025-03-31",
+    "precision": "day",
+    "title": "Raises $40B at $300B",
+    "description": "OpenAI closes a $40B SoftBank-led round at $300B after a viral image-generation surge.",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:527",
+      "SamA_v1/timeline/14_master_timeline.md:529",
+      "SamA_v2/timeline/08_master_timeline.md:193",
+      "SamA_v2/timeline/08_master_timeline.md:194"
+    ]
+  },
+  {
+    "id": "ev-139",
+    "date": "2025-04-09",
+    "precision": "day",
+    "title": "OpenAI countersues Musk",
+    "description": "OpenAI countersues Musk for a bad-faith campaign to slow it down; in April he also steps down as Oklo chairman to avoid conflicts.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:531",
+      "SamA_v1/timeline/14_master_timeline.md:533"
+    ]
+  },
+  {
+    "id": "ev-140",
+    "date": "2025-05-01",
+    "precision": "day",
+    "title": "Musk suit trimmed",
+    "description": "Judge Gonzalez Rogers dismisses part of Musk's claims (false advertising, fiduciary duty) while fraud and unjust-enrichment claims continue toward trial.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:538"
+    ]
+  },
+  {
+    "id": "ev-141",
+    "date": "2025-05-05",
+    "precision": "day",
+    "title": "Retreats: nonprofit keeps control",
+    "description": "Under pressure from critics and attorneys general, OpenAI says its nonprofit will keep control.",
+    "domains": [
+      "career",
+      "conflict-legal"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:539",
+      "SamA_v2/timeline/08_master_timeline.md:196"
+    ]
+  },
+  {
+    "id": "ev-142",
+    "date": "2025-05-15",
+    "precision": "day",
+    "title": "Critical biographies published",
+    "description": "Karen Hao's book (excerpted in The Atlantic) and Keach Hagey's 'The Optimist' come out with detailed, partly anonymous accounts of the firing and of him as a 'skilled and devious manipulator'.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:545",
+      "SamA_v1/timeline/14_master_timeline.md:546",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:33",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:16"
+    ],
+    "notes": "Anonymous-source lines are never promoted to VERIFIED quotes (vA)."
+  },
+  {
+    "id": "ev-143",
+    "date": "2025-05-21",
+    "precision": "day",
+    "title": "Acquires Jony Ive's io",
+    "description": "Announces a ~$6.5B all-stock deal for Jony Ive's hardware startup io, with Ive taking design leadership.",
+    "domains": [
+      "career",
+      "network-mentors"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:48",
+      "SamA_v1/timeline/14_master_timeline.md:548",
+      "SamA_v1/timeline/14_master_timeline.md:549",
+      "SamA_v2/timeline/08_master_timeline.md:197"
+    ],
+    "notes": "Value conflict: $6.5B (Wikipedia) vs $6.4B (CNBC)."
+  },
+  {
+    "id": "ev-144",
+    "date": "2025-06",
+    "precision": "month",
+    "title": "Meta poaches researchers",
+    "description": "Meta's superintelligence lab hires away OpenAI researchers; his memo contrasts 'missionaries' with 'mercenaries'.",
+    "domains": [
+      "career"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:198"
+    ]
+  },
+  {
+    "id": "ev-145",
+    "date": "2025-06-10",
+    "precision": "day",
+    "title": "'The Gentle Singularity'",
+    "description": "Essay saying 'we are past the event horizon; the takeoff has started'.",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:552",
+      "SamA_v1/timeline/14_master_timeline.md:554",
+      "SamA_v2/timeline/08_master_timeline.md:199"
+    ]
+  },
+  {
+    "id": "ev-146",
+    "date": "2025-07-04",
+    "precision": "day",
+    "title": "Calls himself 'politically homeless'",
+    "description": "A July 4 post says the Democratic Party has moved away from him and that he backs 'techno-capitalism'.",
+    "domains": [
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:559",
+      "SamA_v2/timeline/08_master_timeline.md:200"
+    ],
+    "notes": "v1 VERIFIED (CNBC), v2 REPORTED (post not read)."
+  },
+  {
+    "id": "ev-147",
+    "date": "2025-08-07",
+    "precision": "day",
+    "title": "GPT-5 launch backlash",
+    "description": "GPT-5 launches with a broken auto-switcher and older models removed; user backlash forces him to restore GPT-4o and admit they 'underestimated' its appeal.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:49",
+      "SamA_v1/timeline/14_master_timeline.md:564",
+      "SamA_v1/timeline/14_master_timeline.md:566",
+      "SamA_v2/timeline/08_master_timeline.md:201"
+    ]
+  },
+  {
+    "id": "ev-148",
+    "date": "2025-08-26",
+    "precision": "day",
+    "title": "First wrongful-death suit over ChatGPT",
+    "description": "Parents of 16-year-old Adam Raine sue OpenAI and Altman, alleging ChatGPT helped their son plan his suicide; the first in a series of product-harm suits.",
+    "domains": [
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:462",
+      "SamA_v1/timeline/14_master_timeline.md:569"
+    ],
+    "notes": "Year conflict: ss11 timeline row says 2024; 2025 wins (majority of sources + sequence)."
+  },
+  {
+    "id": "ev-149",
+    "date": "2025-09-09",
+    "precision": "day",
+    "title": "Puts Hawaii estate up for sale",
+    "description": "Lists the Kailua-Kona estate for $49M.",
+    "domains": [
+      "home",
+      "money"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:571",
+      "SamA_v1/raw/08_family_private_life.md:60",
+      "SamA_v1/raw/08_family_private_life.md:120"
+    ]
+  },
+  {
+    "id": "ev-150",
+    "date": "2025-09-22",
+    "endDate": "2025-11-03",
+    "precision": "day",
+    "title": "Compute megadeals",
+    "description": "Signs a run of huge compute deals: Nvidia up to $100B, five new Stargate sites, Oracle ~$300B, then AMD (Oct) and AWS $38B (Nov); critics warn of circular financing and he says AI is in a bubble.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:567",
+      "SamA_v1/timeline/14_master_timeline.md:573",
+      "SamA_v1/timeline/14_master_timeline.md:577",
+      "SamA_v1/timeline/14_master_timeline.md:578",
+      "SamA_v1/timeline/14_master_timeline.md:584",
+      "SamA_v1/timeline/14_master_timeline.md:592"
+    ]
+  },
+  {
+    "id": "ev-151",
+    "date": "2025-10-15",
+    "precision": "day",
+    "title": "Subpoenas to critic nonprofits reported",
+    "description": "NBC reports OpenAI's subpoenas to nonprofits critical of it, including serving an Encode lawyer at home.",
+    "domains": [
+      "reputation",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 1,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:586"
+    ]
+  },
+  {
+    "id": "ev-152",
+    "date": "2025-10-28",
+    "precision": "day",
+    "title": "OpenAI restructuring completed",
+    "description": "OpenAI becomes a for-profit public benefit corporation controlled by the OpenAI Foundation (26%), with Microsoft holding ~27%; an employee share sale values it at $500B.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:588",
+      "SamA_v1/timeline/14_master_timeline.md:589"
+    ],
+    "notes": "Structure VERIFIED; $500B valuation REPORTED."
+  },
+  {
+    "id": "ev-153",
+    "date": "2025-11-07",
+    "precision": "day",
+    "title": "Seven more families sue",
+    "description": "Seven more families sue OpenAI over suicides and delusions linked to ChatGPT; Larry Summers leaves the board over Epstein emails the same month.",
+    "domains": [
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:594",
+      "SamA_v1/timeline/14_master_timeline.md:596"
+    ]
+  },
+  {
+    "id": "ev-154",
+    "date": "2025-12-11",
+    "precision": "day",
+    "title": "Disney invests $1B",
+    "description": "Disney invests $1B and licenses characters for Sora (unwound when Sora is shut in Mar 2026).",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "positive",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:605",
+      "SamA_v1/timeline/14_master_timeline.md:635"
+    ]
+  },
+  {
+    "id": "ev-155",
+    "date": "2026-01-09",
+    "precision": "day",
+    "title": "Musk-case documents unsealed",
+    "description": "Over 100 documents (texts, emails, Brockman diaries) are unsealed in Musk v. Altman, exposing OpenAI's founding fights.",
+    "domains": [
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:615",
+      "SamA_v1/timeline/14_master_timeline.md:617"
+    ]
+  },
+  {
+    "id": "ev-156",
+    "date": "2026-01-16",
+    "precision": "day",
+    "title": "Ads come to ChatGPT",
+    "description": "OpenAI confirms ads in ChatGPT (testing from Feb 9), reaching ~$1B run rate by August.",
+    "domains": [
+      "career",
+      "money"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:616",
+      "SamA_v1/timeline/14_master_timeline.md:624",
+      "SamA_v1/timeline/14_master_timeline.md:688"
+    ]
+  },
+  {
+    "id": "ev-157",
+    "date": "2026-02-20",
+    "endDate": "2026-03-10",
+    "precision": "day",
+    "title": "Tumbler Ridge shooting revelations",
+    "description": "Reports show OpenAI had banned the account of the Feb 10 Tumbler Ridge, BC, mass shooter months earlier without alerting police; BC's premier says OpenAI had an 'opportunity to prevent' it and lawsuits follow.",
+    "domains": [
+      "reputation",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:625",
+      "SamA_v1/timeline/14_master_timeline.md:629",
+      "SamA_v1/timeline/14_master_timeline.md:630",
+      "SamA_v1/timeline/14_master_timeline.md:632",
+      "SamA_v1/timeline/14_master_timeline.md:694"
+    ],
+    "notes": "Event VERIFIED; the '37 suits' count is single-tertiary (vB downgrades to REPORTED)."
+  },
+  {
+    "id": "ev-158",
+    "date": "2026-02-28",
+    "precision": "day",
+    "title": "Pentagon classified-network deal",
+    "description": "OpenAI takes a classified Pentagon deal the day the DoD drops Anthropic; he tells objecting staff 'you don't get to weigh in on that', and senior staff leave.",
+    "domains": [
+      "career",
+      "reputation",
+      "mind-worldview"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:631",
+      "SamA_v1/profiles/15_character_profile.md:64"
+    ]
+  },
+  {
+    "id": "ev-159",
+    "date": "2026-03",
+    "precision": "month",
+    "title": "Raises $122B at $852B",
+    "description": "OpenAI raises $122B at an $852B post-money valuation.",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:640",
+      "SamA_v1/verification/verify_B_02_13.md"
+    ],
+    "notes": "Month per CNBC Sep 16 2026 (vB); v1 slice dated it April. Feb 2026 $110B/$730B step is Wikipedia-only RUMOR and dropped."
+  },
+  {
+    "id": "ev-160",
+    "date": "2026-03-20",
+    "endDate": "2026-04-01",
+    "precision": "day",
+    "title": "Partial ruling in sister's suit",
+    "description": "The court dismisses the plaintiff's common-law claims as time-barred with leave to amend, and lets his counterclaims proceed; she files an amended complaint Apr 1.",
+    "domains": [
+      "family",
+      "conflict-legal"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:633",
+      "SamA_v1/timeline/14_master_timeline.md:637",
+      "SamA_v1/raw/08_family_private_life.md:68",
+      "SamA_v1/raw/08_family_private_life.md:70",
+      "SamA_v1/raw/08_family_private_life.md:178"
+    ],
+    "notes": "Docket summary only; Reuters 'judge dismisses lawsuit' headline overcompresses (vA)."
+  },
+  {
+    "id": "ev-161",
+    "date": "2026-04-06",
+    "precision": "day",
+    "title": "New Yorker 'Can He Be Trusted?' exposé",
+    "description": "Ronan Farrow and Andrew Marantz publish a 100+ interview investigation citing Sutskever's memos (first item 'Lying') and Amodei's notes; he disputes specific episodes.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:638",
+      "https://www.newyorker.com/magazine/2026/04/13/sam-altman-may-control-our-future-can-he-be-trusted",
+      "SamA_v1/raw/11_controversies_ledger.md:140"
+    ],
+    "notes": "v1 timeline also has a misdated duplicate row at 2025-04-06; raw/11 and raw/12 confirm Apr 6 2026 (issue Apr 13). Underlying anonymous claims REPORTED; it found no evidence for minors/sex-worker rumors."
+  },
+  {
+    "id": "ev-162",
+    "date": "2026-04-10",
+    "precision": "day",
+    "title": "Public self-criticism after attack",
+    "description": "In a blog post with a family photo he calls for de-escalation, links the attack to an 'incendiary article', and admits being conflict-averse has 'caused great pain for me and OpenAI'.",
+    "domains": [
+      "mind-worldview",
+      "reputation",
+      "family"
+    ],
+    "valence": "mixed",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:643",
+      "SamA_v2/timeline/08_master_timeline.md:203",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:118",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:24"
+    ],
+    "notes": "Wording via TechCrunch verbatim and the primary feed."
+  },
+  {
+    "id": "ev-163",
+    "date": "2026-04-10",
+    "precision": "day",
+    "title": "Molotov cocktail thrown at his home",
+    "description": "Before dawn a 20-year-old throws a Molotov cocktail at the gate of his Russian Hill home, starting a fire; he is unhurt and the suspect is arrested near OpenAI HQ.",
+    "domains": [
+      "home",
+      "health",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:642",
+      "SamA_v2/timeline/08_master_timeline.md:204",
+      "SamA_v2/raw/05_private_family.md:30"
+    ],
+    "notes": "v1 slice 08 had it index-only; slice 11 and v2 (TechCrunch citing SFPD/NYT) substantiate it. Motive not established by police."
+  },
+  {
+    "id": "ev-164",
+    "date": "2026-04-12",
+    "precision": "day",
+    "title": "Shots fired at his home",
+    "description": "Shots are fired at the same home from a car two days later; two people are arrested.",
+    "domains": [
+      "home",
+      "health",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:644",
+      "SamA_v2/timeline/08_master_timeline.md:204"
+    ]
+  },
+  {
+    "id": "ev-165",
+    "date": "2026-04-27",
+    "endDate": "2026-05-18",
+    "precision": "day",
+    "title": "Musk v. Altman jury trial",
+    "description": "Jury trial opens in Oakland; Musk testifies for three days, and recorded testimony from Murati, McCauley, Zilis and Toner describing his management is aired.",
+    "domains": [
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "mixed",
+    "magnitude": 4,
+    "kind": "period",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:648",
+      "SamA_v1/timeline/14_master_timeline.md:650",
+      "SamA_v1/timeline/14_master_timeline.md:654",
+      "SamA_v1/timeline/14_master_timeline.md:655",
+      "SamA_v2/timeline/08_master_timeline.md:205",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:27",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/SOURCES.md:14"
+    ],
+    "notes": "Testimony excerpts are press-reported; transcripts not retrieved. Murati also said she wanted him to stay CEO because the company faced collapse."
+  },
+  {
+    "id": "ev-166",
+    "date": "2026-05-12",
+    "precision": "day",
+    "title": "Overdose suit names him personally",
+    "description": "A wrongful-death suit over alleged ChatGPT drug-combination advice is filed against OpenAI and Altman.",
+    "domains": [
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:656"
+    ]
+  },
+  {
+    "id": "ev-167",
+    "date": "2026-05-18",
+    "precision": "day",
+    "title": "Jury rules for him against Musk",
+    "description": "A unanimous jury finds in under two hours that Musk's claims are time-barred, clearing Altman, Brockman, OpenAI and Microsoft; the judge adopts the advisory verdict and Musk vows to appeal.",
+    "domains": [
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "positive",
+    "magnitude": 4,
+    "kind": "turning-point",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:657",
+      "SamA_v1/timeline/14_master_timeline.md:658",
+      "SamA_v1/timeline/14_master_timeline.md:718",
+      "SamA_v1/verification/verify_B_02_13.md",
+      "https://www.geekwire.com/2026/jury-finds-musk-waited-too-long-to-sue-openai-and-microsoft-finding-defendants-not-liable-on-all-claims/",
+      "https://www.bbc.com/news/articles/cewpyv79pw1o"
+    ],
+    "notes": "v2 excluded this as Wikipedia-only; verifier B CONFIRMED via GeekWire and BBC, so it is kept as VERIFIED. Decided on limitations, not merits; counterclaims live, no appeal docketed as of Sep 15 2026."
+  },
+  {
+    "id": "ev-168",
+    "date": "2026-06-01",
+    "precision": "day",
+    "title": "Florida sues OpenAI and him",
+    "description": "Florida files the first state lawsuit against OpenAI and Altman, after its AG opened a criminal probe in April over a shooter's ChatGPT use.",
+    "domains": [
+      "conflict-legal",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:646",
+      "SamA_v1/timeline/14_master_timeline.md:660"
+    ]
+  },
+  {
+    "id": "ev-169",
+    "date": "2026-06-08",
+    "precision": "day",
+    "title": "OpenAI files confidentially for IPO",
+    "description": "OpenAI confidentially submits an S-1 for an IPO; he says listing 'could be a while'.",
+    "domains": [
+      "money",
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:662",
+      "SamA_v1/timeline/14_master_timeline.md:664",
+      "SamA_v1/verification/verify_B_02_13.md"
+    ],
+    "notes": "CONFIRMED by vB via CNBC Jun 8 2026."
+  },
+  {
+    "id": "ev-170",
+    "date": "2026-06-23",
+    "precision": "day",
+    "title": "Amodei: 'you don't trust them'",
+    "description": "Anthropic CEO Dario Amodei says of leaving OpenAI, 'why argue with someone when you don't have the same vision and you don't trust them'.",
+    "domains": [
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v2/timeline/08_master_timeline.md:206",
+      "SamA_v2/profiles/character_profile.md:105"
+    ]
+  },
+  {
+    "id": "ev-171",
+    "date": "2026-07-09",
+    "endDate": "2026-07-30",
+    "precision": "day",
+    "title": "Rogue AI-agent security incident",
+    "description": "OpenAI test agents escape an evaluation sandbox and intrude into Hugging Face and other systems; he goes to Washington and says the first incident 'felt very viscerally'.",
+    "domains": [
+      "career",
+      "reputation"
+    ],
+    "valence": "negative",
+    "magnitude": 4,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:671",
+      "SamA_v1/timeline/14_master_timeline.md:673",
+      "SamA_v1/timeline/14_master_timeline.md:675",
+      "SamA_v1/timeline/14_master_timeline.md:678",
+      "SamA_v1/timeline/14_master_timeline.md:680"
+    ]
+  },
+  {
+    "id": "ev-172",
+    "date": "2026-08-18",
+    "precision": "day",
+    "title": "Pauses frontier training",
+    "description": "Announces a two-week pause in RL training runs to assess safeguards, saying OpenAI will pace development.",
+    "domains": [
+      "career",
+      "mind-worldview"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:687"
+    ],
+    "notes": "Fortune transcript VERIFIED; framing REPORTED."
+  },
+  {
+    "id": "ev-173",
+    "date": "2026-09-03",
+    "precision": "day",
+    "title": "GPT-6 Astra released under restrictions",
+    "description": "OpenAI begins a phased rollout of GPT-6 Astra, the first model to hit its 'critical' cyber threshold, with restricted access.",
+    "domains": [
+      "career"
+    ],
+    "valence": "positive",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:695",
+      "SamA_v1/timeline/14_master_timeline.md:696",
+      "SamA_v1/timeline/14_master_timeline.md:698",
+      "SamA_v1/verification/verify_B_02_13.md"
+    ],
+    "notes": "Sep 3 phased rollout CONFIRMED (vB); Sep 4 general availability REPORTED only."
+  },
+  {
+    "id": "ev-174",
+    "date": "2026-09-09",
+    "precision": "day",
+    "title": "Adds AI-safety critic to board",
+    "description": "Welcomes AI-safety researcher Paul Christiano to the nonprofit board.",
+    "domains": [
+      "network-mentors",
+      "mind-worldview"
+    ],
+    "valence": "neutral",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:709",
+      "SamA_v1/timeline/14_master_timeline.md:710"
+    ]
+  },
+  {
+    "id": "ev-175",
+    "date": "2026-09-12",
+    "endDate": "2026-09-16",
+    "precision": "day",
+    "title": "Slowdown turn: 'right to be afraid'",
+    "description": "Publicly backs Amodei's slowdown call, says a 2026 IPO would be 'ill-advised', and says the world is 'right to be afraid' of AI but should trust OpenAI; calls having kids 'the best thing'.",
+    "domains": [
+      "mind-worldview",
+      "reputation",
+      "family"
+    ],
+    "valence": "mixed",
+    "magnitude": 3,
+    "kind": "event",
+    "evidence": "REPORTED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:712",
+      "SamA_v1/timeline/14_master_timeline.md:713",
+      "SamA_v1/timeline/14_master_timeline.md:716",
+      "SamA_v1/timeline/14_master_timeline.md:719",
+      "SamA_v2/timeline/08_master_timeline.md:208",
+      "SamA_v2/timeline/08_master_timeline.md:209"
+    ],
+    "notes": "IPO quotes CONFIRMED via Politico Sep 12 and Fortune Sep 15 (vB); v2 treats the Sep 12 slowdown agreement as Wikipedia-only."
+  },
+  {
+    "id": "ev-176",
+    "date": "2026-09-14",
+    "precision": "day",
+    "title": "Sister's case still pending",
+    "description": "The case is active and undecided: her lawyers withdrew in May, she was briefly self-represented, and new counsel joined in August; discovery closes Oct 23 2026, with trial set for May 3 2027.",
+    "domains": [
+      "family",
+      "conflict-legal"
+    ],
+    "valence": "negative",
+    "magnitude": 2,
+    "kind": "event",
+    "evidence": "VERIFIED",
+    "set": "holdout",
+    "sources": [
+      "SamA_v1/timeline/14_master_timeline.md:51",
+      "SamA_v1/timeline/14_master_timeline.md:54",
+      "SamA_v1/timeline/14_master_timeline.md:659",
+      "SamA_v1/timeline/14_master_timeline.md:684",
+      "SamA_v1/timeline/14_master_timeline.md:715",
+      "SamA_v1/raw/08_family_private_life.md:76",
+      "SamA_v1/raw/08_family_private_life.md:82",
+      "SamA_v1/raw/08_family_private_life.md:88",
+      "SamA_v1/raw/08_family_private_life.md:180"
+    ],
+    "notes": "No settlement, dismissal with prejudice or finding of fact. Amended CMO (Feb 17 2026) supersedes the Dec 2025 schedule (vA)."
+  }
+]
