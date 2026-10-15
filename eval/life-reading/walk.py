@@ -229,6 +229,8 @@ def dasha_check(c, path):
             continue
         span = table[key]
         near = text[m.end():m.end() + 60]
+        nxt = pat.search(near)
+        near = near[:nxt.start()] if nxt else near  # dates after the next chain belong to it
         for d in re.findall(r'\d{4}-\d{2}-\d{2}', near)[:2]:
             if not (span['start'] <= d <= span['end']):
                 errors.append({'chain': '-'.join(key), 'date': d, 'stored': [span['start'], span['end']]})
