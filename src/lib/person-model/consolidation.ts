@@ -972,10 +972,48 @@ export function validateObservationSpans(
   }
 }
 
+/** Typographic variants a model may emit for the same character. */
+const QUOTE_EQUIVALENTS: Record<string, string> = {
+  '\u2018': "'", '\u2019': "'", '\u201A': "'", '\u2032': "'",
+  '\u201C': '"', '\u201D': '"', '\u201E': '"', '\u2033': '"',
+  '\u2013': '-', '\u2014': '-', '\u2026': '...', '\u00A0': ' ',
+};
+
 /**
- * Correct a provider's harmless offset drift without weakening provenance.
- * The quoted text itself must already occur exactly once in the claimed source;
- * missing or ambiguous quotes remain hard failures.
+ * Fold whitespace runs and typographic variants, remembering where each folded
+ * character came from so a match can be mapped back to the original text.
+ */
+function foldForQuoteMatch(text: string) {
+  let folded = '';
+  const origin: number[] = [];
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index]!;
+    if (/\s/.test(char)) {
+      if (!folded.endsWith(' ')) { folded += ' '; origin.push(index); }
+      continue;
+    }
+    const replacement = QUOTE_EQUIVALENTS[char] ?? char;
+    for (const part of replacement) { folded += part; origin.push(index); }
+  }
+  return { folded, origin };
+}
+
+function occurrences(haystack: string, needle: string): number[] {
+  const found: number[] = [];
+  for (let at = haystack.indexOf(needle); at >= 0; at = haystack.indexOf(needle, at + 1)) found.push(at);
+  return found;
+}
+
+const nearest = (candidates: number[], target: number) =>
+  candidates.reduce((best, at) => (Math.abs(at - target) < Math.abs(best - target) ? at : best));
+
+/**
+ * Locate each quote in its claimed source on the server, so provenance never
+ * depends on the model counting characters. Offsets are recomputed; a quote
+ * that differs only in whitespace or typographic quote/dash characters is
+ * re-anchored to the source's own text; when the text occurs more than once,
+ * the occurrence nearest the provider's offset is used. A quote whose words
+ * are not in the source remains a hard failure.
  */
 export function normalizeObservationSpans<T extends PersonObservationDraft>(
   sources: readonly ConsolidationSource[],
@@ -994,15 +1032,20 @@ export function normalizeObservationSpans<T extends PersonObservationDraft>(
     if (observation.spanEnd <= source.body.length
       && source.body.slice(observation.spanStart, observation.spanEnd) === observation.exactQuote) return observation;
 
-    const first = source.body.indexOf(observation.exactQuote);
-    if (first < 0 || source.body.indexOf(observation.exactQuote, first + 1) >= 0) {
-      throw new MalformedPersonStageOutputError('Observation quote did not uniquely match its source.');
+    const exact = occurrences(source.body, observation.exactQuote);
+    if (observation.exactQuote.length && exact.length) {
+      const start = nearest(exact, observation.spanStart);
+      return { ...observation, spanStart: start, spanEnd: start + observation.exactQuote.length };
     }
-    return {
-      ...observation,
-      spanStart: first,
-      spanEnd: first + observation.exactQuote.length,
-    };
+
+    const body = foldForQuoteMatch(source.body);
+    const quote = foldForQuoteMatch(observation.exactQuote).folded.trim();
+    const folded = quote ? occurrences(body.folded, quote) : [];
+    if (!folded.length) throw new MalformedPersonStageOutputError('Observation quote was not found in its source.');
+    const foldedStart = nearest(folded, observation.spanStart);
+    const spanStart = body.origin[foldedStart]!;
+    const spanEnd = body.origin[foldedStart + quote.length - 1]! + 1;
+    return { ...observation, spanStart, spanEnd, exactQuote: source.body.slice(spanStart, spanEnd) };
   });
 }
 
