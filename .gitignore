@@ -56,3 +56,6 @@ next-env.d.ts
 
 # Python bytecode from running the vendored Atros tests
 __pycache__/
+
+# Evaluation runs (keep baselines deliberately with git add -f)
+/eval/runs/
