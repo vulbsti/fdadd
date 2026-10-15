@@ -9,7 +9,7 @@ import { assertPiAuthority, assertPiAuthorityRecent, hasFinalPiCheckpoint, loadP
   resolvePiCheckpointFiles } from './pi-store';
 import { loadImportFiles } from '@/lib/imports/store';
 import type { AstrologerRunEvent } from './contracts';
-import { PI_INITIALIZATION_PROTOCOL, preparePiInitialization, withPiPreparationLock } from './pi-initialization';
+import { PI_INITIALIZATION_PROTOCOL, preparePiInitialization, StalePiSandboxError, withPiPreparationLock } from './pi-initialization';
 import { edgeConfig, signEdgeRunToken } from '@/lib/edge/client';
 
 export const PI_RUNTIME_ASSETS = ['package.json', 'package-lock.json', 'runner.mjs', 'runner-state.mjs', 'extension.mjs', 'workspace-tools.mjs',
@@ -76,9 +76,27 @@ export async function preparePiWorkspace(runId: string) {
   const loaded = await loadPiFiles(authority);
   const runtimeFiles = await readPiRuntimeFiles();
   const bundle = piRuntimeBundleHash(runtimeFiles);
-  const sandbox = await Sandbox.getOrCreate({
+  const open = () => Sandbox.getOrCreate({
     name: piSandboxName(authority, bundle), timeout: SANDBOX_TIMEOUT_MS, persistent: false, ...sandboxSource(),
   });
+  const sandbox = await open();
+  try {
+    return await preparePiSandbox(sandbox, { runId, authority, loaded, runtimeFiles, bundle });
+  } catch (error) {
+    if (!(error instanceof StalePiSandboxError)) throw error;
+    // A VM that stopped while idle comes back without its files but keeps the
+    // sealed network, so it can never reinstall. Replace it; the person's
+    // files and the conversation are restored from durable storage.
+    console.warn(`Replacing Pi sandbox ${sandbox.name}: ${error.message}`);
+    await sandbox.delete({ deleteOrphanSnapshots: true });
+    return preparePiSandbox(await open(), { runId, authority, loaded, runtimeFiles, bundle });
+  }
+}
+
+async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, runtimeFiles, bundle }: {
+  runId: string; authority: PiAuthority; loaded: Awaited<ReturnType<typeof loadPiFiles>>;
+  runtimeFiles: Awaited<ReturnType<typeof readPiRuntimeFiles>>; bundle: string;
+}) {
   await sandbox.extendTimeout(RUN_TIMEOUT_EXTENSION_MS).catch(() => {
     // Plan limits can refuse an extension; the run deadline still fits the base timeout.
   });
@@ -144,11 +162,16 @@ export async function preparePiWorkspace(runId: string) {
       runtimeReady: async () => (await sandbox.runCommand('node', ['--input-type=module', '-e', runtimeProbe])).exitCode === 0,
       atrosReady: async () => (await sandbox.runCommand('bash', ['-lc',
         `test -f '/tmp/atros-ready-${ATROS_ENGINE_VERSION.replace(/[^a-zA-Z0-9]/g, '-')}' && /tmp/atros-venv/bin/atros --version >/dev/null 2>&1`])).exitCode === 0,
+      canInstall: async () => (await sandbox.runCommand('node', ['-e',
+        "fetch('https://registry.npmjs.org/', { signal: AbortSignal.timeout(8000) }).then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"])).exitCode === 0,
       installRuntime: async () => {
         await assertCleanForInstallation();
         await sandbox.writeFiles(runtimeFiles);
         const install = await sandbox.runCommand('npm', ['ci', '--ignore-scripts', '--prefix', RUNTIME], { timeoutMs: 240000 });
-        if (install.exitCode !== 0) throw new Error('Pinned Pi installation failed.');
+        if (install.exitCode !== 0) {
+          console.error(`Pinned Pi installation failed in ${sandbox.name}:`, (await install.stderr()).slice(-2000));
+          throw new Error('Pinned Pi installation failed.');
+        }
         await installWorkspacePackages(sandbox);
       },
       installAtros: async () => { await assertCleanForInstallation(); await ensureAtrosInstalled(sandbox); },

@@ -105,7 +105,16 @@ fun FormColumn(bottomAligned: Boolean = true, content: @Composable ColumnScope.(
         Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding(),
     ) {
         val minHeight = maxHeight
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        val scroll = rememberScrollState()
+        if (bottomAligned) {
+            // The keyboard can grow for a moment (a paste or clipboard strip). The form then
+            // overflows from the top, and without this the last field and the main button
+            // slide under the keyboard until it shrinks again. Keep the bottom in view.
+            androidx.compose.runtime.LaunchedEffect(scroll) {
+                androidx.compose.runtime.snapshotFlow { scroll.maxValue }.collect { if (it > 0) scroll.scrollTo(it) }
+            }
+        }
+        Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Column(
                 Modifier.fillMaxWidth().heightIn(min = minHeight).padding(horizontal = 22.dp, vertical = 24.dp),
                 verticalArrangement = if (bottomAligned) androidx.compose.foundation.layout.Arrangement.Bottom else androidx.compose.foundation.layout.Arrangement.Top,

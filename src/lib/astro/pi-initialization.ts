@@ -11,11 +11,22 @@ export interface PiInitializationDependencies {
   readState(): Promise<PiInitializationState>;
   runtimeReady(): Promise<boolean>;
   atrosReady(): Promise<boolean>;
+  /** Whether the VM can still reach package registries; false once its network was sealed. */
+  canInstall(): Promise<boolean>;
   installRuntime(): Promise<void>;
   installAtros(): Promise<void>;
   writeReadyMarker(marker: string): Promise<void>;
   sealNetwork(): Promise<void>;
   writeDataPhaseMarker(): Promise<void>;
+}
+
+/**
+ * The VM cannot be made ready in place: it holds (or held) private data, or its
+ * network was sealed by an earlier run and it lost its files when it stopped.
+ * The caller replaces it with a fresh VM; durable storage holds everything.
+ */
+export class StalePiSandboxError extends Error {
+  constructor(message: string) { super(message); this.name = 'StalePiSandboxError'; }
 }
 
 /** The VM lock spans installation, network sealing, personal writes, and config commit. */
@@ -47,9 +58,12 @@ export async function preparePiInitialization(
   let [runtimeReady, atrosReady] = await readiness();
   if (protectedVm) {
     if (!runtimeReady || !atrosReady || (state.readyMarker !== null && state.readyMarker !== options.readyMarker)) {
-      throw new Error('Prepared Pi sandbox readiness is invalid; refusing installation or network widening after private data.');
+      throw new StalePiSandboxError('Prepared Pi sandbox readiness is invalid; refusing installation or network widening after private data.');
     }
   } else {
+    if ((!runtimeReady || !atrosReady) && !await dependencies.canInstall()) {
+      throw new StalePiSandboxError('Pi sandbox needs installation but its network is sealed.');
+    }
     if (!runtimeReady) await dependencies.installRuntime();
     if (!atrosReady) await dependencies.installAtros();
     [runtimeReady, atrosReady] = await readiness();
