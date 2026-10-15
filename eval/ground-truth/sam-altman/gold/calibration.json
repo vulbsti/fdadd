@@ -1,0 +1,2167 @@
+[
+ {
+  "id": "p00-sun-jupiter",
+  "md": "Sun",
+  "ad": "Jupiter",
+  "from": "1985-04-22",
+  "to": "1985-05-13",
+  "fromAge": 0,
+  "toAge": 0.06,
+  "predictions": [
+   {
+    "domain": "family",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "The family situation at birth is reasonably secure, with the father the dominant figure.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-001"
+    ],
+    "explanation": "Born into a secure, educated two-career family (dermatologist mother, real-estate broker father), eldest of four: 'secure' holds. 'Father the dominant figure' is not documented either way.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Correct in kind (secure family at birth); no other test possible.",
+  "lessons": [],
+  "note": "AD began 1984-07-25, before birth; window starts at birth."
+ },
+ {
+  "id": "p01-sun-saturn",
+  "md": "Sun",
+  "ad": "Saturn",
+  "from": "1985-05-13",
+  "to": "1986-04-25",
+  "fromAge": 0.06,
+  "toAge": 1.01,
+  "predictions": [
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A minor illness or medical scare before age 1.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-002"
+    ],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "The father is busy, absent or under career pressure.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-002"
+    ],
+    "explanation": "No record of the father's work situation in 1985-86; infancy is an undocumented quiet stretch.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable: infancy is undocumented.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p02-sun-mercury",
+  "md": "Sun",
+  "ad": "Mercury",
+  "from": "1986-04-25",
+  "to": "1987-03-02",
+  "fromAge": 1.01,
+  "toAge": 1.86,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "mixed",
+    "strength": 1,
+    "statement": "Speech or early learning is unremarkable to slightly delayed.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-002",
+     "ev-003"
+    ],
+    "explanation": "No record of speech or development at 1-2. The nearest evidence (ev-003, about age 3) shows precocity, which leans against a delay but falls outside this window.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable; the nearest evidence (precocity at about 3) leans against the predicted delay.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p03-sun-ketu",
+  "md": "Sun",
+  "ad": "Ketu",
+  "from": "1987-03-02",
+  "to": "1987-07-08",
+  "fromAge": 1.86,
+  "toAge": 2.21,
+  "predictions": [
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A fever or minor accident around age 2-2.2.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-002"
+    ],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable: no health record.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p04-sun-venus",
+  "md": "Sun",
+  "ad": "Venus",
+  "from": "1987-07-08",
+  "to": "1988-07-07",
+  "fromAge": 2.21,
+  "toAge": 3.21,
+  "predictions": [
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 2,
+    "statement": "A home move or family relocation between 2.2 and 3.2.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-004"
+    ],
+    "explanation": "The family did relocate (Chicago to Clayton, Missouri, the father's hometown), but about a year later than this sub-period: around 1988-89, age about 3.5-4.5, still under the ashtama Shani transit (Saturn in Sagittarius, 2.65-4.91) that the prediction relied on. Right transit, sub-period too early.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "health",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Minor childhood illness.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Relocation signal right (ashtama Shani), sub-period about a year early.",
+  "lessons": [
+   "rule-09"
+  ]
+ },
+ {
+  "id": "p05-moon-moon",
+  "md": "Moon",
+  "ad": "Moon",
+  "from": "1988-07-07",
+  "to": "1989-05-07",
+  "fromAge": 3.21,
+  "toAge": 4.04,
+  "predictions": [
+   {
+    "domain": "family",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Warm home life; the mother is especially present and supportive.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-005"
+    ],
+    "explanation": "Household described only generically (two-career parents, competitive siblings). No evidence on the mother's presence in 1988-89.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "health",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Minor health issues from ashtama Shani, but nothing lasting.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable: no dated family evidence.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p06-moon-mars",
+  "md": "Moon",
+  "ad": "Mars",
+  "from": "1989-05-07",
+  "to": "1989-12-06",
+  "fromAge": 4.04,
+  "toAge": 4.62,
+  "predictions": [
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A noticeable injury, burn or fever between 4.0 and 4.6.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-004",
+    "magnitude": 3,
+    "category": "stronger-influence",
+    "explanation": "Move to the father's hometown around 1988-89. The relocation fell under ashtama Shani (Saturn in Sagittarius, 8th from the Moon, 2.65-4.91), which the blind itself cited as the relocation driver, and inside Moon MD (Moon = 4th lord, home). The sub-period predictions on either side (Sun-Venus, Moon-Rahu) bracket it. The year is single-source.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "periodVerdict": "Health call untestable. The real event was the family's move to the father's hometown, carried by the ashtama Shani transit.",
+  "lessons": [
+   "rule-09",
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p07-moon-rahu",
+  "md": "Moon",
+  "ad": "Rahu",
+  "from": "1989-12-06",
+  "to": "1991-06-07",
+  "fromAge": 4.62,
+  "toAge": 6.12,
+  "predictions": [
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 3,
+    "statement": "A relocation or school change between 4.6 and 6.1.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-004"
+    ],
+    "explanation": "The only documented move is dated '1989' from a single citation chain. If it fell in December 1989 it lands in this sub-period and this is a hit; otherwise it belongs to Moon-Moon/Moon-Mars and no second move or school change is recorded here.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "health",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Fears, nightmares or an allergy or skin issue.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable; the move's year is single-source.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p08-moon-jupiter",
+  "md": "Moon",
+  "ad": "Jupiter",
+  "from": "1991-06-07",
+  "to": "1992-10-06",
+  "fromAge": 6.12,
+  "toAge": 7.46,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Recognised as bright in early school between 6.1 and 7.5.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-003"
+    ],
+    "explanation": "No dated school record for age 6-7.5. General precocity (ev-003) is consistent with the prediction but not datable to the window.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable; general precocity is consistent.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p09-moon-saturn",
+  "md": "Moon",
+  "ad": "Saturn",
+  "from": "1992-10-06",
+  "to": "1994-05-07",
+  "fromAge": 7.46,
+  "toAge": 9.04,
+  "predictions": [
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "The family faces a financial or career pressure between 7.5 and 9.0 (the father's job or business).",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-005"
+    ],
+    "explanation": "No record of family financial or career pressure in 1992-94; the father's career is not documented by date.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "change",
+    "strength": 2,
+    "statement": "The child becomes serious or reserved.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-006",
+     "ev-008"
+    ],
+    "explanation": "A real inner turn happened at exactly 8.0 (April 1993, Moon-Saturn-Ketu): the first computer, which he later calls a 'dividing line in my life' and a 'lifeline to the world'. It expressed through the Saturn-in-8th 'technology/research' reading (nr-07a) and a private, inward world (Saturn aspecting the Moon) rather than plain seriousness or low mood. AD lord's placement (8th: research, hidden things) was visible before the event.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "The key childhood turn (first computer at 8) came through Saturn's research/technology meaning, not through family hardship.",
+  "lessons": [
+   "rule-02"
+  ]
+ },
+ {
+  "id": "p10-moon-mercury",
+  "md": "Moon",
+  "ad": "Mercury",
+  "from": "1994-05-07",
+  "to": "1995-10-07",
+  "fromAge": 9.04,
+  "toAge": 10.46,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Uneven academic results between 9 and 10.5; creative or extracurricular strengths rather than top grades.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "No school results recorded for 9-10.5. (The youngest sibling's birth, ev-007, falls here, which fits Mercury as 3rd lord of younger siblings, but it was not predicted and is magnitude 1.)",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p11-moon-ketu",
+  "md": "Moon",
+  "ad": "Ketu",
+  "from": "1995-10-07",
+  "to": "1996-05-07",
+  "fromAge": 10.46,
+  "toAge": 11.04,
+  "predictions": [
+   {
+    "domain": "family",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A loss or separation in the extended family, or a grandparent's illness, between 10.5 and 11.0.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "No extended-family loss or illness recorded for late 1995 to spring 1996.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p12-moon-venus",
+  "md": "Moon",
+  "ad": "Venus",
+  "from": "1996-05-07",
+  "to": "1998-01-05",
+  "fromAge": 11.04,
+  "toAge": 12.71,
+  "predictions": [
+   {
+    "domain": "family",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Family comfort and finances improve between 11 and 12.7.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-005"
+    ],
+    "explanation": "No evidence on the family's finances in 1996-97.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Interest in arts, music or creative subjects.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "No record of arts or music interests; the documented interests are computers and online networks.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-008",
+    "magnitude": 3,
+    "category": "alternate-reading",
+    "explanation": "At 11-12 he discovered online chat networks and privately worked out that he is gay. Venus (7th lord, sexuality) is exalted in the 12th (the private, hidden house), with Ketu in the 7th: the Venus AD expressed as a private, non-conventional awakening of partnership and identity (an unconventional variant of nr-05a and nr-05b), not as family comfort or arts. Venus as karaka of sexuality and the 12th as the hidden were classical and visible.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "periodVerdict": "Missed the real theme: a private discovery of identity and orientation online (Venus in the 12th, Ketu in the 7th).",
+  "lessons": [
+   "rule-06"
+  ]
+ },
+ {
+  "id": "p13-moon-sun",
+  "md": "Moon",
+  "ad": "Sun",
+  "from": "1998-01-05",
+  "to": "1998-07-07",
+  "fromAge": 12.71,
+  "toAge": 13.21,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "A school leadership or competitive honour between 12.7 and 13.2.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-009"
+    ],
+    "explanation": "Entry to an elite prep school (grades 7-12) falls around age 12-13, but the start year is undocumented ('late 1990s'). Leadership roles there (yearbook editor, school website) are real but undated. Direction right, timing unverifiable.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Direction plausible (elite school entry around 12-13); undated.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p14-mars-mars",
+  "md": "Mars",
+  "ad": "Mars",
+  "from": "1998-07-07",
+  "to": "1998-12-03",
+  "fromAge": 13.21,
+  "toAge": 13.62,
+  "predictions": [
+   {
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "Conflicts with teachers or parents, or a disciplinary incident, between 13.2 and 13.6.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "No disciplinary incident or dated conflict recorded for July-December 1998.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "An injury or fever.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p15-mars-rahu",
+  "md": "Mars",
+  "ad": "Rahu",
+  "from": "1998-12-03",
+  "to": "1999-12-22",
+  "fromAge": 13.62,
+  "toAge": 14.67,
+  "predictions": [
+   {
+    "domain": "mind-worldview",
+    "direction": "change",
+    "strength": 3,
+    "statement": "A strong new passion or identity shift (technology, business, rebellion) between 13.6 and 14.7.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-006",
+     "ev-009"
+    ],
+    "explanation": "No datable identity shift at 13.6-14.7. The technology identity was already formed at 8 (ev-006), and the school-era interests (CS mentor, Model UN) are undated.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "An accident or injury risk.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Childhood record has no dated health events for this window; the dossier documents only family facts and a few anecdotes.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Untestable; the technology identity predates it.",
+  "lessons": [
+   "rule-10"
+  ]
+ },
+ {
+  "id": "p16-mars-jupiter",
+  "md": "Mars",
+  "ad": "Jupiter",
+  "from": "1999-12-22",
+  "to": "2000-11-27",
+  "fromAge": 14.67,
+  "toAge": 15.6,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Good exam or academic results, or admission to a better school, between 14.7 and 15.6.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-009"
+    ],
+    "explanation": "No exam results or dated academic honours for 1999-2000.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "network-mentors",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "A teacher or mentor takes a special interest.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-009"
+    ],
+    "explanation": "A CS teacher did mentor him at the prep school (early AI talks), which fits Jupiter as 9th lord, but the mentoring is not dated to this sub-period.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Venus",
+    "fromAge": 15.13,
+    "toAge": 15.28,
+    "expect": "Recognition or prize around age 15.1-15.3.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "No dated recognition or prize at 15.1-15.3.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "A mentor existed in these school years; undated.",
+  "lessons": [
+   "rule-04"
+  ]
+ },
+ {
+  "id": "p17-mars-saturn",
+  "md": "Mars",
+  "ad": "Saturn",
+  "from": "2000-11-27",
+  "to": "2002-01-06",
+  "fromAge": 15.6,
+  "toAge": 16.71,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Academic pressure or underperformance, or a forced change of school or stream, between 15.6 and 16.7.",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-012",
+     "ev-013"
+    ],
+    "explanation": "No academic slump is recorded; he graduated on time and entered Stanford. Transit Jupiter crossed the natal Moon (Taurus, June 2000 to June 2001) during the Saturn-on-Moon peak, which classically relieves sade sati. The blind METHOD lists Jupiter over the Moon as an amplifier but did not net it against this sub-period.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "family",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Family discord or a family financial hit.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-011"
+    ],
+    "explanation": "Family strain did arrive, but as a disclosure rather than a discord or money hit: at about 16 he came out to his parents, and his mother said she was 'astonished'. No financial hit is recorded.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A low-mood or isolation phase.",
+    "verdict": "alternate-reading",
+    "evidence": [
+     "ev-010",
+     "ev-011",
+     "ev-008"
+    ],
+    "explanation": "The sade sati pressure was real (growing up gay in the Midwest, worked out privately), but it discharged outward through the Mars sub-period lord in the 2nd house of speech (nr-02b: blunt, combative speech; nr-01c: clash with authority). He addressed the whole school, came out, and changed the school. A public stand, not isolation. Mars as AD lord in the 2nd was visible before the event.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Saturn",
+    "fromAge": 15.6,
+    "toAge": 15.78,
+    "expect": "The worst weeks, at 15.6-15.8.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-010",
+     "ev-011"
+    ],
+    "explanation": "The coming-out events are dated only '2001', so they cannot be placed in Nov 2000 to Feb 2001.",
+    "explanationStrength": "weak"
+   },
+   {
+    "pratyantar": "Mars",
+    "fromAge": 16.33,
+    "toAge": 16.39,
+    "expect": "Conflict or injury at 16.3-16.4.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-010"
+    ],
+    "explanation": "The school-assembly confrontation (2001) may fall here, but its date is year-only.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "career",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Sade-sati pressure real; discharged as a courageous public stand (Mars in the 2nd), not slump or isolation; Jupiter over the Moon protected academics.",
+  "lessons": [
+   "rule-02",
+   "rule-11"
+  ]
+ },
+ {
+  "id": "p18-mars-mercury",
+  "md": "Mars",
+  "ad": "Mercury",
+  "from": "2002-01-06",
+  "to": "2003-01-03",
+  "fromAge": 16.71,
+  "toAge": 17.7,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Important exams around 16.7-17.7 go better than feared; a competitive entrance is cleared, but not at the top rank.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-013"
+    ],
+    "explanation": "The competitive entrance was cleared, and more strongly than predicted (Stanford CS, not 'below top rank'). The admission decision is not dated, so it may fall in Mars-Ketu.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Wins a competition or debate.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-009"
+    ],
+    "explanation": "Model UN and school activities are recorded but no dated competition win.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Entrance cleared more strongly than predicted.",
+  "lessons": []
+ },
+ {
+  "id": "p19-mars-ketu",
+  "md": "Mars",
+  "ad": "Ketu",
+  "from": "2003-01-03",
+  "to": "2003-06-01",
+  "fromAge": 17.7,
+  "toAge": 18.11,
+  "predictions": [
+   {
+    "domain": "education",
+    "direction": "change",
+    "strength": 2,
+    "statement": "An abrupt choice of subject or institution between 17.7 and 18.1.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-012",
+     "ev-013"
+    ],
+    "explanation": "Institution and subject were chosen in this window (graduation in May 2003, Stanford CS that autumn), but nothing was 'abrupt'. It was a conventional choice.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "money",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Conventional, not abrupt, choice of institution.",
+  "lessons": []
+ },
+ {
+  "id": "p20-mars-venus",
+  "md": "Mars",
+  "ad": "Venus",
+  "from": "2003-06-01",
+  "to": "2004-07-31",
+  "fromAge": 18.11,
+  "toAge": 19.27,
+  "predictions": [
+   {
+    "domain": "partnership",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "A first serious romantic relationship between 18.1 and 19.3.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-015"
+    ],
+    "explanation": "His first long relationship, with a classmate who later co-founded his company (about nine years), began around 2004. Venus as 7th lord in the AD.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Leaves home for college or moves to another city or country.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-013"
+    ],
+    "explanation": "Left Missouri for Stanford, California, in September 2003 (Mars-Venus-Moon).",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Enters higher education.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-013"
+    ],
+    "explanation": "Entered Stanford in autumn 2003.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Clean hit on all three domains: college move, higher education, first long relationship.",
+  "lessons": []
+ },
+ {
+  "id": "p21-mars-sun",
+  "md": "Mars",
+  "ad": "Sun",
+  "from": "2004-07-31",
+  "to": "2004-12-06",
+  "fromAge": 19.27,
+  "toAge": 19.62,
+  "predictions": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "First leadership role, project or venture (student organisation, startup idea) between 19.3 and 19.6.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-016",
+     "ev-018"
+    ],
+    "explanation": "The first venture (a location app, first called Radiate) existed by spring 2005, a few months after this short sub-period. When the idea was conceived is not dated.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "partnership",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "The venture idea formed around here but is undated; the real break came in the next sub-period.",
+  "lessons": [
+   "rule-09"
+  ]
+ },
+ {
+  "id": "p22-mars-moon",
+  "md": "Mars",
+  "ad": "Moon",
+  "from": "2004-12-06",
+  "to": "2005-07-07",
+  "fromAge": 19.62,
+  "toAge": 20.21,
+  "predictions": [
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "First meaningful independent earnings between 19.6 and 20.2.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-018"
+    ],
+    "explanation": "First outside money: the founders' accelerator stipend ($6k per founder, June 2005), then a venture round months later.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 2,
+    "statement": "A change of residence.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-018"
+    ],
+    "explanation": "Moved to Cambridge, MA for the accelerator summer of 2005.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "conflict-legal",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window. The childhood record is thin, so quiet is expected.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-016",
+    "magnitude": 5,
+    "category": "stronger-influence",
+    "explanation": "Dropped out of Stanford in 2005, a few months before the Rahu MD seam (2005-07-07). Transit Saturn in Cancer (3rd from the Moon: courage, initiative, from Sep 2004 and May 2005) plus transit Rahu entering Pisces (Feb 2005) pulled the Rahu-MD break forward into the last months of Mars MD. Mars as lagna lord (self-initiative) with Chandra-Mangala gave the drive. Dasha sandhi: seams act as a window of plus or minus 6 months. Birth time also matters here: about 1 hour of birth-time error moves every dasha seam by about 3 months.",
+    "explanationStrength": "strong"
+   },
+   {
+    "eventId": "ev-018",
+    "magnitude": 5,
+    "category": "stronger-influence",
+    "explanation": "Funded in the first batch of the accelerator (June 2005). Same driver as ev-016: transit Saturn in the 3rd from the Moon and the onset of Rahu MD (sandhi). It also delivered the Mars-Moon money and home calls (first outside money; move to Cambridge).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "periodVerdict": "Small calls hit; the big Rahu-MD break (dropout, accelerator) arrived in these last months of Mars MD.",
+  "lessons": [
+   "rule-09"
+  ]
+ },
+ {
+  "id": "p23-rahu-rahu",
+  "md": "Rahu",
+  "ad": "Rahu",
+  "from": "2005-07-07",
+  "to": "2008-03-19",
+  "fromAge": 20.21,
+  "toAge": 22.91,
+  "predictions": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Takes a radical career step between 20.2 and 22.9 (drops a conventional track, founds something, or joins a frontier field), with early visible traction.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-016",
+     "ev-019",
+     "ev-021",
+     "ev-022",
+     "ev-023"
+    ],
+    "explanation": "Radical step plus early visible traction: dropped out to run the startup (decision spring to autumn 2005, straddling the MD seam), raised a Series A (Nov 2005), launched publicly as a press-profiled 21-year-old CEO (Sep 2006), and raised a Series B with a carrier deal (2007).",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 4,
+    "statement": "Relocates to a new city or country.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-018",
+     "ev-021"
+    ],
+    "explanation": "Moved for the accelerator (Cambridge, then back to the Bay Area), but no foreign or long-distance relocation. He stayed in the Bay Area after 2003.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "education",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Formal education is cut short, changed or ended unconventionally.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-016"
+    ],
+    "explanation": "Formal education ended without a degree (left Stanford after two years). The month is uncertain (spring to autumn 2005), on the MD seam.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Jupiter",
+    "fromAge": 20.61,
+    "toAge": 20.97,
+    "expect": "Mentor or investor support at 20.6-21.0.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-019"
+    ],
+    "explanation": "The Series A (Sequoia and NEA) is dated Nov 2005 (age 20.57), about two weeks before this pratyantar (20.61-20.97). Month precision, so near-hit.",
+    "explanationStrength": "strong"
+   },
+   {
+    "pratyantar": "Venus",
+    "fromAge": 21.94,
+    "toAge": 22.39,
+    "expect": "Partnership or relationship development at 21.9-22.4.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-023"
+    ],
+    "explanation": "Series B and a national carrier distribution deal in July 2007 (age 22.23).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "family",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Hit: radical step with fast visible traction; pratyantar timing of investor/deal events also worked.",
+  "lessons": [
+   "rule-04",
+   "rule-12"
+  ]
+ },
+ {
+  "id": "p24-rahu-jupiter",
+  "md": "Rahu",
+  "ad": "Jupiter",
+  "from": "2008-03-19",
+  "to": "2010-08-13",
+  "fromAge": 22.91,
+  "toAge": 25.31,
+  "predictions": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "A major public breakthrough or first big success between 22.9 and 25.3: a product, company, role or recognition that defines the person's early reputation.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-024",
+     "ev-029",
+     "ev-026"
+    ],
+    "explanation": "Reputation-defining visibility: on stage at Apple's WWDC keynote (June 2008, Rahu-Jupiter-Jupiter), and named by his patron as one of the five most interesting founders (April 2009). The business underneath was stalling (see money), so the hit is on reputation more than on economics.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "network-mentors",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "A powerful older mentor or backer opens doors.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-022",
+     "ev-026",
+     "ev-029"
+    ],
+    "explanation": "His accelerator founder and patron publicly championed him in 2008-09 ('king of the cannibals', 'What would Sama do?'): a powerful older backer opening doors, as Jupiter (9th lord) predicts.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "First serious wealth (equity, salary jump).",
+    "verdict": "outside-chart",
+    "evidence": [
+     "ev-028",
+     "ev-031"
+    ],
+    "explanation": "No serious wealth: the 2008 global financial crisis forced the company to explore a sale or financing (Nov 2008, inside the Saturn pratyantar the blind flagged). Angel investing began around 2010 but produced no liquidity yet. Outside-chart: the 2008-09 credit crunch and venture freeze.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Self-confidence soars, but Saturn kantaka on the Moon causes stress.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-026",
+     "ev-028"
+    ],
+    "explanation": "Self-confidence and public aura are documented (patron essays). Stress is implied by the crisis-era sale exploration but not reported directly.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Saturn",
+    "fromAge": 23.23,
+    "toAge": 23.61,
+    "expect": "A setback or hard negotiation around 23.2-23.6.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-028",
+     "ev-027"
+    ],
+    "explanation": "A patent suit (Oct 2008, age 23.45), then the company hired bankers to explore a sale or financing in the crisis (Nov 11 2008, age 23.56).",
+    "explanationStrength": "strong"
+   },
+   {
+    "pratyantar": "Venus",
+    "fromAge": 24.09,
+    "toAge": 24.49,
+    "expect": "Money or partnership high around 24.1-24.5.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "No money or partnership event recorded for May-Oct 2009.",
+    "explanationStrength": "weak"
+   },
+   {
+    "pratyantar": "Sun",
+    "fromAge": 24.49,
+    "toAge": 24.61,
+    "expect": "Public recognition around 24.5-24.6.",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-030"
+    ],
+    "explanation": "No recognition. Instead the company pivoted products (Oct-Nov 2009), as transit Saturn entered Virgo (6th from the lagna: competition).",
+    "explanationStrength": "weak"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "family",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-031",
+    "magnitude": 3,
+    "category": "alternate-reading",
+    "explanation": "Began angel investing (about 2010, year only). The Jupiter AD (9th lord, benefactor) expressed through the investor or patron role (nr-06a, nr-13b: the 5th lord in the lagna with Rahu, bold speculation) rather than through salary or equity wealth.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "periodVerdict": "Hit on reputation and patrons; money miss explained by the 2008 crisis; the Saturn pratyantar timed the crisis exactly.",
+  "lessons": [
+   "rule-04",
+   "rule-05",
+   "rule-12"
+  ]
+ },
+ {
+  "id": "p25-rahu-saturn",
+  "md": "Rahu",
+  "ad": "Saturn",
+  "from": "2010-08-13",
+  "to": "2013-06-19",
+  "fromAge": 25.31,
+  "toAge": 28.16,
+  "predictions": [
+   {
+    "domain": "career",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "Between 25.3 and 28.2 a significant career setback or forced restructuring (a project failure, an ouster, or a firm crisis), alongside expanded scope. The net effect is more responsibility under strain.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-033",
+     "ev-032",
+     "ev-036",
+     "ev-034"
+    ],
+    "explanation": "Exact. Five days into the AD (Aug 18 2010) a dominant platform's competing product undercut the company. A plateau followed, then a sale at a loss to investors (Mar 2012) that still gave him liquidity. Meanwhile his scope widened (part-time partner at the accelerator, June 2011). Setback plus expanded responsibility, as written.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "money",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Large swings: a big gain (11th lord) and a big loss or debt (8th).",
+    "verdict": "hit",
+    "evidence": [
+     "ev-036",
+     "ev-037"
+    ],
+    "explanation": "Big gain and big loss in one: a $43.4M sale that was a negative return for VCs, about $5M to him, then a $21M fund raised mostly from a patron investor (other people's money, the 8th-house theme).",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A partner, co-founder or legal dispute begins.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-035"
+    ],
+    "explanation": "The 7th-house transit (Saturn in Libra from 26.6) did hit his co-founder partnership, but as the end of a nine-year romantic relationship with his co-founder (2012), not as a dispute or lawsuit.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "Stress and overwork lead to exhaustion.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "No health record for 2010-13.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Ketu",
+    "fromAge": 26.16,
+    "toAge": 26.33,
+    "expect": "Abrupt break or exit at 26.2-26.3.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-034"
+    ],
+    "explanation": "No exit at 26.2-26.3. He joined the accelerator as a part-time partner on June 13 2011, days before this pratyantar. An addition, not a break.",
+    "explanationStrength": "weak"
+   },
+   {
+    "pratyantar": "Rahu",
+    "fromAge": 27.35,
+    "toAge": 27.78,
+    "expect": "Risky bet at 27.4-27.8.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-037"
+    ],
+    "explanation": "No dated risky bet in Sep 2012 to Feb 2013. The fund launch was earlier (April 2012).",
+    "explanationStrength": "weak"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "education",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Strong hit: competitor shock on day 5, sale at a loss to investors, widened scope, and the 7th-house transit ended the co-founder partnership.",
+  "lessons": [
+   "rule-02",
+   "rule-03",
+   "rule-05"
+  ]
+ },
+ {
+  "id": "p26-rahu-mercury",
+  "md": "Rahu",
+  "ad": "Mercury",
+  "from": "2013-06-19",
+  "to": "2016-01-06",
+  "fromAge": 28.16,
+  "toAge": 30.71,
+  "predictions": [
+   {
+    "domain": "conflict-legal",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "Litigation or a major dispute between 28.2 and 30.7, resolved substantially in the person's favour.",
+    "verdict": "alternate-reading",
+    "evidence": [
+     "ev-040",
+     "ev-044",
+     "ev-041"
+    ],
+    "explanation": "No litigation. The Harsha-VRY 'win through others' adversity' expressed as stepping into roles others vacated: the accelerator's founder stepped aside for him ('I am not really much of a manager. Sam Altman is.'), and a portfolio company's CEO resigned, after which he served as interim CEO. Mercury (3rd/6th lord) also acted as deal-making and contracts (the accelerator's standard-deal reform). Post-hoc fit to nr-04b and nr-04a.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "A new venture, a pivot or a new deal that recovers momentum after the Rahu-Saturn setback.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-040",
+     "ev-048",
+     "ev-049",
+     "ev-051"
+    ],
+    "explanation": "A huge recovery, bigger than the strength-3 call: named president of the accelerator (Feb 2014), seeded and co-founded a nonprofit AI lab (May-Dec 2015). Mercury sits in the D10 10th with an own-sign Jupiter and an exalted Venus (nr-10), which was visible before and argued for strength 5.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "partnership",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Saturn return pressure on relationships; commitment or separation becomes the issue.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-046"
+    ],
+    "explanation": "The partnership question was about commitment versus separation. He reportedly met his current partner around 2015 (year only). It was a beginning, not a crisis.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Venus",
+    "fromAge": 28.67,
+    "toAge": 29.09,
+    "expect": "Partnership event at 28.7-29.1.",
+    "verdict": "alternate-reading",
+    "evidence": [
+     "ev-040"
+    ],
+    "explanation": "No relationship event. Instead he was named accelerator president (Feb 21 2014, age 28.84, inside this Venus pratyantar). Venus is exalted in the D10 10th, so it expressed as a career partnership and succession. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "pratyantar": "Jupiter",
+    "fromAge": 29.96,
+    "toAge": 30.31,
+    "expect": "Recovery at 30.0-30.3.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-048",
+     "ev-049"
+    ],
+    "explanation": "Recovery and a new arc: proposed the AI lab to a famous tech patron (May 25 2015, age 30.09) and brokered its founding dinner (July 2015).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "education",
+    "verdict": "partial",
+    "evidence": [
+     "ev-042"
+    ],
+    "explanation": "His own education stayed quiet, but he co-taught a Stanford startup course (Sep 2014, magnitude 2). This is education as the teacher (Mercury, 3rd lord: teaching and communication), not as a student.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-043",
+    "magnitude": 3,
+    "category": "alternate-reading",
+    "explanation": "Personally led a $50M round for a social-news company and joined its board (Sep 2014). This is the parallel-roles reading of the D10 10th cluster (nr-10c: investor plus operator plus public voice) and nr-13b (bold investing).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "periodVerdict": "Career rise badly under-called (strength 3 vs two magnitude-5 events); the predicted litigation never came, adversity came as others' vacated roles.",
+  "lessons": [
+   "rule-01",
+   "rule-04"
+  ]
+ },
+ {
+  "id": "p27-rahu-ketu",
+  "md": "Rahu",
+  "ad": "Ketu",
+  "from": "2016-01-06",
+  "to": "2017-01-23",
+  "fromAge": 30.71,
+  "toAge": 31.76,
+  "predictions": [
+   {
+    "domain": "partnership",
+    "direction": "fall",
+    "strength": 4,
+    "statement": "A significant partnership, marriage or co-founder relationship ends or breaks down between 30.7 and 31.8.",
+    "verdict": "alternate-reading",
+    "evidence": [
+     "ev-053",
+     "ev-054",
+     "ev-035"
+    ],
+    "explanation": "No breakup is recorded in 2016. The 7th-house break had already been spent in 2012 under Saturn's transit through the 7th sign. Ketu in the 7th instead acted as detachment from a business partnership role: he handed the core accelerator program to a successor (Oct 2016) to run a holding role. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "career",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Leaves or is pushed out of a role and starts a new direction.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-053"
+    ],
+    "explanation": "Partly stepped back from a role: he became president of the group while a successor ran the core program. This was voluntary and not an ouster, and a new direction (the AI lab) was already under way.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Turns spiritual or philosophical; questions success.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-052",
+     "ev-056",
+     "ev-057"
+    ],
+    "explanation": "A philosophical turn is visible: the basic-income experiment (May 2016), a public prepper and survival posture (Oct 2016), and the essay on human-AI merging (2017). These are existential and societal questions rather than spiritual ones. Ketu's detachment and endgame flavour fits loosely.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Mars",
+    "fromAge": 31.08,
+    "toAge": 31.15,
+    "expect": "Conflict peak at 31.1-31.15.",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-052"
+    ],
+    "explanation": "No conflict peak. He launched the basic-income pilot (May 31 2016). The Mars pratyantar acted as initiative (lagna lord) rather than conflict. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "pratyantar": "Saturn",
+    "fromAge": 31.44,
+    "toAge": 31.61,
+    "expect": "Ashtama Shani starts, with heaviness, at 31.4-31.6.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-055",
+     "ev-056"
+    ],
+    "explanation": "A heavier, more exposed moment: the New Yorker profile (Oct 3 2016) fixed a mixed public image and spread a 'survivalist' story. Not ashtama heaviness as such (Saturn entered Sagittarius only in Jan 2017).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "education",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-055",
+    "magnitude": 4,
+    "category": "alternate-reading",
+    "explanation": "A major magazine profile fixed a polarising image (Oct 2016): ambition, 'extremely good at becoming powerful', a prepper inventory. This is nr-01c (Rahu-Sun in the lagna: a polarising public image), landing in the Saturn pratyantar.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "periodVerdict": "Predicted break did not come (already spent in 2012); Ketu worked as delegation and detachment plus a philosophical turn.",
+  "lessons": [
+   "rule-03",
+   "rule-08"
+  ]
+ },
+ {
+  "id": "p28-rahu-venus",
+  "md": "Rahu",
+  "ad": "Venus",
+  "from": "2017-01-23",
+  "to": "2020-01-24",
+  "fromAge": 31.76,
+  "toAge": 34.76,
+  "predictions": [
+   {
+    "domain": "partnership",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Marriage or a committed long-term partnership between 31.8 and 34.8, likely to someone from a different country or culture.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-046"
+    ],
+    "explanation": "No dated commitment or marriage event in 2017-2020. The record only says a partner of foreign origin was met around 2015 and does not document the relationship's status. Missing: any dated relationship milestone.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Large wealth accumulation (2nd lord) but also large spending, property or luxury purchases (12th).",
+    "verdict": "alternate-reading",
+    "evidence": [
+     "ev-059",
+     "ev-065",
+     "ev-068"
+    ],
+    "explanation": "Money moved at the level of institutions, through other people's capital (nr-02c, 8th lord in the 2nd), rather than as personal accumulation: a founding donor stopped funding (2018), he set up a capped-profit structure taking no equity himself (Mar 2019), and he secured a $1B strategic investment (Jul 2019). The 12th-house 'outflow' appeared as the organisation running short of money. The nr-02c candidate was visible in the blind reading.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A health issue or chronic stress under ashtama Shani.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-061"
+    ],
+    "explanation": "No personal health record. The ashtama-Shani heaviness fell on the family instead (the father's death, May 2018). See unpredictedEvents.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "career",
+    "direction": "stable",
+    "strength": 2,
+    "statement": "The career consolidates rather than leaps.",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-058",
+     "ev-059",
+     "ev-064",
+     "ev-065",
+     "ev-066",
+     "ev-067",
+     "ev-068"
+    ],
+    "explanation": "Not consolidation but the largest leap so far: a control fight with a co-founder, then becoming CEO of the AI lab under a new capped-profit structure, leaving the accelerator's presidency, and a $1B partner investment. Venus is exalted in the D10 10th (with Mercury and own-sign Jupiter), so the blind's 'Venus not linked to the 10th' was wrong; the D10 placement was available in the input. Also Rahu MD lord in the lagna (ambition) and transit Jupiter in the 8th/9th.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Venus",
+    "fromAge": 31.76,
+    "toAge": 32.26,
+    "expect": "Marriage or partnership around 31.8-32.3.",
+    "verdict": "data-gap",
+    "evidence": [
+     "ev-046"
+    ],
+    "explanation": "No dated marriage or partnership event in Jan-Jul 2017.",
+    "explanationStrength": "weak"
+   },
+   {
+    "pratyantar": "Mars",
+    "fromAge": 32.66,
+    "toAge": 32.83,
+    "expect": "Dispute at 32.7-32.8.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-058",
+     "ev-059"
+    ],
+    "explanation": "Exact. The control fight with a co-founder peaked in Sep 2017 to Feb 2018, and that co-founder left the board on Feb 20 2018 (age 32.83), the day the Mars pratyantar (2017-12-18 to 2018-02-20) closed.",
+    "explanationStrength": "strong"
+   },
+   {
+    "pratyantar": "Saturn",
+    "fromAge": 33.68,
+    "toAge": 34.16,
+    "expect": "Heaviest stretch at 33.7-34.2.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-064",
+     "ev-065",
+     "ev-066"
+    ],
+    "explanation": "The heaviest restructuring of the AD (Dec 2018 to Jun 2019): stepped down as accelerator president (exit framing contested), became CEO of the AI lab under a new capped-profit structure, and dropped to adviser. Heavy, yes, but net upward.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "education",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-061",
+    "magnitude": 5,
+    "category": "stronger-influence",
+    "explanation": "Father died on May 25 2018 (age 33.09, Rahu-Venus-Rahu). Transit Saturn was in Sagittarius: the 9th from the lagna (father) and 8th from the Moon (ashtama Shani). Natal 9th lord Jupiter is debilitated, and the father karaka Sun is joined by Rahu, which is also the pratyantar lord. These are classical father-loss indicators, visible before. The blind assigned this ashtama Shani to the native's own health.",
+    "explanationStrength": "strong"
+   },
+   {
+    "eventId": "ev-062",
+    "magnitude": 3,
+    "category": "alternate-reading",
+    "explanation": "Co-founded an iris-scanning identity and crypto project (2019) as chairman. This is the parallel-roles reading (nr-10c) plus Rahu (unconventional, frontier technology, foreign rollout) as MD lord.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "periodVerdict": "Most wrong career call: 'consolidation' was in fact the biggest leap. Venus is in the D10 10th. Mars and Saturn pratyantars timed the co-founder fight and the restructuring; ashtama Shani fell on the father.",
+  "lessons": [
+   "rule-01",
+   "rule-02",
+   "rule-05",
+   "rule-06",
+   "rule-07",
+   "rule-12"
+  ]
+ },
+ {
+  "id": "p29-rahu-sun",
+  "md": "Rahu",
+  "ad": "Sun",
+  "from": "2020-01-24",
+  "to": "2020-12-18",
+  "fromAge": 34.76,
+  "toAge": 35.66,
+  "predictions": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "Steps into a top leadership or authority role, or achieves major public recognition, between 34.8 and 35.7.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-065",
+     "ev-072",
+     "ev-067"
+    ],
+    "explanation": "He already held the top role (CEO since 2019), and the lab shipped its first commercial product (June 11 2020, inside the Jupiter pratyantar that the blind flagged as the peak). But there was no 'major public recognition'; the record calls 2019-22 relatively quiet public years.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "reputation",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Public profile jumps; also scrutiny of ego and conduct.",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-067"
+    ],
+    "explanation": "No jump in public profile in 2020. Transit Saturn sat in Capricorn, over natal debilitated Jupiter in the 10th, and constricted visibility instead of amplifying it (the blind read Saturn in the 10th as an amplifier). Also outside-chart: the COVID-19 pandemic year, and the field was not yet consumer-facing. Reinterpretation after the fact.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "An issue with the father's health or the relationship with him.",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-061"
+    ],
+    "explanation": "No father event in 2020: the Sun (father karaka) signification had already discharged in May 2018, when Saturn transited the 9th from the lagna under ashtama Shani. Nothing remained for Rahu-Sun to act on. Post-hoc.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "pratyantar": "Jupiter",
+    "fromAge": 35.06,
+    "toAge": 35.18,
+    "expect": "Peak recognition at 35.1-35.2.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-072"
+    ],
+    "explanation": "First commercial product shipped on June 11 2020 (age 35.14, inside the window). It was a milestone, not 'peak recognition'.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "quietChecks": [
+   {
+    "domain": "education",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-069",
+    "magnitude": 3,
+    "category": "stronger-influence",
+    "explanation": "Bought a $15.7M Napa ranch ('late 2020'; may fall on the Rahu-Moon start, Dec 18 2020). Transit Jupiter in Capricorn aspected the 4th (Cancer) by its 7th aspect, and the Sun is the nakshatra lord of the 4th-lord Moon (Krittika), so the Sun AD gives Moon (home) results. Outside-chart amplifier: a pandemic-era flight to space and retreats.",
+    "explanationStrength": "strong"
+   },
+   {
+    "eventId": "ev-070",
+    "magnitude": 3,
+    "category": "stronger-influence",
+    "explanation": "Bought a $27M San Francisco compound in March 2020. Same drivers as ev-069: transit Jupiter entered Capricorn on Mar 30 2020 and aspected the 4th, and the Sun is the nakshatra lord of the 4th-lord Moon. It is one month early relative to that ingress, so the timing is approximate.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "periodVerdict": "Held the top role and shipped the first product in the flagged Jupiter pratyantar, but no visibility peak; property buying started early.",
+  "lessons": [
+   "rule-01",
+   "rule-08",
+   "rule-13"
+  ]
+ },
+ {
+  "id": "p30-rahu-moon",
+  "md": "Rahu",
+  "ad": "Moon",
+  "from": "2020-12-18",
+  "to": "2022-06-19",
+  "fromAge": 35.66,
+  "toAge": 37.16,
+  "predictions": [
+   {
+    "domain": "home",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Buys a major home or property, or sets up a new base, between 35.7 and 37.2.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-075",
+     "ev-069"
+    ],
+    "explanation": "Bought a $43M estate in Hawaii (July 2021, Rahu-Moon-Jupiter). The $15.7M Napa ranch ('late 2020') may also fall at the start of this AD (from Dec 18 2020).",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Anxiety, insomnia or public pressure on the mind.",
+    "verdict": "partial",
+    "evidence": [
+     "ev-078"
+    ],
+    "explanation": "Emotional and public pressure arrived through the family. From Nov 2021 his youngest sister began public social-media accusations and the family described her as estranged (transit Rahu over the natal Moon, 35.4-36.9). There is no direct record of anxiety or insomnia.",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Continued high responsibility; institution-building.",
+    "verdict": "hit",
+    "evidence": [
+     "ev-067",
+     "ev-076"
+    ],
+    "explanation": "Continued high responsibility and institution-building at the AI lab (the API, image and code models of 2021), and his identity and crypto venture was unveiled (Oct 2021).",
+    "explanationStrength": "strong"
+   },
+   {
+    "domain": "family",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Child birth or family expansion likely in this window if not before.",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-078"
+    ],
+    "explanation": "No child or family expansion. The family event went the other way (sibling estrangement), because transit Rahu was on the natal Moon (the 4th lord, family). The blind flagged this as turbulence but still predicted expansion. Saturn's natal aspect on the 5th also delays children (nr-13a).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "education",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "No fit event of magnitude 2 or more in this domain falls in the window.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-073",
+    "magnitude": 3,
+    "category": "alternate-reading",
+    "explanation": "Funded a longevity startup's entire $180M seed (2021; one source says April 2022, which is still inside this AD). The Moon in the 2nd (wealth) with Mars (Chandra-Mangala) expressed as large deployment of capital into high-risk deep-tech and bio ventures (nr-07a, nr-13b) rather than accumulation. The longevity theme also echoes the 8th-house interest (nr-12b).",
+    "explanationStrength": "strong"
+   },
+   {
+    "eventId": "ev-077",
+    "magnitude": 4,
+    "category": "alternate-reading",
+    "explanation": "Put about $375M of his own money into a fusion company's $500M round (Nov 2021), his largest personal investment. Same reading as ev-073: Chandra-Mangala in the 2nd as bold capital deployment into deep tech (nr-02a, nr-07a, nr-13b). It also fits nr-05c (money flows out as easily as it comes).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "periodVerdict": "Home purchase and institution-building hit; Rahu on the Moon gave family turbulence (sibling estrangement) instead of expansion; money expressed as huge deep-tech bets.",
+  "lessons": [
+   "rule-05",
+   "rule-13",
+   "rule-11"
+  ]
+ },
+ {
+  "id": "p31-rahu-mars",
+  "md": "Rahu",
+  "ad": "Mars",
+  "from": "2022-06-19",
+  "to": "2023-07-07",
+  "fromAge": 37.16,
+  "toAge": 38.21,
+  "predictions": [
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "A major financial gain (sale, investment, payout) between 37.2 and 38.2.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Window open: Rahu-Mars began 2022-06-19, so only 11 of about 383 days had elapsed by the cut-off. Verdict pending.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A sharp public conflict or legal fight.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Window open: only 11 of about 383 days of Rahu-Mars had elapsed at the cut-off. Verdict pending.",
+    "explanationStrength": "weak"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "Injury, surgery or blood-pressure risk.",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Window open: only 11 of about 383 days of Rahu-Mars had elapsed at the cut-off; no health record. Verdict pending.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "keyPratyantarChecks": [],
+  "quietChecks": [
+   {
+    "domain": "education",
+    "verdict": "data-gap",
+    "evidence": [],
+    "explanation": "Window open at the cut-off.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "unpredictedEvents": [],
+  "periodVerdict": "Open at the cut-off (11 days elapsed); all calls pending.",
+  "lessons": [
+   "rule-12"
+  ],
+  "note": "Running at the cut-off (2022-06-30); 11 of about 383 days elapsed."
+ }
+]

@@ -1,0 +1,1065 @@
+{
+ "convention": "Lahiri sidereal, true node, sign at 12:00 UT daily",
+ "natal": {
+  "lagna": "Aries",
+  "moon": "Taurus"
+ },
+ "ingresses": {
+  "Jupiter": [
+   {
+    "sign": "Sagittarius",
+    "from": "1985-01-01",
+    "to": "1985-01-10",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "1985-01-10",
+    "to": "1986-01-25",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "1986-01-25",
+    "to": "1987-02-03",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "1987-02-03",
+    "to": "1987-06-17",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "1987-06-17",
+    "to": "1987-10-26",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Pisces",
+    "from": "1987-10-26",
+    "to": "1988-02-03",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "1988-02-03",
+    "to": "1988-06-20",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Taurus",
+    "from": "1988-06-20",
+    "to": "1989-07-02",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Gemini",
+    "from": "1989-07-02",
+    "to": "1990-07-21",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Cancer",
+    "from": "1990-07-21",
+    "to": "1991-08-14",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Leo",
+    "from": "1991-08-14",
+    "to": "1992-09-12",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Virgo",
+    "from": "1992-09-12",
+    "to": "1993-10-13",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Libra",
+    "from": "1993-10-13",
+    "to": "1994-11-11",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "1994-11-11",
+    "to": "1995-12-07",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "1995-12-07",
+    "to": "1996-12-26",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "1996-12-26",
+    "to": "1998-01-08",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "1998-01-08",
+    "to": "1998-05-26",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "1998-05-26",
+    "to": "1998-09-10",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aquarius",
+    "from": "1998-09-10",
+    "to": "1999-01-13",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "1999-01-13",
+    "to": "1999-05-26",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "1999-05-26",
+    "to": "2000-06-03",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Taurus",
+    "from": "2000-06-03",
+    "to": "2001-06-16",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Gemini",
+    "from": "2001-06-16",
+    "to": "2002-07-05",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Cancer",
+    "from": "2002-07-05",
+    "to": "2003-07-30",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Leo",
+    "from": "2003-07-30",
+    "to": "2004-08-28",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Virgo",
+    "from": "2004-08-28",
+    "to": "2005-09-28",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Libra",
+    "from": "2005-09-28",
+    "to": "2006-10-28",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2006-10-28",
+    "to": "2007-11-22",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2007-11-22",
+    "to": "2008-12-10",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2008-12-10",
+    "to": "2009-05-02",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2009-05-02",
+    "to": "2009-07-31",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2009-07-31",
+    "to": "2009-12-20",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2009-12-20",
+    "to": "2010-05-02",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "2010-05-02",
+    "to": "2010-11-01",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2010-11-01",
+    "to": "2010-12-06",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "2010-12-06",
+    "to": "2011-05-08",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "2011-05-08",
+    "to": "2012-05-17",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Taurus",
+    "from": "2012-05-17",
+    "to": "2013-05-31",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Gemini",
+    "from": "2013-05-31",
+    "to": "2014-06-19",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Cancer",
+    "from": "2014-06-19",
+    "to": "2015-07-14",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Leo",
+    "from": "2015-07-14",
+    "to": "2016-08-12",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Virgo",
+    "from": "2016-08-12",
+    "to": "2017-09-12",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Libra",
+    "from": "2017-09-12",
+    "to": "2018-10-12",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2018-10-12",
+    "to": "2019-03-30",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2019-03-30",
+    "to": "2019-04-23",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2019-04-23",
+    "to": "2019-11-05",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2019-11-05",
+    "to": "2020-03-30",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2020-03-30",
+    "to": "2020-06-30",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2020-06-30",
+    "to": "2020-11-20",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2020-11-20",
+    "to": "2021-04-06",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2021-04-06",
+    "to": "2021-09-14",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2021-09-14",
+    "to": "2021-11-21",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2021-11-21",
+    "to": "2022-04-13",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "2022-04-13",
+    "to": "2023-04-22",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "2023-04-22",
+    "to": "2024-05-01",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Taurus",
+    "from": "2024-05-01",
+    "to": "2025-05-15",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Gemini",
+    "from": "2025-05-15",
+    "to": "2025-10-19",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Cancer",
+    "from": "2025-10-19",
+    "to": "2025-12-05",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Gemini",
+    "from": "2025-12-05",
+    "to": "2026-06-02",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Cancer",
+    "from": "2026-06-02",
+    "to": "2026-10-31",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Leo",
+    "from": "2026-10-31",
+    "to": "2027-01-25",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Cancer",
+    "from": "2027-01-25",
+    "to": "2027-06-26",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Leo",
+    "from": "2027-06-26",
+    "to": "2027-11-27",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Virgo",
+    "from": "2027-11-27",
+    "to": "2028-02-29",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Leo",
+    "from": "2028-02-29",
+    "to": "2028-07-24",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Virgo",
+    "from": "2028-07-24",
+    "to": "2028-12-26",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Libra",
+    "from": "2028-12-26",
+    "to": "2029-03-29",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Virgo",
+    "from": "2029-03-29",
+    "to": "2029-08-25",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Libra",
+    "from": "2029-08-25",
+    "to": "2030-01-25",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2030-01-25",
+    "to": "2030-05-01",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Libra",
+    "from": "2030-05-01",
+    "to": "2030-09-23",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2030-09-23",
+    "to": "2031-01-01+",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   }
+  ],
+  "Saturn": [
+   {
+    "sign": "Scorpio",
+    "from": "1985-01-01",
+    "to": "1985-06-01",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Libra",
+    "from": "1985-06-01",
+    "to": "1985-09-17",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "1985-09-17",
+    "to": "1987-12-17",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "1987-12-17",
+    "to": "1990-03-21",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "1990-03-21",
+    "to": "1990-06-20",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "1990-06-20",
+    "to": "1990-12-15",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "1990-12-15",
+    "to": "1993-03-06",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "1993-03-06",
+    "to": "1993-10-15",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Capricorn",
+    "from": "1993-10-15",
+    "to": "1993-11-10",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "1993-11-10",
+    "to": "1995-06-02",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "1995-06-02",
+    "to": "1995-08-10",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aquarius",
+    "from": "1995-08-10",
+    "to": "1996-02-17",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "1996-02-17",
+    "to": "1998-04-17",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "1998-04-17",
+    "to": "2000-06-07",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Taurus",
+    "from": "2000-06-07",
+    "to": "2002-07-23",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Gemini",
+    "from": "2002-07-23",
+    "to": "2003-01-08",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Taurus",
+    "from": "2003-01-08",
+    "to": "2003-04-08",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Gemini",
+    "from": "2003-04-08",
+    "to": "2004-09-06",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Cancer",
+    "from": "2004-09-06",
+    "to": "2005-01-13",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Gemini",
+    "from": "2005-01-13",
+    "to": "2005-05-26",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Cancer",
+    "from": "2005-05-26",
+    "to": "2006-11-01",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Leo",
+    "from": "2006-11-01",
+    "to": "2007-01-11",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Cancer",
+    "from": "2007-01-11",
+    "to": "2007-07-16",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Leo",
+    "from": "2007-07-16",
+    "to": "2009-09-10",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Virgo",
+    "from": "2009-09-10",
+    "to": "2011-11-15",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Libra",
+    "from": "2011-11-15",
+    "to": "2012-05-16",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Virgo",
+    "from": "2012-05-16",
+    "to": "2012-08-04",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Libra",
+    "from": "2012-08-04",
+    "to": "2014-11-03",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2014-11-03",
+    "to": "2017-01-27",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2017-01-27",
+    "to": "2017-06-21",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2017-06-21",
+    "to": "2017-10-26",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2017-10-26",
+    "to": "2020-01-24",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2020-01-24",
+    "to": "2022-04-29",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2022-04-29",
+    "to": "2022-07-12",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2022-07-12",
+    "to": "2023-01-18",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2023-01-18",
+    "to": "2025-03-30",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Pisces",
+    "from": "2025-03-30",
+    "to": "2027-06-03",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "2027-06-03",
+    "to": "2027-10-20",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Pisces",
+    "from": "2027-10-20",
+    "to": "2028-02-24",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aries",
+    "from": "2028-02-24",
+    "to": "2029-08-08",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Taurus",
+    "from": "2029-08-08",
+    "to": "2029-10-05",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Aries",
+    "from": "2029-10-05",
+    "to": "2030-04-17",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Taurus",
+    "from": "2030-04-17",
+    "to": "2031-01-01+",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   }
+  ],
+  "Rahu": [
+   {
+    "sign": "Taurus",
+    "from": "1985-01-01",
+    "to": "1985-02-05",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Aries",
+    "from": "1985-02-05",
+    "to": "1986-08-05",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Pisces",
+    "from": "1986-08-05",
+    "to": "1988-02-02",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aquarius",
+    "from": "1988-02-02",
+    "to": "1989-10-18",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Capricorn",
+    "from": "1989-10-18",
+    "to": "1991-04-13",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "1991-04-13",
+    "to": "1992-10-11",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Scorpio",
+    "from": "1992-10-11",
+    "to": "1994-05-10",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Libra",
+    "from": "1994-05-10",
+    "to": "1994-05-12",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "1994-05-12",
+    "to": "1994-05-28",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Libra",
+    "from": "1994-05-28",
+    "to": "1994-06-06",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Scorpio",
+    "from": "1994-06-06",
+    "to": "1994-06-08",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Libra",
+    "from": "1994-06-08",
+    "to": "1995-12-25",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Virgo",
+    "from": "1995-12-25",
+    "to": "1997-06-20",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Leo",
+    "from": "1997-06-20",
+    "to": "1998-12-18",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Cancer",
+    "from": "1998-12-18",
+    "to": "2000-08-31",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Gemini",
+    "from": "2000-08-31",
+    "to": "2002-02-28",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Taurus",
+    "from": "2002-02-28",
+    "to": "2003-08-28",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Aries",
+    "from": "2003-08-28",
+    "to": "2005-02-23",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Pisces",
+    "from": "2005-02-23",
+    "to": "2006-11-09",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2006-11-09",
+    "to": "2008-05-06",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2008-05-06",
+    "to": "2009-11-03",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2009-11-03",
+    "to": "2011-05-03",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2011-05-03",
+    "to": "2013-01-15",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   },
+   {
+    "sign": "Libra",
+    "from": "2013-01-15",
+    "to": "2014-07-14",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6
+   },
+   {
+    "sign": "Virgo",
+    "from": "2014-07-14",
+    "to": "2016-01-09",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5
+   },
+   {
+    "sign": "Leo",
+    "from": "2016-01-09",
+    "to": "2017-09-09",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4
+   },
+   {
+    "sign": "Cancer",
+    "from": "2017-09-09",
+    "to": "2019-03-23",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3
+   },
+   {
+    "sign": "Gemini",
+    "from": "2019-03-23",
+    "to": "2020-09-20",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2
+   },
+   {
+    "sign": "Taurus",
+    "from": "2020-09-20",
+    "to": "2022-03-17",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1
+   },
+   {
+    "sign": "Aries",
+    "from": "2022-03-17",
+    "to": "2023-11-29",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12
+   },
+   {
+    "sign": "Pisces",
+    "from": "2023-11-29",
+    "to": "2025-05-30",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11
+   },
+   {
+    "sign": "Aquarius",
+    "from": "2025-05-30",
+    "to": "2026-11-26",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10
+   },
+   {
+    "sign": "Capricorn",
+    "from": "2026-11-26",
+    "to": "2028-05-24",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9
+   },
+   {
+    "sign": "Sagittarius",
+    "from": "2028-05-24",
+    "to": "2030-02-04",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8
+   },
+   {
+    "sign": "Scorpio",
+    "from": "2030-02-04",
+    "to": "2031-01-01+",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7
+   }
+  ]
+ }
+}

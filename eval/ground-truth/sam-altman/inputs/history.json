@@ -1,0 +1,574 @@
+[
+  {
+    "id": "489a87c08960c07cd14c38b3204bda54",
+    "title": "Where I come from",
+    "createdAt": "2022-01-12T06:41:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Hi. I'm trying this out because a friend said it helps to have one place where you lay out your life and then think about it. So I'll start at the beginning and see how it goes.\n\nI'm Sam. I was born on April 22, 1985, in Chicago. I don't remember anything about Chicago, honestly. When I was about four, around 1989, my family moved to Clayton, Missouri, which is a suburb of St. Louis and where my dad grew up. So when people ask where I'm from, I say St. Louis. We lived in the Hillcrest area, the streets that run down toward Forest Park. That park is a big part of what I picture when I think of being a kid.",
+        "createdAt": "2022-01-12T06:41:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks for starting there. Who was in the house growing up?",
+        "createdAt": "2022-01-12T06:45:00Z"
+      },
+      {
+        "role": "user",
+        "content": "My mom, Connie, is a dermatologist. She's practiced in St. Louis for a very long time. My dad, Jerry, was a real-estate broker, and later in his life he put a lot of himself into affordable housing and historic preservation in St. Louis. Both of them worked, so it was a busy two-career house.\n\nI'm the oldest of four. Then my brothers Max and Jack, and then my sister Annie, who is the youngest. She's a lot younger than me. She was born around 1994, so I was already nine or so.\n\nWe were a very competitive family. Games, puzzles, sports, school, all of it. Jack likes to tell a story about a game we played called Samurai where I always declared myself the Samurai leader, so I always won. His summary of me as a kid is \"I have to win, and I'm in charge of everything.\" I'd like to argue with that but I can't really. My mom also had this thing where she made each of us a \"Mom's Favorite\" T-shirt, which tells you something about how she handled four competitive kids.",
+        "createdAt": "2022-01-12T06:46:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "That's a vivid picture. What do you remember about yourself in those early years?",
+        "createdAt": "2022-01-12T06:50:51Z"
+      },
+      {
+        "role": "user",
+        "content": "The family story is that I was a systems kid. Apparently in nursery school I figured out how area codes worked, like the logic behind them, and that delighted everyone. There's also a story that I fixed the family VCR when I was about three. I honestly can't tell you if that one is real or family legend. I don't remember it.\n\nWhat I do remember clearly is my eighth birthday, so April 1993. My parents got me a Mac LC II. It cost something like $2,200 in 1993 dollars, which was horrifically expensive for a machine that was honestly not that good. 40 MB hard drive. We put it in my bedroom. I've said this before and I still think it's true: it was a dividing line in my life. There was before I had a computer and after. I learned to program on it and I also took it apart to see how it worked, which I don't think my parents loved.",
+        "createdAt": "2022-01-12T06:51:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What did having the computer mean to you at that age?",
+        "createdAt": "2022-01-12T06:56:08Z"
+      },
+      {
+        "role": "user",
+        "content": "It was my lifeline to the rest of the world. I'll get into why in another session, it's tied up with being gay and not having anyone to talk to about it. But even before that, it was the first thing that felt like it was mine and that I could get deeper into than anyone around me.\n\nWe were a Jewish family, Reform. I wouldn't call myself religious, but I'm culturally very Jewish. A friend once described me as an optimist and a survivalist at the same time, the sense that things are going to be great but could also go deeply wrong at any moment. I think that's pretty accurate and I think it comes from how I grew up.",
+        "createdAt": "2022-01-12T06:57:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Noted. Is there anything from those Clayton years you're less sure about or don't remember well?",
+        "createdAt": "2022-01-12T07:01:42Z"
+      },
+      {
+        "role": "user",
+        "content": "A lot of it, honestly. I don't have a lot of specific memories before about eight. I don't remember the move from Chicago at all. I remember the house, the park, my brothers being around all the time. I don't remember particular teachers in elementary school. It's a bit of a blur until the computer, and then things get sharper.\n\nI'll stop here for today. One thing I'd like to get out of this eventually: I'm 36, I've had a strange and fast life, and I want to understand what actually matters for the next ten years. Where should I be putting my attention? I'll come back to that.",
+        "createdAt": "2022-01-12T07:02:59Z"
+      }
+    ]
+  },
+  {
+    "id": "b2f843ae961c983b470f485d2b0377bf",
+    "title": "Growing up gay in the Midwest",
+    "createdAt": "2022-01-27T05:52:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to talk about being a teenager, because I think it shaped me more than anything else from childhood.\n\nGrowing up gay in the Midwest in the late nineties and two-thousands was not the most awesome thing. I figured it out pretty young, around eleven or twelve, and I didn't have anyone in my real life I could talk to about it. That's where the computer came in. Finding AOL chat rooms was transformative. Just having a human connection with people who understood something that nobody in my actual world would understand was unbelievably powerful. Secrets are bad when you're eleven or twelve. The internet was where I didn't have to keep one.",
+        "createdAt": "2022-01-27T05:52:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "That sounds like it carried a lot of weight. Where were you in school then?",
+        "createdAt": "2022-01-27T05:56:00Z"
+      },
+      {
+        "role": "user",
+        "content": "I went to John Burroughs School, which is a private prep school in the St. Louis area. I think I started there around seventh grade, so roughly 1998, and graduated with the class of 2003.\n\nI did a lot there. I edited the yearbook, played water polo, built the school's website, did Model UN. The teacher who mattered most was Ms. Kepchar, Georgeann Kepchar, who taught computer science. I had her second period, and I'd show up a little early and we'd just talk, a lot of it about AI and where technology was going. She probably doesn't remember it, but she was an unbelievably important force in my life. The CS lab there is where I really started thinking about working on AI someday. I had an English teacher, Mr. Abbott, who I think hoped I'd become a writer rather than a tech person. I liked his class a lot.",
+        "createdAt": "2022-01-27T05:57:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "When did you come out, and to whom first?",
+        "createdAt": "2022-01-27T06:01:51Z"
+      },
+      {
+        "role": "user",
+        "content": "I told my parents when I was about sixteen, so around 2001. My mom has said she was astonished, that I had always struck her as just sort of \"unisexual and tech-y.\" Which is a funny way to describe your kid, but fair. As far as I remember, it wasn't a dramatic rejection story. It was more that I'd been carrying it alone for years before saying anything.\n\nThen there was the school thing. There was an assembly about sexuality, and a group of students, a Christian group, boycotted it. I was angry about that. So I got up in front of the whole school, said that I was gay, and asked everyone whether we wanted to be a school that was repressive or one that was open to different ideas.",
+        "createdAt": "2022-01-27T06:02:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Do you remember how that day felt, or what happened after?",
+        "createdAt": "2022-01-27T06:07:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Honestly, the details are fuzzy. I don't remember exactly what grade I was in. Probably junior year, but I could be off by a year. I remember being nervous and also very sure that I was right, which is a combination I've felt a lot since.\n\nWhat I know about the aftermath mostly comes from other people. My college counselor, Madelyn Gray, said later that what I did changed the school, that it felt like someone opened up a big box full of all kinds of kids and let them out into the world. I'm proud of that, and a bit surprised at seventeen-year-old me. I think it's the first time I learned that if you just say the true thing out loud, in public, a lot of other people are relieved.",
+        "createdAt": "2022-01-27T06:08:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Thank you for sharing that. Is there anything from that period you still think about?",
+        "createdAt": "2022-01-27T06:12:42Z"
+      },
+      {
+        "role": "user",
+        "content": "Mostly that I got lucky. I had a computer, I had a teacher who took me seriously, I went to a school that could absorb something like that, and I had parents who could afford all of it. I've written publicly that I wouldn't be where I am if I hadn't been born incredibly lucky, and that's a big part of what I mean.\n\nThe other thing is that a lot of my adult instincts look like that assembly. Pick the thing you believe, say it plainly, accept that some people will be upset. I don't know if that's always been good for me.",
+        "createdAt": "2022-01-27T06:13:59Z"
+      }
+    ]
+  },
+  {
+    "id": "bf382b9462f3941290c0b6f5f5931d50",
+    "title": "Stanford and dropping out",
+    "createdAt": "2022-02-09T07:15:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Next chapter: Stanford. I got there in the fall of 2003 and studied computer science. I spent time in the AI lab, which at the time felt like the obvious thing for someone like me to do. AI was not fashionable then. It mostly didn't work.\n\nThe honest truth about my two years there is that I probably learned more playing poker with my classmates than I did in lectures. I played a lot. Poker teaches you to notice patterns in people over time and to make decisions with very imperfect information. I still think it's one of the best training grounds for the kind of work I do.",
+        "createdAt": "2022-02-09T07:15:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Who were the important people for you at Stanford?",
+        "createdAt": "2022-02-09T07:19:00Z"
+      },
+      {
+        "role": "user",
+        "content": "Nick. Nick Sivo. He was a classmate and we started dating early on. I think 2004, but I genuinely don't remember the exact month or even whether it was the end of freshman year or the start of sophomore year. We were together about nine years. I thought I was going to marry him. I was very in love.\n\nHe also became my co-founder. In 2005 we started working on a location-sharing idea for phones. The idea was simple: your phone knows where you are, so it should be able to tell you which of your friends are nearby. It was first called Radiate and then became Loopt. Alok Deshpande, another classmate, was part of it, and two childhood friends of mine from St. Louis, Rick and Tom Pernikoff, were involved early too.",
+        "createdAt": "2022-02-09T07:20:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How did the decision to leave school come about?",
+        "createdAt": "2022-02-09T07:24:51Z"
+      },
+      {
+        "role": "user",
+        "content": "We applied to this new thing Paul Graham and Jessica Livingston were starting called Y Combinator. It was the very first batch, summer 2005, in Cambridge, Massachusetts. They gave each founder about $6,000 and Paul cooked dinners for everyone. Reddit was in that same batch. It felt like summer camp for people who wanted to build companies.\n\nI was nineteen. After that summer I just didn't go back to Stanford. People talk about dropping out like it's this huge brave leap. For me it wasn't as big a risk as it might seem. I could always go back, and I had a thing I was more excited about than anything in class.",
+        "createdAt": "2022-02-09T07:25:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What was that first summer like day to day?",
+        "createdAt": "2022-02-09T07:30:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Insane. I worked constantly. I worked so much and ate so badly that I actually got scurvy. Vitamin C deficiency, like a sailor in the 1700s. I tell it as a funny story now, but it's a pretty good illustration of how I treated my own body at that age.\n\nPaul took a liking to me early. He later wrote that Loopt was the most promising company of that first batch and compared me to Bill Gates at nineteen, which was flattering and also a lot to live up to. I don't think I fully understood at the time how much that relationship with Paul and YC would shape the rest of my life.",
+        "createdAt": "2022-02-09T07:31:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Do you ever think about finishing your degree?",
+        "createdAt": "2022-02-09T07:35:42Z"
+      },
+      {
+        "role": "user",
+        "content": "Not really. I don't have a degree and it has never once mattered. What I sometimes think about is whether I skipped some normal part of being in my early twenties. I went from high school, to two years of college, to being a CEO who was in the press at twenty-one. I'm not sure what I missed. I'm not sure I missed anything. But I notice I wonder about it.",
+        "createdAt": "2022-02-09T07:36:59Z"
+      }
+    ]
+  },
+  {
+    "id": "fd6e2e8400f9ebb0b204bdfc86275f4a",
+    "title": "The Loopt years",
+    "createdAt": "2022-02-24T06:03:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to go through Loopt properly because it was seven years of my life and I think I've told a simplified version of it so many times that I've lost some of the texture.\n\nAfter YC, in late 2005, we raised a Series A, about $5 million from Sequoia and NEA. In September 2006 we launched on Boost Mobile. They ran an ad campaign, \"Where you at?\" Suddenly I was a \"21-year-old CEO\" in articles. By that November we had something like 40,000 subscribers. It felt huge and also tiny.",
+        "createdAt": "2022-02-24T06:03:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What was it like being that young and running a company?",
+        "createdAt": "2022-02-24T06:07:00Z"
+      },
+      {
+        "role": "user",
+        "content": "Exciting and lonely in a specific way. I was dealing with carriers. In 2006 and 2007 the only way to get on people's phones was to make deals with Sprint, Verizon, Boost, and those are giant slow companies. I learned a lot about negotiating with people who had all the power. We raised a Series B in 2007. I think it was eight-something million, though there was a larger authorization and I don't remember exactly how much was called. We got onto Sprint phones that year.\n\nThen 2008 was the peak. Apple had the iPhone and the App Store coming, and in June 2008 I demoed Loopt on stage at WWDC during Steve Jobs's keynote. I was twenty-three.",
+        "createdAt": "2022-02-24T06:08:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What happened after the iPhone launch?",
+        "createdAt": "2022-02-24T06:12:51Z"
+      },
+      {
+        "role": "user",
+        "content": "We shipped on the App Store when it opened in July 2008 and we made a real mistake. The app sent text invitations to people's whole address books, and it didn't respect when people replied STOP. People were furious, and they were right to be. We apologized and shipped a fix about a week later. I still think about that one. It was the kind of growth hack that seemed clever in a meeting and was just disrespectful to users in real life.\n\nThat fall the financial crisis hit. In November 2008 we hired Allen & Co to look at either raising more or selling. We were also sued for patent infringement that year by a company called Earthcomber. That got dropped in early 2009, but it was a distraction at the worst time.",
+        "createdAt": "2022-02-24T06:13:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How were you doing personally through that stretch?",
+        "createdAt": "2022-02-24T06:18:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Strangely, it was also when Paul started writing about me in essays. He said if you dropped me on an island of cannibals I'd be king in five years. In 2009 he put me on a list of the five most interesting founders, with Steve Jobs and others, and said that on questions of strategy or ambition he asks \"What would Sama do?\" I was twenty-four. I didn't know what to do with that. Part of me loved it. Part of me knew the company wasn't working as well as that made it sound.\n\nWe kept trying new things. In 2009 and 2010 we spun out a meet-people-nearby feature called Mix, bought GraffitiGeo, which was another YC company, and launched Pulse, which was more about local places and events. We got to about 4 million registered users and maybe 45 people.",
+        "createdAt": "2022-02-24T06:19:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What turned it?",
+        "createdAt": "2022-02-24T06:23:42Z"
+      },
+      {
+        "role": "user",
+        "content": "In August 2010 Facebook launched Places, and that was more or less the end of our position. They had the social graph; we had a feature. Around the same time we brought in Steve Boom as president. I stayed CEO. From 2010 to early 2012 it was a grind. We kept shipping updates, we did a 4.0 redesign, and nothing found real growth. Those were hard years. I don't have a lot of crisp memories of them, which I think says something.\n\nThe big lesson I took from Loopt is that you can't force people to want something. Users didn't want to share their location with friends all the time, at least not then. It's why I later wrote that your goal as a startup is to make something users love, and that it's better to have a small number of users who love it than a large number who like it. We had a lot of people who kind of liked it.",
+        "createdAt": "2022-02-24T06:24:59Z"
+      }
+    ]
+  },
+  {
+    "id": "90c8ef883373606aa60ada68e55a27d4",
+    "title": "Selling Loopt, Nick, a year off",
+    "createdAt": "2022-03-10T05:38:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Continuing the Loopt story. In March 2012 we agreed to sell to Green Dot for $43.4 million in cash, including about $9.8 million for retention. It closed around the end of that quarter. For our investors it was not a good outcome. We'd raised more than $30 million. For me personally it was my first real money. I walked away with about $5 million.\n\nI stayed on at Green Dot for a while after the deal closed. Our tech ended up feeding into a mobile bank account product they launched called GoBank. I don't remember exactly how long I was there.",
+        "createdAt": "2022-03-10T05:38:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How did you feel about how it ended?",
+        "createdAt": "2022-03-10T05:42:00Z"
+      },
+      {
+        "role": "user",
+        "content": "Mixed. Relief, mostly. Some embarrassment, because a lot of people had expected a lot from me and it was a modest exit. Some pride that the team landed somewhere and nobody got hurt.\n\nAnd then, right after the sale, Nick and I broke up. Nine years. We'd started the company together and been together the whole time, and I think once the company was gone there was a lot less holding things in place. I'm not going to go into the details here. I'll just say I thought I was going to marry him, and then I didn't, and that was a big loss at the same time as the company ending. 2012 was a strange year.",
+        "createdAt": "2022-03-10T05:43:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What did you do next?",
+        "createdAt": "2022-03-10T05:47:51Z"
+      },
+      {
+        "role": "user",
+        "content": "I took about a year off, more or less. I read many dozens of textbooks, which sounds absurd, but I did it. Nuclear engineering, synthetic biology, investing, AI. Fields I'd been interested in and never had time for. A lot of what I care about now, fusion and longevity and AI, I can trace back to that year.\n\nI also started a fund with my brother Jack in 2012 called Hydrazine Capital. It was about $21 million. Much of the money came from Peter Thiel, and I put in a lot of what I got from Loopt. We invested heavily in YC companies.",
+        "createdAt": "2022-03-10T05:48:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Had you been investing before that?",
+        "createdAt": "2022-03-10T05:53:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Yes, a bit. I started angel investing around 2010, I think. I can't give you a clean date. I was lucky to be early in some companies that turned out to be great, Stripe and Airbnb among them. Over time it became more than a hundred companies. That's where most of my personal money actually comes from, not Loopt.\n\nI was also already part of YC. In June 2011, while I was still running Loopt, Paul brought on a few alumni as part-time partners. Me, Garry Tan, Emmett Shear, Justin Kan. I loved it. I liked helping founders more than I'd liked most of the job of running Loopt. Around mid-2012, Paul started asking me if I'd ever want to run YC. That conversation went on for more than a year.",
+        "createdAt": "2022-03-10T05:54:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Understood. Is there anything about that period you'd like help thinking through?",
+        "createdAt": "2022-03-10T05:58:42Z"
+      },
+      {
+        "role": "user",
+        "content": "I'm curious what other people see in that pattern. I seem to do best when I'm investing in or helping many things at once, and I'm less sure I'm good at running one operating company day to day. But now I'm running one. Is that a weakness I should fix, or should I just staff around it? What should I be focusing on in myself over the next few years?",
+        "createdAt": "2022-03-10T05:59:59Z"
+      }
+    ]
+  },
+  {
+    "id": "69ded9e6759245bc621df59d02d87783",
+    "title": "Running Y Combinator",
+    "createdAt": "2022-03-29T06:20:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "YC. In February 2014 Paul announced that I'd become president of Y Combinator after that winter's Demo Day. I was twenty-eight. His public reasoning was that YC needed to get bigger and he wasn't much of a manager, and that I was. I didn't fully believe I was a manager either, but I believed YC could be a lot bigger.\n\nOn my 29th birthday, April 22, 2014, we announced what we called the New Deal: a standard $120,000 for 7% for every company in the batch. That was my first big policy as president.",
+        "createdAt": "2022-03-29T06:20:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What did those first years look like?",
+        "createdAt": "2022-03-29T06:24:00Z"
+      },
+      {
+        "role": "user",
+        "content": "Very busy and very fun. That fall I co-taught a class at Stanford, How to Start a Startup, basically the YC curriculum as a lecture course, with guests like Mark Zuckerberg and Peter Thiel and Paul. I found that funny, since I'd dropped out of Stanford.\n\nAt the end of September 2014 I personally led Reddit's $50 million Series B at about a $500 million valuation and later joined the board. Then in November, Yishan resigned as CEO, and I was Reddit's interim CEO for about eight days while we put Ellen Pao in as interim CEO. Eight days is a weird length of time to run a company. It felt both like nothing and like a lot.",
+        "createdAt": "2022-03-29T06:25:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "And how did YC change under you?",
+        "createdAt": "2022-03-29T06:29:51Z"
+      },
+      {
+        "role": "user",
+        "content": "I wanted to make the machine much bigger. In 2015 we launched the YC Fellowship, YC Continuity, which was a growth fund of roughly $700 million, and YC Research, a nonprofit research lab I seeded with $10 million of my own money. In 2016 YC announced a basic income pilot in Oakland, because I believe that as technology gets better we'll have to rethink how people get a share of what it produces. Then Startup School online in 2017, YC China in 2018, and batches grew from around 60 or 70 companies to more than 200.\n\nIn late 2016 Michael Seibel became CEO of the core YC program and I became president of the broader YC Group. That let me spend more time on expansion and on OpenAI, which I'll talk about separately.",
+        "createdAt": "2022-03-29T06:30:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What else stands out from those years?",
+        "createdAt": "2022-03-29T06:35:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Turning thirty in 2015. I wrote a list of life lessons around then called \"The days are long but the decades are short.\" I still believe most of it.\n\nThen the New Yorker profile in October 2016. It's still how a lot of people think of me. It covered my childhood and coming out, and Paul said I'm extremely good at becoming powerful, which I've never been sure how to take. The part that went viral was my prepping. I said I have guns, gold, potassium iodide, antibiotics, batteries, water, gas masks from the Israeli Defense Force, and a big patch of land in Big Sur I can fly to, and that the backup plan was to fly with Peter to his place in New Zealand. I also mentioned I like racing cars, I had five, including two McLarens and an old Tesla, and that I fly rented planes around California. It made me sound like a cartoon survivalist billionaire. Some of it is just how my brain works. I try not to think about the ways the world could end, but I can't fully stop.",
+        "createdAt": "2022-03-29T06:36:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How do you look back on the YC years now?",
+        "createdAt": "2022-03-29T06:40:42Z"
+      },
+      {
+        "role": "user",
+        "content": "Mostly with gratitude. I learned more about how the world works in those five years than ever before, because I saw thousands of companies at once. I also think the YC years made me comfortable with being in charge of something that matters to a lot of people. That turned out to be preparation for what came next.",
+        "createdAt": "2022-03-29T06:41:59Z"
+      }
+    ]
+  },
+  {
+    "id": "33160177ddd1259b5cda25258cd55fbe",
+    "title": "How OpenAI started",
+    "createdAt": "2022-04-14T07:02:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to get OpenAI's origin down, because I think the way I tell it has already drifted.\n\nBy 2015 I was convinced that AI was going to be the most important technology of my lifetime and that it could go very well or very badly. I'd been thinking about it since high school with Ms. Kepchar. In May 2015 I emailed Elon Musk and proposed that YC do something like a Manhattan Project for AI. He wrote back that it was probably worth a conversation.",
+        "createdAt": "2022-04-14T07:02:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What happened after that email?",
+        "createdAt": "2022-04-14T07:06:00Z"
+      },
+      {
+        "role": "user",
+        "content": "That summer, around July 2015, we had a dinner at the Rosewood on Sand Hill Road. Elon, Greg Brockman, Ilya Sutskever, and others. That dinner basically started the recruiting. Greg became central to building the team, and Ilya was the research heart of it.\n\nIn December 2015 we announced OpenAI as a nonprofit with about a billion dollars pledged. Elon and I were co-chairs. I stayed president of YC the whole time, so for a few years I was doing both, which in hindsight was too much, but at the time it felt like the two things fit together.",
+        "createdAt": "2022-04-14T07:07:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What did you believe about AI back then?",
+        "createdAt": "2022-04-14T07:11:51Z"
+      },
+      {
+        "role": "user",
+        "content": "In 2017 I wrote an essay called \"The Merge.\" My argument was that the merge between humans and machines had already started. Our phones control us and tell us what to do and when, social media decides how we feel. I said a merge is probably our best-case scenario, and that we'll be the first species to design our own descendants. Either we become the biological bootloader for digital intelligence and then fade, or we figure out what a successful merge looks like. I still mostly believe that, though I'd write it differently now.",
+        "createdAt": "2022-04-14T07:12:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What were the hard parts in those early OpenAI years?",
+        "createdAt": "2022-04-14T07:17:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Late 2017 into early 2018 was brutal. We were figuring out whether OpenAI needed a for-profit arm, because it was clear we'd need far more compute and money than a nonprofit could raise. Elon wanted majority equity and control of that for-profit. Ilya and Greg didn't think any one person should have that kind of control over something that might become AGI, and I agreed with them. At one point Elon wrote that discussions were over.\n\nIn February 2018 he left the board. The public reason was a conflict with Tesla's AI work. He'd given about $100 million of what had been talked about as a much bigger commitment, and suddenly we were short of money and I was much more on the hook to figure it out. In April 2018 we published the OpenAI Charter, about making sure the benefits are broadly distributed, about safety, about cooperating instead of racing. That document matters a lot to me.",
+        "createdAt": "2022-04-14T07:18:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How were you doing through that period?",
+        "createdAt": "2022-04-14T07:22:42Z"
+      },
+      {
+        "role": "user",
+        "content": "Not great, if I'm honest. It was a hard spring. And then my dad died in May of that year, which I want to talk about separately. When I think about 2018 I think of it as the year a lot of things I depended on got pulled out at once. I don't know that I processed it well. I mostly just worked.",
+        "createdAt": "2022-04-14T07:23:59Z"
+      }
+    ]
+  },
+  {
+    "id": "5f3061755a11c3eb22d3df3a2c005a55",
+    "title": "My dad, and my family now",
+    "createdAt": "2022-04-27T05:47:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "I turned 37 last week, and birthdays make me think about my dad, so I want to write about him.\n\nMy father, Jerry Altman, died on May 25, 2018. He was 67. He was born in October 1950. The memorial was a few days later, on May 28, at Central Reform Congregation in St. Louis.",
+        "createdAt": "2022-04-27T05:47:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry. What would you want someone to know about him?",
+        "createdAt": "2022-04-27T05:51:00Z"
+      },
+      {
+        "role": "user",
+        "content": "He was a real-estate broker for most of his career, but what he cared about later on was affordable housing and historic preservation in St. Louis. He was a St. Louis person through and through. Clayton was his hometown, and that's why we moved there when I was four. I wish I'd asked him more about that work when I had the chance.\n\nI don't talk about his death much. Partly because it happened in the middle of the hardest stretch at OpenAI, and I handled it by working, which is how I handle most things. I'm not sure I ever properly grieved. It's still hard to talk about.",
+        "createdAt": "2022-04-27T05:52:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How are things with the rest of your family today?",
+        "createdAt": "2022-04-27T05:56:51Z"
+      },
+      {
+        "role": "user",
+        "content": "My mom is still in St. Louis, still practicing. She's the person who knows me best in some ways. She likes to say I keep a lot tied up inside, and that I'll call her with a headache after googling it, convinced it's meningitis or lymphoma, and she has to tell me it's just stress. She calls it cyber-chondria. She's right.\n\nI'm close with my brothers. Jack started Hydrazine with me and then founded Lattice, which he runs as CEO. Max has worked at startups and on investing with us. My mom once said I like having my brothers around because they knew me before all this and can push back in ways other people can't, but that it's tricky with the power dynamic. That's true. They're the people who'll tell me I'm being ridiculous.",
+        "createdAt": "2022-04-27T05:57:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "And your sister?",
+        "createdAt": "2022-04-27T06:02:08Z"
+      },
+      {
+        "role": "user",
+        "content": "That's the painful one. Annie and I aren't in touch. It has been difficult for a long time, and since late last year it's become public, with things she's posting online about me and the family. The family has been supporting her, and we'll keep doing that. I don't want to get into the details here. I just want it written down that it exists and that it weighs on all of us, my mom especially.",
+        "createdAt": "2022-04-27T06:03:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Thank you for including that. Is there anything you want to come back to about your dad or your family?",
+        "createdAt": "2022-04-27T06:07:42Z"
+      },
+      {
+        "role": "user",
+        "content": "I think about how little time I spend with them. Work takes everything, and my mom isn't getting younger. What should I be paying attention to in my family relationships over the next few years?",
+        "createdAt": "2022-04-27T06:08:59Z"
+      }
+    ]
+  },
+  {
+    "id": "9abbe6050cc9d7dcb4e820cad7bc1dae",
+    "title": "Leaving YC, running OpenAI",
+    "createdAt": "2022-05-18T06:30:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Picking up where the OpenAI story left off. By early 2019 it was clear I couldn't keep doing both YC and OpenAI. In March 2019 I stepped down as YC president and became chairman. Michael Seibel had been running the core program since 2016 anyway. In May 2019 Geoff Ralston became president and I moved to an adviser role. That was the formal end of my time running YC. It was the right call, but it was strange to leave the thing that had been my whole identity for five years.",
+        "createdAt": "2022-05-18T06:30:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What changed at OpenAI at that point?",
+        "createdAt": "2022-05-18T06:34:00Z"
+      },
+      {
+        "role": "user",
+        "content": "Also in March 2019, we created OpenAI LP, a capped-profit company controlled by the nonprofit. Investors' returns are capped, at 100x for the first round. I became CEO. I took no equity. People find that hard to believe, but I already had enough money from investing, and I didn't want my incentives to be the question anyone asked about OpenAI.\n\nThen in July 2019 Microsoft invested $1 billion, with Azure as our exclusive cloud. That was about compute more than anything. Training these models takes enormous computing power, and after Elon left we needed a partner who could provide it.",
+        "createdAt": "2022-05-18T06:35:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "And since then?",
+        "createdAt": "2022-05-18T06:39:51Z"
+      },
+      {
+        "role": "user",
+        "content": "2020 was GPT-3 and, in June 2020, the API, our first product that made money. It was the first time I felt like people outside the AI world could touch what we were building. In 2021 we had DALL-E, and the model behind GitHub Copilot. It's been a relatively quiet period publicly for me. I'm not in the press much. Most of my energy goes into OpenAI and into a small number of very large bets outside it.\n\nIn January 2019, right before all of this, I published \"How To Be Successful.\" Compounding is magic, be an exponential curve yourself, believe in yourself almost to the point of delusion but stay truth-seeking, let small opportunities go to focus on step changes.",
+        "createdAt": "2022-05-18T06:40:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How did the pandemic years go for you personally?",
+        "createdAt": "2022-05-18T06:45:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Honestly, fine, and I'm aware that's a privileged thing to say. In March 2020 I bought a house in Russian Hill in San Francisco, which is my main home now. Later in 2020 I bought a ranch in Napa, a real working ranch, about 950 acres. That's where I go on weekends and where I feel most like a normal person. In July 2021 I bought a place in Hawaii, on the Big Island near Kona. I'm aware of how that list sounds.\n\nIn 2020 I also gave $250,000 to a super PAC supporting Biden. I've mostly given to Democrats. I care a lot about policy because I think technology without good policy leaves most people worse off.",
+        "createdAt": "2022-05-18T06:46:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "What's on your mind about work right now?",
+        "createdAt": "2022-05-18T06:50:42Z"
+      },
+      {
+        "role": "user",
+        "content": "That we're at the beginning of something enormous and that I'm not sure we're ready. The models keep getting better faster than I expected. I think we're a few years from something that will genuinely change how people work. I worry whether OpenAI has the money, the compute, and the culture to handle that, and whether I'm the right person to lead it at that scale. What should I be paying most attention to over the next year or two?",
+        "createdAt": "2022-05-18T06:51:59Z"
+      }
+    ]
+  },
+  {
+    "id": "c9f509ccd91fd6acfbe885e8f40d94e3",
+    "title": "Money, big bets, and Oliver",
+    "createdAt": "2022-06-08T06:12:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "I want to put down where my money and personal bets are, because I think it says a lot about what I actually care about, more than what I say.\n\nOutside OpenAI, there are three main things. Helion, a fusion company. I've been investor and chairman since 2015. In November 2021 I led their $500 million round with about $375 million of my own money. That's the biggest personal investment I've ever made. I also chair Oklo, which is fission. I believe energy and intelligence are the two things that, if they get cheap, make everything else cheap.",
+        "createdAt": "2022-06-08T06:12:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "And the others?",
+        "createdAt": "2022-06-08T06:16:00Z"
+      },
+      {
+        "role": "user",
+        "content": "Retro Biosciences, a longevity company. In 2021 I funded their whole $180 million seed round myself. Between Helion and Retro, a huge share of my liquid money is in two companies. That's either very wise or very dumb.\n\nThe third is Worldcoin, which I co-founded with Alex Blania in 2019 through Tools for Humanity. I'm chairman. We unveiled it publicly last October. The idea is an iris-scanning device, the Orb, that proves you're a unique human, and in exchange you get a share of a token. It's been controversial, mostly on privacy, and I understand why. I think in a world with powerful AI we will need a way to prove someone is a person, and possibly a way to distribute wealth to everyone.",
+        "createdAt": "2022-06-08T06:17:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Is that connected to what you've written about distributing wealth?",
+        "createdAt": "2022-06-08T06:21:51Z"
+      },
+      {
+        "role": "user",
+        "content": "Yes. In March 2021 I published \"Moore's Law for Everything.\" The argument was that AI will push more and more power from labor to capital, and if policy doesn't adapt, most people will end up worse off. I proposed an American Equity Fund, taxing large companies and privately held land at 2.5% a year and paying every adult a share, around $13,500 a year in my example. The line I care about most is that the new social contract should be a floor for everyone in exchange for a ceiling for no one. A great future isn't complicated: technology to create more wealth and policy to distribute it fairly.\n\nI've been funding a basic income study for years now too, the one that began as the YC pilot in Oakland.",
+        "createdAt": "2022-06-08T06:22:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks. You mentioned wanting to talk about your personal life too.",
+        "createdAt": "2022-06-08T06:27:08Z"
+      },
+      {
+        "role": "user",
+        "content": "Right. I'm in a relationship with Oliver. Oliver Mulherin. He's Australian and a software engineer. We met around 2015, I think. The honest version is that we met late one night in Peter Thiel's hot tub. We've been together for years now. I keep it pretty private. Weekends are usually at the ranch in Napa together, and that's honestly the part of my life that feels most stable and most mine.\n\nI haven't talked much about Oliver in public, and I'm not sure if that's because I want to protect it or because I've just gotten used to keeping things to myself. Probably both.",
+        "createdAt": "2022-06-08T06:28:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Understood. Anything you'd like to think about there?",
+        "createdAt": "2022-06-08T06:32:42Z"
+      },
+      {
+        "role": "user",
+        "content": "Whether I'm giving the relationship what it needs, mostly. My work keeps expanding. I don't want to repeat what happened with Nick, where the company and the relationship were so tangled together that when one ended, so did the other. With Oliver it's separate, which I think is good. But I'm not sure I've made the space for a real life outside OpenAI that I keep telling myself I'll make. What should I be protecting this year?",
+        "createdAt": "2022-06-08T06:33:59Z"
+      }
+    ]
+  },
+  {
+    "id": "780174c345ec6eaed652de2a39fba87f",
+    "title": "What keeps me up at night",
+    "createdAt": "2022-06-27T05:25:00Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Last one for a while, I think. I want to write down what I'm anxious about right now, honestly, since this is a private place.\n\nFirst: AI going wrong. I believe AGI could be the best thing that ever happens to humanity, and I also believe that if it goes badly it could be catastrophic. I hold both and don't know how to make them sit comfortably together. My whole working life is now organized around getting that right, and I'm not sure anyone, including me, really knows how.",
+        "createdAt": "2022-06-27T05:25:00Z"
+      },
+      {
+        "role": "assistant",
+        "content": "That's a lot to carry. What else?",
+        "createdAt": "2022-06-27T05:29:00Z"
+      },
+      {
+        "role": "user",
+        "content": "Second: my own health, sort of. I'm healthy, as far as I know. I've been vegetarian since I was a kid. For a while I had goals like a hundred-mile bike ride every week and fifty pull-ups in a row. I write a list of goals every year and look at it every few weeks. But I'm also the person who googles a headache and calls my mom. My mom says I keep an awful lot tied up inside and that it comes out as stress in my body, and she's probably right.\n\nThird, the prepper part of me. Since around 2016 people have teased me about the guns-and-gold thing. I try not to think about it too much. I don't like that part of my mind, but it's there.",
+        "createdAt": "2022-06-27T05:30:17Z"
+      },
+      {
+        "role": "assistant",
+        "content": "How about the day-to-day pressures?",
+        "createdAt": "2022-06-27T05:34:51Z"
+      },
+      {
+        "role": "user",
+        "content": "Money for compute. OpenAI's progress depends on far more computing power than we have, and we can't raise it like a normal company because of the capped-profit structure and the nonprofit control. I believe in that structure. I also think it will be tested hard.\n\nAnd attention. I'm on a lot of boards and involved in a lot of companies. I'm coming off the Reddit board around now. I still own a lot of Reddit, but I don't need to be in the room. I'd like to cut more of that. I've written that you should be willing to let small opportunities go to focus on potential step changes, but in practice I spread myself too thin.",
+        "createdAt": "2022-06-27T05:35:51Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Is there anything from your past that feels unresolved?",
+        "createdAt": "2022-06-27T05:40:08Z"
+      },
+      {
+        "role": "user",
+        "content": "My dad. I never really grieved him. My sister. I don't know if that will ever get better. And something about Loopt and Nick. I was twenty-seven when that ended, and I've moved so fast since then that I'm not sure I ever looked back at it properly.\n\nThe dates I'm least sure of in everything I've told you: when exactly I met Nick, which year the school assembly was, when I started angel investing, and the time I was born. My mom once said early morning, around five, but that's from memory and I wouldn't bet on it.",
+        "createdAt": "2022-06-27T05:41:42Z"
+      },
+      {
+        "role": "assistant",
+        "content": "Thank you, that's helpful to have written down. Anything you'd like to ask before you go?",
+        "createdAt": "2022-06-27T05:45:42Z"
+      },
+      {
+        "role": "user",
+        "content": "Yes. Given all of it, what's likely coming for me over the next few years? Should I be bracing for things to get much bigger and more public, or quieter? And if you had to name the one thing I should focus on in the second half of this year, what would it be?",
+        "createdAt": "2022-06-27T05:46:59Z"
+      }
+    ]
+  }
+]
