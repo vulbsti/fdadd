@@ -21,7 +21,7 @@ export interface EvalCase {
   birth: { name: string; date: string; time: string; latitude: number; longitude: number; timezone: string; place_name?: string };
   timeSource?: string;
   timeConfidence?: string;
-  inputs: Record<string, { profile: string; history: string; name?: string }>;
+  inputs: Record<string, { profile: string; history: string; name?: string; place_name?: string }>;
 }
 
 async function atros(argv: string[]) {
@@ -47,8 +47,8 @@ export async function buildWorkspace(caseDir: string, outDir: string, variant = 
   const files: Array<{ path: string; content: string }> = [];
   const add = (p: string, value: unknown) => files.push({ path: p, content: typeof value === 'string' ? value : JSON.stringify(value, null, 2) });
 
-  // The chart summary prints the profile name, so a masked case uses its masked name.
-  const calc = await calculations({ ...c, birth: { ...c.birth, name: inputs.name ?? c.birth.name } });
+  // The chart files print the name and birthplace, so a masked case uses its masked ones.
+  const calc = await calculations({ ...c, birth: { ...c.birth, name: inputs.name ?? c.birth.name, place_name: inputs.place_name ?? c.birth.place_name } });
   const { name: _name, place_name: _place, ...birth } = c.birth;
   add('astrology/birth.json', birth);
   for (const file of astrologyWorkspaceFiles(calc, c.asOf, { timeSource: c.timeSource, timeConfidence: c.timeConfidence })) files.push(file);

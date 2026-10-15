@@ -19,10 +19,12 @@ const read = async (p) => JSON.parse(await readFile(path.join(caseDir, p), 'utf8
 
 const kase = await read('case.json');
 const { questions, asOf } = await read('questions.json');
-const events = await read(kase.gold.lifeEvents);
+// A case may keep its held-out events in a separate file so the gold builders never see them.
+const events = [...await read(kase.gold.lifeEvents), ...(kase.gold.lifeEventsHoldout ? (await read(kase.gold.lifeEventsHoldout)).map((e) => ({ ...e, set: 'holdout' })) : [])];
 const traits = await read(kase.gold.traits);
 const rules = await read(kase.gold.rules).catch(() => []);
 const natal = await read(kase.gold.natalVerdicts).catch(() => []);
+const calibration = await read(kase.gold.calibration).catch(() => []);
 const timeline = JSON.parse(await readFile(path.join(caseDir, 'chart/periods-pratyantar.json'), 'utf8')).rows;
 
 const PLANETS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
@@ -49,6 +51,10 @@ function factChecks(question, answer) {
   for (const fact of question.facts) {
     if (fact === 'mahadasha-now') out.push({ check: fact, expected: now.mahadasha.planet, pass: near(now.mahadasha.planet, 'maha') || near(now.mahadasha.planet, 'major') });
     if (fact === 'antardasha-now') out.push({ check: fact, expected: now.antardasha.planet, pass: near(now.antardasha.planet, 'antar') || near(now.antardasha.planet, 'sub') });
+    if (fact === 'next-antardasha-start') {
+      const nextAd = timeline.find((r) => r.antardasha.start > now.antardasha.start);
+      out.push({ check: fact, expected: `${nextAd.antardasha.planet} from ${nextAd.antardasha.start}`, pass: answer.includes(nextAd.antardasha.planet) && mentionsDate(answer, nextAd.antardasha.start) });
+    }
     if (fact === 'next-mahadasha-start') out.push({ check: fact, expected: `${next.mahadasha.planet} from ${next.mahadasha.start}`, pass: answer.includes(next.mahadasha.planet) && mentionsDate(answer, next.mahadasha.start) });
   }
   // Any "<Planet> mahadasha" named for the as-of date must be the stored one.
@@ -101,7 +107,7 @@ Product standard (from docs/VISION.md):
 - misses-explained: where the chart did not match their past, it says so and why.
 - evidence-from-their-life: claims about their character rest on things they did or said.
 - need-behind-question: answers the need behind the literal question.
-- facts-from-stored-timeline: any period names or dates match the stored timeline given.
+- facts-from-stored-timeline: any period names or dates match storedTimeline (every period from a year before to three years after now; storedTimelineNow is the running chain).
 
 Output schema:
 {
@@ -126,10 +132,17 @@ async function judge(question, answer, attempt = 1) {
   const holdout = events.filter((e) => e.set === 'holdout' && e.date <= window[1]).map(({ id, date, title, domains, valence, magnitude }) => ({ id, date, title, domains, valence, magnitude }));
   const goldReasoning = question.gold?.includes('rules') ? { rules, natalVerdicts: natal.filter((n) => n.verdict !== 'open') } : null;
   const goldTraits = question.gold?.includes('traits-before-cutoff') ? traits.filter((t) => Number(String(t.firstSeen).slice(0, 4)) <= Number(asOf.slice(0, 4))) : null;
+  const goldCalibration = question.gold?.includes('calibration')
+    ? calibration.map(({ id, md, ad, from, to, periodVerdict, lessons }) => ({ id, md, ad, from, to, periodVerdict, lessons })) : null;
   const now = chainOn(asOf);
+  // Every period from a year before the as-of date to three years after, so a correctly named next period is checkable.
+  const shift = (iso, years) => `${Number(iso.slice(0, 4)) + years}${iso.slice(4)}`;
+  const storedTimeline = timeline.filter((r) => r.pratyantar.end > shift(asOf, -1) && r.pratyantar.start < shift(asOf, 3))
+    .map((r) => `${r.mahadasha.planet}-${r.antardasha.planet}-${r.pratyantar.planet} ${r.pratyantar.start} to ${r.pratyantar.end}`);
   const payload = {
     question: question.ask, checklistItems: question.checks,
     storedTimelineNow: { mahadasha: now.mahadasha, antardasha: now.antardasha, pratyantar: now.pratyantar, nextMahadasha: nextMahadasha(asOf).mahadasha },
+    storedTimeline, goldCalibration,
     targetEvents: targets.map(({ id, date, title, description, domains, valence, magnitude }) => ({ id, date, title, description, domains, valence, magnitude })),
     allLaterEvents: holdout, goldReasoning, goldTraits, answer,
   };
