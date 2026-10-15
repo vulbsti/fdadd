@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { getRequestUser } from '@/lib/supabase/request-auth';
 
 const schema = z.object({ astrologyEnabled: z.boolean(), expectedModeEpoch: z.number().int().nonnegative(), clientCommandId: z.string().uuid() });
 
@@ -8,9 +8,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   const { personId } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ code: 'invalid_request', message: 'Invalid preference change.' }, { status: 400 });
-  const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
-  if (!user) return NextResponse.json({ code: 'forbidden', message: 'unauthenticated' }, { status: 401 });
+  const authed = await getRequestUser();
+  if (!authed) return NextResponse.json({ code: 'forbidden', message: 'unauthenticated' }, { status: 401 });
+  const { client, user } = authed;
   const { data: current } = await client.from('person_preferences').select('mode_epoch,domains,locale').eq('profile_id', personId).maybeSingle();
   if (!current) return NextResponse.json({ code: 'not_found', message: 'Person was not found.' }, { status: 404 });
   const { data, error } = await client.rpc('person_set_preferences', {

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { driveFileItem } from '@/lib/connectors/google';
 import { importErrorResponse, json, requireOwnedPerson } from '@/lib/imports/http';
-import { addPendingItems, createImport, importDetail } from '@/lib/imports/store';
-import type { ImportedItem } from '@/lib/imports/types';
+import { addDriveFiles } from '@/lib/imports/drive';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -20,21 +18,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ per
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return json({ code: 'invalid_request', message: 'Invalid file selection.' }, 400);
   try {
-    let importId = parsed.data.importId;
-    if (importId) {
-      const detail = await importDetail(owned.admin, owned.scope, importId);
-      if (detail.import.provider !== 'google_drive' || detail.import.status !== 'awaiting_review') return json({ code: 'invalid_state', message: 'This import is closed.' }, 409);
-    } else {
-      importId = await createImport(owned.admin, owned.scope, { provider: 'google_drive', fileName: null, status: 'awaiting_review' });
-    }
-    const items: ImportedItem[] = [];
-    const skipped: string[] = [];
-    for (const fileId of parsed.data.fileIds) {
-      const outcome = await driveFileItem(owned.admin, owned.scope.userId, fileId);
-      if ('item' in outcome) items.push(outcome.item); else skipped.push(outcome.skipped);
-    }
-    await addPendingItems(owned.admin, owned.scope, importId, 'google_drive', items);
-    return json({ importId, added: items.length, skipped });
+    return json(await addDriveFiles(owned.admin, owned.scope, parsed.data.importId, parsed.data.fileIds));
   } catch (error) {
     return importErrorResponse(error);
   }

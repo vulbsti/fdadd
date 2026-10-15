@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { getRequestUser } from '@/lib/supabase/request-auth';
 import { AgentStore, AgentStoreError } from '@/lib/astro/agent-store';
 import type { ApiErrorDto } from '@/lib/astro/contracts';
 
@@ -49,15 +50,17 @@ export function errorResponse(error: unknown, fallbackStatus = 500): NextRespons
 export interface AuthedContext {
   userId: string;
   store: AgentStore;
+  /** The user's own client (row level security applies), cookie or Bearer. */
+  client: SupabaseClient;
 }
 
-/** Authenticate the request and build the agent store with both clients. */
+/**
+ * Authenticate the request (Supabase cookie, or `Authorization: Bearer` from
+ * the mobile app) and build the agent store with both clients.
+ */
 export async function requireAuth(): Promise<AuthedContext | null> {
   if (!isSupabaseConfigured()) return null;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-  return { userId: user.id, store: new AgentStore(supabase, createAdminClient()) };
+  const authed = await getRequestUser();
+  if (!authed) return null;
+  return { userId: authed.user.id, store: new AgentStore(authed.client, createAdminClient()), client: authed.client };
 }

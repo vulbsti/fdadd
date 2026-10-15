@@ -1,0 +1,18 @@
+{
+  "kind": "androidpublisher#subscriptionPurchaseV2",
+  "startTime": "2026-10-01T09:12:44.123Z",
+  "regionCode": "IN",
+  "subscriptionState": "SUBSCRIPTION_STATE_ACTIVE",
+  "latestOrderId": "GPA.3312-4410-2231-55120",
+  "acknowledgementState": "ACKNOWLEDGEMENT_STATE_PENDING",
+  "externalAccountIdentifiers": { "obfuscatedExternalAccountId": "6c1f0f5e-2b7c-4d39-9a51-0d8a3f6b2e11" },
+  "lineItems": [
+    {
+      "productId": "aidoraa_membership",
+      "expiryTime": "2026-11-01T09:12:40.000Z",
+      "latestSuccessfulOrderId": "GPA.3312-4410-2231-55120",
+      "autoRenewingPlan": { "autoRenewEnabled": true },
+      "offerDetails": { "basePlanId": "plus-monthly" }
+    }
+  ]
+}

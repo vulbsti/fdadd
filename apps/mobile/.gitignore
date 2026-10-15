@@ -1,0 +1,25 @@
+# Gradle / build outputs
+.gradle/
+.kotlin/
+build/
+*/build/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+
+# Local machine configuration
+local.properties
+keystore.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+xcuserdata/

@@ -1,0 +1,24 @@
+{
+  "kind": "androidpublisher#subscriptionPurchaseV2",
+  "startTime": "2026-10-10T15:00:00.000Z",
+  "regionCode": "US",
+  "subscriptionState": "SUBSCRIPTION_STATE_ACTIVE",
+  "latestOrderId": "GPA.3399-0001-0002-00003",
+  "linkedPurchaseToken": "old-basic-token",
+  "acknowledgementState": "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED",
+  "externalAccountIdentifiers": { "obfuscatedExternalAccountId": "6c1f0f5e-2b7c-4d39-9a51-0d8a3f6b2e11" },
+  "lineItems": [
+    {
+      "productId": "aidoraa_membership",
+      "expiryTime": "2026-10-10T15:00:00.000Z",
+      "autoRenewingPlan": { "autoRenewEnabled": false },
+      "offerDetails": { "basePlanId": "basic-monthly" }
+    },
+    {
+      "productId": "aidoraa_membership",
+      "expiryTime": "2026-11-10T15:00:00.000Z",
+      "autoRenewingPlan": { "autoRenewEnabled": true },
+      "offerDetails": { "basePlanId": "pro-monthly" }
+    }
+  ]
+}

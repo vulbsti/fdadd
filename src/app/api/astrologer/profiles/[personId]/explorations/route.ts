@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { getRequestUser } from '@/lib/supabase/request-auth';
 
 const schema = z.object({
   objectId: z.string().uuid(),
@@ -20,11 +20,11 @@ export async function POST(
       { status: 400 },
     );
   }
-  const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
-  if (!user) {
+  const authed = await getRequestUser();
+  if (!authed) {
     return NextResponse.json({ code: 'forbidden', message: 'unauthenticated' }, { status: 401 });
   }
+  const { client, user } = authed;
   const { data, error } = await client.rpc('person_start_exploration', {
     p_profile_id: personId,
     p_object_id: parsed.data.objectId,

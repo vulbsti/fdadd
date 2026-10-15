@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
 vi.mock('server-only', () => ({}));
 vi.mock('@/lib/supabase/server', () => ({ createClient: mocks.createClient }));
 vi.mock('@/lib/supabase/admin', () => ({ createAdminClient: mocks.createAdminClient }));
+// Cookie requests: no Authorization header, so the cookie client is used.
+vi.mock('next/headers', () => ({ headers: async () => new Headers() }));
 
 import { PersonStore, PERSON_MODEL_RPC } from './store';
 

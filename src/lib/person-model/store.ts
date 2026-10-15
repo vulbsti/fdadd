@@ -2,7 +2,7 @@ import 'server-only';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
+import { getRequestUser } from '@/lib/supabase/request-auth';
 import {
   CreateNameOnlyPersonInputSchema,
   PersonIdentitySchema,
@@ -244,12 +244,11 @@ export class PersonStore {
 
   /** Create only inside a request/server execution and derive owner from verified auth. */
   static async fromRequest(): Promise<PersonStore> {
-    const userClient = await createClient();
-    const { data, error } = await userClient.auth.getUser();
-    if (error || !data.user) {
+    const authed = await getRequestUser();
+    if (!authed) {
       throw new PersonStoreError('unauthenticated', 'Sign in before accessing a person model.');
     }
-    return new PersonStore(userClient, data.user.id, createAdminClient, 'request');
+    return new PersonStore(authed.client, authed.user.id, createAdminClient, 'request');
   }
 
   /** Internal workflow entry point: it exposes only fenced worker publication. */

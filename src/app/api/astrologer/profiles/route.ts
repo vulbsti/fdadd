@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { ProfileSummarySchema, type ProfileSummary } from '@/lib/astro/contracts';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
 
 export const runtime = 'nodejs';
 
@@ -45,8 +44,7 @@ export async function POST(request: Request) {
   const parsed = createSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ code: 'invalid_request', message: 'Enter a name.' }, { status: 400 });
   try {
-    const client = await createClient();
-    const { data, error } = await client.rpc('person_create', {
+    const { data, error } = await auth.client.rpc('person_create', {
       p_name: parsed.data.name,
       p_command_id: parsed.data.idempotencyKey,
     });
