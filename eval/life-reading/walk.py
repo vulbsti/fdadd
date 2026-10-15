@@ -241,7 +241,7 @@ def dasha_check(c, path):
                 errors.append({'chain': '-'.join(key), 'problem': 'no such period'})
             continue
         span = table[key]
-        near = text[m.end():m.end() + 60]
+        near = text[m.end():m.end() + 60].split('\n')[0]
         nxt = pat.search(near)
         near = near[:nxt.start()] if nxt else near  # dates after the next chain belong to it
         for d in re.findall(r'\d{4}-\d{2}-\d{2}', near)[:2]:
