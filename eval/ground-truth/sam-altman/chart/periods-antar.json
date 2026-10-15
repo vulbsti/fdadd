@@ -1,0 +1,635 @@
+{
+  "level": "antar",
+  "rows": [
+    {
+      "chain": "Sun-Jupiter",
+      "mahadasha": {
+        "planet": "Sun",
+        "start": "1982-07-07",
+        "end": "1988-07-07"
+      },
+      "antardasha": {
+        "planet": "Jupiter",
+        "start": "1984-07-25",
+        "end": "1985-05-13"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Sun-Saturn",
+      "mahadasha": {
+        "planet": "Sun",
+        "start": "1982-07-07",
+        "end": "1988-07-07"
+      },
+      "antardasha": {
+        "planet": "Saturn",
+        "start": "1985-05-13",
+        "end": "1986-04-25"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Sun-Mercury",
+      "mahadasha": {
+        "planet": "Sun",
+        "start": "1982-07-07",
+        "end": "1988-07-07"
+      },
+      "antardasha": {
+        "planet": "Mercury",
+        "start": "1986-04-25",
+        "end": "1987-03-02"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Sun-Ketu",
+      "mahadasha": {
+        "planet": "Sun",
+        "start": "1982-07-07",
+        "end": "1988-07-07"
+      },
+      "antardasha": {
+        "planet": "Ketu",
+        "start": "1987-03-02",
+        "end": "1987-07-08"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Sun-Venus",
+      "mahadasha": {
+        "planet": "Sun",
+        "start": "1982-07-07",
+        "end": "1988-07-07"
+      },
+      "antardasha": {
+        "planet": "Venus",
+        "start": "1987-07-08",
+        "end": "1988-07-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Moon",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1989-05-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Mars",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Mars",
+        "start": "1989-05-07",
+        "end": "1989-12-06"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Rahu",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Rahu",
+        "start": "1989-12-06",
+        "end": "1991-06-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Jupiter",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Jupiter",
+        "start": "1991-06-07",
+        "end": "1992-10-06"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Saturn",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Saturn",
+        "start": "1992-10-06",
+        "end": "1994-05-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Mercury",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Mercury",
+        "start": "1994-05-07",
+        "end": "1995-10-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Ketu",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Ketu",
+        "start": "1995-10-07",
+        "end": "1996-05-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Venus",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Venus",
+        "start": "1996-05-07",
+        "end": "1998-01-05"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Moon-Sun",
+      "mahadasha": {
+        "planet": "Moon",
+        "start": "1988-07-07",
+        "end": "1998-07-07"
+      },
+      "antardasha": {
+        "planet": "Sun",
+        "start": "1998-01-05",
+        "end": "1998-07-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Mars",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "1998-12-03"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Rahu",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Rahu",
+        "start": "1998-12-03",
+        "end": "1999-12-22"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Jupiter",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Jupiter",
+        "start": "1999-12-22",
+        "end": "2000-11-27"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Saturn",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Saturn",
+        "start": "2000-11-27",
+        "end": "2002-01-06"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Mercury",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Mercury",
+        "start": "2002-01-06",
+        "end": "2003-01-03"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Ketu",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Ketu",
+        "start": "2003-01-03",
+        "end": "2003-06-01"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Venus",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Venus",
+        "start": "2003-06-01",
+        "end": "2004-07-31"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Sun",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Sun",
+        "start": "2004-07-31",
+        "end": "2004-12-06"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Mars-Moon",
+      "mahadasha": {
+        "planet": "Mars",
+        "start": "1998-07-07",
+        "end": "2005-07-07"
+      },
+      "antardasha": {
+        "planet": "Moon",
+        "start": "2004-12-06",
+        "end": "2005-07-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Rahu",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2008-03-19"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Jupiter",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Jupiter",
+        "start": "2008-03-19",
+        "end": "2010-08-13"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Saturn",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Saturn",
+        "start": "2010-08-13",
+        "end": "2013-06-19"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Mercury",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Mercury",
+        "start": "2013-06-19",
+        "end": "2016-01-06"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Ketu",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Ketu",
+        "start": "2016-01-06",
+        "end": "2017-01-23"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Venus",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Venus",
+        "start": "2017-01-23",
+        "end": "2020-01-24"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Sun",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Sun",
+        "start": "2020-01-24",
+        "end": "2020-12-18"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Moon",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Moon",
+        "start": "2020-12-18",
+        "end": "2022-06-19"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Rahu-Mars",
+      "mahadasha": {
+        "planet": "Rahu",
+        "start": "2005-07-07",
+        "end": "2023-07-07"
+      },
+      "antardasha": {
+        "planet": "Mars",
+        "start": "2022-06-19",
+        "end": "2023-07-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Jupiter",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2025-08-24"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Saturn",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Saturn",
+        "start": "2025-08-24",
+        "end": "2028-03-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Mercury",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Mercury",
+        "start": "2028-03-07",
+        "end": "2030-06-12"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Ketu",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Ketu",
+        "start": "2030-06-12",
+        "end": "2031-05-19"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Venus",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Venus",
+        "start": "2031-05-19",
+        "end": "2034-01-17"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Sun",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Sun",
+        "start": "2034-01-17",
+        "end": "2034-11-06"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Moon",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Moon",
+        "start": "2034-11-06",
+        "end": "2036-03-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Mars",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Mars",
+        "start": "2036-03-07",
+        "end": "2037-02-10"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Jupiter-Rahu",
+      "mahadasha": {
+        "planet": "Jupiter",
+        "start": "2023-07-07",
+        "end": "2039-07-07"
+      },
+      "antardasha": {
+        "planet": "Rahu",
+        "start": "2037-02-10",
+        "end": "2039-07-07"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    },
+    {
+      "chain": "Saturn-Saturn",
+      "mahadasha": {
+        "planet": "Saturn",
+        "start": "2039-07-07",
+        "end": "2058-07-07"
+      },
+      "antardasha": {
+        "planet": "Saturn",
+        "start": "2039-07-07",
+        "end": "2042-07-10"
+      },
+      "pratyantar": null,
+      "sookshma": null
+    }
+  ]
+}

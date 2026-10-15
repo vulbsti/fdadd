@@ -1,0 +1,1356 @@
+[
+ {
+  "md": "Sun",
+  "ad": "Jupiter",
+  "fromAge": 0,
+  "toAge": 0.06,
+  "themes": "The last weeks of the Sun mahadasha balance at birth; nothing personal can be read beyond the family's circumstances at birth.",
+  "byDomain": [
+   {
+    "domain": "family",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "The family situation at birth is reasonably secure, with the father the dominant figure.",
+    "basis": "Sun exalted in the lagna as MD lord; Jupiter the 9th lord"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "money",
+   "partnership",
+   "conflict-legal"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Sun",
+  "ad": "Saturn",
+  "fromAge": 0.06,
+  "toAge": 1.01,
+  "themes": "Infancy under a Sun-Saturn combination (bitter enemies, Saturn in the 8th). Health fragility in the first year, or a parent under strain.",
+  "byDomain": [
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A minor illness or medical scare before age 1.",
+    "basis": "Saturn 8th-house occupant as AD lord in an enemy combination with the MD lord Sun"
+   },
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "The father is busy, absent or under career pressure.",
+    "basis": "Sun-Saturn enmity; Saturn the 10th lord"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "partnership",
+   "conflict-legal"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Sun",
+  "ad": "Mercury",
+  "fromAge": 1.01,
+  "toAge": 1.86,
+  "themes": "Early speech and development; Mercury is debilitated in the 12th, so speech may come late or the child is introverted.",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "mixed",
+    "strength": 1,
+    "statement": "Speech or early learning is unremarkable to slightly delayed.",
+    "basis": "Mercury debilitated in the 12th"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "money",
+   "partnership"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Sun",
+  "ad": "Ketu",
+  "fromAge": 1.86,
+  "toAge": 2.21,
+  "themes": "A short Ketu sub-period; ashtama Shani begins at 2.65. Possible fever, minor injury or separation from a parent.",
+  "byDomain": [
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A fever or minor accident around age 2-2.2.",
+    "basis": "Ketu AD; Ketu aspects the lagna and the Sun"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "money"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Sun",
+  "ad": "Venus",
+  "fromAge": 2.21,
+  "toAge": 3.21,
+  "themes": "Saturn transits Sagittarius (8th from the Moon, ashtama Shani). Possible relocation or a family financial strain, though Venus, as 2nd lord and exalted, keeps comfort at home.",
+  "byDomain": [
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 2,
+    "statement": "A home move or family relocation between 2.2 and 3.2.",
+    "basis": "Saturn transiting 8th from the Moon; Venus the 12th-house occupant"
+   },
+   {
+    "domain": "health",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Minor childhood illness.",
+    "basis": "Ashtama Shani"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "conflict-legal"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Moon",
+  "ad": "Moon",
+  "fromAge": 3.21,
+  "toAge": 4.04,
+  "themes": "Start of the exalted-Moon decade. Jupiter transits the natal Moon (3.2-4.2). A protective, nurturing period with a strong maternal bond; ashtama Shani still runs in the background.",
+  "byDomain": [
+   {
+    "domain": "family",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Warm home life; the mother is especially present and supportive.",
+    "basis": "Exalted Moon as MD/AD lord and 4th lord; Jupiter transiting the Moon"
+   },
+   {
+    "domain": "health",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Minor health issues from ashtama Shani, but nothing lasting.",
+    "basis": "Saturn in Sagittarius, 8th from the Moon"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "conflict-legal",
+   "partnership"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Moon",
+  "ad": "Mars",
+  "fromAge": 4.04,
+  "toAge": 4.62,
+  "themes": "Mars AD, as lagna lord and 8th lord conjunct the Moon. An energetic, accident-prone phase, with cuts, falls or burns.",
+  "byDomain": [
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A noticeable injury, burn or fever between 4.0 and 4.6.",
+    "basis": "Mars as 8th lord conjunct the Moon"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "money"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Moon",
+  "ad": "Rahu",
+  "fromAge": 4.62,
+  "toAge": 6.12,
+  "themes": "Rahu AD with ashtama Shani ending at 5.65. Unsettled phase: a school change, relocation or anxiety.",
+  "byDomain": [
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 3,
+    "statement": "A relocation or school change between 4.6 and 6.1.",
+    "basis": "Rahu in the lagna as AD lord; Saturn in the 8th from the Moon until 5.65"
+   },
+   {
+    "domain": "health",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Fears, nightmares or an allergy or skin issue.",
+    "basis": "Rahu-Moon combination"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "partnership"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Moon",
+  "ad": "Jupiter",
+  "fromAge": 6.12,
+  "toAge": 7.46,
+  "themes": "Jupiter AD: the 9th lord, with a cancelled debilitation. Good start in school; teachers notice the child. Saturn moves into Capricorn (9th from the Moon).",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Recognised as bright in early school between 6.1 and 7.5.",
+    "basis": "Jupiter as AD lord, 9th lord with neecha bhanga; Jupiter transiting the 5th from the lagna (6.3-7.4)"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "conflict-legal",
+   "partnership"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Moon",
+  "ad": "Saturn",
+  "fromAge": 7.46,
+  "toAge": 9.04,
+  "themes": "Saturn AD, the 10th/11th lord in the 8th, opposite the natal Moon. More discipline and responsibility at home, and a sense of heaviness; possibly a family financial strain or the father's career change.",
+  "byDomain": [
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "The family faces a financial or career pressure between 7.5 and 9.0 (the father's job or business).",
+    "basis": "Saturn AD aspects the Moon; Saturn the 10th lord from the Moon-sign perspective"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "change",
+    "strength": 2,
+    "statement": "The child becomes serious or reserved.",
+    "basis": "Saturn aspecting the Moon"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "partnership"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Moon",
+  "ad": "Mercury",
+  "fromAge": 9.04,
+  "toAge": 10.46,
+  "themes": "Mercury AD: debilitated with neecha bhanga. Mixed school performance, with creative, verbal or imaginative strengths. Jupiter transits Libra and Scorpio.",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Uneven academic results between 9 and 10.5; creative or extracurricular strengths rather than top grades.",
+    "basis": "Mercury debilitated, NB with Venus"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "conflict-legal"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Moon",
+  "ad": "Ketu",
+  "fromAge": 10.46,
+  "toAge": 11.04,
+  "themes": "Short Ketu AD. Detachment, possibly a loss in the extended family or a health dip.",
+  "byDomain": [
+   {
+    "domain": "family",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A loss or separation in the extended family, or a grandparent's illness, between 10.5 and 11.0.",
+    "basis": "Ketu AD in the 7th, aspecting the lagna"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "career",
+   "money"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Moon",
+  "ad": "Venus",
+  "fromAge": 11.04,
+  "toAge": 12.71,
+  "themes": "Venus AD: exalted 2nd/7th lord. Comfort, arts and friendships; the family's prosperity is visible. Saturn enters Pisces (11th from the Moon), which is good for the family's gains.",
+  "byDomain": [
+   {
+    "domain": "family",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Family comfort and finances improve between 11 and 12.7.",
+    "basis": "Venus exalted, 2nd lord; Saturn transiting the 11th from the Moon"
+   },
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Interest in arts, music or creative subjects.",
+    "basis": "Venus with Mercury in the 12th"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "conflict-legal"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Moon",
+  "ad": "Sun",
+  "fromAge": 12.71,
+  "toAge": 13.21,
+  "themes": "Sun AD: exalted in the lagna. Confidence surges; a leadership role at school. Sade sati begins at 13.0.",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "A school leadership or competitive honour between 12.7 and 13.2.",
+    "basis": "Sun exalted in the lagna, 5th lord"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "partnership",
+   "money"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Mars",
+  "ad": "Mars",
+  "fromAge": 13.21,
+  "toAge": 13.62,
+  "themes": "Mars MD begins under sade sati (Saturn over Aries, the 12th from the Moon and transiting the lagna). Assertive, combative adolescence; restless, with conflict with authority.",
+  "byDomain": [
+   {
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "Conflicts with teachers or parents, or a disciplinary incident, between 13.2 and 13.6.",
+    "basis": "Mars MD/AD; Saturn transiting the lagna (sade sati phase 1)"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "An injury or fever.",
+    "basis": "Mars as 8th lord"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "partnership",
+   "career"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Mars",
+  "ad": "Rahu",
+  "fromAge": 13.62,
+  "toAge": 14.67,
+  "themes": "Mars-Rahu under sade sati, with Saturn transiting the lagna. A risky, rebellious phase with strong ambition and possibly an early entrepreneurial or tech obsession.",
+  "byDomain": [
+   {
+    "domain": "mind-worldview",
+    "direction": "change",
+    "strength": 3,
+    "statement": "A strong new passion or identity shift (technology, business, rebellion) between 13.6 and 14.7.",
+    "basis": "Rahu in the lagna as AD lord; Saturn on the lagna"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "An accident or injury risk.",
+    "basis": "Mars-Rahu combination"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "partnership"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Mars",
+  "ad": "Jupiter",
+  "fromAge": 14.67,
+  "toAge": 15.6,
+  "themes": "Jupiter AD, with transit Jupiter in Aries and then Taurus (over the lagna and the Moon). Relief within the sade sati; good academic results and a mentor's support.",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Good exam or academic results, or admission to a better school, between 14.7 and 15.6.",
+    "basis": "Jupiter as 9th lord AD; transit Jupiter on the lagna and Moon"
+   },
+   {
+    "domain": "network-mentors",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "A teacher or mentor takes a special interest.",
+    "basis": "Jupiter as 9th lord"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Venus",
+    "fromAge": 15.13,
+    "toAge": 15.28,
+    "expect": "Recognition or prize around age 15.1-15.3."
+   }
+  ],
+  "notablyQuiet": [
+   "partnership",
+   "conflict-legal"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Mars",
+  "ad": "Saturn",
+  "fromAge": 15.6,
+  "toAge": 16.71,
+  "themes": "Mars-Saturn (mutually aspecting from the 2nd and 8th) during the sade sati peak, with Saturn over the natal Moon (15.1-17.3). The hardest teenage stretch: pressure, family strain, academic stress.",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Academic pressure or underperformance, or a forced change of school or stream, between 15.6 and 16.7.",
+    "basis": "Mars-Saturn opposition; Saturn transiting the natal Moon (sade sati peak)"
+   },
+   {
+    "domain": "family",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Family discord or a family financial hit.",
+    "basis": "Saturn aspecting the 2nd-house Moon-Mars; transit Saturn on the 2nd"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A low-mood or isolation phase.",
+    "basis": "Sade sati on the Moon"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Saturn",
+    "fromAge": 15.6,
+    "toAge": 15.78,
+    "expect": "The worst weeks, at 15.6-15.8."
+   },
+   {
+    "pd": "Mars",
+    "fromAge": 16.33,
+    "toAge": 16.39,
+    "expect": "Conflict or injury at 16.3-16.4."
+   }
+  ],
+  "notablyQuiet": [
+   "partnership",
+   "career"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Mars",
+  "ad": "Mercury",
+  "fromAge": 16.71,
+  "toAge": 17.7,
+  "themes": "Mercury AD: 3rd/6th lord, NB, Harsha VRY. Exams and competitions with mixed but ultimately successful outcomes; Jupiter transits Gemini and then Cancer.",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Important exams around 16.7-17.7 go better than feared; a competitive entrance is cleared, but not at the top rank.",
+    "basis": "Mercury NB + VRY; Saturn still on the Moon"
+   },
+   {
+    "domain": "conflict-legal",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Wins a competition or debate.",
+    "basis": "Harsha VRY"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "partnership",
+   "money"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Mars",
+  "ad": "Ketu",
+  "fromAge": 17.7,
+  "toAge": 18.11,
+  "themes": "Short Ketu AD. Spiritual or philosophical questioning; possibly a sudden decision to change path or college.",
+  "byDomain": [
+   {
+    "domain": "education",
+    "direction": "change",
+    "strength": 2,
+    "statement": "An abrupt choice of subject or institution between 17.7 and 18.1.",
+    "basis": "Ketu AD aspecting the lagna"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "money"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Mars",
+  "ad": "Venus",
+  "fromAge": 18.11,
+  "toAge": 19.27,
+  "themes": "Mars-Venus: the 7th lord exalted in the 12th, with Jupiter transiting Leo (the 5th). First serious romance; college life, perhaps away from home or abroad.",
+  "byDomain": [
+   {
+    "domain": "partnership",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "A first serious romantic relationship between 18.1 and 19.3.",
+    "basis": "Mars-Venus combination; Jupiter transiting the 5th"
+   },
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Leaves home for college or moves to another city or country.",
+    "basis": "Venus in the 12th (foreign, away)"
+   },
+   {
+    "domain": "education",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Enters higher education.",
+    "basis": "Jupiter transiting the 5th from the lagna"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "conflict-legal"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Mars",
+  "ad": "Sun",
+  "fromAge": 19.27,
+  "toAge": 19.62,
+  "themes": "Short Sun AD: leadership and self-assertion. Sade sati is ending.",
+  "byDomain": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "First leadership role, project or venture (student organisation, startup idea) between 19.3 and 19.6.",
+    "basis": "Sun exalted in the lagna"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "partnership"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Mars",
+  "ad": "Moon",
+  "fromAge": 19.62,
+  "toAge": 20.21,
+  "themes": "Mars-Moon (conjunct natally, Chandra-Mangala). Money-making instinct awakens; first earnings or a first business deal. Jupiter is in Virgo (6th).",
+  "byDomain": [
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "First meaningful independent earnings between 19.6 and 20.2.",
+    "basis": "Chandra-Mangala yoga activated"
+   },
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 2,
+    "statement": "A change of residence.",
+    "basis": "Moon as 4th lord"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "conflict-legal"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Rahu",
+  "fromAge": 20.21,
+  "toAge": 22.91,
+  "themes": "Rahu MD opens. Rahu is in the lagna, and transit Rahu is in Pisces/Aquarius (12th/11th from the lagna). A bold break from the conventional path: leaving formal education, starting a venture, or moving abroad into a new or technology field. Saturn is in Cancer (3rd from the Moon), which supports courage.",
+  "byDomain": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Takes a radical career step between 20.2 and 22.9 (drops a conventional track, founds something, or joins a frontier field), with early visible traction.",
+    "basis": "Rahu MD/AD in the lagna; Saturn transiting the 3rd from the Moon; transit Rahu in the 11th from about 21.5"
+   },
+   {
+    "domain": "home",
+    "direction": "change",
+    "strength": 4,
+    "statement": "Relocates to a new city or country.",
+    "basis": "Rahu in the lagna; transit Rahu in the 12th"
+   },
+   {
+    "domain": "education",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Formal education is cut short, changed or ended unconventionally.",
+    "basis": "Rahu overriding the 4th/5th"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Jupiter",
+    "fromAge": 20.61,
+    "toAge": 20.97,
+    "expect": "Mentor or investor support at 20.6-21.0."
+   },
+   {
+    "pd": "Venus",
+    "fromAge": 21.94,
+    "toAge": 22.39,
+    "expect": "Partnership or relationship development at 21.9-22.4."
+   }
+  ],
+  "notablyQuiet": [
+   "family"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Jupiter",
+  "fromAge": 22.91,
+  "toAge": 25.31,
+  "themes": "Rahu-Jupiter, with Jupiter as the 9th lord in the 10th (NB). Transit Jupiter goes through Sagittarius (9th) and over natal Jupiter in Capricorn (10th) at 22.6-25. Saturn is in Leo (5th; kantaka from the Moon). A strong early career rise with mentors, recognition and the first significant wealth.",
+  "byDomain": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "A major public breakthrough or first big success between 22.9 and 25.3: a product, company, role or recognition that defines the person's early reputation.",
+    "basis": "Rahu-Jupiter; Jupiter transiting the 9th/10th and its natal position; D10 Jupiter in own sign in the 10th"
+   },
+   {
+    "domain": "network-mentors",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "A powerful older mentor or backer opens doors.",
+    "basis": "Jupiter as 9th lord"
+   },
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "First serious wealth (equity, salary jump).",
+    "basis": "Jupiter transiting the 11th briefly at 24-25"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Self-confidence soars, but Saturn kantaka on the Moon causes stress.",
+    "basis": "Saturn in the 4th from the Moon at 22.2-24.4"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Saturn",
+    "fromAge": 23.23,
+    "toAge": 23.61,
+    "expect": "A setback or hard negotiation around 23.2-23.6."
+   },
+   {
+    "pd": "Venus",
+    "fromAge": 24.09,
+    "toAge": 24.49,
+    "expect": "Money or partnership high around 24.1-24.5."
+   },
+   {
+    "pd": "Sun",
+    "fromAge": 24.49,
+    "toAge": 24.61,
+    "expect": "Public recognition around 24.5-24.6."
+   }
+  ],
+  "notablyQuiet": [
+   "family"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Saturn",
+  "fromAge": 25.31,
+  "toAge": 28.16,
+  "themes": "Rahu-Saturn: Saturn is the 10th/11th lord in the 8th, retrograde. Transit Saturn goes through Virgo (6th from the lagna) and then Libra (7th) from 26.6. Jupiter crosses the lagna (26-27) and the Moon (27-28). A heavy restructuring of career: scaling pains, conflicts with partners or boards, a big gamble.",
+  "byDomain": [
+   {
+    "domain": "career",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "Between 25.3 and 28.2 a significant career setback or forced restructuring (a project failure, an ouster, or a firm crisis), alongside expanded scope. The net effect is more responsibility under strain.",
+    "basis": "Rahu-Saturn AD; Saturn in the 8th; transit Saturn entering the 7th"
+   },
+   {
+    "domain": "money",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Large swings: a big gain (11th lord) and a big loss or debt (8th).",
+    "basis": "Saturn as 11th lord in the 8th"
+   },
+   {
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A partner, co-founder or legal dispute begins.",
+    "basis": "Transit Saturn in the 7th from 26.6"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "Stress and overwork lead to exhaustion.",
+    "basis": "Saturn in the 8th"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Ketu",
+    "fromAge": 26.16,
+    "toAge": 26.33,
+    "expect": "Abrupt break or exit at 26.2-26.3."
+   },
+   {
+    "pd": "Rahu",
+    "fromAge": 27.35,
+    "toAge": 27.78,
+    "expect": "Risky bet at 27.4-27.8."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Mercury",
+  "fromAge": 28.16,
+  "toAge": 30.71,
+  "themes": "Rahu-Mercury: Mercury is the 6th lord in the 12th (Harsha VRY, NB). Transit Saturn goes through Libra and then Scorpio over natal Saturn (Saturn return 29.5-31.8; 7th from the Moon). Jupiter is in Gemini/Cancer. Fights, negotiations and deals; an adversity that the person turns into a win, especially via foreign or behind-the-scenes channels.",
+  "byDomain": [
+   {
+    "domain": "conflict-legal",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "Litigation or a major dispute between 28.2 and 30.7, resolved substantially in the person's favour.",
+    "basis": "Harsha VRY; Mercury the 6th lord; Saturn transit on the 7th/8th"
+   },
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "A new venture, a pivot or a new deal that recovers momentum after the Rahu-Saturn setback.",
+    "basis": "Mercury NB; Jupiter transiting the 3rd/4th"
+   },
+   {
+    "domain": "partnership",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Saturn return pressure on relationships; commitment or separation becomes the issue.",
+    "basis": "Transit Saturn in the 7th from the Moon"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Venus",
+    "fromAge": 28.67,
+    "toAge": 29.09,
+    "expect": "Partnership event at 28.7-29.1."
+   },
+   {
+    "pd": "Jupiter",
+    "fromAge": 29.96,
+    "toAge": 30.31,
+    "expect": "Recovery at 30.0-30.3."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Ketu",
+  "fromAge": 30.71,
+  "toAge": 31.76,
+  "themes": "Rahu-Ketu: the nodal axis lords. Ketu is in the 7th. Transit Saturn is in Scorpio/Sagittarius (7th/8th from the Moon) and Jupiter is in Leo/Virgo. Detachment, a break, an exit or a disillusionment phase; a partnership ends or a role is lost.",
+  "byDomain": [
+   {
+    "domain": "partnership",
+    "direction": "fall",
+    "strength": 4,
+    "statement": "A significant partnership, marriage or co-founder relationship ends or breaks down between 30.7 and 31.8.",
+    "basis": "Ketu in the 7th as AD lord; transit Saturn in the 7th from the Moon"
+   },
+   {
+    "domain": "career",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Leaves or is pushed out of a role and starts a new direction.",
+    "basis": "Rahu-Ketu AD"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Turns spiritual or philosophical; questions success.",
+    "basis": "Ketu"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Mars",
+    "fromAge": 31.08,
+    "toAge": 31.15,
+    "expect": "Conflict peak at 31.1-31.15."
+   },
+   {
+    "pd": "Saturn",
+    "fromAge": 31.44,
+    "toAge": 31.61,
+    "expect": "Ashtama Shani starts, with heaviness, at 31.4-31.6."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Venus",
+  "fromAge": 31.76,
+  "toAge": 34.76,
+  "themes": "Rahu-Venus: Venus is the exalted 2nd/7th lord in the 12th. Ashtama Shani runs (Saturn in Sagittarius, 8th from the Moon, 31.8-34.8). Jupiter goes through Virgo, Libra and Scorpio. Wealth, luxury and relationship (marriage or a committed partnership) prominent, but with hidden stress, health strain and heavy spending.",
+  "byDomain": [
+   {
+    "domain": "partnership",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Marriage or a committed long-term partnership between 31.8 and 34.8, likely to someone from a different country or culture.",
+    "basis": "Venus the 7th lord as AD lord, exalted; D9 Venus in own sign; Jupiter transiting the 7th at 32.4-33.5"
+   },
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Large wealth accumulation (2nd lord) but also large spending, property or luxury purchases (12th).",
+    "basis": "Venus as 2nd lord in the 12th"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A health issue or chronic stress under ashtama Shani.",
+    "basis": "Saturn 8th from the Moon"
+   },
+   {
+    "domain": "career",
+    "direction": "stable",
+    "strength": 2,
+    "statement": "The career consolidates rather than leaps.",
+    "basis": "Venus not linked to the 10th"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Venus",
+    "fromAge": 31.76,
+    "toAge": 32.26,
+    "expect": "Marriage or partnership around 31.8-32.3."
+   },
+   {
+    "pd": "Mars",
+    "fromAge": 32.66,
+    "toAge": 32.83,
+    "expect": "Dispute at 32.7-32.8."
+   },
+   {
+    "pd": "Saturn",
+    "fromAge": 33.68,
+    "toAge": 34.16,
+    "expect": "Heaviest stretch at 33.7-34.2."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Sun",
+  "fromAge": 34.76,
+  "toAge": 35.66,
+  "themes": "Rahu-Sun: Sun exalted in the lagna (5th lord). Transit Saturn enters Capricorn (10th from the lagna, over natal Jupiter) at 34.8, and Jupiter is in Sagittarius/Capricorn (9th/10th). A major authority and visibility peak: leadership role, public recognition and power.",
+  "byDomain": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "Steps into a top leadership or authority role, or achieves major public recognition, between 34.8 and 35.7.",
+    "basis": "Exalted Sun AD; Saturn and Jupiter both transiting the 9th/10th"
+   },
+   {
+    "domain": "reputation",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Public profile jumps; also scrutiny of ego and conduct.",
+    "basis": "Sun-Rahu in the lagna"
+   },
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "An issue with the father's health or the relationship with him.",
+    "basis": "Sun the karaka with Rahu"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Jupiter",
+    "fromAge": 35.06,
+    "toAge": 35.18,
+    "expect": "Peak recognition at 35.1-35.2."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Moon",
+  "fromAge": 35.66,
+  "toAge": 37.16,
+  "themes": "Rahu-Moon: transit Rahu over the natal Moon (35.4-36.9) and Saturn in the 10th from the lagna. A heavy workload and emotional turbulence, but property, home or a family expansion.",
+  "byDomain": [
+   {
+    "domain": "home",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Buys a major home or property, or sets up a new base, between 35.7 and 37.2.",
+    "basis": "Moon as 4th lord, exalted"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Anxiety, insomnia or public pressure on the mind.",
+    "basis": "Transit Rahu on the natal Moon"
+   },
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Continued high responsibility; institution-building.",
+    "basis": "Saturn transiting the 10th from the lagna"
+   },
+   {
+    "domain": "family",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Child birth or family expansion likely in this window if not before.",
+    "basis": "Moon AD; Jupiter transiting the 11th from the lagna"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Rahu",
+  "ad": "Mars",
+  "fromAge": 37.16,
+  "toAge": 38.21,
+  "themes": "Rahu-Mars: Mars is lagna lord and 8th lord. Transit Rahu crosses the lagna (36.9-38.6), and Saturn moves to Aquarius (11th) at 37.7. Aggressive moves, conflicts and bold bets, with strong gains from the Saturn 11th transit.",
+  "byDomain": [
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "A major financial gain (sale, investment, payout) between 37.2 and 38.2.",
+    "basis": "Saturn transiting the 11th; Mars the lagna lord in the 2nd"
+   },
+   {
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A sharp public conflict or legal fight.",
+    "basis": "Mars-Rahu; transit Rahu on the lagna"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "Injury, surgery or blood-pressure risk.",
+    "basis": "Mars as 8th lord; Rahu on the lagna"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Jupiter",
+  "ad": "Jupiter",
+  "fromAge": 38.21,
+  "toAge": 40.34,
+  "themes": "Jupiter MD opens: the 9th lord in the 10th with neecha bhanga, exalted in D9 and in own sign in D10. Transit Jupiter crosses the lagna and the Moon (38-40), and Saturn is in the 11th. One of the strongest windows in the chart: prestige, wealth, institutional and advisory stature, possibly philanthropy.",
+  "byDomain": [
+   {
+    "domain": "career",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "A clear status high point between 38.2 and 40.3: top-level role, a landmark deal or institutional honour.",
+    "basis": "Jupiter MD/AD with NBRY; transit Jupiter on the lagna and Moon; Saturn in the 11th"
+   },
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "Peak wealth gain of the life so far.",
+    "basis": "Saturn transiting the 11th (37.7-39.9); 11th SAV 34"
+   },
+   {
+    "domain": "network-mentors",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Becomes a mentor, patron or investor to others; sits on boards.",
+    "basis": "Jupiter as 9th lord"
+   },
+   {
+    "domain": "family",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "A child is born or the family expands, if not already.",
+    "basis": "Jupiter the karaka transiting the Moon"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Saturn",
+    "fromAge": 38.49,
+    "toAge": 38.83,
+    "expect": "Responsibility jump at 38.5-38.8."
+   },
+   {
+    "pd": "Venus",
+    "fromAge": 39.26,
+    "toAge": 39.61,
+    "expect": "Luxury and partnership high at 39.3-39.6."
+   }
+  ],
+  "notablyQuiet": [
+   "conflict-legal"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Jupiter",
+  "ad": "Saturn",
+  "fromAge": 40.34,
+  "toAge": 42.87,
+  "themes": "Jupiter-Saturn: Saturn is the 10th/11th lord in the 8th, aspecting natal Jupiter; they are conjunct in D9. Saturn enters Pisces (12th from the lagna) at 39.9 and Aries (12th from the Moon, sade sati) at 42.1. A career change at the top: a structural shift, leaving one throne for another, or regulatory or institutional pressure.",
+  "byDomain": [
+   {
+    "domain": "career",
+    "direction": "change",
+    "strength": 4,
+    "statement": "A big structural career change between 40.3 and 42.9: exit, merger, or a new role or entity, with the move into Saturn sade sati making the end of this window hard.",
+    "basis": "Jupiter-Saturn AD; 10th lord in the 8th; Saturn transiting the 12th then entering the lagna"
+   },
+   {
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Regulatory, tax or institutional conflict.",
+    "basis": "Saturn aspecting the 10th; transit Saturn in the 12th"
+   },
+   {
+    "domain": "money",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "Large money movements in both directions; heavy spending abroad or on new ventures.",
+    "basis": "Transit Saturn in the 12th"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Rahu",
+    "fromAge": 42.16,
+    "toAge": 42.54,
+    "expect": "Crisis onset at 42.2-42.5."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Jupiter",
+  "ad": "Mercury",
+  "fromAge": 42.87,
+  "toAge": 45.14,
+  "themes": "Jupiter-Mercury: Mercury is the 6th lord in the 12th, debilitated (NB, Harsha VRY). Sade sati phase 1, with Saturn over Aries (the lagna and Sun-Rahu) at about 42.1-45. A combative, high-pressure period with public attacks, legal or competitive battles, and health strain, but the VRY means adversaries ultimately lose ground.",
+  "byDomain": [
+   {
+    "domain": "conflict-legal",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "A major legal or public conflict between 42.9 and 45.1; the outcome is defensive success or settlement, not a total loss.",
+    "basis": "Mercury the 6th lord, VRY; Saturn transiting the lagna over Sun-Rahu"
+   },
+   {
+    "domain": "reputation",
+    "direction": "fall",
+    "strength": 4,
+    "statement": "Reputation takes visible damage (criticism, scandal or loss of standing) during this window.",
+    "basis": "Saturn transiting natal Sun-Rahu in the lagna; sade sati"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A significant health issue or medical intervention.",
+    "basis": "Saturn on the lagna; lagna SAV 20"
+   },
+   {
+    "domain": "career",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "The career loses momentum or the person steps back from a central role.",
+    "basis": "Sade sati on the lagna/12th from the Moon"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Mars",
+    "fromAge": 44.01,
+    "toAge": 44.14,
+    "expect": "Conflict peak at 44.0-44.1."
+   },
+   {
+    "pd": "Saturn",
+    "fromAge": 44.78,
+    "toAge": 45.14,
+    "expect": "Heaviest stretch at 44.8-45.1."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "medium"
+ },
+ {
+  "md": "Jupiter",
+  "ad": "Ketu",
+  "fromAge": 45.14,
+  "toAge": 46.07,
+  "themes": "Jupiter-Ketu, with Saturn entering Taurus over the natal Moon (sade sati peak, about 45-47.5). Detachment, loss and withdrawal; a partnership crisis (Ketu in the 7th); spiritual turn.",
+  "byDomain": [
+   {
+    "domain": "partnership",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Marital or business partnership strain or a separation between 45.1 and 46.1.",
+    "basis": "Ketu in the 7th as AD lord; Saturn over the Moon"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "change",
+    "strength": 3,
+    "statement": "A spiritual or philosophical turn; withdrawal from public life.",
+    "basis": "Ketu with Jupiter (spiritual)"
+   },
+   {
+    "domain": "health",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "A health dip.",
+    "basis": "Sade sati peak"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Jupiter",
+  "ad": "Venus",
+  "fromAge": 46.07,
+  "toAge": 48.74,
+  "themes": "Jupiter-Venus: two benefic lords (Venus 2nd/7th exalted). Saturn is still on the Moon (sade sati peak) and Jupiter is in Scorpio and beyond. Partial recovery: money and family are restored, and art, luxury and philanthropy return.",
+  "byDomain": [
+   {
+    "domain": "money",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Wealth stabilises or grows again between 46.1 and 48.7 after the mid-40s dip.",
+    "basis": "Venus as 2nd lord exalted"
+   },
+   {
+    "domain": "partnership",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "The relationship is repaired or a new partnership forms.",
+    "basis": "Venus as 7th lord; D9 Venus own sign"
+   },
+   {
+    "domain": "mind-worldview",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "Emotional heaviness lingers until sade sati ends at about 49-50.",
+    "basis": "Saturn on the Moon and then the 2nd from the Moon"
+   }
+  ],
+  "keyPratyantars": [
+   {
+    "pd": "Saturn",
+    "fromAge": 47.78,
+    "toAge": 48.21,
+    "expect": "Heavy stretch at 47.8-48.2."
+   }
+  ],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Jupiter",
+  "ad": "Sun",
+  "fromAge": 48.74,
+  "toAge": 49.54,
+  "themes": "Jupiter-Sun: the exalted Sun, as 5th lord, in the lagna. A short revival of authority and a public honour.",
+  "byDomain": [
+   {
+    "domain": "reputation",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Public recognition or an honour, or a return to visibility, between 48.7 and 49.5.",
+    "basis": "Sun exalted in the lagna; Jupiter-Sun are best friends"
+   },
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "An issue with the father's health or his loss is possible.",
+    "basis": "Sun the pitru karaka in a late-life dasha"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "low"
+ },
+ {
+  "md": "Jupiter",
+  "ad": "Moon",
+  "fromAge": 49.54,
+  "toAge": 50.87,
+  "themes": "Jupiter-Moon: the exalted Moon, as 4th lord. Sade sati ends around 49-50. Home, property and emotional settling; mother-related events.",
+  "byDomain": [
+   {
+    "domain": "home",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "Property acquisition or a home move between 49.5 and 50.9.",
+    "basis": "Moon as 4th lord exalted"
+   },
+   {
+    "domain": "family",
+    "direction": "mixed",
+    "strength": 2,
+    "statement": "An event concerning the mother's health.",
+    "basis": "Moon as matri karaka in a late-life dasha"
+   }
+  ],
+  "keyPratyantars": [],
+  "notablyQuiet": [
+   "education"
+  ],
+  "confidence": "low"
+ }
+]
