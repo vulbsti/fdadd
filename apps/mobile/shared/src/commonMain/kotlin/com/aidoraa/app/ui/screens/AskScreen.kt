@@ -393,6 +393,9 @@ fun ConversationsScreen(app: AppController) {
     val sessions by app.sessions.collectAsState()
     val personId by app.personId.collectAsState()
     val mine = sessions.filter { personId == null || it.profileId == null || it.profileId == personId }
+    // Fetch on open, not only from the button that pushes this screen: Android can rebuild the
+    // app straight onto this screen after reclaiming memory.
+    LaunchedEffect(Unit) { app.loadSessions() }
     PushedScreen {
         ScreenTitle("Past ", "conversations")
         if (mine.isEmpty()) T("Nothing here yet. Your conversations will appear here.", Type.muted())
@@ -401,7 +404,7 @@ fun ConversationsScreen(app: AppController) {
                 SettingsRow(
                     icon = null,
                     label = session.title.ifBlank { "Conversation" },
-                    sub = listOfNotNull(parseIsoMillis(session.updatedAt)?.let { relativeDay(it) }, session.lastMessagePreview?.take(80)).joinToString(" · "),
+                    sub = listOfNotNull(parseIsoMillis(session.updatedAt)?.let { relativeDay(it) }, session.lastMessagePreview?.let { plainPreview(it) }).joinToString(" · "),
                     divider = index < mine.lastIndex,
                 ) {
                     app.pop()
@@ -413,6 +416,10 @@ fun ConversationsScreen(app: AppController) {
         SmallButton("Start a new conversation") { app.chat.startNew(); app.pop(); app.selectTab(com.aidoraa.app.state.Tab.Ask) }
     }
 }
+
+/** A one-line preview without markdown symbols (headings, bold, bullets). */
+internal fun plainPreview(text: String, max: Int = 80): String =
+    markdownToAnnotated(text).text.replace(Regex("\\s+"), " ").trim().take(max)
 
 /** Height the tab bar takes above the navigation bar (68dp bar + 14dp margin + 10dp gap). */
 internal val TAB_BAR_SPACE = 92.dp
