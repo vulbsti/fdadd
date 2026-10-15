@@ -168,3 +168,25 @@ def test_bangalore_1991_regression(charts):
     chains = [r["chain"] for r in rows]
     assert chains[-2:] == ["Rahu-Mars-Moon", "Jupiter-Jupiter-Jupiter"]
     assert rows[-2]["pratyantar"]["end"] == rows[-1]["pratyantar"]["start"] == "2026-12-05"
+
+
+def test_boundary_day_belongs_to_the_new_period():
+    """Periods are half-open [start, end): on a boundary day the new period runs."""
+    from atros.dashas.timeline import chain_for_date
+
+    moon = 32.8718  # Taurus 2.87 deg sidereal (Krittika)
+    born = date(1985, 4, 22)
+    mds = generate_mahadasha_timeline(moon, born, 120)
+    for prev, nxt in zip(mds, mds[1:4]):
+        chain = chain_for_date(moon, born, nxt.start_date)
+        assert chain["mahadasha"].planet == nxt.planet
+        assert chain["antardasha"].start_date == nxt.start_date
+        assert chain["pratyantar"].start_date == nxt.start_date
+        before = chain_for_date(moon, born, date.fromordinal(nxt.start_date.toordinal() - 1))
+        assert before["mahadasha"].planet == prev.planet
+
+
+def test_window_excludes_period_ending_on_window_start():
+    md = generate_mahadasha_timeline(32.8718, date(1985, 4, 22), 120)[2]
+    rows = periods_for_window(32.8718, date(1985, 4, 22), md.end_date, md.end_date, "maha")
+    assert [r["mahadasha"]["start"] for r in rows] == [md.end_date.isoformat()]
