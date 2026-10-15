@@ -28,7 +28,7 @@ import os
 import re
 import shutil
 import sys
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 HOME = Path(os.environ.get('LIFE_READING_HOME', '/mnt/project-files/life-reading'))
@@ -92,10 +92,23 @@ def events(c):
     return load(c['dir'] / 'profile' / 'events.json')
 
 
+def when(e):
+    """The date an event is placed at: the middle of the span its precision allows."""
+    d = date.fromisoformat(e['date'])
+    p = e.get('precision', 'day')
+    if p in ('year', 'approx') and e['date'].endswith('-01-01'):
+        d = d.replace(month=7, day=2)
+    elif p == 'month' and d.day == 1:
+        d = d.replace(day=15)
+    elif p == 'season' and d.day == 1:
+        d = d + timedelta(days=45)
+    return d.isoformat()
+
+
 def write_life(c, dest, until, since=None):
     """Events dated before `until` (and on/after `since`), plus inner/ for years wholly before `until`."""
     dest.mkdir(parents=True, exist_ok=True)
-    ev = [e for e in events(c) if e['date'] < until and (since is None or e['date'] >= since)]
+    ev = [e for e in events(c) if when(e) < until and (since is None or when(e) >= since)]
     (dest / 'events.json').write_text(mask(c, json.dumps(ev, indent=1, ensure_ascii=False)))
     inner = dest / 'inner'
     inner.mkdir(exist_ok=True)
@@ -199,7 +212,7 @@ def leak_check(c, ch, path, seen_to=None):
     for e in events(c):
         body = mask(c, e['title'] + ' ' + e['story'])
         lower.update(re.findall(r'\b[a-z][a-z0-9.\'-]{3,}\b', body))
-        (past if e['date'] < cut else future).update(WORD.findall(body))
+        (past if when(e) < cut else future).update(WORD.findall(body))
     # Inner-life years the agent was shown count as known too.
     for f in (c['dir'] / 'profile' / 'inner').glob('*.md'):
         if f'{int(f.stem[:4])}-12-31' < cut:
@@ -253,7 +266,7 @@ def score_prep(cid, run, n):
         ev = [e for e in load(c['dir'] / 'hidden' / 'events.json') if e['date'] <= c['hiddenEnd']]
     else:
         shutil.copy(out / 'reading.md', ws / 'reading.md')
-        ev = [e for e in events(c) if ch['start'] <= e['date'] < ch['end']]
+        ev = [e for e in events(c) if ch['start'] <= when(e) < ch['end']]
     (ws / 'events.json').write_text(json.dumps(ev, indent=1, ensure_ascii=False))
     (ws / 'SCORER.md').write_text((PROMPTS / 'scorer.md').read_text())
     print(ws)
