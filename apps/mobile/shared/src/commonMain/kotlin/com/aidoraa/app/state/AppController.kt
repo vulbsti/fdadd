@@ -239,6 +239,7 @@ class AppController(
         val cachedLayout = PanelLayout.decode(cache.readString("layout"))
         if (cachedLayout != null) _layout.value = cachedLayout
         if (cached != null) applyBootstrap(cached, fromCache = true)
+        cache.read("sessions", ListSerializer(SessionSummaryDto.serializer()))?.let { _sessions.value = it }
         refresh()
     }
 
@@ -248,6 +249,7 @@ class AppController(
     /** Called when the app comes to the foreground; skips the call if the data is fresh. */
     fun onForeground() {
         if (nowMillis() - lastRefresh > 60_000) refresh()
+        else if (_sessions.value.isEmpty()) loadSessions()
     }
 
     fun refresh() {

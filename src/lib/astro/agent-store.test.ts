@@ -25,3 +25,21 @@ describe('AgentStore workflow attachment authority', () => {
     });
   });
 });
+
+describe('AgentStore database errors', () => {
+  it('rewords an unfinished profile setup for people', async () => {
+    const userRpc = vi.fn().mockResolvedValue({
+      data: null,
+      error: { code: 'AIT01', message: 'profile initialization is not complete' },
+    });
+    const store = new AgentStore(
+      { rpc: userRpc } as unknown as SupabaseClient,
+      { rpc: vi.fn() } as unknown as SupabaseClient,
+    );
+
+    await expect(store.createSession('profile-1')).rejects.toMatchObject({
+      code: 'invalid_transition',
+      message: 'Aidoraa is still getting to know this person. Please try again in a minute.',
+    });
+  });
+});

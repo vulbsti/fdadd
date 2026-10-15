@@ -2,6 +2,7 @@ package com.aidoraa.app.data
 
 import com.aidoraa.app.core.AppConfig
 import com.aidoraa.app.core.SecureStore
+import com.aidoraa.app.core.debugLog
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SessionManager
@@ -158,6 +159,7 @@ class AuthRepository(private val config: AppConfig, secureStore: SecureStore, sc
         } catch (cancel: CancellationException) {
             throw cancel
         } catch (error: Throwable) {
+            debugLog("AidoraaAuth", "Sign-in request failed", error)
             throw AuthException(friendlyAuthMessage(error.message))
         }
     }

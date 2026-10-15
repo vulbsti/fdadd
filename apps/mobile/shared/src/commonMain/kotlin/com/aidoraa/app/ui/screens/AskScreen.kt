@@ -12,6 +12,7 @@ import com.aidoraa.app.ui.components.SmallButton
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
@@ -77,7 +78,6 @@ import com.aidoraa.app.ui.components.Group
 import com.aidoraa.app.ui.components.Icon
 import com.aidoraa.app.ui.components.IconCircleButton
 import com.aidoraa.app.ui.components.Icons
-import com.aidoraa.app.ui.components.Pill
 import com.aidoraa.app.ui.components.PrimaryButton
 import com.aidoraa.app.ui.components.RevealText
 import com.aidoraa.app.ui.components.ScreenTitle
@@ -125,6 +125,11 @@ fun AskScreen(app: AppController) {
         }
     }
 
+    // Height of the floating question, chips and composer (plus the offset under them), so the
+    // last answer can always scroll fully clear of them instead of sitting underneath.
+    var overlayHeight by remember { mutableStateOf(190.dp) }
+    val density = androidx.compose.ui.platform.LocalDensity.current
+
     Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars)) {
         Column(Modifier.fillMaxSize()) {
             val returnTo by app.conversationReturn.collectAsState()
@@ -144,7 +149,7 @@ fun AskScreen(app: AppController) {
             LazyColumn(
                 state = list,
                 modifier = Modifier.fillMaxSize().blurSource(),
-                contentPadding = PaddingValues(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 190.dp),
+                contentPadding = PaddingValues(start = 18.dp, end = 18.dp, top = 12.dp, bottom = overlayHeight + 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 if (state.messages.isEmpty() && state.stream == null) {
@@ -205,12 +210,15 @@ fun AskScreen(app: AppController) {
         // keyboard. The tab bar hides while the keyboard is up (MainShell); a keyboard that reports
         // only a small inset (handwriting toolbar, floating mode) still can't push the composer
         // under the tab bar, because the larger of the two offsets wins.
-        val density = androidx.compose.ui.platform.LocalDensity.current
         val imeVisible = WindowInsets.isImeVisible
         val imeBottom = with(density) { WindowInsets.ime.getBottom(density).toDp() }
         val navBottom = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
         val composerBottom = composerOffset(imeBottom, navBottom, tabBarShown = !imeVisible)
-        Column(Modifier.align(Alignment.BottomCenter).padding(bottom = composerBottom)) {
+        Column(
+            Modifier.align(Alignment.BottomCenter)
+                .onSizeChanged { overlayHeight = with(density) { it.height.toDp() } + composerBottom }
+                .padding(bottom = composerBottom),
+        ) {
             val question = state.focusedQuestion
             val chips = when {
                 question != null && question.options.isNotEmpty() -> question.options.map { it.label }
@@ -218,16 +226,24 @@ fun AskScreen(app: AppController) {
                 else -> emptyList()
             }
             if (question != null) {
-                T(question.prompt, Type.body(13.5.sp, Palette.Ink2), Modifier.padding(horizontal = 22.dp, vertical = 6.dp), maxLines = 3)
+                T(
+                    question.prompt, Type.body(13.5.sp, Palette.Ink2),
+                    Modifier.padding(horizontal = 14.dp, vertical = 4.dp).fillMaxWidth()
+                        .floatingGlass(RoundedCornerShape(18.dp)).padding(horizontal = 14.dp, vertical = 10.dp),
+                    maxLines = 3,
+                )
             }
             if (chips.isNotEmpty()) {
+                val chipMaxWidth = with(density) { androidx.compose.ui.platform.LocalWindowInfo.current.containerSize.width.toDp() } - 28.dp
                 Row(
                     Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 14.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     chips.forEach { label ->
                         T(label, Type.body(13.5.sp),
-                            Modifier.floatingGlass(Pill).tap(label) { app.chat.send(label) }.padding(horizontal = 12.dp, vertical = 8.dp))
+                            Modifier.widthIn(max = chipMaxWidth).floatingGlass(RoundedCornerShape(18.dp))
+                                .tap(label) { app.chat.send(label) }.padding(horizontal = 12.dp, vertical = 8.dp),
+                            maxLines = 3)
                     }
                 }
             }
@@ -377,6 +393,9 @@ fun ConversationsScreen(app: AppController) {
     val sessions by app.sessions.collectAsState()
     val personId by app.personId.collectAsState()
     val mine = sessions.filter { personId == null || it.profileId == null || it.profileId == personId }
+    // Fetch on open, not only from the button that pushes this screen: Android can rebuild the
+    // app straight onto this screen after reclaiming memory.
+    LaunchedEffect(Unit) { app.loadSessions() }
     PushedScreen {
         ScreenTitle("Past ", "conversations")
         if (mine.isEmpty()) T("Nothing here yet. Your conversations will appear here.", Type.muted())
@@ -385,7 +404,7 @@ fun ConversationsScreen(app: AppController) {
                 SettingsRow(
                     icon = null,
                     label = session.title.ifBlank { "Conversation" },
-                    sub = listOfNotNull(parseIsoMillis(session.updatedAt)?.let { relativeDay(it) }, session.lastMessagePreview?.take(80)).joinToString(" · "),
+                    sub = listOfNotNull(parseIsoMillis(session.updatedAt)?.let { relativeDay(it) }, session.lastMessagePreview?.let { plainPreview(it) }).joinToString(" · "),
                     divider = index < mine.lastIndex,
                 ) {
                     app.pop()
@@ -397,6 +416,10 @@ fun ConversationsScreen(app: AppController) {
         SmallButton("Start a new conversation") { app.chat.startNew(); app.pop(); app.selectTab(com.aidoraa.app.state.Tab.Ask) }
     }
 }
+
+/** A one-line preview without markdown symbols (headings, bold, bullets). */
+internal fun plainPreview(text: String, max: Int = 80): String =
+    markdownToAnnotated(text).text.replace(Regex("\\s+"), " ").trim().take(max)
 
 /** Height the tab bar takes above the navigation bar (68dp bar + 14dp margin + 10dp gap). */
 internal val TAB_BAR_SPACE = 92.dp

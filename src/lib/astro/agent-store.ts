@@ -53,6 +53,12 @@ const PG_CONSTRAINT_HINTS: Record<string, AgentErrorCode> = {
   23514: 'invalid_request', // check_violation
 };
 
+/** Database messages that reach people verbatim, reworded for the app and the website. */
+const FRIENDLY_DB_MESSAGES: Record<string, string> = {
+  'profile initialization is not complete':
+    'Aidoraa is still getting to know this person. Please try again in a minute.',
+};
+
 function normalizeDbError(error: { code?: string; message?: string }): AgentStoreError {
   const code = error.code ?? '';
   if (code === 'PGRST202') {
@@ -64,7 +70,8 @@ function normalizeDbError(error: { code?: string; message?: string }): AgentStor
   }
   const mapped = PG_ERROR_CODES[code] ?? PG_CONSTRAINT_HINTS[code.split('')[0] === '2' ? code : ''];
   if (mapped) {
-    return new AgentStoreError(mapped, error.message ?? 'database error', error.message);
+    const message = (error.message && FRIENDLY_DB_MESSAGES[error.message]) ?? error.message ?? 'database error';
+    return new AgentStoreError(mapped, message, error.message);
   }
   return new AgentStoreError('internal', error.message ?? 'database error', error.message);
 }
