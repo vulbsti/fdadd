@@ -180,7 +180,7 @@ def collect(cid, run, n, step):
         shutil.rmtree(rd / 'notes')
     shutil.copytree(ws / 'notes', rd / 'notes')
     shutil.copytree(ws / 'notes', out / f'notes-after-{step}', dirs_exist_ok=True)
-    checks = {'leaks': leak_check(c, ch, out / name), 'dasha': dasha_check(c, out / name)}
+    checks = {'leaks': leak_check(c, ch, out / name, seen_to=ch['end'] if step == 'match' else None), 'dasha': dasha_check(c, out / name)}
     (out / f'checks-{step}.json').write_text(json.dumps(checks, indent=1))
     print(json.dumps({'chapter': slug(ch), 'step': step, 'leaks': len(checks['leaks']), 'dashaErrors': len(checks['dasha'])}))
 
@@ -191,10 +191,10 @@ COMMON = set(PLANETS) | {'Sept', 'India', 'America', 'United', 'States', 'Everyt
                          'Their', 'When', 'What', 'Where', 'With', 'From', 'After', 'Before', 'During', 'Expected', 'Lagna'}
 
 
-def leak_check(c, ch, path):
+def leak_check(c, ch, path, seen_to=None):
     """Proper names that first appear in the profile after this point and show up in the text."""
     text = Path(path).read_text()
-    cut = ch['start'] if ch['n'] != 'final' else c['cutoff']
+    cut = seen_to or (ch['start'] if ch['n'] != 'final' else c['cutoff'])
     past, future, lower = set(), set(), set()
     for e in events(c):
         body = mask(c, e['title'] + ' ' + e['story'])
