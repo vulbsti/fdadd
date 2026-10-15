@@ -1,0 +1,1198 @@
+{
+  "case": "sam-altman",
+  "variant": "named",
+  "run": "baseline-named",
+  "scoredAt": "2026-10-15T20:26:05.672Z",
+  "judged": true,
+  "metrics": {
+    "completed": "6/6",
+    "factsCorrect": 100,
+    "jargonOk": 50,
+    "shortHorizonFree": 100,
+    "futureLeaks": 0,
+    "identityLeaks": 0,
+    "anticipatedPct": 10,
+    "anticipatedOrPartialPct": 30,
+    "contradictedPct": 0,
+    "claimsHappenedPct": 70,
+    "checklistPassPct": 89,
+    "reasoningAgreesPct": 34
+  },
+  "questions": [
+    {
+      "id": "q-work-next-years",
+      "checks": {
+        "completed": true,
+        "words": 535,
+        "facts": [],
+        "jargonTerms": 6,
+        "jargonPer100Words": 1.1,
+        "jargonOk": false,
+        "shortHorizon": [],
+        "askedQuestion": false,
+        "questionHasControl": false,
+        "leakedFutureKnowledge": [],
+        "recognisedIdentity": [],
+        "toolsUsed": [
+          "person_state",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "grep",
+          "find",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "bash",
+          "read",
+          "grep",
+          "grep",
+          "read",
+          "bash"
+        ]
+      },
+      "judge": {
+        "checklist": [
+          {
+            "item": "life-terms",
+            "pass": false,
+            "quote": "You’re in Rahu–Mars. In your chart, Mars connects personal drive with both resources and major change",
+            "why": "The answer does translate some implications into work terms, but relies on unexplained astrology language and house references that may not make sense to someone unfamiliar with astrology."
+          },
+          {
+            "item": "specific-to-person",
+            "pass": true,
+            "quote": "OpenAI is where you’ve concentrated your working life, you’re worried about compute, money and culture, and you know you still spread your attention across too many boards and companies.",
+            "why": "It uses specific details from this person's work and concerns rather than offering a reading that could fit anyone with the same chart."
+          },
+          {
+            "item": "past-present-future",
+            "pass": true,
+            "quote": "Your history doesn’t suggest you lack the ability to lead; it suggests that your attention is the scarce resource.",
+            "why": "It connects the person's work history and current attention constraints to future leadership and organizational demands."
+          },
+          {
+            "item": "direction",
+            "pass": true,
+            "quote": "Make responsible scaling a capability of the organization, not a burden you carry personally.",
+            "why": "It gives a clear work focus and explains why: the mission and institutional demands could exceed what one person can sustainably carry."
+          },
+          {
+            "item": "certainty-stated",
+            "pass": true,
+            "quote": "Astrology is a lens, not a guarantee; your birth time is approximate, so I’d treat the dates as broad handover points rather than exact deadlines.",
+            "why": "It states uncertainty plainly and identifies the approximate birth time as a reason for caution."
+          },
+          {
+            "item": "one-testing-question",
+            "pass": true,
+            "quote": "The answer asks no question.",
+            "why": "It asks at most one question; zero questions meets the checklist requirement."
+          },
+          {
+            "item": "no-day-week-level",
+            "pass": true,
+            "quote": "I’d treat the dates as broad handover points rather than exact deadlines.",
+            "why": "It gives broad multi-year periods, not day- or week-level predictions."
+          }
+        ],
+        "anticipated": [
+          {
+            "eventId": "ev-080",
+            "verdict": "partial",
+            "quote": "your work gets more consequential over the next few years",
+            "why": "This anticipates a major positive career development, but the answer downplays public visibility and does not foresee ChatGPT's launch or its enormous public impact."
+          },
+          {
+            "eventId": "ev-081",
+            "verdict": "anticipated",
+            "quote": "decisions about capacity, financing, ownership",
+            "why": "The answer specifically points to financing and capacity decisions in the period leading into the investment."
+          },
+          {
+            "eventId": "ev-085",
+            "verdict": "missed",
+            "quote": "“bigger” looks more certain than “more famous.”",
+            "why": "It does not anticipate a high-profile public role or favorable reputation as a public voice on AI."
+          },
+          {
+            "eventId": "ev-094",
+            "verdict": "partial",
+            "quote": "a pressured, action-heavy stretch: decisions about capacity, financing, ownership, and who carries responsibility",
+            "why": "It anticipates pressure and major organizational decisions around this period, but not the opposite-direction career shock of being fired."
+          },
+          {
+            "eventId": "ev-095",
+            "verdict": "partial",
+            "quote": "decisions about capacity, financing, ownership, and who carries responsibility",
+            "why": "This broadly anticipates consequential leadership decisions, but not the specific weekend negotiations over his return."
+          },
+          {
+            "eventId": "ev-096",
+            "verdict": "partial",
+            "quote": "Put strong operators around the work, and define which decisions genuinely need you.",
+            "why": "It anticipates the importance of the team and leadership structure, but not the Microsoft offer or staff revolt supporting his return."
+          },
+          {
+            "eventId": "ev-097",
+            "verdict": "anticipated",
+            "quote": "career, purpose and leadership near the center of a new long chapter",
+            "why": "This broadly anticipates his continuing central leadership role and positive career trajectory, though it misses the firing-and-return sequence."
+          },
+          {
+            "eventId": "ev-103",
+            "verdict": "missed",
+            "quote": "governance, capital, risk, leadership succession",
+            "why": "General organizational risk is mentioned, but the answer does not anticipate a lawsuit or personal legal conflict."
+          },
+          {
+            "eventId": "ev-105",
+            "verdict": "partial",
+            "quote": "Build clear governance and safety decision-making",
+            "why": "It points toward governance changes, which fits the review and board developments, but does not foresee the investigation clearing his return or his rejoining the board."
+          },
+          {
+            "eventId": "ev-112",
+            "verdict": "missed",
+            "quote": "“bigger” looks more certain than “more famous.”",
+            "why": "It does not anticipate the public accusations and reputational dispute about his conduct toward the board."
+          },
+          {
+            "eventId": "ev-122",
+            "verdict": "partial",
+            "quote": "governance, capital, risk, leadership succession",
+            "why": "Leadership succession and organizational design are relevant to the departures, but the answer does not predict the loss of Murati and senior researchers."
+          },
+          {
+            "eventId": "ev-130",
+            "verdict": "missed",
+            "quote": "The answer focuses on work, institutions, and organizational design.",
+            "why": "It gives no indication of a family dispute or personal lawsuit."
+          },
+          {
+            "eventId": "ev-131",
+            "verdict": "anticipated",
+            "quote": "Get the compute and financing plan onto a credible, durable footing.",
+            "why": "This points in the direction of large-scale AI infrastructure and financing, matching the central substance of Stargate."
+          },
+          {
+            "eventId": "ev-143",
+            "verdict": "missed",
+            "quote": "Put strong operators around the work",
+            "why": "The answer advises building a strong team but does not anticipate a major acquisition or a new design partnership."
+          },
+          {
+            "eventId": "ev-152",
+            "verdict": "anticipated",
+            "quote": "serious organizational design: governance, capital, risk, leadership succession",
+            "why": "This directly anticipates a major organizational and governance restructuring, although it does not specify the eventual corporate form."
+          },
+          {
+            "eventId": "ev-157",
+            "verdict": "missed",
+            "quote": "Build clear governance and safety decision-making",
+            "why": "The advice concerns safety governance, but it does not predict a public safety-related failure, blame, or legal backlash."
+          },
+          {
+            "eventId": "ev-161",
+            "verdict": "missed",
+            "quote": "The chart’s tension is not “you’re not the right person.”",
+            "why": "The answer does not anticipate a major exposé challenging whether he can be trusted."
+          },
+          {
+            "eventId": "ev-163",
+            "verdict": "missed",
+            "quote": "The answer focuses on work, institutions, and organizational design.",
+            "why": "It makes no prediction about danger or violence at his home."
+          },
+          {
+            "eventId": "ev-164",
+            "verdict": "missed",
+            "quote": "The answer focuses on work, institutions, and organizational design.",
+            "why": "It makes no prediction about danger or violence at his home."
+          },
+          {
+            "eventId": "ev-165",
+            "verdict": "missed",
+            "quote": "governance, capital, risk, leadership succession",
+            "why": "General risk and governance are mentioned, but the answer does not anticipate a major lawsuit reaching a jury trial."
+          },
+          {
+            "eventId": "ev-167",
+            "verdict": "missed",
+            "quote": "The answer focuses on work, institutions, and organizational design.",
+            "why": "It does not predict the favorable legal outcome or a jury clearing him."
+          }
+        ],
+        "claims": [
+          {
+            "claim": "His work will become more consequential over the next few years, with a larger institutional mission.",
+            "verdict": "happened",
+            "eventIds": [
+              "ev-080",
+              "ev-081",
+              "ev-131",
+              "ev-143",
+              "ev-152"
+            ],
+            "why": "The later events show major growth in OpenAI's reach, financing, infrastructure ambitions, and organizational scale."
+          },
+          {
+            "claim": "The work is more likely to get bigger than to make him more famous.",
+            "verdict": "did-not-happen",
+            "eventIds": [
+              "ev-080",
+              "ev-085",
+              "ev-086",
+              "ev-131"
+            ],
+            "why": "His work did grow, but he also became a highly visible global figure, testified before the Senate, and repeatedly drew major public attention."
+          },
+          {
+            "claim": "The period through July 2023 will be pressured and action-heavy, involving capacity, financing, ownership, and responsibility.",
+            "verdict": "happened",
+            "eventIds": [
+              "ev-080",
+              "ev-081",
+              "ev-085"
+            ],
+            "why": "The launch, major investment, and public AI oversight role all brought rapid growth and consequential decisions in that period."
+          },
+          {
+            "claim": "From July 2023 to August 2025, career, purpose, and leadership will be central, with a large opportunity that is difficult to make work in practice.",
+            "verdict": "partly",
+            "eventIds": [
+              "ev-089",
+              "ev-094",
+              "ev-097",
+              "ev-105",
+              "ev-122",
+              "ev-131"
+            ],
+            "why": "Career and leadership were clearly central, with a major firing and return as well as rapid expansion; the answer does not anticipate the severity of the upheaval or the specific conflicts."
+          },
+          {
+            "claim": "From August 2025 to March 2028, emphasis will shift toward durable growth, governance, capital, risk, and succession.",
+            "verdict": "partly",
+            "eventIds": [
+              "ev-152",
+              "ev-157",
+              "ev-161",
+              "ev-165",
+              "ev-167"
+            ],
+            "why": "The restructuring and subsequent safety, reputation, and legal challenges make governance and risk salient, but the answer does not foresee the specific adverse events or their mixed outcomes."
+          },
+          {
+            "claim": "Behind-the-scenes capacity work will precede a more public phase.",
+            "verdict": "did-not-happen",
+            "eventIds": [
+              "ev-080",
+              "ev-085",
+              "ev-086",
+              "ev-131"
+            ],
+            "why": "The period included major public launches, Senate testimony, international appearances, and highly visible announcements rather than a clear low-visibility phase first."
+          }
+        ],
+        "reasoning": [],
+        "summary": "The answer gives a useful, personalized strategic focus on scaling OpenAI responsibly, but its broad institutional-growth forecast misses the defining career rupture and return, as well as the major legal and reputational conflicts. It also underestimates how publicly visible the work would become, despite accurately anticipating financing, infrastructure, and governance as central themes.",
+        "targets": [
+          "ev-080",
+          "ev-081",
+          "ev-085",
+          "ev-094",
+          "ev-095",
+          "ev-096",
+          "ev-097",
+          "ev-103",
+          "ev-105",
+          "ev-112",
+          "ev-122",
+          "ev-130",
+          "ev-131",
+          "ev-143",
+          "ev-152",
+          "ev-157",
+          "ev-161",
+          "ev-163",
+          "ev-164",
+          "ev-165",
+          "ev-167"
+        ]
+      }
+    },
+    {
+      "id": "q-rough-patch",
+      "checks": {
+        "completed": true,
+        "words": 446,
+        "facts": [],
+        "jargonTerms": 1,
+        "jargonPer100Words": 0.2,
+        "jargonOk": true,
+        "shortHorizon": [],
+        "askedQuestion": true,
+        "questionHasControl": true,
+        "leakedFutureKnowledge": [],
+        "recognisedIdentity": [],
+        "toolsUsed": [
+          "person_state",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "ls",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "ls",
+          "ls",
+          "find",
+          "find",
+          "bash",
+          "grep",
+          "read",
+          "bash",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "ask_person"
+        ]
+      },
+      "judge": {
+        "checklist": [
+          {
+            "item": "life-terms",
+            "pass": true,
+            "quote": "resources and responsibilities may feel especially personal and urgent",
+            "why": "It explains the astrological symbolism in ordinary language about money, responsibilities, stress, and relationships."
+          },
+          {
+            "item": "specific-to-person",
+            "pass": true,
+            "quote": "OpenAI’s compute and funding constraints, very concentrated personal investments, and your own sense that you take on too many roles",
+            "why": "These details tie the reading to this person's work, finances, and self-described overcommitment rather than to a generic chart."
+          },
+          {
+            "item": "direction",
+            "pass": true,
+            "quote": "reduce one commitment you don’t need to personally carry, and put a clear rule around your next major financial risk",
+            "why": "It gives concrete actions and connects them to the forecasted pressure around workload and financial risk."
+          },
+          {
+            "item": "certainty-stated",
+            "pass": true,
+            "quote": "this is a forecast to test against your life, not proof that something bad is already happening",
+            "why": "It states uncertainty plainly and distinguishes a chart-based forecast from evidence of an event already occurring."
+          },
+          {
+            "item": "no-day-week-level",
+            "pass": true,
+            "quote": "I’d treat these dates as a broad window rather than precise deadlines",
+            "why": "It uses broad date ranges and explicitly rejects precise deadlines; it makes no day- or week-level prediction."
+          }
+        ],
+        "anticipated": [
+          {
+            "eventId": "ev-094",
+            "verdict": "partial",
+            "quote": "Jupiter is tied to career and broader purpose in your chart, but its placement suggests growth may come with constraints, public responsibility, and costs.",
+            "why": "This broadly anticipates career pressure after July 2023, but it does not specifically foresee a sudden firing, and the forecast spans a much wider period."
+          },
+          {
+            "eventId": "ev-095",
+            "verdict": "missed",
+            "quote": "I wouldn’t assume that means instant relief",
+            "why": "The answer warns of continuing pressure but does not anticipate negotiations to return or the network response around the firing."
+          },
+          {
+            "eventId": "ev-103",
+            "verdict": "missed",
+            "quote": "Jupiter is tied to career and broader purpose in your chart",
+            "why": "This is a general career reading, not a forecast of a lawsuit or legal/reputational conflict."
+          },
+          {
+            "eventId": "ev-112",
+            "verdict": "missed",
+            "quote": "Speech and close relationships when you’re depleted",
+            "why": "The warning concerns the person's own speech in close relationships; it does not anticipate public allegations about candor or board conflict."
+          },
+          {
+            "eventId": "ev-122",
+            "verdict": "missed",
+            "quote": "Jupiter is tied to career and broader purpose in your chart",
+            "why": "It does not predict senior colleagues or researchers leaving, or a specific disruption to the person's network."
+          },
+          {
+            "eventId": "ev-130",
+            "verdict": "partial",
+            "quote": "Make deliberate room for Oliver and family; don’t let an exhausted workweek decide what those relationships mean.",
+            "why": "It flags possible strain in family or close relationships, but not a family lawsuit, and its near-term framing is far from the 2025 event."
+          },
+          {
+            "eventId": "ev-157",
+            "verdict": "missed",
+            "quote": "Astrology is a lens, not fate.",
+            "why": "There is no forecast of a safety-related controversy, legal fallout, or reputational crisis in 2026."
+          },
+          {
+            "eventId": "ev-161",
+            "verdict": "missed",
+            "quote": "public responsibility, and costs",
+            "why": "The broad mention of public responsibility does not anticipate a detailed investigative exposé or specific trust allegations."
+          },
+          {
+            "eventId": "ev-163",
+            "verdict": "missed",
+            "quote": "Protect sleep and recovery, and take persistent symptoms to a clinician",
+            "why": "This is health advice about stress, not a prediction of an attack on the person's home."
+          },
+          {
+            "eventId": "ev-164",
+            "verdict": "missed",
+            "quote": "I’m not predicting illness.",
+            "why": "The answer makes no forecast of physical danger or violence at home."
+          },
+          {
+            "eventId": "ev-165",
+            "verdict": "missed",
+            "quote": "Jupiter is tied to career and broader purpose in your chart",
+            "why": "It does not anticipate a jury trial or legal testimony about the person's management."
+          }
+        ],
+        "claims": [
+          {
+            "claim": "A demanding stretch is beginning and pressure will increase through July 7, 2023.",
+            "verdict": "partly",
+            "eventIds": [
+              "ev-080",
+              "ev-081",
+              "ev-082",
+              "ev-084",
+              "ev-085",
+              "ev-086"
+            ],
+            "why": "The period brought major career growth and public prominence, alongside some hostility and pressure; the timeline does not show a clearly dominant hard stretch through that date."
+          },
+          {
+            "claim": "From now through September 7, the period looks urgent and potentially harder to assess clearly.",
+            "verdict": "unclear",
+            "eventIds": [],
+            "why": "The supplied later-event timeline does not establish what the person's experience was during this specific 2022 window."
+          },
+          {
+            "claim": "October 28 through December 28 looks more like slow institutional or work burdens than a sudden blow.",
+            "verdict": "did-not-happen",
+            "eventIds": [
+              "ev-080"
+            ],
+            "why": "The listed major development in that window is ChatGPT's launch, a major success; no slow institutional or work burden is identified in the stored events."
+          },
+          {
+            "claim": "After July 7, 2023, pressure changes form, with career growth bringing constraints, public responsibility, and costs.",
+            "verdict": "partly",
+            "eventIds": [
+              "ev-094",
+              "ev-095",
+              "ev-097",
+              "ev-103",
+              "ev-112",
+              "ev-122"
+            ],
+            "why": "There was substantial career success and public responsibility, but also a firing, legal conflict, public criticism, and departures. The forecast is broad and does not identify those particular developments."
+          }
+        ],
+        "reasoning": [],
+        "summary": "The answer gives useful, personalized risk-management advice and appropriately states uncertainty, but its forecasts stay broad and mostly focus on financial, workload, and relationship strain. It does not anticipate the defining later developments: the CEO firing and return, lawsuits and public allegations, senior departures, or the later family and home-safety crises.",
+        "targets": [
+          "ev-094",
+          "ev-095",
+          "ev-103",
+          "ev-112",
+          "ev-122",
+          "ev-130",
+          "ev-157",
+          "ev-161",
+          "ev-163",
+          "ev-164",
+          "ev-165"
+        ]
+      }
+    },
+    {
+      "id": "q-personal-life",
+      "checks": {
+        "completed": true,
+        "words": 758,
+        "facts": [],
+        "jargonTerms": 3,
+        "jargonPer100Words": 0.4,
+        "jargonOk": false,
+        "shortHorizon": [],
+        "askedQuestion": true,
+        "questionHasControl": true,
+        "leakedFutureKnowledge": [],
+        "recognisedIdentity": [],
+        "toolsUsed": [
+          "person_state",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "grep",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "find",
+          "read",
+          "grep",
+          "grep",
+          "read",
+          "read",
+          "ls",
+          "ls",
+          "ls",
+          "bash",
+          "read",
+          "read",
+          "read",
+          "read",
+          "bash",
+          "bash",
+          "bash",
+          "read",
+          "ask_person"
+        ]
+      },
+      "judge": {
+        "checklist": [
+          {
+            "item": "life-terms",
+            "pass": true,
+            "quote": "That looks more like a question of how to make room for both than a verdict about the relationship.",
+            "why": "The answer explains the chart in ordinary language and connects it to understandable concerns about work, privacy, and family relationships, despite some astrology-specific terms."
+          },
+          {
+            "item": "specific-to-person",
+            "pass": true,
+            "quote": "you’ve described Oliver as the most stable, most your own part of life, while also wondering whether you’re giving the relationship enough room.",
+            "why": "It uses personal details about Oliver, the ranch, the user's mother and brothers, Annie, and the user's grief over their father."
+          },
+          {
+            "item": "certainty-stated",
+            "pass": true,
+            "quote": "The broader reading above is more dependable than that level of precision.",
+            "why": "It states a clear limitation: birth-time uncertainty makes fine relationship timing less dependable, and it distinguishes broad themes from claims about specific milestones."
+          },
+          {
+            "item": "no-day-week-level",
+            "pass": true,
+            "quote": "May through December 2024 is a useful period to look concretely at family priorities, time, money and the way you talk about what matters.",
+            "why": "The answer gives month-level and multi-year windows, not day- or week-level predictions."
+          }
+        ],
+        "anticipated": [
+          {
+            "eventId": "ev-101",
+            "verdict": "missed",
+            "quote": "I wouldn’t use it to call marriage or children timing.",
+            "why": "The answer does not point to a marriage or another positive partnership milestone around 2024; it explicitly declines to predict marriage timing."
+          },
+          {
+            "eventId": "ev-110",
+            "verdict": "missed",
+            "quote": "The more useful question is what supportive contact and boundaries are possible without forcing an outcome.",
+            "why": "It does not anticipate a shared financial or philanthropic commitment with the partner."
+          },
+          {
+            "eventId": "ev-130",
+            "verdict": "missed",
+            "quote": "I wouldn’t use astrology to promise reconciliation; the more useful question is what supportive contact and boundaries are possible without forcing an outcome.",
+            "why": "It notes strain and boundaries with Annie but does not anticipate a lawsuit or a family conflict escalating in the 2025 window."
+          },
+          {
+            "eventId": "ev-135",
+            "verdict": "missed",
+            "quote": "I wouldn’t use it to call marriage or children timing.",
+            "why": "The answer explicitly avoids forecasting children and gives no positive family-expansion prediction for 2025."
+          },
+          {
+            "eventId": "ev-137",
+            "verdict": "missed",
+            "quote": "That can mean serious conversations and renegotiating responsibilities; it is not a prediction of loss or separation.",
+            "why": "The answer forecasts possible conversations about responsibilities, not a legal response or counterclaims in the family dispute."
+          },
+          {
+            "eventId": "ev-160",
+            "verdict": "missed",
+            "quote": "I’d watch how work responsibilities, shared resources, trust and family-business boundaries interact—especially where your brothers are concerned.",
+            "why": "This is a broad family-and-obligations theme, but it does not point to a lawsuit or a court ruling in 2026."
+          },
+          {
+            "eventId": "ev-163",
+            "verdict": "missed",
+            "quote": "Keep a dependable rhythm with Oliver, and set specific time for your mom and brothers rather than relying on good intentions.",
+            "why": "The answer gives relationship advice but does not anticipate danger or an attack at the home."
+          },
+          {
+            "eventId": "ev-164",
+            "verdict": "missed",
+            "quote": "The more credible risk is quieter: work keeps expanding, and the people who feel most secure to you get whatever time is left over.",
+            "why": "The predicted risk is lack of time for loved ones, not violence or shots fired at the home."
+          }
+        ],
+        "claims": [
+          {
+            "claim": "Work will keep expanding, leaving the people closest to the user whatever time remains.",
+            "verdict": "unclear",
+            "eventIds": [
+              "ev-101",
+              "ev-110",
+              "ev-135"
+            ],
+            "why": "The later timeline shows major work developments alongside marriage, a shared pledge, and a child, but it does not establish whether work actually displaced time with family."
+          },
+          {
+            "claim": "The relationship's closeness will need to be actively protected from work and public demands.",
+            "verdict": "unclear",
+            "eventIds": [
+              "ev-101",
+              "ev-110",
+              "ev-135"
+            ],
+            "why": "The relationship later includes marriage, a shared pledge, and a child, but the timeline does not say whether their closeness was strained or required the specific protections described."
+          },
+          {
+            "claim": "From July 2023 to August 2025, work will not simply recede and work-versus-private-life balance will remain a central negotiation.",
+            "verdict": "unclear",
+            "eventIds": [
+              "ev-101",
+              "ev-110",
+              "ev-135"
+            ],
+            "why": "The timeline documents substantial career activity and major personal milestones in this period, but does not report the private-life balance or whether it remained a central negotiation."
+          },
+          {
+            "claim": "From August 2025 to March 2028, work responsibilities, shared resources, trust, and family-business boundaries will interact, with possible serious conversations and renegotiation.",
+            "verdict": "partly",
+            "eventIds": [
+              "ev-130",
+              "ev-137",
+              "ev-160"
+            ],
+            "why": "A serious family conflict and legal dispute with the user's sister, followed by counterclaims and a court ruling, did occur within the stated period. The answer does not anticipate that dispute specifically, and its focus on brothers and family-business boundaries does not match the recorded events."
+          }
+        ],
+        "reasoning": [],
+        "summary": "The answer is personal and appropriately cautious, but it misses the clearest later developments in the requested area: marriage, having a child, and a major legal conflict with the user's sister. Its broad predictions about work competing with private life and family responsibilities do not identify those events, and much of their outcome is not measurable from the timeline.",
+        "targets": [
+          "ev-101",
+          "ev-110",
+          "ev-130",
+          "ev-135",
+          "ev-137",
+          "ev-160",
+          "ev-163",
+          "ev-164"
+        ]
+      }
+    },
+    {
+      "id": "q-dasha-now",
+      "checks": {
+        "completed": true,
+        "words": 47,
+        "facts": [
+          {
+            "check": "mahadasha-now",
+            "expected": "Rahu",
+            "pass": true
+          },
+          {
+            "check": "antardasha-now",
+            "expected": "Mars",
+            "pass": true
+          },
+          {
+            "check": "next-mahadasha-start",
+            "expected": "Jupiter from 2023-07-07",
+            "pass": true
+          }
+        ],
+        "jargonTerms": 8,
+        "jargonPer100Words": 17,
+        "jargonOk": true,
+        "shortHorizon": [],
+        "askedQuestion": false,
+        "questionHasControl": false,
+        "leakedFutureKnowledge": [],
+        "recognisedIdentity": [],
+        "toolsUsed": [
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "person_state"
+        ]
+      },
+      "judge": {
+        "checklist": [
+          {
+            "item": "facts-from-stored-timeline",
+            "pass": true,
+            "quote": "you’re in Rahu mahadasha – Mars antardasha – Mars pratyantardasha",
+            "why": "This matches the stored timeline for June 30, 2022, including the current periods."
+          },
+          {
+            "item": "life-terms",
+            "pass": false,
+            "quote": "Rahu mahadasha – Mars antardasha – Mars pratyantardasha",
+            "why": "It gives the technical astrology labels without explaining them in terms understandable to someone unfamiliar with astrology."
+          },
+          {
+            "item": "need-behind-question",
+            "pass": true,
+            "quote": "The next change is July 11, 2022... The larger period, Rahu–Mars, continues until July 7, 2023",
+            "why": "It directly answers which period is current and when the next and larger-period changes occur."
+          }
+        ],
+        "anticipated": [],
+        "claims": [
+          {
+            "claim": "The pratyantardasha changes from Mars to Rahu on July 11, 2022.",
+            "verdict": "unclear",
+            "eventIds": [],
+            "why": "No later events are supplied to verify whether this change occurred."
+          },
+          {
+            "claim": "Rahu mahadasha ends and Jupiter mahadasha begins on July 7, 2023.",
+            "verdict": "unclear",
+            "eventIds": [],
+            "why": "No later events are supplied to verify whether this change occurred."
+          }
+        ],
+        "reasoning": [],
+        "summary": "The answer accurately reports the stored dasha periods and their change dates, and directly addresses the question. Its main shortcoming is that it relies on astrology terminology without explaining it in everyday language.",
+        "targets": []
+      }
+    },
+    {
+      "id": "q-why-so-far",
+      "checks": {
+        "completed": true,
+        "words": 836,
+        "facts": [],
+        "jargonTerms": 7,
+        "jargonPer100Words": 0.8,
+        "jargonOk": false,
+        "shortHorizon": [],
+        "askedQuestion": false,
+        "questionHasControl": false,
+        "leakedFutureKnowledge": [],
+        "recognisedIdentity": [],
+        "toolsUsed": [
+          "read",
+          "read",
+          "read",
+          "read",
+          "person_state",
+          "read",
+          "read",
+          "read",
+          "find",
+          "find",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "ls",
+          "ls",
+          "read",
+          "read",
+          "read",
+          "read",
+          "grep",
+          "read"
+        ]
+      },
+      "judge": {
+        "checklist": [
+          {
+            "item": "life-terms",
+            "pass": true,
+            "quote": "you turned isolation into self-reliance, self-reliance into unusual competence, and competence into a life of increasing scale",
+            "why": "It explains the life pattern in ordinary language; astrology is presented as a symbolic lens rather than assumed knowledge."
+          },
+          {
+            "item": "specific-to-person",
+            "pass": true,
+            "quote": "After Loopt, you noticed that helping many founders felt better suited to you than running one company. Then you expanded YC; later, you took on the work of building OpenAI.",
+            "why": "It uses particular events and choices from this person's history, not just chart-based generalities."
+          },
+          {
+            "item": "past-present-future",
+            "pass": true,
+            "quote": "The next piece of understanding may be less about finding another reason you’re built for consequential work, and more about noticing what that work has allowed you not to stop and feel.",
+            "why": "It connects early isolation and later work patterns to a present reflection and a future direction, though it does not forecast specific future events."
+          },
+          {
+            "item": "misses-explained",
+            "pass": true,
+            "quote": "I wouldn’t use astrology to explain your father’s death or to claim that any of these events were fated.",
+            "why": "It explicitly limits what the chart can explain and does not force a chart-based explanation onto a major loss."
+          },
+          {
+            "item": "certainty-stated",
+            "pass": true,
+            "quote": "I’d call that a suggestive correspondence, not an explanation of why those losses happened.",
+            "why": "It states the interpretation's limits in plain language, distinguishing a suggestive timing fit from causal certainty."
+          }
+        ],
+        "anticipated": [],
+        "claims": [],
+        "reasoning": [
+          {
+            "goldId": "rule-01",
+            "verdict": "absent",
+            "quote": "The broad timing also fits strikingly, though it doesn’t prove causation",
+            "why": "It discusses past dasha timing, but makes no claim about career strength in Jupiter, Mercury, or Venus periods."
+          },
+          {
+            "goldId": "rule-02",
+            "verdict": "agrees",
+            "quote": "Saturn is tied to career and gains but placed in the house associated with upheaval and restructuring.",
+            "why": "This matches the restructuring interpretation and applies it to the Loopt decline and sale; it does not spell out the later-upgrade pattern."
+          },
+          {
+            "goldId": "rule-03",
+            "verdict": "absent",
+            "quote": "Rahu–Saturn (August 2010 to June 2013) overlaps Loopt’s grinding decline, its sale, and the end of your relationship with Nick.",
+            "why": "It notes the overlap but does not identify the Saturn transit through the 7th as the timing mechanism or distinguish that from Ketu periods."
+          },
+          {
+            "goldId": "rule-04",
+            "verdict": "agrees",
+            "quote": "the computer, the school, supportive parents, a teacher who took you seriously, and access to Stanford and YC.",
+            "why": "It recognizes people and institutions opening doors, consistent with patrons and sponsors as a channel for career progress."
+          },
+          {
+            "goldId": "rule-05",
+            "verdict": "absent",
+            "quote": "That resembles the combination you describe: private intensity, direct speech, and a life where ideas become ventures and capital.",
+            "why": "It mentions capital only generally and does not explain financial swings as institutional fundraising, other people's money, or high-risk deployments."
+          },
+          {
+            "goldId": "rule-06",
+            "verdict": "absent",
+            "quote": "You worked through the end of Loopt and the breakup with Nick",
+            "why": "It mentions a relationship ending but does not discuss the private, non-conventional partnership pattern, foreign partners, or marriage."
+          },
+          {
+            "goldId": "rule-07",
+            "verdict": "agrees",
+            "quote": "I wouldn’t use astrology to explain your father’s death",
+            "why": "This is consistent with the gold caution against using the chart to make unsupported health or family predictions."
+          },
+          {
+            "goldId": "rule-08",
+            "verdict": "absent",
+            "quote": "The broad timing also fits strikingly, though it doesn’t prove causation",
+            "why": "It does not discuss withdrawal periods, low-visibility building, delegation, or limits on forecasting public recognition."
+          },
+          {
+            "goldId": "rule-09",
+            "verdict": "absent",
+            "quote": "Rahu’s long period began in 2005, just as your unconventional, technology-driven public rise began.",
+            "why": "It names a dasha transition but does not discuss seam windows, timing uncertainty, or birth-time sensitivity."
+          },
+          {
+            "goldId": "rule-10",
+            "verdict": "contradicts",
+            "quote": "the Moon period covered much of childhood; Mars covered your adolescence, coming out publicly, Stanford, and the beginning of Loopt",
+            "why": "It presents childhood and adolescent periods as a striking timing fit, while the gold rule says those childhood periods cannot be tested from the record."
+          },
+          {
+            "goldId": "rule-11",
+            "verdict": "absent",
+            "quote": "You also learned early that saying the true thing aloud can change a room.",
+            "why": "It recounts a public stand but does not connect pressure on the Moon to outward confrontation or family turbulence."
+          },
+          {
+            "goldId": "rule-12",
+            "verdict": "absent",
+            "quote": "Within that, Rahu–Saturn (August 2010 to June 2013) overlaps Loopt’s grinding decline",
+            "why": "It does not make or evaluate any pratyantar-level timing claim."
+          },
+          {
+            "goldId": "rule-13",
+            "verdict": "absent",
+            "quote": "Your exalted Moon sits with Mars in the 2nd house, linking drive and feeling with family, values, speech, and resources.",
+            "why": "It does not discuss property or the specific role of Moon activation in property timing."
+          },
+          {
+            "goldId": "nr-01a",
+            "verdict": "agrees",
+            "quote": "an exalted Sun in Aries in the 1st house is traditionally read as strong self-direction and leadership; Rahu there adds an unconventional, amplifying quality.",
+            "why": "This directly matches the reading of a self-directed, ambitious leader drawn to unconventional arenas, and the answer supports it with the person's choices and career."
+          },
+          {
+            "goldId": "nr-01c",
+            "verdict": "absent",
+            "quote": "Your school assembly is an early version of a pattern that shows up later: you see a large problem, form a strong view, and accept the risk of acting on it.",
+            "why": "It describes bold public action but does not address a polarizing public image or recurring friction with authority."
+          },
+          {
+            "goldId": "nr-02a",
+            "verdict": "absent",
+            "quote": "a life where ideas become ventures and capital.",
+            "why": "It does not discuss wealth through initiative, deal-making, sharp gains and losses, or money as a recurring preoccupation."
+          },
+          {
+            "goldId": "nr-02c",
+            "verdict": "absent",
+            "quote": "Your drive mattered enormously, but it had openings to work through.",
+            "why": "It recognizes help and opportunity but does not connect wealth to other people's capital or the 8th lord in the 2nd."
+          },
+          {
+            "goldId": "nr-03c",
+            "verdict": "absent",
+            "quote": "Your exalted Moon sits with Mars in the 2nd house, linking drive and feeling with family, values, speech, and resources.",
+            "why": "It does not discuss owning property, real estate as wealth, or the home-base reading."
+          },
+          {
+            "goldId": "nr-04a",
+            "verdict": "agrees",
+            "quote": "You’ve repeatedly described doing best when you can learn across many things, help other builders, or make a system larger",
+            "why": "The answer supports the broad-synthesis and cross-disciplinary strength in this reading, though it does not discuss conventional schooling or the Mercury/Venus placements."
+          },
+          {
+            "goldId": "nr-04b",
+            "verdict": "absent",
+            "quote": "Your instinct to act on what you believe has changed institutions; it can also outrun listening.",
+            "why": "It does not discuss competitors, lawsuits, or crises ending in the person's favor."
+          },
+          {
+            "goldId": "nr-05b",
+            "verdict": "absent",
+            "quote": "the end of Loopt and the breakup with Nick",
+            "why": "It mentions an ended relationship but does not discuss delayed marriage, later stable partnership, or the chart's partnership reading."
+          },
+          {
+            "goldId": "nr-05c",
+            "verdict": "absent",
+            "quote": "private intensity, direct speech, and a life where ideas become ventures and capital.",
+            "why": "It does not address lavish spending or money flowing out on comfort, travel, art, and luxury."
+          },
+          {
+            "goldId": "nr-06b",
+            "verdict": "agrees",
+            "quote": "Later, you found people and places—Ms. Kepchar, Stanford, YC—that took your interest in technology seriously.",
+            "why": "It describes mentors and institutions as important to the career path, consistent with the patron-guided career reading."
+          },
+          {
+            "goldId": "nr-07a",
+            "verdict": "agrees",
+            "quote": "In your chart Saturn is tied to career and gains but placed in the house associated with upheaval and restructuring.",
+            "why": "This directly matches the career-through-crisis and restructuring interpretation, and the answer relates it to the Loopt decline."
+          },
+          {
+            "goldId": "nr-07b",
+            "verdict": "absent",
+            "quote": "And luck is part of the explanation, not a footnote.",
+            "why": "It discusses luck and openings but not delayed gains through other people's capital or a serious financial crisis before lasting wealth."
+          },
+          {
+            "goldId": "nr-08a",
+            "verdict": "agrees",
+            "quote": "Rahu’s long period began in 2005, just as your unconventional, technology-driven public rise began.",
+            "why": "This matches the unconventional technology rise and visibility associated with Rahu's period."
+          },
+          {
+            "goldId": "nr-08b",
+            "verdict": "absent",
+            "quote": "the end of Loopt and the breakup with Nick; the YC identity changing",
+            "why": "It notes relationship and institutional endings but does not interpret them through Ketu in the 7th or predict unstable partnerships."
+          },
+          {
+            "goldId": "nr-10a",
+            "verdict": "agrees",
+            "quote": "Then you expanded YC; later, you took on the work of building OpenAI.",
+            "why": "It recognizes high-achievement institution-building and leadership, matching the substance of the D10 career reading."
+          },
+          {
+            "goldId": "nr-10b",
+            "verdict": "absent",
+            "quote": "Your attraction to AI, in particular, wasn’t a sudden career move",
+            "why": "It mentions knowledge and technology work but not the finance, advisory, creative, or media career reading."
+          },
+          {
+            "goldId": "nr-10c",
+            "verdict": "absent",
+            "quote": "You’ve repeatedly described doing best when you can learn across many things, help other builders, or make a system larger",
+            "why": "It describes broad interests and supporting builders, but does not identify parallel roles such as investor, operator, and public voice."
+          },
+          {
+            "goldId": "nr-11a",
+            "verdict": "agrees",
+            "quote": "the outside story look like one continuous ascent, while the inside story includes abrupt endings",
+            "why": "This captures high attainment alongside dramatic reversals, the main substance of the reading."
+          },
+          {
+            "goldId": "nr-11b",
+            "verdict": "agrees",
+            "quote": "a life of increasing scale",
+            "why": "The answer depicts achievement that is not merely notable but increasingly consequential, consistent with the gold refutation of a merely upper-middle outcome."
+          },
+          {
+            "goldId": "nr-12b",
+            "verdict": "absent",
+            "quote": "You’ve named it yourself: the computer, the school, supportive parents, a teacher who took you seriously, and access to Stanford and YC.",
+            "why": "These are described as personal opportunities, not as sudden events, other people's money, or research and occult interests."
+          },
+          {
+            "goldId": "nr-13b",
+            "verdict": "absent",
+            "quote": "a life where ideas become ventures and capital.",
+            "why": "It does not discuss investing as a central lifelong theme or bold speculation."
+          },
+          {
+            "goldId": "nr-15c",
+            "verdict": "agrees",
+            "quote": "Then you expanded YC; later, you took on the work of building OpenAI.",
+            "why": "The account describes substantial achievements before the Jupiter period, consistent with the gold rejection of a late-bloomer reading."
+          }
+        ],
+        "summary": "The answer is personal, clear, and careful about not treating astrology as fate; it connects specific past experiences to a useful present-day reflection. Its biggest gap from the gold is that it leaves most of the chart’s validated career, money, and relationship patterns unexplored, and it overstates how testable the childhood-period timing is.",
+        "targets": []
+      }
+    },
+    {
+      "id": "q-what-holds-me-back",
+      "checks": {
+        "completed": true,
+        "words": 673,
+        "facts": [],
+        "jargonTerms": 2,
+        "jargonPer100Words": 0.3,
+        "jargonOk": true,
+        "shortHorizon": [],
+        "askedQuestion": true,
+        "questionHasControl": true,
+        "leakedFutureKnowledge": [],
+        "recognisedIdentity": [],
+        "toolsUsed": [
+          "read",
+          "read",
+          "read",
+          "read",
+          "person_state",
+          "ls",
+          "read",
+          "read",
+          "read",
+          "grep",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "ask_person"
+        ]
+      },
+      "judge": {
+        "checklist": [
+          {
+            "item": "life-terms",
+            "pass": true,
+            "quote": "You’re a systems-minded builder with a strong appetite for consequential problems.",
+            "why": "It describes the trait in everyday language. The astrology is also presented as a secondary lens, not as something the reader must know to understand the reading."
+          },
+          {
+            "item": "specific-to-person",
+            "pass": true,
+            "quote": "You’ve said you handled your father’s death by working, and aren’t sure you properly grieved.",
+            "why": "This uses a personal life detail, alongside examples such as Loopt and the user's reflections on taking on too much."
+          },
+          {
+            "item": "evidence-from-their-life",
+            "pass": true,
+            "quote": "You’ve also said that in practice you spread yourself too thin—across boards, companies, and bets.",
+            "why": "The answer grounds its claim about divided attention in the person's reported behavior rather than relying only on chart interpretation."
+          },
+          {
+            "item": "one-testing-question",
+            "pass": false,
+            "quote": "I’m asking the question below because the answer changes what would help most: if the bigger problem is too many commitments, the work is about cutting scope; if it’s emotional avoidance, the work is about making room for what busyness is helping you carry.",
+            "why": "It explains a useful distinction but never actually asks the reader a question or gives them a way to answer."
+          }
+        ],
+        "anticipated": [],
+        "claims": [
+          {
+            "claim": "Keeping too many important commitments will divide attention and postpone the life the person wants to make room for.",
+            "verdict": "unclear",
+            "eventIds": [],
+            "why": "This is a forward-looking tendency, but no later events are supplied to assess whether it happened."
+          },
+          {
+            "claim": "Using work to stay functional through painful experiences can leave less room for grief, rest, or closeness.",
+            "verdict": "unclear",
+            "eventIds": [],
+            "why": "The answer frames this as a possible consequence, and no later events are supplied to assess it."
+          }
+        ],
+        "reasoning": [],
+        "summary": "The answer gives a grounded, personal account of overcommitment and carrying emotional pain through work, but the gold traits emphasize force of will, deal-closing, and escalating ambition more than these proposed blockers. It also misses several important counterbalancing traits in the gold, especially inconsistent candor and abrupt conflict patterns, and it ends by promising a question without asking one.",
+        "targets": []
+      }
+    }
+  ]
+}

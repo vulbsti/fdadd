@@ -29,7 +29,10 @@ Weak (after-the-fact) explanations are allowed but labelled.
 
 ## Running it
 
-Needs `OPENCODE_API_KEY` (the production model key) and, once per container:
+Needs `OPENCODE_API_KEY` (the production model key) and, once per containerIn a Claude cloud session the agent proxy injects the key for opencode.ai, so
+set `OPENCODE_API_KEY` to any placeholder and `NODE_USE_ENV_PROXY=1` (Node's
+`fetch` skips the proxy otherwise and the provider answers 401). Once per
+container:
 
 ```bash
 eval/setup.sh

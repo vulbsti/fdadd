@@ -112,7 +112,7 @@ Output schema:
 "anticipated": one entry for EACH target event listed. "anticipated" means the answer pointed to that kind of development (domain + direction) in roughly that time window, in any wording; "partial" = right domain or direction but not both, or timing off by more than a year; "contradicted" = the answer predicted the opposite.
 "reasoning": only when gold rules/readings are given; one entry per gold item.`;
 
-async function judge(question, answer) {
+async function judge(question, answer, attempt = 1) {
   const key = process.env.OPENCODE_API_KEY?.trim() || process.env.OPENGO_API?.trim();
   if (!key) throw new Error('OPENCODE_API_KEY is not set; run with --no-judge for code checks only.');
   const window = question.window ?? [asOf, asOf];
@@ -131,16 +131,32 @@ async function judge(question, answer) {
     targetEvents: targets.map(({ id, date, title, description, domains, valence, magnitude }) => ({ id, date, title, description, domains, valence, magnitude })),
     allLaterEvents: holdout, goldReasoning, goldTraits, answer,
   };
+  // Streamed: the provider cuts off non-streamed responses that take longer than about 30 s.
   const response = await fetch('https://opencode.ai/zen/go/v1/responses', {
-    method: 'POST', headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ model: process.env.JUDGE_MODEL ?? 'gpt-6-luna', reasoning: { effort: 'medium' }, max_output_tokens: 16000,
+    method: 'POST', headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json', 'x-opencode-session': `judge-${kase.id}-${question.id}-${Date.now()}` },
+    body: JSON.stringify({ model: process.env.JUDGE_MODEL ?? 'gpt-6-luna', reasoning: { effort: 'medium' }, max_output_tokens: 16000, stream: true, text: { format: { type: 'json_object' } },
       input: [{ role: 'system', content: RUBRIC }, { role: 'user', content: JSON.stringify(payload) }] }),
     signal: AbortSignal.timeout(300_000),
   });
   if (!response.ok) throw new Error(`judge ${response.status}: ${(await response.text()).slice(0, 300)}`);
-  const body = await response.json();
-  const text = (body.output ?? []).flatMap((o) => o.type === 'message' ? o.content : []).filter((c) => c.type === 'output_text').map((c) => c.text).join('');
-  const parsed = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
+  let text = '';
+  let buffer = '';
+  for await (const chunk of response.body.pipeThrough(new TextDecoderStream())) {
+    buffer += chunk;
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data:')) continue;
+      const event = JSON.parse(line.slice(5).trim() || 'null');
+      if (event?.type === 'response.output_text.delta') text += event.delta;
+      if (event?.type === 'response.failed' || event?.type === 'error') throw new Error(`judge stream: ${JSON.stringify(event).slice(0, 300)}`);
+    }
+  }
+  let parsed;
+  try { parsed = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1)); } catch (error) {
+    if (attempt < 3) return judge(question, answer, attempt + 1);
+    throw error;
+  }
   return { ...parsed, targets: targets.map((t) => t.id) };
 }
 
