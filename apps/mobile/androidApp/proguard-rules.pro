@@ -53,3 +53,8 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
+
+# --- Diagnostics: debugLog() is for debug builds only; drop every call in release ---
+-assumenosideeffects class com.aidoraa.app.core.DebugLog_androidKt {
+    void debugLog(...);
+}
