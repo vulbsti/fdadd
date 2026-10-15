@@ -232,7 +232,9 @@ def dasha_check(c, path):
         nxt = pat.search(near)
         near = near[:nxt.start()] if nxt else near  # dates after the next chain belong to it
         for d in re.findall(r'\d{4}-\d{2}-\d{2}', near)[:2]:
-            if not (span['start'] <= d <= span['end']):
+            # A date years away from the span means the pair named a conjunction, not a period.
+            far = d < str(int(span['start'][:4]) - 2) or d > str(int(span['end'][:4]) + 2)
+            if not far and not (span['start'] <= d <= span['end']):
                 errors.append({'chain': '-'.join(key), 'date': d, 'stored': [span['start'], span['end']]})
     return errors
 
