@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { RpcClient } from '@earendil-works/pi-coding-agent';
 import { listWorkspace, workspacePath } from './workspace-tools.mjs';
-import { createEventQueue, createLoopGuard, planCheckpointFiles, shouldCheckpoint } from './runner-state.mjs';
+import { createEventQueue, createLoopGuard, needsWrapUp, planCheckpointFiles, shouldCheckpoint, WRAP_UP_PROMPT } from './runner-state.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const config = JSON.parse(await readFile(process.argv[2], 'utf8'));
@@ -195,6 +195,7 @@ const live = createEventQueue(sendLive);
 const flushTimer = setInterval(() => { void live.flush().catch((error) => console.error(error.message)); }, edge ? 250 : 400);
 const guard = createLoopGuard();
 let stopReason = null;
+let wrappingUp = false;
 let segment = 0;
 let checkpointQueue = Promise.resolve();
 let checkpointSequence = recovery?.sameRun ? recovery.checkpoint.sequence : 0;
@@ -245,6 +246,7 @@ client.onEvent((event) => {
     const safe = { type: event.type, toolName: event.toolName, toolCallId: event.toolCallId, isError: event.isError === true };
     publicEvents.push(safe);
     live.push({ kind: ended ? 'tool_end' : 'tool_start', toolName: event.toolName, toolCallId: String(event.toolCallId).slice(0, 200), isError: safe.isError });
+    if (wrappingUp && !ended) stopForNoProgress('it kept using tools after being asked to answer');
     const verdict = ended ? guard.ended(safe.isError) : guard.started(event.toolName, event.args);
     if (verdict.action === 'stop') stopForNoProgress(verdict.reason);
     if (verdict.action === 'warn') {
@@ -266,12 +268,21 @@ function firstPrompt() {
 }
 
 let exitCode = 0;
+const startedAt = Date.now();
 try {
   await client.start();
   await client.promptAndWait(recovery?.checkpoint?.session
     ? 'Continue the interrupted accepted request from the saved session. Inspect saved tool results and working files before repeating work; finish the answer. Current capabilities are authoritative.'
     : firstPrompt(), undefined, config.deadlineMs);
   await checkpointQueue;
+  const remainingMs = config.deadlineMs - (Date.now() - startedAt);
+  if (needsWrapUp(stopReason, lastAssistant) && remainingMs > 30_000) {
+    console.error(`Pi wrap-up turn: ${stopReason ?? `stop reason ${lastAssistant?.stopReason}`}`);
+    stopReason = null;
+    wrappingUp = true;
+    await client.promptAndWait(WRAP_UP_PROMPT, undefined, Math.min(remainingMs, 180_000));
+    await checkpointQueue;
+  }
   if (stopReason) throw new Error(stopReason);
   if (!lastAssistant || ['error', 'aborted', 'length', 'toolUse'].includes(lastAssistant.stopReason)) throw new Error('Pi stopped without a complete final answer.');
   const answer = (lastAssistant.content ?? []).filter((item) => item.type === 'text').map((item) => item.text).join('\n').trim();

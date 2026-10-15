@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createEventQueue, createLoopGuard, digestOf, planCheckpointFiles, shouldCheckpoint } from './runner-state.mjs';
+import { createEventQueue, createLoopGuard, digestOf, needsWrapUp, planCheckpointFiles, shouldCheckpoint } from './runner-state.mjs';
 
 test('loop guard steers, then stops, only on identical repeated calls', () => {
   const guard = createLoopGuard({ warnAt: 3, stopAt: 5 });
@@ -65,4 +65,16 @@ test('event queue retries a failed batch on the next flush', async () => {
   await assert.rejects(queue.flush(), /offline/);
   await queue.flush();
   assert.equal(sent.length, 1);
+});
+
+test('a stopped, cut-off or text-less run gets one wrap-up turn; errors and real answers do not', () => {
+  const text = (value) => [{ type: 'text', text: value }];
+  assert.equal(needsWrapUp('Stopped because the same read call was repeated 5 times', { stopReason: 'aborted', content: [] }), true);
+  assert.equal(needsWrapUp(null, { stopReason: 'length', content: text('Half an answ') }), true);
+  assert.equal(needsWrapUp(null, { stopReason: 'toolUse', content: [] }), true);
+  assert.equal(needsWrapUp(null, { stopReason: 'stop', content: [{ type: 'thinking' }] }), true);
+  assert.equal(needsWrapUp(null, { stopReason: 'stop', content: text('A full answer.') }), false);
+  assert.equal(needsWrapUp(null, { stopReason: 'error', content: [] }), false);
+  assert.equal(needsWrapUp(null, { stopReason: 'aborted', content: [] }), false);
+  assert.equal(needsWrapUp(null, null), false);
 });

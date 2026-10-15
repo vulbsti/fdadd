@@ -231,7 +231,7 @@ describe('person consolidation stage contracts', () => {
     expect(() => validateObservationSpans([makeSource({ body: 'Different source.' })], [exact])).toThrow(/did not match/);
   });
 
-  it('repairs only uniquely resolvable provider offset drift', () => {
+  it('recomputes offsets for a quote that occurs in its source', () => {
     const source = makeSource({ body: 'First sentence. Exact evidence. Last sentence.' });
     const drifted = {
       ...makeObservation('self'),
@@ -243,13 +243,23 @@ describe('person consolidation stage contracts', () => {
     expect(normalized).toMatchObject({ spanStart: 16, spanEnd: 31, exactQuote: 'Exact evidence.' });
     expect(() => validateObservationSpans([source], [normalized!])).not.toThrow();
 
+    // Repeated text anchors to the occurrence nearest the provider's offset.
     const repeated = makeSource({ body: 'Same quote. Same quote.' });
-    expect(() => normalizeObservationSpans([repeated], [{
-      ...drifted,
-      spanStart: 1,
-      spanEnd: 11,
-      exactQuote: 'Same quote.',
-    }])).toThrow(/uniquely match/);
+    const [second] = normalizeObservationSpans([repeated], [{ ...drifted, spanStart: 10, spanEnd: 20, exactQuote: 'Same quote.' }]);
+    expect(second).toMatchObject({ spanStart: 12, spanEnd: 23 });
+
+    expect(() => normalizeObservationSpans([source], [{ ...drifted, exactQuote: 'Invented evidence.' }]))
+      .toThrow(/not found/);
+  });
+
+  it('re-anchors a quote that differs only in whitespace or typographic characters', () => {
+    const source = makeSource({ body: 'I said \u201cI\u2019ll ask later\u201d \u2014  and then\nI didn\u2019t.' });
+    const loose = { ...makeObservation('self'), spanStart: 0, spanEnd: 5,
+      exactQuote: '"I\'ll ask later" - and then I didn\'t.' };
+    const [normalized] = normalizeObservationSpans([source], [loose]);
+    expect(normalized!.exactQuote).toBe(source.body.slice(7));
+    expect(normalized).toMatchObject({ spanStart: 7, spanEnd: source.body.length });
+    expect(() => validateObservationSpans([source], [normalized!])).not.toThrow();
   });
 
   it('normalizes an overlong end offset even when String.slice clamps to the exact quote', () => {
