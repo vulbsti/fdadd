@@ -59,24 +59,34 @@ class NeechaBhangaRajaYogaDetector(YogaDetector):
                     f"Conjunct with exalted {exalted_conjunct}"
                 )
 
-            # Check condition 2: Dispositor in Kendra
+            # Check condition 2: Dispositor in Kendra from Lagna or Moon
             dispositor = self._get_dispositor(planet.sign)
             if dispositor:
                 dispositor_planet = self._get_planet_by_name(chart, dispositor)
-                if dispositor_planet and self._is_in_kendra(dispositor_planet.house):
+                where = self._kendra_from(chart, dispositor_planet)
+                if where:
                     cancellation_reasons.append(
-                        f"Dispositor {dispositor} is in Kendra "
-                        f"(house {dispositor_planet.house})"
+                        f"Dispositor {dispositor} is in Kendra from the {where}"
                     )
 
-            # Check condition 3: Lord of exaltation sign in Kendra
+            # Check condition 3: Lord of exaltation sign in Kendra from Lagna or Moon
             exaltation_lord = self._get_exaltation_sign_lord(planet.planet)
             if exaltation_lord:
                 exalt_lord_planet = self._get_planet_by_name(chart, exaltation_lord)
-                if exalt_lord_planet and self._is_in_kendra(exalt_lord_planet.house):
+                where = self._kendra_from(chart, exalt_lord_planet)
+                if where:
                     cancellation_reasons.append(
-                        f"Exaltation sign lord {exaltation_lord} is in Kendra "
-                        f"(house {exalt_lord_planet.house})"
+                        f"Exaltation sign lord {exaltation_lord} is in Kendra from the {where}"
+                    )
+
+            # Check condition 3b: the planet exalted in this sign is in Kendra from Lagna or Moon
+            for other, exalt in EXALTATION.items():
+                if other == planet.planet or exalt["sign"] != planet.sign:
+                    continue
+                where = self._kendra_from(chart, self._get_planet_by_name(chart, other))
+                if where:
+                    cancellation_reasons.append(
+                        f"{other}, exalted in {planet.sign}, is in Kendra from the {where}"
                     )
 
             # Check condition 5: Retrograde
@@ -128,6 +138,20 @@ class NeechaBhangaRajaYogaDetector(YogaDetector):
     def _get_dispositor(self, sign: str) -> Optional[str]:
         """Get the ruling planet of a sign."""
         return RASHI_LORDS.get(sign)
+
+    def _kendra_from(self, chart: LagnaChart, target) -> Optional[str]:
+        """'Lagna' or 'Moon' when target sits in a Kendra from it, else None.
+
+        The Moon's own position never counts as a Kendra from itself.
+        """
+        if target is None:
+            return None
+        if self._is_in_kendra(target.house):
+            return "Lagna"
+        moon = self._get_planet_by_name(chart, "Moon")
+        if moon and target.planet != "Moon" and (target.house - moon.house) % 12 in (0, 3, 6, 9):
+            return "Moon"
+        return None
 
     def _get_exaltation_sign_lord(self, planet: str) -> Optional[str]:
         """Get the lord of the planet's exaltation sign."""

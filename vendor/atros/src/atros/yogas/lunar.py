@@ -71,7 +71,9 @@ class LunarYogaDetector(YogaDetector):
         in_2nd = self._eligible_planets_in_house(chart, house_2nd)
         in_12th = self._eligible_planets_in_house(chart, house_12th)
 
-        if in_2nd or in_12th:
+        # A planet with the Moon also keeps it from being isolated.
+        with_moon = [p for p in self._eligible_planets_in_house(chart, moon.house) if p.planet != "Moon"]
+        if in_2nd or in_12th or with_moon:
             return []
 
         # Check cancellation conditions
