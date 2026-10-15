@@ -824,7 +824,19 @@
       "houses_involved": [
         12
       ],
-      "description": "Mercury's debilitation in Pisces (house 12) is cancelled: Conjunct with exalted Venus; Dispositor Jupiter is in Kendra (house 10). This transforms weakness into strength.",
+      "description": "Mercury's debilitation in Pisces (house 12) is cancelled: Conjunct with exalted Venus; Dispositor Jupiter is in Kendra from the Lagna. This transforms weakness into strength.",
+      "strength": 50.0
+    },
+    {
+      "name": "Neecha Bhanga Raja Yoga",
+      "type": "Raja",
+      "planets_involved": [
+        "Jupiter"
+      ],
+      "houses_involved": [
+        10
+      ],
+      "description": "Jupiter's debilitation in Capricorn (house 10) is cancelled: Dispositor Saturn is in Kendra from the Moon; Mars, exalted in Capricorn, is in Kendra from the Moon. This transforms weakness into strength.",
       "strength": 50.0
     },
     {
@@ -839,18 +851,6 @@
       ],
       "description": "Sun and Rahu are conjunct in Aries (15.9 degrees apart), forming Grahan Yoga. This eclipse combination may affect the significations of Sun.",
       "strength": 50.0
-    },
-    {
-      "name": "Kemadruma Yoga",
-      "type": "Kemadruma",
-      "planets_involved": [
-        "Moon"
-      ],
-      "houses_involved": [
-        2
-      ],
-      "description": "Moon in house 2 has no eligible planet in 2nd or 12th house, indicating Kemadruma Yoga. However, partial cancellation applies: Mars in Kendra (house 2) from Moon; Saturn in Kendra (house 8) from Moon.",
-      "strength": 30.0
     }
   ],
   "dasha_timeline": {

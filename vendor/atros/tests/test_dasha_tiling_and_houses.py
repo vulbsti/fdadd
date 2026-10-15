@@ -190,3 +190,21 @@ def test_window_excludes_period_ending_on_window_start():
     md = generate_mahadasha_timeline(32.8718, date(1985, 4, 22), 120)[2]
     rows = periods_for_window(32.8718, date(1985, 4, 22), md.end_date, md.end_date, "maha")
     assert [r["mahadasha"]["start"] for r in rows] == [md.end_date.isoformat()]
+
+
+SAM_1985 = _bd("Chicago", 1985, 4, 22, 5, 0, 41.85, -87.65, "America/Chicago")  # Aries lagna, Moon+Mars in Taurus
+
+
+def test_neecha_bhanga_counts_kendra_from_the_moon():
+    # Jupiter debilitated in Capricorn: its dispositor Saturn is 7th from the
+    # Moon and Mars (exalted in Capricorn) sits with the Moon.
+    yogas = ChartService().generate_full_chart(SAM_1985).yogas
+    nb = [y for y in yogas if y.name == "Neecha Bhanga Raja Yoga" and y.planets_involved == ["Jupiter"]]
+    assert nb, [y.name for y in yogas]
+    assert "Saturn is in Kendra from the Moon" in nb[0].description
+    assert "Mars, exalted in Capricorn" in nb[0].description
+
+
+def test_no_kemadruma_when_a_planet_joins_the_moon():
+    yogas = ChartService().generate_full_chart(SAM_1985).yogas
+    assert not [y for y in yogas if y.name == "Kemadruma Yoga"]
