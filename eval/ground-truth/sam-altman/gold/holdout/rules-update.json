@@ -1,0 +1,254 @@
+{
+ "scope": "Held-out years 2022-07..2026-06 (Rahu-Mars, Jupiter-Jupiter, Jupiter-Saturn to 2026-06-30). Wording anonymised. Contamination caveat applies: rule support may be inflated by a predictor who recognised the subject.",
+ "rules": [
+  {
+   "id": "rule-01",
+   "status": "held",
+   "evidence": [
+    "p-14",
+    "p-16",
+    "p-36",
+    "p-53",
+    "ev-081",
+    "ev-085",
+    "ev-123",
+    "ev-159",
+    "ev-105"
+   ],
+   "finding": "Mercury and Venus pratyantars in this window all carried career/capital gains (Jan 2023 investment, spring 2023 testimony, autumn 2024 raise, spring 2026 raise/deals). Jupiter-Jupiter was the career peak AD.",
+   "revision": "Add: career-strong is not reputation-safe; see N-03 for Mercury."
+  },
+  {
+   "id": "rule-02",
+   "status": "held",
+   "evidence": [
+    "p-32",
+    "p-52",
+    "p-41",
+    "ev-094",
+    "ev-097",
+    "ev-105",
+    "ev-152",
+    "p-13",
+    "ev-080"
+   ],
+   "finding": "Both Saturn pratyantars inside strong ADs delivered forced restructuring ending upward (removal and return 2023; corporate restructuring 2025). The third Saturn pratyantar (late 2022) held a breakthrough launch instead of pressure, consistent with the rule's technology clause rather than its setback clause.",
+   "revision": null
+  },
+  {
+   "id": "rule-03",
+   "status": "held",
+   "evidence": [
+    "p-05",
+    "p-45",
+    "ev-101"
+   ],
+   "finding": "No ending while Saturn stayed out of Libra; instead a marriage. Only negatively tested.",
+   "revision": null
+  },
+  {
+   "id": "rule-04",
+   "status": "needs-revision",
+   "evidence": [
+    "p-10",
+    "p-22",
+    "p-33",
+    "ev-081",
+    "ev-094",
+    "ev-096",
+    "ev-103",
+    "ev-119",
+    "ev-131",
+    "ev-138",
+    "ev-165",
+    "ev-167"
+   ],
+   "finding": "Sponsors and boards remained the channel for both rise and crisis (patron rescue in 2023, new sponsors 2025). But the strained former co-sponsor tie escalated to multi-year litigation and a jury trial, which the rule (and the back-test note that conflicts are sponsor fights, not lawsuits) excluded.",
+   "revision": "Patron and co-founder ties strain under malefic sub-periods and, from the Jupiter MD onward, can escalate to formal litigation; outcomes favour the native (nr-04b)."
+  },
+  {
+   "id": "rule-05",
+   "status": "held",
+   "evidence": [
+    "p-02",
+    "p-15",
+    "p-21",
+    "p-42",
+    "ev-081",
+    "ev-123",
+    "ev-138",
+    "ev-150",
+    "ev-159",
+    "ev-169",
+    "ev-110"
+   ],
+   "finding": "Every money signal showed as institutional capital (raises, megadeals, IPO filing). Personal money surfaced only as a pledge to give it away (ev-110) and a donation (ev-127).",
+   "revision": null
+  },
+  {
+   "id": "rule-06",
+   "status": "needs-revision",
+   "evidence": [
+    "p-25",
+    "ev-088",
+    "ev-090",
+    "ev-101",
+    "ev-135"
+   ],
+   "finding": "The Venus clause held (no Venus timing). But the rule's 'no formal marriage' framing was overtaken: a public couple appearance, a stated plan for children and a marriage came under the Jupiter MD start with transit Jupiter on the lagna aspecting the 7th and 5th, and a child followed under Jupiter over the Moon.",
+   "revision": "Partnership formalisation is timed by Jupiter (MD/AD start plus transit Jupiter aspecting the 7th), not Venus; read the non-conventional path as the form, not as absence of commitment."
+  },
+  {
+   "id": "rule-07",
+   "status": "held",
+   "evidence": [
+    "p-07",
+    "p-28",
+    "p-48",
+    "ev-121",
+    "ev-128",
+    "ev-163",
+    "ev-164"
+   ],
+   "finding": "No health event of his own; health-tagged items are self-reports or threats in which he was unhurt.",
+   "revision": "Note that physical-security threats can appear (N-01) without bodily harm."
+  },
+  {
+   "id": "rule-08",
+   "status": "needs-revision",
+   "evidence": [
+    "p-04",
+    "p-18",
+    "ev-080",
+    "ev-098",
+    "p-35",
+    "p-54",
+    "ev-108",
+    "ev-118",
+    "ev-169"
+   ],
+   "finding": "Visibility clause held: the public peak came exactly with Rahu then Jupiter on the lagna. Ketu clause failed as a timer: both Ketu pratyantars (mid-2024, mid-2026) missed the departures by weeks and the second held an IPO filing.",
+   "revision": "Keep the visibility requirement; drop Ketu pratyantars as departure/delegation timers (AD-level only)."
+  },
+  {
+   "id": "rule-09",
+   "status": "held",
+   "evidence": [
+    "p-17",
+    "p-52",
+    "ev-094",
+    "ev-097",
+    "ev-152"
+   ],
+   "finding": "MD seam 2023-07-07: the defining break came +4.5 months. AD seam 2025-08-24: restructuring completed +2 months.",
+   "revision": null
+  },
+  {
+   "id": "rule-10",
+   "status": "not-tested",
+   "evidence": [],
+   "finding": "Childhood-only rule; no bearing on the held-out years.",
+   "revision": null
+  },
+  {
+   "id": "rule-11",
+   "status": "held",
+   "evidence": [
+    "p-38",
+    "ev-130",
+    "ev-137",
+    "p-19",
+    "ev-088"
+   ],
+   "finding": "The Jupiter-Jupiter-Moon pratyantar (with Jupiter over the Moon) brought the sibling lawsuit (3 days early), counterclaims and a birth. The Rahu-Mars-Moon pratyantar gave no sibling turbulence (1 of 2).",
+   "revision": "Severity can reach magnitude 5 (litigation); do not cap family turbulence at low weight."
+  },
+  {
+   "id": "rule-12",
+   "status": "needs-revision",
+   "evidence": [
+    "p-32",
+    "p-52",
+    "p-39",
+    "p-13",
+    "p-12",
+    "p-31",
+    "ev-094",
+    "ev-152",
+    "ev-139",
+    "ev-080",
+    "ev-089"
+   ],
+   "finding": "Saturn pratyantars 2 of 3 (the third was a breakthrough, not a setback); Mars 1 of 1 (low magnitude); Jupiter 0 of 2 clean (one miss by a month, one mixed launch).",
+   "revision": "Saturn and Mars pratyantar timing is reliable; Jupiter pratyantar timing is not. Saturn pratyantars give restructuring (sign depends on the AD), not necessarily setbacks."
+  },
+  {
+   "id": "rule-13",
+   "status": "needs-revision",
+   "evidence": [
+    "p-27",
+    "p-38",
+    "ev-134",
+    "p-47",
+    "ev-149",
+    "ev-163",
+    "ev-164"
+   ],
+   "finding": "Moon clause held (lots bought in the Moon pratyantar with Jupiter over the Moon). Jupiter-in-Cancer clause failed in its short windows: a listing for sale and then attacks on the home.",
+   "revision": "Keep the Moon activation; demote brief Jupiter ingresses into Cancer, and check Saturn in the 12th first (N-01)."
+  }
+ ],
+ "newRules": [
+  {
+   "id": "N-01",
+   "rule": "Saturn transiting the 12th over natal 12th-house planets that include the 6th lord brings exposure to hidden or unknown adversaries (including threats to the residence) and heavy outflows, while the native escapes bodily harm.",
+   "evidence": [
+    "ev-163",
+    "ev-164",
+    "ev-150",
+    "ev-157",
+    "p-47"
+   ],
+   "confidence": "low",
+   "note": "One instance, post-hoc."
+  },
+  {
+   "id": "N-02",
+   "rule": "A Saturn pratyantar falling while Rahu transits the lagna can deliver a technology breakthrough rather than a setback (Saturn as 8th-house research significator).",
+   "evidence": [
+    "ev-080",
+    "p-13"
+   ],
+   "confidence": "low",
+   "note": "One instance."
+  },
+  {
+   "id": "N-03",
+   "rule": "Mercury (3rd/6th lord, D10 10th) pratyantars in strong ADs give career gains together with public accusations and disputes: expect both.",
+   "evidence": [
+    "ev-105",
+    "ev-107",
+    "ev-111",
+    "ev-112",
+    "ev-159",
+    "ev-157",
+    "ev-161",
+    "ev-163",
+    "p-34",
+    "p-53"
+   ],
+   "confidence": "medium",
+   "note": "Two of two Mercury pratyantars in the Jupiter MD so far."
+  },
+  {
+   "id": "N-04",
+   "rule": "Sun pratyantars (exalted Sun in the lagna) bring direct engagement with heads of state or ruling power.",
+   "evidence": [
+    "ev-086",
+    "ev-127"
+   ],
+   "confidence": "low",
+   "note": "Two instances (heads-of-state tour in Rahu-Mars-Sun; inaugural donation in Jupiter-Jupiter-Sun)."
+  }
+ ]
+}
