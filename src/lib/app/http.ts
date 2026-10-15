@@ -38,10 +38,14 @@ export async function requireAppUser(request: Request): Promise<AppRequestContex
   return { user: authed.user, userId: authed.user.id, client: authed.client, accessToken: authed.accessToken };
 }
 
+const EXPIRED_TOKEN_CODES = new Set(['PGRST301', 'PGRST303']);
+
 /** Log a failure without private values and answer with a generic message. */
 export function appFailure(scope: string, error: unknown, message = 'Something went wrong. Please try again.') {
   const detail = error && typeof error === 'object' && 'code' in error ? String((error as { code: unknown }).code)
     : error instanceof Error ? error.message : 'unknown';
+  // The token expired between sign-in check and query: the app refreshes and retries on 401.
+  if (EXPIRED_TOKEN_CODES.has(detail)) return appError(401, 'unauthenticated', 'Please sign in again.');
   console.error(`[app-api] ${scope} failed`, { detail });
   return appError(500, 'internal', message);
 }
