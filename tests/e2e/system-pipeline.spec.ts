@@ -173,11 +173,11 @@ async function expectAnswerVisible(page: Page, outputMessageId: string, content:
 type Period = { planet: string; start: string; end: string };
 type Timeline = { rows: Array<{ mahadasha: Period; antardasha?: Period | null; pratyantar?: Period | null }> };
 
-/** Mahadasha and antardasha lords running on `today` (YYYY-MM-DD), from the stored timeline. */
-function currentDashaLords(timeline: Timeline, today: string): string[] {
-  const running = (period?: Period | null) => period && period.start <= today && today < period.end ? period.planet : null;
+/** The mahadasha and antardasha running on `today` (YYYY-MM-DD), from the stored timeline. */
+function currentDasha(timeline: Timeline, today: string) {
+  const running = (period?: Period | null) => Boolean(period && period.start <= today && today < period.end);
   const row = timeline.rows.find((item) => running(item.antardasha ?? item.mahadasha));
-  return row ? [...new Set([row.mahadasha.planet, row.antardasha?.planet].filter((planet): planet is string => Boolean(planet)))] : [];
+  return row ? { mahadasha: row.mahadasha, antardasha: row.antardasha ?? row.mahadasha } : null;
 }
 
 async function createVisibleConversation(page: Page, personId: string, admin: SupabaseClient, userId: string) {
@@ -434,15 +434,24 @@ pipelineTest('name-only onboarding to grounded memory, birth setup, chart, and l
 
     const astroSessionId = await createVisibleConversation(page, personId, admin, userId);
     const dasha = await sendMessage(page, admin, 'What is my current dasha? Explain it as a reflective lens, not a deterministic prediction.');
-    // Dasha periods are precomputed at birth setup. The answer is grounded when it
-    // names the periods actually running today, however Pi looked them up.
+    // Dasha periods are precomputed at birth setup and must come from that stored
+    // data (read from the workspace by any tool), never be worked out from the
+    // model's memory. Run receipts do not record which file a tool read, so the
+    // test checks the content: both running lords and the year the current
+    // antardasha starts or ends must match the stored timeline. A dasha guessed
+    // or computed in memory is very unlikely to get all three right.
     const stored = await admin.from('astro_profile_calculations').select('timeline')
       .eq('profile_id', personId).limit(1).single();
     if (stored.error || !stored.data) throw stored.error ?? new Error('Precomputed calculations missing.');
-    const runningLords = currentDashaLords(stored.data.timeline as Timeline, new Date().toISOString().slice(0, 10));
-    expect(runningLords.length, 'Today is outside the stored dasha timeline.').toBeGreaterThan(0);
-    expect(dasha.answer, `The answer should name a running period (${runningLords.join(', ')}).`)
-      .toMatch(new RegExp(`\\b(${runningLords.join('|')})\\b`, 'i'));
+    const running = currentDasha(stored.data.timeline as Timeline, new Date().toISOString().slice(0, 10));
+    if (!running) throw new Error('Today is outside the stored dasha timeline.');
+    const expected = `${running.mahadasha.planet} mahadasha, ${running.antardasha.planet} antardasha ${running.antardasha.start} to ${running.antardasha.end}`;
+    for (const planet of new Set([running.mahadasha.planet, running.antardasha.planet])) {
+      expect(dasha.answer, `The answer should match the stored dasha (${expected}).`).toMatch(new RegExp(`\\b${planet}\\b`, 'i'));
+    }
+    const years = [running.antardasha.start.slice(0, 4), running.antardasha.end.slice(0, 4)];
+    expect(dasha.answer, `The answer should date the current period from stored data (${expected}).`)
+      .toMatch(new RegExp(`\\b(${years.join('|')})\\b`));
     const dashaReceipt = await admin.from('astro_agent_run_steps').select('refs').eq('run_id', dasha.runId)
       .eq('step_key', 'pi:final').single();
     if (dashaReceipt.error || !dashaReceipt.data) throw dashaReceipt.error ?? new Error('Dasha Pi receipt missing.');
