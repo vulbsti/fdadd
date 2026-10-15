@@ -61,7 +61,7 @@ def chapters(c):
         s, e = r['antardasha']['start'], r['antardasha']['end']
         if e <= c['walkStart'] or s >= c['cutoff']:
             continue
-        out.append({'chain': r['chain'], 'start': max(s, c['walkStart']), 'end': min(e, c['cutoff']), 'fullEnd': e})
+        out.append({'chain': r['chain'], 'start': max(s, c['walkStart']), 'end': min(e, c['cutoff']), 'fullStart': s, 'fullEnd': e})
     # A sliver of a chapter just before the cut-off has nothing to read; the forecast covers it.
     if out and (date.fromisoformat(out[-1]['end']) - date.fromisoformat(out[-1]['start'])).days < 60:
         out.pop()
@@ -108,6 +108,11 @@ def write_life(c, dest, until, since=None):
     return ev
 
 
+def workspace(cid, run, ch, step):
+    # An opaque folder name: the path must not tell the agent whose life this is.
+    return WORK / hashlib.sha256(cid.encode()).hexdigest()[:10] / run / slug(ch) / step
+
+
 def run_dir(c, run):
     d = HOME / 'runs' / c['id'] / run
     d.mkdir(parents=True, exist_ok=True)
@@ -116,18 +121,21 @@ def run_dir(c, run):
 
 def fill(text, c, ch):
     return (text.replace('{{START}}', ch['start']).replace('{{END}}', ch['end'])
-            .replace('{{CHAIN}}', ch['chain']).replace('{{AGE}}', str(ch['age'])))
+            .replace('{{CHAIN}}', ch['chain'])
+            .replace('{{FULLSTART}}', ch.get('fullStart', ch['start'])).replace('{{FULLEND}}', ch.get('fullEnd', ch['end'])).replace('{{AGE}}', str(ch['age'])))
 
 
 def prepare(cid, run, n, step):
     c = case(cid)
     ch = chapter(c, n)
     rd = run_dir(c, run)
-    ws = WORK / cid / run / slug(ch) / step
+    ws = workspace(cid, run, ch, step)
     if ws.exists():
         shutil.rmtree(ws)
     ws.mkdir(parents=True)
-    shutil.copytree(c['dir'] / 'chart', ws / 'chart')
+    (ws / 'chart').mkdir()
+    for f in (c['dir'] / 'chart').glob('*.json'):
+        (ws / 'chart' / f.name).write_text(mask(c, f.read_text()))
     notes = rd / 'notes'
     if notes.exists():
         shutil.copytree(notes, ws / 'notes')
@@ -155,7 +163,7 @@ def collect(cid, run, n, step):
     c = case(cid)
     ch = chapter(c, n)
     rd = run_dir(c, run)
-    ws = WORK / cid / run / slug(ch) / step
+    ws = workspace(cid, run, ch, step)
     out = rd / 'chapters' / slug(ch)
     out.mkdir(parents=True, exist_ok=True)
     name = {'read': 'reading.md', 'match': 'match.md', 'forecast': 'forecast.md'}[step]
@@ -187,11 +195,14 @@ def leak_check(c, ch, path):
     """Proper names that first appear in the profile after this point and show up in the text."""
     text = Path(path).read_text()
     cut = ch['start'] if ch['n'] != 'final' else c['cutoff']
-    past, future = set(), set()
+    past, future, lower = set(), set(), set()
     for e in events(c):
-        words = set(WORD.findall(mask(c, e['title'] + ' ' + e['story'])))
-        (past if e['date'] < cut else future).update(words)
-    suspicious = sorted((future - past - COMMON) & set(WORD.findall(text)))
+        body = mask(c, e['title'] + ' ' + e['story'])
+        lower.update(re.findall(r'\b[a-z][a-z0-9.\'-]{3,}\b', body))
+        (past if e['date'] < cut else future).update(WORD.findall(body))
+    # Proper names only: capitalised words that the profile never writes in lower case.
+    names = {w for w in future - past - COMMON if w.lower() not in lower}
+    suspicious = sorted(names & set(WORD.findall(text)))
     later_terms = [t for t in c.get('leakTerms', []) if t.lower() in text.lower()]
     return [{'term': t, 'kind': 'name-from-later'} for t in suspicious] + [{'term': t, 'kind': 'case-leak-term'} for t in later_terms]
 
@@ -225,7 +236,7 @@ def score_prep(cid, run, n):
     ch = chapter(c, n)
     rd = run_dir(c, run)
     out = rd / 'chapters' / slug(ch)
-    ws = WORK / cid / run / slug(ch) / 'score'
+    ws = workspace(cid, run, ch, 'score')
     if ws.exists():
         shutil.rmtree(ws)
     ws.mkdir(parents=True)
@@ -243,7 +254,7 @@ def score_prep(cid, run, n):
 def score_collect(cid, run, n):
     c = case(cid)
     ch = chapter(c, n)
-    ws = WORK / cid / run / slug(ch) / 'score'
+    ws = workspace(cid, run, ch, 'score')
     out = run_dir(c, run) / 'chapters' / slug(ch)
     s = load(ws / 'score.json')
     shutil.copy(ws / 'score.json', out / 'score.json')

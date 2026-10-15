@@ -1,6 +1,6 @@
 # This step: read the chapter ahead
 
-You stand at {{START}}, the start of the {{CHAIN}} chapter, which runs to {{END}}. The person is {{AGE}} years old. You know their life up to this date and nothing after it.
+You stand at {{START}}. The {{CHAIN}} chapter runs from {{FULLSTART}} to {{FULLEND}}; you read it from {{START}} to {{END}}. The person is {{AGE}} years old. You know their life up to this date and nothing after it.
 
 Write `reading.md`: the life this person will live from {{START}} to {{END}}, as concretely as you can. Cover their relationships, work and business dealings, money, family, health, home and their inner state, and anything else this chart points to for this chapter. Say when things turn and what turns, using the sub-periods inside the chapter and the transits over it. Say how sure you are of each part, and why.
 
