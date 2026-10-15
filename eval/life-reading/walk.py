@@ -200,6 +200,10 @@ def leak_check(c, ch, path):
         body = mask(c, e['title'] + ' ' + e['story'])
         lower.update(re.findall(r'\b[a-z][a-z0-9.\'-]{3,}\b', body))
         (past if e['date'] < cut else future).update(WORD.findall(body))
+    # Inner-life years the agent was shown count as known too.
+    for f in (c['dir'] / 'profile' / 'inner').glob('*.md'):
+        if f'{int(f.stem[:4])}-12-31' < cut:
+            past.update(WORD.findall(mask(c, f.read_text())))
     # Proper names only: capitalised words that the profile never writes in lower case.
     names = {w for w in future - past - COMMON if w.lower() not in lower}
     suspicious = sorted(names & set(WORD.findall(text)))
