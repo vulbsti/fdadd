@@ -186,7 +186,7 @@ def collect(cid, run, n, step):
 
 
 WORD = re.compile(r"\b[A-Z][A-Za-z0-9.'-]{3,}\b")
-COMMON = set(PLANETS) | {'January', 'February', 'March', 'April', 'June', 'July', 'August', 'September', 'October',
+COMMON = set(PLANETS) | {'Sept', 'Everything', 'January', 'February', 'March', 'April', 'June', 'July', 'August', 'September', 'October',
                          'November', 'December', 'Monday', 'Friday', 'Saturday', 'Sunday', 'This', 'That', 'There', 'They',
                          'Their', 'When', 'What', 'Where', 'With', 'From', 'After', 'Before', 'During', 'Expected', 'Lagna'}
 
