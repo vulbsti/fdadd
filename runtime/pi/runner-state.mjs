@@ -37,6 +37,23 @@ export function createLoopGuard({ warnAt = 3, stopAt = 5, failureWarnAt = 4, fai
   };
 }
 
+/**
+ * A run the loop guard stopped, or one whose last reply was cut off or never
+ * reached text, still gets one tool-free turn to answer with what it has, so
+ * the person receives a partial answer instead of an error. Provider errors
+ * and deadline expiry are not retried here.
+ */
+export function needsWrapUp(stopReason, lastAssistant) {
+  if (stopReason) return true;
+  if (!lastAssistant) return false;
+  if (['length', 'toolUse'].includes(lastAssistant.stopReason)) return true;
+  if (lastAssistant.stopReason === 'error' || lastAssistant.stopReason === 'aborted') return false;
+  return !(lastAssistant.content ?? []).some((item) => item.type === 'text' && item.text?.trim());
+}
+
+export const WRAP_UP_PROMPT = 'Stop using tools now. Answer the person directly with what you have already found, '
+  + 'concisely, and say plainly what you could not finish or check.';
+
 export function digestOf(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
 }
