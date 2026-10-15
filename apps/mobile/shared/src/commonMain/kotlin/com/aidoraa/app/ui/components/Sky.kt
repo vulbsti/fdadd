@@ -4,14 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
@@ -66,28 +63,17 @@ fun DrawScope.drawSkyBase(full: Size) {
 }
 
 /**
- * The starry night behind everything, drawn with a Canvas. Stars twinkle at
- * about 15 frames a second, and hold still when motion is reduced.
+ * The starry night behind everything, drawn with a Canvas. It holds still: the sky is the
+ * source the floating glass blurs, so any motion here would re-render every blurred panel
+ * on every frame and keep a mid-range phone busy while nothing on screen changes.
  */
 @Composable
-fun SkyBackground(modifier: Modifier = Modifier, animate: Boolean) {
-    var time by remember { mutableFloatStateOf(0f) }
-    if (animate) {
-        LaunchedEffect(Unit) {
-            var last = 0L
-            while (true) {
-                withFrameMillis { frame ->
-                    if (frame - last >= 66) { time = frame.toFloat(); last = frame }
-                }
-            }
-        }
-    }
+fun SkyBackground(modifier: Modifier = Modifier) {
     Canvas(modifier.fillMaxSize()) {
         drawSkyBase(size)
         val scale = size.width / 390f
-        val t = time
         for (star in stars) {
-            val alpha = if (animate) 0.35f + 0.4f * sin(t / 1400f + star.phase) else 0.35f + 0.4f * sin(star.phase)
+            val alpha = 0.35f + 0.4f * sin(star.phase)
             drawCircle(Color(0xFFF0ECE0).copy(alpha = alpha.coerceIn(0.05f, 1f)), star.radius * scale, Offset(star.x * size.width, star.y * size.height))
         }
     }

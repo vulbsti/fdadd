@@ -139,7 +139,7 @@ fun AidoraaApp(app: AppController) {
     CompositionLocalProvider(LocalRootSize provides rootSize, LocalApp provides app, LocalSheet provides sheet) {
         AidoraaTheme(fonts, effects) {
             Box(Modifier.fillMaxSize().background(Palette.Sky).onSizeChanged { rootSize.value = it.toSize() }) {
-                SkyBackground(Modifier.blurSource(), animate = !caps.reduceMotion && !reduceEffects)
+                SkyBackground(Modifier.blurSource())
                 val phase by app.phase.collectAsState()
                 when (val current = phase) {
                     AppPhase.Loading -> SplashScreen()
