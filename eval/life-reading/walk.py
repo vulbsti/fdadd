@@ -8,6 +8,7 @@ Case data lives outside the repo (it is private): LIFE_READING_HOME, default
 
   cases/<id>/case.json      birth, cut-off, walk start, ages to count
   cases/<id>/chart/         chart.json, periods-antar/pratyantar.json, transits-slow.json
+                            (prompt sets that name window.md also get signals.py's output per window)
   cases/<id>/profile/       Profiler output: events.json, inner/YYYY.md
   cases/<id>/hidden/        events after the cut-off (scorer only)
   runs/<id>/<run>/          one walk: chapters/NN-<chain>/{reading,match,score}, notes/
@@ -27,6 +28,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 from datetime import date, timedelta
 from pathlib import Path
@@ -159,6 +161,12 @@ def prepare(cid, run, n, step):
         (ws / 'notes').mkdir()
     write_life(c, ws / 'life', ch['start'])
     task = (PROMPTS / f'task-{step}.md').read_text()
+    if 'window.md' in task:
+        # The chart signals for the window this step reads (see signals.py); prompt sets from v3 on use them.
+        py = Path(ATROS).parent / 'python'
+        sig = subprocess.run([str(py), str(Path(__file__).resolve().parent / 'signals.py'), str(c['dir'] / 'chart'), ch['start'], ch['end']],
+                             check=True, capture_output=True, text=True).stdout
+        (ws / 'chart' / 'window.md').write_text(sig)
     if step == 'match':
         shutil.copy(rd / 'chapters' / slug(ch) / 'reading.md', ws / 'reading.md')
         write_life(c, ws / 'revealed', ch['end'], since=ch['start'])
@@ -199,8 +207,18 @@ def collect(cid, run, n, step):
     shutil.copytree(ws / 'notes', rd / 'notes')
     shutil.copytree(ws / 'notes', out / f'notes-after-{step}', dirs_exist_ok=True)
     checks = {'leaks': leak_check(c, ch, out / name, seen_to=ch['end'] if step == 'match' else None), 'dasha': dasha_check(c, out / name)}
+    if step in ('read', 'forecast') and (ws / 'chart' / 'window.md').exists():
+        checks['signals'] = signal_check(ws / 'chart' / 'window.md', out / name)
     (out / f'checks-{step}.json').write_text(json.dumps(checks, indent=1))
-    print(json.dumps({'chapter': slug(ch), 'step': step, 'leaks': len(checks['leaks']), 'dashaErrors': len(checks['dasha'])}))
+    print(json.dumps({'chapter': slug(ch), 'step': step, 'leaks': len(checks['leaks']), 'dashaErrors': len(checks['dasha']),
+                      **({'signalsUnanswered': checks['signals']} if 'signals' in checks else {})}))
+
+
+def signal_check(window, path):
+    """Signal ids in chart/window.md that the reading never answers."""
+    ids = re.findall(r'\*\*(S\d+)\*\*', Path(window).read_text())
+    text = Path(path).read_text()
+    return [i for i in ids if not re.search(r'\b' + i + r'\b', text)]
 
 
 WORD = re.compile(r"\b[A-Z][A-Za-z0-9.'-]{3,}\b")
@@ -289,13 +307,15 @@ def score_collect(cid, run, n):
     big = [e for e in s['events'] if e.get('magnitude', 0) >= 3]
     print(json.dumps({'chapter': slug(ch), 'events3+': len(big), 'seen': sum(e['verdict'] == 'seen' for e in big),
                       'partly': sum(e['verdict'] == 'partly' for e in big), 'missed': sum(e['verdict'] == 'missed' for e in big),
+                      'missedButNamed': sum(e['verdict'] == 'missed' and bool(e.get('namedAsTail')) for e in big),
                       'falseAlarms': sum(x['verdict'] == 'false-alarm' for x in s.get('expected', []))}))
 
 
 def report(cid, run):
     c = case(cid)
     rd = run_dir(c, run)
-    lines = ['| Chapter | Age | Counts | Events 3+ | Seen | Partly | Missed | False alarms | Dasha errors | Leak flags |', '|---|---|---|---|---|---|---|---|---|---|']
+    lines = ['| Chapter | Age | Counts | Events 3+ | Seen | Partly | Missed | Missed but named as a tail | False alarms | Dasha errors | Leak flags | Signals unanswered |',
+             '|---|---|---|---|---|---|---|---|---|---|---|---|']
     for ch in chapters(c) + [chapter(c, 'final')]:
         out = rd / 'chapters' / slug(ch)
         if not (out / 'score.json').exists():
@@ -305,7 +325,9 @@ def report(cid, run):
         chk = load(out / ('checks-read.json' if ch['n'] != 'final' else 'checks-forecast.json'))
         lines.append(f"| {ch['chain']} ({ch['start']} to {ch['end']}) | {ch['age']} | {'yes' if ch.get('counts', True) else 'no'} | {len(big)} | "
                      f"{sum(e['verdict'] == 'seen' for e in big)} | {sum(e['verdict'] == 'partly' for e in big)} | {sum(e['verdict'] == 'missed' for e in big)} | "
-                     f"{sum(x['verdict'] == 'false-alarm' for x in s.get('expected', []))} | {len(chk['dasha'])} | {len(chk['leaks'])} |")
+                     f"{sum(e['verdict'] == 'missed' and bool(e.get('namedAsTail')) for e in big)} | "
+                     f"{sum(x['verdict'] == 'false-alarm' for x in s.get('expected', []))} | {len(chk['dasha'])} | {len(chk['leaks'])} | "
+                     f"{len(chk['signals']) if 'signals' in chk else '-'} |")
     text = '\n'.join(lines)
     (rd / 'REPORT.md').write_text(f'# {cid} / {run}\n\n{text}\n')
     print(text)

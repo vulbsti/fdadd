@@ -41,5 +41,7 @@ default `/tmp/life-reading-work`). After each step `collect` scans the output fo
 names that first appear later in the life, and checks every dasha chain and date
 it names against the stored timeline.
 
+From prompt set v3, `prepare` also writes `chart/window.md` for each read and forecast step: `signals.py` lists every period lord, the houses for each part of life, and every slow-transit ingress, station and exact contact in the window, each with an id. `collect` reports any id the reading left unanswered, and `report` adds a column for misses the reading had named as a tail.
+
 `atros` for recalculation comes from `vendor/atros` with the fixes on the
 ground-truth branch (PR #36): `python3 -m venv /tmp/atros-venv && /tmp/atros-venv/bin/pip install -e vendor/atros`.
