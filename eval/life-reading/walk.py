@@ -234,7 +234,9 @@ def dasha_check(c, path):
     rows = load(c['dir'] / 'chart' / 'periods-pratyantar.json')['rows']
     ad = {(r['mahadasha']['planet'], r['antardasha']['planet']): r['antardasha'] for r in rows}
     pd = {(r['mahadasha']['planet'], r['antardasha']['planet'], r['pratyantar']['planet']): r['pratyantar'] for r in rows}
-    pat = re.compile(r'\b(' + '|'.join(PLANETS) + r')\s*[-–/]\s*(' + '|'.join(PLANETS) + r')(?:\s*[-–/]\s*(' + '|'.join(PLANETS) + r'))?\b')
+    P = '|'.join(PLANETS)
+    # Up to five levels (down to prana); only the first three are checked against the stored tables.
+    pat = re.compile(r'(?<![-–\w])(' + P + r')\s*[-–]\s*(' + P + r')(?:\s*[-–]\s*(' + P + r'))?(?:\s*[-–]\s*(?:' + P + r')){0,2}\b')
     errors = []
     for m in pat.finditer(text):
         key = tuple(x for x in m.groups() if x)
