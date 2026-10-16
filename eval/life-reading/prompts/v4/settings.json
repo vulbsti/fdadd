@@ -1,0 +1,3 @@
+{
+ "features": ["signals-v4", "arena-record", "situations-check", "scorer-inner", "sensitivity"]
+}
