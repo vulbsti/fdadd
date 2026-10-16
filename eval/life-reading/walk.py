@@ -113,10 +113,12 @@ def write_life(c, dest, until, since=None):
     inner = dest / 'inner'
     inner.mkdir(exist_ok=True)
     first = int(since[:4]) if since else 0
+    # A year counts as over if it ends within two weeks of `until` (chapters often end late in December).
+    over_by = (date.fromisoformat(until) + timedelta(days=14)).isoformat()
     for f in sorted((c['dir'] / 'profile' / 'inner').glob('*.md')):
         y = int(f.stem[:4])
         # Only whole years that are over by `until`, so no file describes time still ahead.
-        if first <= y and f'{y}-12-31' < until:
+        if first <= y and f'{y}-12-31' <= over_by:
             (inner / f.name).write_text(mask(c, f.read_text()))
     return ev
 
@@ -162,7 +164,9 @@ def prepare(cid, run, n, step):
     birth = {k: v for k, v in c['birth'].items() if k not in ('name', 'place_name')}
     header = (f"Birth: {birth['date']} {birth['time']} ({birth['timezone']}), lat {birth['latitude']}, lng {birth['longitude']}.\n"
               f"Birth time source: {c.get('timeSource', 'unknown')}.\n"
-              f"atros: `{ATROS}` (try `{ATROS} --help`; e.g. `{ATROS} transit --date ... --time ... --lat ... --lng ... --tz ... --as-of YYYY-MM-DD`).\n\n")
+              f"atros: `{ATROS}` (`{ATROS} --help` lists commands). `--date`/`--time` are always the BIRTH date and time. Transits on a date:\n"
+              f"`{ATROS} transit --date {birth['date']} --time {birth['time']} --lat {birth['latitude']} --lng {birth['longitude']} --tz {birth['timezone']} --as-of YYYY-MM-DD --output json`\n"
+              f"Its houses are counted from the natal Moon (`house_from_moon`); count from the lagna yourself with the sign index. Degrees come from `{ATROS} chart`.\n\n")
     (ws / 'TASK.md').write_text(header + fill(task, c, ch))
     (ws / 'ANALYST.md').write_text((PROMPTS / 'analyst.md').read_text())
     print(ws)
