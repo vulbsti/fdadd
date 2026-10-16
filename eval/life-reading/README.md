@@ -34,6 +34,8 @@ python3 walk.py score-prep <case> <run> <n|final>   # Scorer workspace; then sco
 python3 walk.py report <case> <run>
 ```
 
+`LIFE_READING_PROMPTS` picks the prompt set (default `v1`) and `LIFE_READING_PROFILE` the profile folder inside the case (default `profile`); a run should keep both fixed from its first chapter to its last.
+
 Each agent is told to read only its workspace (under `$LIFE_READING_WORK`,
 default `/tmp/life-reading-work`). After each step `collect` scans the output for
 names that first appear later in the life, and checks every dasha chain and date

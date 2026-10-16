@@ -33,6 +33,7 @@ from pathlib import Path
 
 HOME = Path(os.environ.get('LIFE_READING_HOME', '/mnt/project-files/life-reading'))
 WORK = Path(os.environ.get('LIFE_READING_WORK', '/tmp/life-reading-work'))
+PROFILE = os.environ.get('LIFE_READING_PROFILE', 'profile')
 PROMPTS = Path(__file__).resolve().parent / 'prompts' / os.environ.get('LIFE_READING_PROMPTS', 'v1')
 ATROS = os.environ.get('ATROS_BIN', '/tmp/atros-venv/bin/atros')
 PLANETS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu']
@@ -89,7 +90,7 @@ def mask(c, text):
 
 
 def events(c):
-    return load(c['dir'] / 'profile' / 'events.json')
+    return load(c['dir'] / PROFILE / 'events.json')
 
 
 def when(e):
@@ -115,7 +116,7 @@ def write_life(c, dest, until, since=None):
     first = int(since[:4]) if since else 0
     # A year counts as over if it ends within two weeks of `until` (chapters often end late in December).
     over_by = (date.fromisoformat(until) + timedelta(days=14)).isoformat()
-    for f in sorted((c['dir'] / 'profile' / 'inner').glob('*.md')):
+    for f in sorted((c['dir'] / PROFILE / 'inner').glob('*.md')):
         y = int(f.stem[:4])
         # Only whole years that are over by `until`, so no file describes time still ahead.
         if first <= y and f'{y}-12-31' <= over_by:
@@ -218,7 +219,7 @@ def leak_check(c, ch, path, seen_to=None):
         lower.update(re.findall(r'\b[a-z][a-z0-9.\'-]{3,}\b', body))
         (past if when(e) < cut else future).update(WORD.findall(body))
     # Inner-life years the agent was shown count as known too.
-    for f in (c['dir'] / 'profile' / 'inner').glob('*.md'):
+    for f in (c['dir'] / PROFILE / 'inner').glob('*.md'):
         if f'{int(f.stem[:4])}-12-31' < cut:
             past.update(WORD.findall(mask(c, f.read_text())))
     # Proper names only: capitalised words that the profile never writes in lower case.
