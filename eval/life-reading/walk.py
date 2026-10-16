@@ -218,7 +218,11 @@ def signal_check(window, path):
     """Signal ids in chart/window.md that the reading never answers."""
     ids = re.findall(r'\*\*(S\d+)\*\*', Path(window).read_text())
     text = Path(path).read_text()
-    return [i for i in ids if not re.search(r'\b' + i + r'\b', text)]
+    named = set(re.findall(r'\bS(\d+)\b', text))
+    # Grouped signals are often written as a range, e.g. "S26-S31" or "S26–31".
+    for a, b in re.findall(r'\bS(\d+)\s*[-–]\s*S?(\d+)\b', text):
+        named.update(str(k) for k in range(int(a), int(b) + 1))
+    return [i for i in ids if i[1:] not in named]
 
 
 WORD = re.compile(r"\b[A-Z][A-Za-z0-9.'-]{3,}\b")
