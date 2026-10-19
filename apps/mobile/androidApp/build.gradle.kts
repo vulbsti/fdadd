@@ -27,6 +27,13 @@ val supabaseUrl = publicSetting("aidoraaSupabaseUrl", "AIDORAA_SUPABASE_URL", "$
 val supabaseKey = publicSetting("aidoraaSupabaseKey", "AIDORAA_SUPABASE_KEY")
 val googleWebClientId = publicSetting("aidoraaGoogleWebClientId", "AIDORAA_GOOGLE_WEB_CLIENT_ID")
 
+/**
+ * Play needs a higher versionCode on every upload. Pass -PaidoraaVersionCode=N (or set
+ * AIDORAA_VERSION_CODE, e.g. a CI run number); local builds fall back to 1.
+ */
+val appVersionCode = publicSetting("aidoraaVersionCode", "AIDORAA_VERSION_CODE", "1").toInt()
+val appVersionName = publicSetting("aidoraaVersionName", "AIDORAA_VERSION_NAME", "1.0.0")
+
 /** Release signing: apps/mobile/keystore.properties, or AIDORAA_UPLOAD_* environment variables. */
 val keystoreProperties = Properties().apply {
     val file = rootProject.file("keystore.properties")
@@ -45,8 +52,8 @@ android {
         applicationId = "com.aidoraa.app"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         buildConfigField("String", "AIDORAA_ORIGIN", origin.quoted())
         buildConfigField("String", "SUPABASE_URL", supabaseUrl.quoted())

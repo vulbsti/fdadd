@@ -150,7 +150,7 @@ Based on the native app as built. The app contains no analytics, ads or crash-re
 
 ## Gaps to fix before submitting
 
-1. **Privacy policy and terms are still templates.** `src/app/privacy/page.tsx` and `src/app/terms/page.tsx` contain `[Your ...]` placeholders. Reviewers reject placeholder policies. The policy should name the processors above, cover birth details, retention, export and deletion.
+1. ~~Privacy policy and terms are still templates.~~ Written out in full (October 2026); the contact address lives in `src/lib/legal.ts`.
 2. **Reviewer access.** Everything is behind sign-in; give reviewers a test account under App content > App access.
 3. **Support email** must be a real, monitored address.
 4. **Play subscription set-up**: create `aidoraa_membership` and the three base plans above, and configure the server's Google Play credentials, before the internal test.
