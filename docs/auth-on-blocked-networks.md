@@ -33,6 +33,19 @@ What keeps sign-in working there:
    - Reset password: link to
      `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/auth/update-password`
 
+4. **Sender name.** The proxy only changes which address browsers reach; the
+   email itself still comes from Supabase's built-in mailer ("Supabase Auth",
+   with a "powered by Supabase" footer) until the project has its own SMTP.
+   Supabase > Authentication > Emails > SMTP Settings: turn on custom SMTP,
+   sender `Aidoraa <hello@aidoraa.com>` (any address on the domain), and the
+   host, port, user and password of a mail service allowed to send for
+   aidoraa.com (for example Resend's free tier: verify the domain with the DNS
+   records it gives, then host `smtp.resend.com`, port 465, user `resend`,
+   password = an API key). Zoho's free plan has no SMTP access.
+
+If sign-in fails, Vercel's function logs for `/auth/callback` and
+`/auth/google/callback` record the reason Supabase or Google gave.
+
 ## Checking it
 
 On a phone or emulator with Private DNS off on an affected network: email
