@@ -1,0 +1,341 @@
+{
+  "case": "sam-altman",
+  "variant": "masked",
+  "asOf": "2022-06-30",
+  "at": "2026-10-15T20:11:07.389Z",
+  "modelCalls": 38,
+  "results": [
+    {
+      "id": "q-work-next-years",
+      "ask": "What will the next few years bring for my work? I want to know what to focus on.",
+      "exitCode": 0,
+      "seconds": 121,
+      "question": {
+        "prompt": "Which is the tightest work constraint right now? I’m asking because it would change what “focus” should mean: fixing the external resource bottleneck, strengthening the organization, or protecting your attention.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "Compute and financing",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "Leadership depth and culture",
+            "kind": "answer"
+          },
+          {
+            "id": "option-3",
+            "label": "My own attention and too many roles",
+            "kind": "answer"
+          },
+          {
+            "id": "option-4",
+            "label": "All three are binding at once",
+            "kind": "answer"
+          },
+          {
+            "id": "option-5",
+            "label": "None of these—the lab’s internal capacity is healthy; the main issue is elsewhere",
+            "kind": "control"
+          }
+        ]
+      },
+      "tools": [
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ls",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "bash",
+        "ask_person"
+      ]
+    },
+    {
+      "id": "q-rough-patch",
+      "ask": "Is there a hard stretch coming? Where should I be careful?",
+      "exitCode": 0,
+      "seconds": 65,
+      "question": {
+        "prompt": "Which part feels most live right now? I’m asking because the timing points to pressure around resources and workload, but knowing the real pressure point would change what I’d tell you to protect first.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "The lab’s compute, funding, or governance",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "My personal money and concentrated investments",
+            "kind": "answer"
+          },
+          {
+            "id": "option-3",
+            "label": "Health, stress, or sleep",
+            "kind": "answer"
+          },
+          {
+            "id": "option-4",
+            "label": "Time, attention, or my relationship",
+            "kind": "answer"
+          },
+          {
+            "id": "option-5",
+            "label": "Something else—or none of these is the main concern",
+            "kind": "control"
+          }
+        ]
+      },
+      "tools": [
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "person_state",
+        "read",
+        "ls",
+        "read",
+        "read",
+        "read",
+        "read",
+        "find",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "read",
+        "ask_person"
+      ]
+    },
+    {
+      "id": "q-personal-life",
+      "ask": "What about my personal life over the next few years, my partner and my family?",
+      "exitCode": 0,
+      "seconds": 82,
+      "question": {
+        "prompt": "Is Oliver asking for more presence or protected time, or is this mainly your own worry that work is crowding out the relationship? I’m asking because those point to different next steps.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "He has asked for more time or presence",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "This is mostly my worry; he hasn’t said he feels shortchanged",
+            "kind": "control"
+          },
+          {
+            "id": "option-3",
+            "label": "There’s a different tension between us",
+            "kind": "answer"
+          }
+        ]
+      },
+      "tools": [
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "ls",
+        "ls",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "bash",
+        "grep",
+        "grep",
+        "read",
+        "read",
+        "read",
+        "bash",
+        "ask_person"
+      ]
+    },
+    {
+      "id": "q-dasha-now",
+      "ask": "Which dasha am I in right now, and when does it change?",
+      "exitCode": 0,
+      "seconds": 17,
+      "question": null,
+      "tools": [
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read"
+      ]
+    },
+    {
+      "id": "q-why-so-far",
+      "ask": "Looking back, why has my life gone the way it has so far?",
+      "exitCode": 0,
+      "seconds": 146,
+      "question": {
+        "prompt": "When major chapters closed—especially the startup and your dad’s death—did you keep working mostly because the work felt necessary, because stopping might have brought you closer to grief or uncertainty, or both? I ask because that changes whether I read your work-first pattern mainly as vocation, coping, or a mix.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "Both: it was meaningful work and a refuge",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "Mostly vocation; I wasn’t using work to avoid grief",
+            "kind": "control"
+          },
+          {
+            "id": "option-3",
+            "label": "Mostly a refuge from grief or uncertainty",
+            "kind": "answer"
+          },
+          {
+            "id": "option-4",
+            "label": "Neither / something else",
+            "kind": "answer"
+          },
+          {
+            "id": "option-5",
+            "label": "I’m not sure",
+            "kind": "answer"
+          }
+        ]
+      },
+      "tools": [
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "find",
+        "ls",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ls",
+        "ls",
+        "read",
+        "ask_person"
+      ]
+    },
+    {
+      "id": "q-what-holds-me-back",
+      "ask": "What am I really like, and what tends to hold me back?",
+      "exitCode": 0,
+      "seconds": 80,
+      "question": {
+        "prompt": "When you keep a commitment or project you suspect you should let go, what usually makes it hardest? I’m asking because the right response differs depending on whether this is about responsibility, stimulation, emotional avoidance, or a misread of your workload.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "I feel the mission or people depend on me; I worry it will be worse without me.",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "New, high-upside possibilities energize me, and I want to keep several alive.",
+            "kind": "answer"
+          },
+          {
+            "id": "option-3",
+            "label": "Work is easier than sitting with grief, uncertainty, or personal needs.",
+            "kind": "answer"
+          },
+          {
+            "id": "option-4",
+            "label": "I do let go when needed; the overload is mostly genuine external urgency, not my pattern.",
+            "kind": "control"
+          }
+        ]
+      },
+      "tools": [
+        "read",
+        "read",
+        "read",
+        "read",
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "find",
+        "find",
+        "ls",
+        "ls",
+        "ls",
+        "ls",
+        "bash",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ask_person"
+      ]
+    }
+  ]
+}

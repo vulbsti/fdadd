@@ -17,7 +17,7 @@ from .vimshottari import generate_mahadasha_timeline
 
 
 def _overlaps(a_start: date, a_end: date, b_start: date, b_end: date) -> bool:
-    return a_start <= b_end and b_start <= a_end
+    return a_start <= b_end and b_start < a_end
 
 
 def subdivide_period(period: DashaPeriod, child_level: int) -> List[DashaPeriod]:
@@ -33,19 +33,19 @@ def subdivide_period(period: DashaPeriod, child_level: int) -> List[DashaPeriod]
 def chain_for_date(moon_longitude: float, birth_date: date, on: date) -> Dict[str, Optional[DashaPeriod]]:
     """Full MD/AD/PD/SD chain active on a single date."""
     mds = generate_mahadasha_timeline(moon_longitude, birth_date, 120)
-    md = next((m for m in mds if m.start_date <= on <= m.end_date), None)
+    md = next((m for m in mds if m.start_date <= on < m.end_date), None)
     if md is None:
         return {"mahadasha": None, "antardasha": None, "pratyantar": None, "sookshma": None}
     ads = generate_antardasha_timeline(md)
-    ad = next((a for a in ads if a.start_date <= on <= a.end_date), None)
+    ad = next((a for a in ads if a.start_date <= on < a.end_date), None)
     if ad is None:
         return {"mahadasha": md, "antardasha": None, "pratyantar": None, "sookshma": None}
     pds = generate_pratyantardasha_timeline(ad)
-    pd = next((p for p in pds if p.start_date <= on <= p.end_date), None)
+    pd = next((p for p in pds if p.start_date <= on < p.end_date), None)
     if pd is None:
         return {"mahadasha": md, "antardasha": ad, "pratyantar": None, "sookshma": None}
     sds = subdivide_period(pd, 4)
-    sd = next((s for s in sds if s.start_date <= on <= s.end_date), None)
+    sd = next((s for s in sds if s.start_date <= on < s.end_date), None)
     return {"mahadasha": md, "antardasha": ad, "pratyantar": pd, "sookshma": sd}
 
 

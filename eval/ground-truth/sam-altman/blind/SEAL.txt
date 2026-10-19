@@ -1,0 +1,7 @@
+sealed 2026-10-15T19:28:47Z before any reconciliation
+b2049bb18865806e1b11295b607c9c722481a1411fdd98a9bb6d382562ab8105  natal-readings.json
+bd2d0753d8621af3e39b68b2f3e2a529bde26d4eceee0b9259fc1e2853c601c3  period-predictions.json
+8528e12b39226c25051b8bbd1eb76bd6a79ad7db0720cb3ee51cc7f59b9cf92c  METHOD.md
+45304ce135b15cbaa2904adc986f0243a1dcd80de32e345eb36ec0e6bc420de4  input/chart.json
+8d0842ce68ddd3dcdc229ceaf272fd79fa8a4a6dc6b192d781f014616010fa06  input/periods-by-age.json
+d72de2fd7e538e45f87624a0d6ecdcc9a847dd19cc0194a862c22a9d074da7e1  input/transits-by-age.json

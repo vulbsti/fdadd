@@ -1,0 +1,199 @@
+[
+ {
+  "id": "rule-01",
+  "rule": "The D10 10th-house cluster (Mercury, Venus and Jupiter together in the 10th of D10) outweighs their rasi weakness. The sub-periods of Mercury and Venus produced the largest career elevations, even though both sit in the rasi 12th and Mercury is debilitated. Never read a Mercury, Venus or Jupiter period as career-quiet; score their career strength at least 4.",
+  "derivedFrom": [
+   "p26-rahu-mercury",
+   "p28-rahu-venus",
+   "ev-040",
+   "ev-051",
+   "ev-065",
+   "ev-068"
+  ],
+  "appliesTo": "Jupiter MD as a whole, and especially Jupiter-Jupiter (2023-07 to 2025-08), Jupiter-Mercury and Jupiter-Venus; any Mercury or Venus pratyantar inside other periods.",
+  "confidence": "high"
+ },
+ {
+  "id": "rule-02",
+  "rule": "Saturn (10th/11th lord in the 8th) works as forced restructuring that ends in an upgrade, not as collapse. Saturn sub-periods, Saturn pratyantars and Saturn's transit over the Moon brought a competitor shock and a sale at a loss to investors, followed by a bigger role; an exit from one leadership post into a larger one; and an adolescent identity crisis that became a public stand. Saturn's 8th-house signification (research, technology, hidden things) also showed early as the defining turn into computing.",
+  "derivedFrom": [
+   "p25-rahu-saturn",
+   "p28-rahu-venus",
+   "p17-mars-saturn",
+   "p09-moon-saturn",
+   "ev-006",
+   "ev-033",
+   "ev-036",
+   "ev-040",
+   "ev-064",
+   "ev-065"
+  ],
+  "appliesTo": "Jupiter-Saturn AD (2025-08 to 2028-03); Saturn pratyantars; the second sade sati (Saturn into Aries, about 2027 onward); Saturn MD (2039+). Expect pressure and restructuring, and weigh the upside before predicting a fall.",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-03",
+  "rule": "Partnership endings are timed by Saturn transiting the 7th sign from the lagna (Libra, Ketu's natal sign), not by the Ketu sub-period. The long first partnership with a business co-founder ended under Saturn in Libra (2011-14); the Rahu-Ketu AD brought delegation and detachment from a role instead of a breakup.",
+  "derivedFrom": [
+   "p25-rahu-saturn",
+   "p27-rahu-ketu",
+   "ev-035",
+   "ev-053"
+  ],
+  "appliesTo": "The next Saturn transit through Libra (about 2041-44); Ketu ADs and pratyantars (Jupiter-Ketu, 2030-06 to 2031-05); any Saturn transit over the 7th from the Moon (Scorpio).",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-04",
+  "rule": "Rahu and Jupiter periods have acted on career through networks of patrons and older sponsors rather than through conflict. Each rise came via a sponsor: an accelerator founder who promoted him and then handed over, a patron-investor who funded his fund, and a celebrity technologist who co-founded the lab. Jupiter (9th lord in the 10th) supplies the patron; Rahu supplies the frontier field. The same patron ties later strained or ended (the 8th-lord quality).",
+  "derivedFrom": [
+   "p23-rahu-rahu",
+   "p24-rahu-jupiter",
+   "p26-rahu-mercury",
+   "ev-018",
+   "ev-022",
+   "ev-029",
+   "ev-037",
+   "ev-040",
+   "ev-048",
+   "ev-059"
+  ],
+  "appliesTo": "Rahu-Mars (to 2023-07) and the whole Jupiter MD (2023-2039). Look for sponsors, boards and patrons as the channel, and for strain in sponsor relationships under malefic pratyantars.",
+  "confidence": "high"
+ },
+ {
+  "id": "rule-05",
+  "rule": "Money signals (the 2nd lord Venus, the Moon and Mars in the 2nd, the 8th lord in the 2nd) show first at the level of institutions, as raising or losing other people's capital, and as large bold deployments into high-risk deep tech, not as steady personal accumulation. Macro shocks (credit crises) override personal money calls.",
+  "derivedFrom": [
+   "p24-rahu-jupiter",
+   "p25-rahu-saturn",
+   "p28-rahu-venus",
+   "p30-rahu-moon",
+   "ev-028",
+   "ev-036",
+   "ev-037",
+   "ev-068",
+   "ev-073",
+   "ev-077"
+  ],
+  "appliesTo": "Rahu-Mars (predicted money rise), Jupiter-Jupiter (predicted peak wealth), Saturn's transit through the 11th (2023-2025). Read money predictions as capital flows in and out of ventures he controls.",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-06",
+  "rule": "Exalted Venus (7th lord) in the 12th with Ketu in the 7th has shown up as a private, non-conventional partnership path. Identity and orientation were discovered privately through online networks, the first long relationship was with a business co-founder, a later partner is of foreign origin, and there is no formal marriage on record by 37. Venus sub-periods did not produce a dated marriage. Read 'unusual or foreign spouse' literally, and treat 'marriage in the Venus AD' as unreliable for this chart.",
+  "derivedFrom": [
+   "p12-moon-venus",
+   "p20-mars-venus",
+   "p28-rahu-venus",
+   "ev-008",
+   "ev-015",
+   "ev-035",
+   "ev-046"
+  ],
+  "appliesTo": "Jupiter-Venus AD (2031-05 to 2034-01), Venus pratyantars, Jupiter transits through the 7th; family-expansion predictions (5th) that depend on a partnership milestone.",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-07",
+  "rule": "Ashtama Shani (Saturn 8th from the Moon), especially when it also transits the 9th from the lagna, has fallen on the father and the family rather than on the native's own body. The native's own health has never surfaced in the record, so health predictions are untestable and low-weight for this person.",
+  "derivedFrom": [
+   "p28-rahu-venus",
+   "p29-rahu-sun",
+   "ev-061"
+  ],
+  "appliesTo": "Future Saturn transits over the 4th/9th from the lagna or the 8th from the Moon (the next ashtama is far off; Saturn over Cancer, about 2034-37, touches the 4th, the mother); all health-domain predictions.",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-08",
+  "rule": "Withdrawal-type factors (Ketu sub-periods; Saturn transiting over natal debilitated Jupiter in the 10th) have produced phases of low-visibility building and delegation, not breaks or public peaks. Do not forecast public recognition from Saturn in the 10th alone.",
+  "derivedFrom": [
+   "p27-rahu-ketu",
+   "p29-rahu-sun",
+   "ev-053",
+   "ev-067"
+  ],
+  "appliesTo": "Saturn's next return to Capricorn (about 2049-52) and Ketu periods (Jupiter-Ketu, about 2030-31). When forecasting visibility, require a Jupiter or Rahu activation as well as Saturn.",
+  "confidence": "low"
+ },
+ {
+  "id": "rule-09",
+  "rule": "Dasha seams act as plus-or-minus 6-month windows (sandhi). The defining break of the Rahu MD (leaving university, funded by the accelerator) arrived in the last months of Mars MD, once supportive transits were in place (Saturn in the 3rd from the Moon, Rahu entering Pisces). Birth-time uncertainty also shifts every seam by about 3 months per hour.",
+  "derivedFrom": [
+   "p21-mars-sun",
+   "p22-mars-moon",
+   "p04-sun-venus",
+   "ev-016",
+   "ev-018",
+   "ev-004"
+  ],
+  "appliesTo": "The Rahu-to-Jupiter MD seam on 2023-07-07 (window about 2023-01 to 2024-01) and the Jupiter-Jupiter to Jupiter-Saturn seam on 2025-08-24.",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-10",
+  "rule": "Childhood periods (Sun MD, Moon MD, early Mars MD) cannot be tested from this record: no health, school-result or dated family evidence. Their data gaps are not misses and should not move confidence in the chart.",
+  "derivedFrom": [
+   "p01-sun-saturn",
+   "p02-sun-mercury",
+   "p03-sun-ketu",
+   "p05-moon-moon",
+   "p06-moon-mars",
+   "p07-moon-rahu",
+   "p08-moon-jupiter",
+   "p10-moon-mercury",
+   "p11-moon-ketu",
+   "p13-moon-sun",
+   "p14-mars-mars",
+   "p15-mars-rahu"
+  ],
+  "appliesTo": "Calibration weighting only.",
+  "confidence": "high"
+ },
+ {
+  "id": "rule-11",
+  "rule": "Pressure on the Moon (sade sati; transit Rahu over the Moon) has expressed outward. Mars, the lagna lord in the 2nd, turns it into a public stand or confrontation, and the Moon as 4th lord turns it into family turbulence (a sibling's public estrangement). It has not shown as inner collapse or isolation.",
+  "derivedFrom": [
+   "p17-mars-saturn",
+   "p30-rahu-moon",
+   "ev-010",
+   "ev-011",
+   "ev-078"
+  ],
+  "appliesTo": "The second sade sati (about 2027-2034); Rahu's next transit over the lagna and the Moon; Moon pratyantars. Forecast family and reputation turbulence before mood collapse.",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-12",
+  "rule": "Pratyantar timing is reliable for malefic pratyantars (Saturn: setbacks; Mars: conflicts and departures) and for Jupiter pratyantars (patron or product milestones), each within days to weeks. Venus pratyantars did not time relationship events.",
+  "derivedFrom": [
+   "p23-rahu-rahu",
+   "p24-rahu-jupiter",
+   "p26-rahu-mercury",
+   "p28-rahu-venus",
+   "p29-rahu-sun",
+   "ev-023",
+   "ev-028",
+   "ev-048",
+   "ev-058",
+   "ev-059",
+   "ev-072"
+  ],
+  "appliesTo": "All pratyantar-level forecasts in Rahu-Mars and Jupiter MD, especially Mars and Saturn pratyantars for conflict and restructuring.",
+  "confidence": "medium"
+ },
+ {
+  "id": "rule-13",
+  "rule": "Property comes through activation of the 4th lord Moon. That includes the Sun's sub-period, because the Moon sits in the Sun's nakshatra (Krittika), and transit Jupiter in Capricorn aspecting the 4th. Large homes and estates were bought in Rahu-Sun and Rahu-Moon, in that Jupiter window.",
+  "derivedFrom": [
+   "p29-rahu-sun",
+   "p30-rahu-moon",
+   "ev-069",
+   "ev-070",
+   "ev-075"
+  ],
+  "appliesTo": "Moon pratyantars; Jupiter-Moon AD (2034-11 to 2036-03); Jupiter transits through Capricorn, Cancer or Scorpio (aspecting or occupying the 4th).",
+  "confidence": "medium"
+ }
+]

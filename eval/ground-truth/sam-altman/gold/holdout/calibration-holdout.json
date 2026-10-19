@@ -1,0 +1,1064 @@
+[
+ {
+  "id": "p32h-rahu-mars",
+  "md": "Rahu",
+  "ad": "Mars",
+  "from": "2022-06-19",
+  "to": "2023-07-07",
+  "fromAge": 37.16,
+  "toAge": 38.2,
+  "predictions": [
+   {
+    "predictionId": "p-01",
+    "domain": "career",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "The work he leads moves from quiet building toward a visible public product or launch before mid-2023; he stays in the top role and his public profile rises clearly over the year.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-080",
+     "ev-084"
+    ],
+    "explanation": "'moves from quiet building toward a visible public product or launch before mid-2023' - the conversational product launched 2022-11-30 (ev-080) and the next model 2023-03-14 (ev-084); stayed in the top role. Magnitude under-called (3 vs actual 5).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-02",
+    "domain": "money",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "A large capital event lands for a venture he controls: a big outside investment or strategic partnership (nine-figure or larger) into the lab or one of his chaired ventures, despite the tight market.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-081"
+    ],
+    "explanation": "'a big outside investment or strategic partnership (nine-figure or larger)' - multibillion strategic investment announced 2023-01-23 (ev-081).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-03",
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "A sharp, public dispute or criticism wave attaches to him or his ventures in this year (a critic, ex-partner, co-founder or regulator-style challenge); it is fought in public and in negotiation, not resolved by a court loss.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-082"
+    ],
+    "explanation": "'a sharp, public dispute ... ex-partner, co-founder' fought in public, no court loss - former co-founder turns publicly hostile Feb-Mar 2023 (ev-082).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-04",
+    "domain": "reputation",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "His public visibility rises sharply and polarises: more admiration and more attack at the same time; by mid-2023 he is a far more widely known public figure than in mid-2022.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-080",
+     "ev-085",
+     "ev-086"
+    ],
+    "explanation": "Visibility rises sharply and polarises - global figure after ev-080, Senate testimony (ev-085), heads-of-state tour with rebukes and walk-backs (ev-086, mixed).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-05",
+    "domain": "partnership",
+    "direction": "stable",
+    "strength": 2,
+    "statement": "No break-up with the current partner in this year; the relationship stays private and largely out of the record.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-088"
+    ],
+    "explanation": "No break-up: correct. But 'the relationship stays private and largely out of the record' is broken by the first public appearance as a couple at a state dinner on 2023-06-22 (ev-088), inside the window. Calibration: Core rule-03 call (no ending) held; the 'stays private' add-on failed in the Rahu-Mars-Moon pratyantar with Jupiter on the lagna aspecting the 7th (2023-04 onward), which favours disclosure.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-06",
+    "domain": "family",
+    "direction": "fall",
+    "strength": 2,
+    "statement": "The public sibling estrangement does not resolve in this year; it may resurface in public at least once, with no reconciliation on record.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [
+     "ev-130"
+    ],
+    "explanation": "Null call: no reconciliation on record in the window; non-resolution confirmed later by the Jan 2025 lawsuit (ev-130). Hedged 'may resurface' did not occur and is not counted. Low information.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-07",
+    "domain": "health",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "No serious illness or hospitalisation becomes public; any strain shows as overwork/stress rather than a documented health event.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "Null call: no illness or hospitalisation on record in the window. Low information (rule-07).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-08",
+    "domain": "home",
+    "direction": "stable",
+    "strength": 2,
+    "statement": "No major new property purchase dominates this year; property activity resumes with Moon-linked periods later.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "Null call: no property event on record in the window (the record does capture property events in other years: ev-116, ev-134, ev-149).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-09",
+    "domain": "mind-worldview",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "He increasingly speaks publicly about the large-scale societal effects and risks of the technology he builds, tying his essays to his institution's product rather than standalone ideas.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-083",
+     "ev-085",
+     "ev-087"
+    ],
+    "explanation": "Speaks publicly on societal effects and risks tied to the institution: AGI strategy post (ev-083, Feb 2023), Senate testimony on oversight (ev-085), extinction-risk statement (ev-087).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-10",
+    "domain": "network-mentors",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "The main strategic partner/patron relationship deepens into a larger commitment during this AD (more money or a deeper tie-up), rather than a new solo route.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-081"
+    ],
+    "explanation": "'The main strategic partner/patron relationship deepens into a larger commitment' - the strategic partner's multiyear multibillion investment (ev-081). Same event as p-02/p-15 (double-counted).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-11",
+    "domain": "education",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "No return to formal study or degree; education appears only as public teaching/talks, not credentials.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "Null call: no formal study on record.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-17",
+    "domain": "career",
+    "direction": "change",
+    "strength": 5,
+    "statement": "The window Jan 2023 - Jan 2024 contains the defining turning point of this four-year span: a break in how he holds his role (a structural change, a confrontation over control, or a step into a much larger institutional role), after which his standing is higher than before.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-094",
+     "ev-095",
+     "ev-096",
+     "ev-097"
+    ],
+    "explanation": "'A break in how he holds his role (... a confrontation over control ...) after which his standing is higher' inside Jan 2023-Jan 2024 - removed by the board 2023-11-17 and restored 2023-11-21/29 (ev-094..097), 4.5 months after the MD seam.",
+    "explanationStrength": "strong",
+    "scope": "Rahu->Jupiter MD seam window 2023-01..2024-01 (rule-09); filed under the AD that ends at the seam."
+   },
+   {
+    "predictionId": "p-18",
+    "domain": "reputation",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "By end-2023 he is treated as an authority/statesman figure of his field (invited counsel to governments and institutions), not just a startup founder.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-085",
+     "ev-086",
+     "ev-098"
+    ],
+    "explanation": "Treated as an authority figure by governments by end-2023 - Senate (ev-085), heads-of-state tour (ev-086), magazine CEO of the Year (ev-098).",
+    "explanationStrength": "strong",
+    "scope": "Rahu->Jupiter MD seam window 2023-01..2024-01 (rule-09); filed under the AD that ends at the seam."
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "predictionId": "p-12",
+    "pratyantar": "Jupiter",
+    "from": "2022-09-07",
+    "to": "2022-10-28",
+    "fromAge": 37.37,
+    "toAge": 37.51,
+    "domain": "network-mentors",
+    "expect": "A patron, partner or product milestone (a sponsor commitment, a notable release or a deal) falls in Sept-Oct 2022.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-080"
+    ],
+    "explanation": "Nothing on record inside Sept-Oct 2022. The nearest milestone (product launch ev-080, 2022-11-30) falls 1 month after the window, inside the +3-month edge allowance but outside the days-to-weeks precision rule-12 claims for Jupiter pratyantars. Partial, not hit. Calibration: Theme right (product milestone), timing off by about 1 month - consistent with the documented +-3 months/hour birth-time slack but not with rule-12's precision.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-13",
+    "pratyantar": "Saturn",
+    "from": "2022-10-28",
+    "to": "2022-12-28",
+    "fromAge": 37.51,
+    "toAge": 37.68,
+    "domain": "career",
+    "expect": "Late 2022 brings a forced pressure point (a competitor move, a market shock to one of his ventures, or a restructuring) that he turns into an advantage rather than a loss; net effect upward.",
+    "scoringVerdict": "false-alarm",
+    "verdict": "alternate-reading",
+    "evidence": [
+     "ev-080"
+    ],
+    "explanation": "'Late 2022 brings a forced pressure point (a competitor move, a market shock ... or a restructuring)' - no forced pressure point is on record. The Nov-Dec 2022 Saturn pratyantar instead held the self-initiated product launch (ev-080), the biggest positive event of the span. Calibration: Saturn (10th/11th lord in the 8th) expressed its 8th-house technology/research signification (named in rule-02) and 10th/11th lordship as a public release, boosted by Rahu on the lagna and Saturn back over natal Jupiter in the 10th; the 'setback' reading of rule-12 did not apply. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-14",
+    "pratyantar": "Mercury",
+    "from": "2022-12-28",
+    "to": "2023-02-20",
+    "fromAge": 37.68,
+    "toAge": 37.83,
+    "domain": "career",
+    "expect": "Early 2023 is a clear career elevation: a major announcement, launch or expanded partnership that puts his institution at the centre of its field, coinciding with Saturn entering the 11th.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-081"
+    ],
+    "explanation": "'A major announcement, launch or expanded partnership that puts his institution at the centre of its field' - multibillion partnership expansion 2023-01-23 (ev-081), five days after Saturn entered the 11th.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-15",
+    "pratyantar": "Mercury",
+    "from": "2022-12-28",
+    "to": "2023-02-20",
+    "fromAge": 37.68,
+    "toAge": 37.83,
+    "domain": "money",
+    "expect": "A very large capital commitment into the institution he runs (or a venture he chairs) is announced or closed in roughly Jan-Mar 2023.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-081"
+    ],
+    "explanation": "'A very large capital commitment ... announced or closed in roughly Jan-Mar 2023' - ev-081 (2023-01-23).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-16",
+    "pratyantar": "Venus",
+    "from": "2023-03-14",
+    "to": "2023-05-17",
+    "fromAge": 37.89,
+    "toAge": 38.06,
+    "domain": "reputation",
+    "expect": "Spring 2023: high-level public appearances and engagement with establishment/institutional figures (policy, government or major forums) as a recognised voice of his field.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-085",
+     "ev-086"
+    ],
+    "explanation": "'High-level public appearances and engagement with establishment/institutional figures (policy, government ...)' Mar-May 2023 - Senate testimony 2023-05-16 (ev-085), one day before the pratyantar ends; heads-of-state tour from 2023-05-22 (ev-086). Highly specific: contamination risk.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-19",
+    "pratyantar": "Moon",
+    "from": "2023-06-05",
+    "to": "2023-07-07",
+    "fromAge": 38.12,
+    "toAge": 38.2,
+    "domain": "family",
+    "expect": "Around the seam, a family or home theme (family relation, home base) comes up; turbulence on the sibling front is more likely than a resolution.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-088",
+     "ev-090"
+    ],
+    "explanation": "'A family or home theme ... comes up; turbulence on the sibling front more likely' - a partnership/home theme appeared (public couple ev-088 in the window; plans for children and the ranch home ev-090, Sept 2023, inside the edge allowance); no sibling turbulence. Calibration: Moon pratyantar activated family/home as rule-11/13 say, but as partnership disclosure and family planning (Jupiter on the lagna aspecting the 5th and 7th), not sibling turbulence.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "quietChecks": [],
+  "unpredictedEvents": [],
+  "periodVerdict": "Strong: launch, capital, public dispute, visibility and government engagement all called, mostly at the right pratyantar. One false alarm (Saturn pratyantar read as a setback held the launch). The seam call (p-17) caught the Nov 2023 removal-and-return.",
+  "lessons": [
+   "rule-01",
+   "rule-04",
+   "rule-05",
+   "rule-09",
+   "rule-12",
+   "N-02",
+   "N-04"
+  ]
+ },
+ {
+  "id": "p33h-jupiter-jupiter",
+  "md": "Jupiter",
+  "ad": "Jupiter",
+  "from": "2023-07-07",
+  "to": "2025-08-24",
+  "fromAge": 38.2,
+  "toAge": 40.34,
+  "predictions": [
+   {
+    "predictionId": "p-20",
+    "domain": "career",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "The strongest career period of his life so far: the institution he leads becomes one of the most prominent organisations in its industry, and he remains its head at the end of this period (2025-08), with expanded authority.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-097",
+     "ev-105",
+     "ev-123",
+     "ev-131",
+     "ev-138",
+     "ev-143"
+    ],
+    "explanation": "Remains head at 2025-08 with expanded authority (restored ev-097, rejoins board ev-105); institution at the top of its industry (ev-123, ev-131, ev-138, ev-143). The AD also held a magnitude-5 removal (ev-094), covered by p-32, not by this statement.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-21",
+    "domain": "money",
+    "direction": "rise",
+    "strength": 5,
+    "statement": "Peak capital flows: the ventures he controls raise their largest-ever sums (multi-billion scale for the main institution), and his personal paper wealth reaches a new high, mostly via stakes in ventures and investments rather than salary.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-123",
+     "ev-138"
+    ],
+    "explanation": "'The ventures he controls raise their largest-ever sums (multi-billion scale)' - $6.6B (ev-123) and $40B (ev-138). The personal-wealth clause is unverified in the record (ev-122 notes he denies an equity grant).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-22",
+    "domain": "network-mentors",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "Patron/board relationships are both the engine and the main strain: at least one important sponsor, board or co-founder relationship is visibly strained or ends in this AD, while new larger sponsors arrive.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-094",
+     "ev-108",
+     "ev-118",
+     "ev-122",
+     "ev-131",
+     "ev-138"
+    ],
+    "explanation": "Board relationship breaks (ev-094), co-founders/leaders leave (ev-108, ev-118, ev-122) while larger sponsors arrive (ev-131, ev-138).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-23",
+    "domain": "conflict-legal",
+    "direction": "mixed",
+    "strength": 3,
+    "statement": "He faces legal or governance challenges (disputes with former partners/co-founders or regulators) in this AD; he comes out holding his position rather than losing it.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-103",
+     "ev-105",
+     "ev-119",
+     "ev-133"
+    ],
+    "explanation": "Legal/governance challenges from a former co-founder (ev-103, ev-119, ev-133) and a governance review that clears him (ev-105); holds position.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-24",
+    "domain": "reputation",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "Public stature peaks: wide recognition as a leading figure of his field (major-media and government-level attention), alongside persistent criticism of his trustworthiness or ambitions.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-098",
+     "ev-131",
+     "ev-111",
+     "ev-112",
+     "ev-142"
+    ],
+    "explanation": "Stature peaks with government-level attention (ev-098, ev-131) 'alongside persistent criticism of his trustworthiness' (ev-111, ev-112, ev-142).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-25",
+    "domain": "partnership",
+    "direction": "rise",
+    "strength": 3,
+    "statement": "His long-term private relationship becomes more formal or more public in this AD (a commitment step such as marriage or public acknowledgment), most plausibly mid-2023 to mid-2024 while Jupiter crosses the lagna and aspects the 7th.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-090",
+     "ev-101"
+    ],
+    "explanation": "'A commitment step such as marriage ... most plausibly mid-2023 to mid-2024' - marriage Jan 2024 (ev-101, magnitude 5). Magnitude under-called (3). Contradicts the spirit of rule-06 and is very specific: strongest contamination flag in the set.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-26",
+    "domain": "family",
+    "direction": "change",
+    "strength": 3,
+    "statement": "Family expansion becomes possible in this AD: Jupiter aspecting the 5th from Aries (2023-24) and the 5th lord Sun with Rahu point to a non-conventional route to a child if one comes; the sibling estrangement stays unresolved.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-129",
+     "ev-135",
+     "ev-130"
+    ],
+    "explanation": "'Family expansion becomes possible in this AD' - expecting (ev-129), son born 2025-02-22 (ev-135). 'Sibling estrangement stays unresolved' true but under-states a federal lawsuit (ev-130). 'Non-conventional route' is not verifiable from the record. Magnitude under-called.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-27",
+    "domain": "home",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Home life consolidates; a property change (new home or major estate move) is plausible in the Moon-linked windows, especially Jan-Mar 2025 and while Jupiter is over the natal Moon (2024-05 to 2025-05).",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-134"
+    ],
+    "explanation": "'A property change ... especially Jan-Mar 2025' - affiliate buys adjacent lots 2025-02-19 (ev-134). Negative home event ev-116 (defect suit, Jul 2024) not foreseen.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-28",
+    "domain": "health",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "No serious, publicly reported health event for him in this AD.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "Null call: no serious health event on record (ev-121 and ev-128 are self-reported mood/sleep remarks, magnitude 2).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-29",
+    "domain": "mind-worldview",
+    "direction": "rise",
+    "strength": 4,
+    "statement": "His essays and public statements about the future of the technology and society reach their widest audience ever, framed around his institution's work (governance, safety, abundance).",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-106",
+     "ev-120",
+     "ev-129",
+     "ev-145"
+    ],
+    "explanation": "Essays framed around the institution do appear (ev-120, ev-129, ev-145) but the record rates every one magnitude <=2; 'reach their widest audience ever' (magnitude 4) is not evidenced. Calibration: Jupiter (9th lord) did activate worldview output; the significance was over-weighted because rule-01's career boost was carried over to the 9th-house domain.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-30",
+    "domain": "education",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "No formal degree or academic post taken; at most honorary or ceremonial academic recognition.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [
+     "ev-092"
+    ],
+    "explanation": "Null call with a matching rider: no degree; 'at most honorary or ceremonial academic recognition' - school alumni award (ev-092).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "predictionId": "p-31",
+    "pratyantar": "Jupiter",
+    "from": "2023-07-07",
+    "to": "2023-10-19",
+    "fromAge": 38.2,
+    "toAge": 38.49,
+    "domain": "career",
+    "expect": "The first months of Jupiter MD (Jul-Oct 2023) bring a patron or product milestone: a major new product release or an expanded partnership commitment.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-089",
+     "ev-093"
+    ],
+    "explanation": "'A major new product release or an expanded partnership commitment' Jul-Oct 2023 - a chaired venture's token/network launched 2023-07-24 (ev-089) but drew immediate regulatory backlash (mixed, magnitude 3); the developer conference (ev-093, magnitude 2) falls 2.5 weeks after the window. No magnitude-4 milestone. Calibration: Jupiter pratyantar gave a product launch but the Rahu transit over the lagna (to 2023-11) and Rahu MD sandhi made it controversial; rule-12's Jupiter timing was loose.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-32",
+    "pratyantar": "Saturn",
+    "from": "2023-10-19",
+    "to": "2024-02-19",
+    "fromAge": 38.49,
+    "toAge": 38.83,
+    "domain": "conflict-legal",
+    "expect": "The sharpest crisis of the four years: between late Oct 2023 and Feb 2024 a governance or control confrontation hits him (board, patron or co-founder level), which resolves within months into him in a stronger position.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-091",
+     "ev-094",
+     "ev-095",
+     "ev-096",
+     "ev-097",
+     "ev-105"
+    ],
+    "explanation": "'Between late Oct 2023 and Feb 2024 a governance or control confrontation hits him (board ...), which resolves within months into him in a stronger position' - board friction Oct 2023 (ev-091), removal 2023-11-17 (ev-094), restoration (ev-097), cleared and back on the board 2024-03-08 (ev-105). Exact; contamination risk.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-33",
+    "pratyantar": "Saturn",
+    "from": "2023-10-19",
+    "to": "2024-02-19",
+    "fromAge": 38.49,
+    "toAge": 38.83,
+    "domain": "network-mentors",
+    "expect": "In the same window, the composition of the people overseeing or backing his institution changes (board, sponsor or key co-leader departures/replacements).",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-096",
+     "ev-097"
+    ],
+    "explanation": "Board composition changes in the same window - new initial board (ev-097), key co-leader quits and returns (ev-094/ev-096).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-34",
+    "pratyantar": "Mercury",
+    "from": "2024-02-19",
+    "to": "2024-06-09",
+    "fromAge": 38.83,
+    "toAge": 39.13,
+    "domain": "career",
+    "expect": "Spring 2024 brings a major career/product elevation and new deals; momentum is clearly restored after the winter crisis.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-105",
+     "ev-115",
+     "ev-107",
+     "ev-111",
+     "ev-112"
+    ],
+    "explanation": "Rejoins the board (ev-105, Mar 2024) and a platform-integration deal (ev-115, Jun 10) fit 'momentum restored', but the window is dominated by reputational damage (ev-107, ev-111, ev-112) and no 'major career/product elevation' of magnitude 4 beyond the board return. Calibration: Mercury is also the 6th lord (disputes, accusations) for this lagna; the pratyantar gave the career repair rule-01 expects plus 6th-house exposure. See new rule N-03.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-35",
+    "pratyantar": "Ketu",
+    "from": "2024-06-09",
+    "to": "2024-07-24",
+    "fromAge": 39.13,
+    "toAge": 39.25,
+    "domain": "network-mentors",
+    "expect": "Mid-2024: senior people around him depart or step back (key colleagues or co-founders leave); he delegates rather than breaking.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-108",
+     "ev-109",
+     "ev-118"
+    ],
+    "explanation": "'Senior people around him depart' in Jun 9-Jul 24 2024 - none inside the window; departures fall just before (ev-108, ev-109, mid-May) and just after (ev-118, Aug). Matches only via the edge allowance; pratyantar precision missed. Calibration: Departure theme of the Jupiter-Jupiter AD (rule-04) right; Ketu pratyantar did not time it (rule-08 Ketu clause weak).",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-36",
+    "pratyantar": "Venus",
+    "from": "2024-07-24",
+    "to": "2024-12-01",
+    "fromAge": 39.25,
+    "toAge": 39.61,
+    "domain": "money",
+    "expect": "Second half of 2024: the largest capital raise yet for the institution he leads, lifting his financial position.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-123"
+    ],
+    "explanation": "'The largest capital raise yet for the institution he leads' Jul-Dec 2024 - $6.6B round 2024-10-02 (ev-123, magnitude 3). Not the largest commitment yet (ev-081 was larger) and no evidence of 'lifting his financial position'. Domain/direction/window right; magnitude 5 and 'largest yet' over-claimed. Calibration: Venus (2nd lord) pratyantar did time a raise (rule-01/05); the scale was over-read from Saturn in the 11th plus Jupiter over the Moon.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-37",
+    "pratyantar": "Venus",
+    "from": "2024-07-24",
+    "to": "2024-12-01",
+    "fromAge": 39.25,
+    "toAge": 39.61,
+    "domain": "career",
+    "expect": "In the same window his institution restructures its governance or corporate form, and senior departures accompany the change.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-122",
+     "ev-126"
+    ],
+    "explanation": "'His institution restructures its governance or corporate form, and senior departures accompany the change' - departures accompanying the conversion push (ev-122, 2024-09-25) and the conversion proposal (ev-126, Dec 2024) are in the window, but the restructure itself only completes in Oct 2025 (ev-152). Calibration: Restructuring theme correctly placed in the Venus pratyantar but completed under the Saturn pratyantar of the next AD, as rule-02 would place it. Specificity raises contamination concern.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-38",
+    "pratyantar": "Moon",
+    "from": "2025-01-09",
+    "to": "2025-03-15",
+    "fromAge": 39.72,
+    "toAge": 39.89,
+    "domain": "family",
+    "expect": "Early 2025 brings a family or home event (a family milestone, a home change, or a renewed public family dispute).",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-130",
+     "ev-134",
+     "ev-135",
+     "ev-137"
+    ],
+    "explanation": "'A family milestone, a home change, or a renewed public family dispute' Jan-Mar 2025 - all three: sibling suit 2025-01-06 (ev-130, 3 days before the pratyantar), lots bought 2025-02-19 (ev-134), son born 2025-02-22 (ev-135), counterclaims 2025-03-07 (ev-137). Broad three-way hedge; magnitude under-called (3 vs 5).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-39",
+    "pratyantar": "Mars",
+    "from": "2025-03-15",
+    "to": "2025-04-29",
+    "fromAge": 39.89,
+    "toAge": 40.02,
+    "domain": "conflict-legal",
+    "expect": "Mar-Apr 2025: an open conflict escalates (a lawsuit or public clash with a former partner, competitor or patron).",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-139",
+     "ev-137"
+    ],
+    "explanation": "'An open conflict escalates (a lawsuit or public clash with a former partner ...)' Mar 15-Apr 29 2025 - countersuit against the former co-founder 2025-04-09 (ev-139); counterclaims vs sibling 8 days before (ev-137).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-40",
+    "pratyantar": "Rahu",
+    "from": "2025-04-29",
+    "to": "2025-08-24",
+    "fromAge": 40.02,
+    "toAge": 40.34,
+    "domain": "reputation",
+    "expect": "Apr-Aug 2025: turbulence and exposure - intense competition and controversy around his institution, while its scale keeps growing; Rahu enters the 11th (2025-05) supporting gains through networks.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-141",
+     "ev-142",
+     "ev-143",
+     "ev-144",
+     "ev-147"
+    ],
+    "explanation": "Turbulence and controversy while scale grows, Apr-Aug 2025 - critical biographies (ev-142), forced retreat on control (ev-141), rival poaching (ev-144), launch backlash (ev-147), alongside a large acquisition (ev-143).",
+    "explanationStrength": "strong"
+   }
+  ],
+  "quietChecks": [],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-089",
+    "magnitude": 3,
+    "eventVerdict": "partial",
+    "anticipatedBy": [
+     "p-31"
+    ],
+    "category": "partial",
+    "explanation": "Jupiter pratyantar launch theme right; Rahu still on the lagna added the regulatory controversy.",
+    "explanationStrength": "weak"
+   },
+   {
+    "eventId": "ev-107",
+    "magnitude": 3,
+    "eventVerdict": "partial",
+    "anticipatedBy": [
+     "p-24"
+    ],
+    "category": "partial",
+    "explanation": "AD-level criticism theme right; Mercury as 6th lord (accusations) was not read for the pratyantar (new rule N-03).",
+    "explanationStrength": "weak"
+   },
+   {
+    "eventId": "ev-109",
+    "magnitude": 3,
+    "eventVerdict": "partial",
+    "anticipatedBy": [
+     "p-35",
+     "p-24"
+    ],
+    "category": "partial",
+    "explanation": "Departure theme right, Ketu timing off by weeks (rule-08 Ketu clause).",
+    "explanationStrength": "weak"
+   },
+   {
+    "eventId": "ev-110",
+    "magnitude": 3,
+    "eventVerdict": "missed",
+    "anticipatedBy": [],
+    "category": "alternate-reading",
+    "explanation": "Jupiter (9th lord, dharma) entered Taurus over the natal 2nd-house Moon on 2024-05-01, 17 days before; money signals expressed as a pledged outflow of capital, in line with rule-05's institutional/large-deployment reading. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "eventId": "ev-127",
+    "magnitude": 3,
+    "eventVerdict": "missed",
+    "anticipatedBy": [],
+    "category": "alternate-reading",
+    "explanation": "Sun (exalted in the lagna, 5th lord, karaka of rulers) pratyantar: the rule-04 patron channel turned to state power. A second instance (heads-of-state tour, ev-086) fell in the earlier Sun pratyantar; see new rule N-04. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "eventId": "ev-130",
+    "magnitude": 5,
+    "eventVerdict": "partial",
+    "anticipatedBy": [
+     "p-38",
+     "p-26"
+    ],
+    "category": "partial",
+    "explanation": "rule-11 (Moon pratyantar/Jupiter over the Moon = family turbulence) timed it within days; the severity was under-read because rule-07/11 had kept family pressure low-weight.",
+    "explanationStrength": "strong"
+   },
+   {
+    "eventId": "ev-141",
+    "magnitude": 3,
+    "eventVerdict": "partial",
+    "anticipatedBy": [
+     "p-40",
+     "p-23"
+    ],
+    "category": "partial",
+    "explanation": "Rahu pratyantar controversy right; the retreat is the forced-restructuring pressure of rule-02 arriving before the Saturn AD.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "periodVerdict": "Strong at AD level and at the Saturn and Moon pratyantars (governance crisis; sibling suit, child, property). Weak at Jupiter, Mercury and Ketu pratyantars. Missed a philanthropic pledge and a political donation; under-called marriage, child and sibling suit (all magnitude 5, predicted 3).",
+  "lessons": [
+   "rule-02",
+   "rule-04",
+   "rule-06",
+   "rule-11",
+   "rule-12",
+   "rule-13",
+   "N-03",
+   "N-04"
+  ]
+ },
+ {
+  "id": "p34h-jupiter-saturn",
+  "md": "Jupiter",
+  "ad": "Saturn",
+  "from": "2025-08-24",
+  "to": "2028-03-07",
+  "fromAge": 40.34,
+  "toAge": 42.87,
+  "note": "Truncated at the scoring horizon 2026-06-30 (age 41.19); the AD runs to 2028-03-07.",
+  "predictions": [
+   {
+    "predictionId": "p-41",
+    "domain": "career",
+    "direction": "change",
+    "strength": 4,
+    "statement": "A restructuring phase of his main institution begins: reorganisation, a new corporate/governance structure or a big strategic pivot, after which his role is larger, not smaller.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-152"
+    ],
+    "explanation": "'A new corporate/governance structure ... after which his role is larger' - restructuring completed 2025-10-28 (ev-152).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-42",
+    "domain": "money",
+    "direction": "mixed",
+    "strength": 4,
+    "statement": "Very large capital commitments and outflows: huge long-term spending/infrastructure commitments by the ventures he controls, alongside public doubt about whether they are sustainable; no personal collapse.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-150",
+     "ev-159"
+    ],
+    "explanation": "'Huge long-term spending/infrastructure commitments ... alongside public doubt about whether they are sustainable' - compute megadeals with critics warning of circular financing (ev-150), $122B raise (ev-159). Specific: contamination risk.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-43",
+    "domain": "reputation",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Reputational scrutiny rises: accusations about his conduct, honesty or rule-bending attach to him personally in this window (media investigations, testimony, or allegations).",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-161",
+     "ev-165",
+     "ev-170"
+    ],
+    "explanation": "'Accusations about his conduct, honesty ... (media investigations, testimony, or allegations)' - trust exposé 2026-04-06 (ev-161), trial testimony on his management (ev-165), a rival's trust remark (ev-170). Specific: contamination risk.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-44",
+    "domain": "conflict-legal",
+    "direction": "fall",
+    "strength": 3,
+    "statement": "Legal and regulatory pressure is active (lawsuits involving his institution or past partners proceed); he is not removed from his role by them in this window.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-148",
+     "ev-153",
+     "ev-157",
+     "ev-160",
+     "ev-165",
+     "ev-166",
+     "ev-167",
+     "ev-168"
+    ],
+    "explanation": "Lawsuits proceed (ev-148, ev-153, ev-166, ev-168), trial (ev-165) won (ev-167); not removed.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-45",
+    "domain": "partnership",
+    "direction": "stable",
+    "strength": 2,
+    "statement": "No breakup with his partner in this window; Saturn is not in Libra.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "Null call: no break-up on record.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-46",
+    "domain": "family",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "Family life is quietly stable or growing; any family news is private-life news, not a crisis; the sibling dispute may continue in legal or public form.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-160",
+     "ev-162",
+     "ev-163",
+     "ev-164"
+    ],
+    "explanation": "'The sibling dispute may continue in legal or public form' - yes (ev-160). But 'any family news is private-life news, not a crisis' fails: the family home was firebombed and shot at in April 2026 (ev-163, ev-164) and he posted a family photo calling for de-escalation (ev-162). Calibration: Legal continuation right; the household crisis came from outside the family via Saturn in the 12th (see p-47 and new rule N-01).",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-47",
+    "domain": "home",
+    "direction": "rise",
+    "strength": 2,
+    "statement": "A home/property move or significant purchase is plausible when Jupiter enters Cancer (4th house), Oct-Dec 2025 or from June 2026.",
+    "scoringVerdict": "miss",
+    "verdict": "stronger-influence",
+    "evidence": [
+     "ev-149",
+     "ev-163",
+     "ev-164"
+    ],
+    "explanation": "'A home/property move or significant purchase is plausible ... Oct-Dec 2025 or from June 2026' - no purchase or move on record; the estate listing for sale (ev-149, Sept 2025) is an outflow, and the dominant home events were attacks on the residence in April 2026 (ev-163, ev-164) - opposite direction. Calibration: Transit Saturn in the 12th (losses, hidden enemies) over natal Mercury (6th lord) and Venus outweighed the brief Jupiter-in-Cancer windows; Jupiter was in Gemini at the time of the attacks. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-48",
+    "domain": "health",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "No publicly reported serious health event for him; Saturn's pressure lands on institutional and family matters, not his body.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "Null call: no health event; the April 2026 attacks are tagged health but he was unhurt (ev-163, ev-164).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-49",
+    "domain": "network-mentors",
+    "direction": "change",
+    "strength": 3,
+    "statement": "A long-standing strategic partner/sponsor relationship is renegotiated into a looser, more arms-length form while new partners are added.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-150",
+     "ev-152",
+     "ev-154"
+    ],
+    "explanation": "New partners added (ev-150, ev-154) and the long-standing partner's position is reset to a fixed stake in the restructuring (ev-152); the record does not state that the tie became 'looser, more arms-length'. Calibration: rule-04 strain-and-renegotiate pattern is consistent with ev-152 but the specific loosening is not in the record.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-50",
+    "domain": "mind-worldview",
+    "direction": "stable",
+    "strength": 3,
+    "statement": "He keeps arguing publicly for very large-scale build-out and for the abundance/benefit vision, now more defensive and policy-focused than in 2023-24.",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-150",
+     "ev-158",
+     "ev-162"
+    ],
+    "explanation": "'Now more defensive' fits the public self-criticism and de-escalation post (ev-162) and the bubble remark (ev-150); the 'abundance/benefit vision ... policy-focused' advocacy is not directly on record in the window. Calibration: Saturn AD sobriety visible; the advocacy half is unrecorded rather than wrong.",
+    "explanationStrength": "weak"
+   },
+   {
+    "predictionId": "p-51",
+    "domain": "education",
+    "direction": "stable",
+    "strength": 1,
+    "statement": "No formal education change.",
+    "scoringVerdict": "hit",
+    "verdict": "quiet-correct",
+    "evidence": [],
+    "explanation": "Null call: no education change on record.",
+    "explanationStrength": "strong"
+   }
+  ],
+  "keyPratyantarChecks": [
+   {
+    "predictionId": "p-52",
+    "pratyantar": "Saturn",
+    "from": "2025-08-24",
+    "to": "2026-01-18",
+    "fromAge": 40.34,
+    "toAge": 40.74,
+    "domain": "career",
+    "expect": "Aug 2025 - Jan 2026: the strongest restructuring point of the Jupiter-Saturn opening - a reorganisation or formal recapitalisation of his main institution completes, net upward for him.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-152"
+    ],
+    "explanation": "'A reorganisation or formal recapitalisation of his main institution completes, net upward' Aug 2025-Jan 2026 - completed 2025-10-28 (ev-152). Exact.",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-53",
+    "pratyantar": "Mercury",
+    "from": "2026-01-18",
+    "to": "2026-05-29",
+    "fromAge": 40.74,
+    "toAge": 41.1,
+    "domain": "career",
+    "expect": "Early 2026: new launches, deals or role expansion after the restructuring.",
+    "scoringVerdict": "hit",
+    "verdict": "hit",
+    "evidence": [
+     "ev-156",
+     "ev-158",
+     "ev-159"
+    ],
+    "explanation": "'New launches, deals or role expansion' Jan-May 2026 - ads product (ev-156, 2 days before), defence deal (ev-158), $122B raise (ev-159). Same window held the heaviest reputational damage (ev-157, ev-161, ev-163).",
+    "explanationStrength": "strong"
+   },
+   {
+    "predictionId": "p-54",
+    "pratyantar": "Ketu",
+    "from": "2026-05-29",
+    "to": "2026-07-22",
+    "fromAge": 41.1,
+    "toAge": 41.25,
+    "domain": "network-mentors",
+    "expect": "Mid-2026: senior departures or a step back from one of his side roles (he delegates a chair/role).",
+    "scoringVerdict": "partial",
+    "verdict": "partial",
+    "evidence": [
+     "ev-158"
+    ],
+    "explanation": "'Senior departures or a step back from one of his side roles' May-Jun 2026 - nothing on record in the window; senior staff left after the defence deal (ev-158, 2026-02-28), within the -3-month edge only. Window partly tested (the pratyantar runs to 2026-07-22). Calibration: Departure theme recurs, but the Ketu pratyantar again did not time it; the record instead shows an IPO filing (ev-169).",
+    "explanationStrength": "weak"
+   }
+  ],
+  "quietChecks": [],
+  "unpredictedEvents": [
+   {
+    "eventId": "ev-163",
+    "magnitude": 4,
+    "eventVerdict": "contradicted",
+    "anticipatedBy": [],
+    "category": "stronger-influence",
+    "explanation": "Transit Saturn in the 12th (hidden enemies, loss) over natal Mercury (6th lord, enemies) and Venus in the Mercury pratyantar outweighed the benefic home windows the forecast used (rule-13). Post-hoc; violent third-party acts are close to outside-chart.",
+    "explanationStrength": "weak"
+   },
+   {
+    "eventId": "ev-164",
+    "magnitude": 4,
+    "eventVerdict": "contradicted",
+    "anticipatedBy": [],
+    "category": "stronger-influence",
+    "explanation": "Same Saturn-in-12th-over-6th-lord configuration as ev-163. Post-hoc.",
+    "explanationStrength": "weak"
+   },
+   {
+    "eventId": "ev-169",
+    "magnitude": 3,
+    "eventVerdict": "partial",
+    "anticipatedBy": [
+     "p-42"
+    ],
+    "category": "partial",
+    "explanation": "rule-05 capital-flow reading covers it at AD level; the Ketu pratyantar did not express withdrawal.",
+    "explanationStrength": "weak"
+   }
+  ],
+  "periodVerdict": "Restructuring-ending-upward (rule-02), capital outflows with doubt, personal reputational scrutiny and legal pressure all called; the attacks on the home contradicted the property call. Window truncated at 2026-06-30.",
+  "lessons": [
+   "rule-02",
+   "rule-05",
+   "rule-13",
+   "N-01",
+   "N-03"
+  ]
+ }
+]

@@ -159,7 +159,7 @@ def find_current_mahadasha(
     check_date = as_of_date or date.today()
 
     for period in timeline:
-        if period.level == 1 and period.start_date <= check_date <= period.end_date:
+        if period.level == 1 and period.start_date <= check_date < period.end_date:
             return period
 
     return None
@@ -198,7 +198,7 @@ def generate_dasha_timeline(
         # Find current antardasha
         today = date.today()
         for ad in antardashas:
-            if ad.start_date <= today <= ad.end_date:
+            if ad.start_date <= today < ad.end_date:
                 current_ad = ad
                 break
 
