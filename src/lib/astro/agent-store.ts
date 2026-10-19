@@ -57,6 +57,8 @@ const PG_CONSTRAINT_HINTS: Record<string, AgentErrorCode> = {
 const FRIENDLY_DB_MESSAGES: Record<string, string> = {
   'profile initialization is not complete':
     'Aidoraa is still getting to know this person. Please try again in a minute.',
+  'another run is active for this profile':
+    'Aidoraa is still answering your last question. Please wait for it to finish.',
 };
 
 function normalizeDbError(error: { code?: string; message?: string }): AgentStoreError {

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { preparePiInitialization, withPiPreparationLock, type PiInitializationDependencies, type PiInitializationState } from './pi-initialization';
+import { preparePiInitialization, StalePiSandboxError, withPiPreparationLock, type PiInitializationDependencies, type PiInitializationState } from './pi-initialization';
 
 const marker = '{"protocol":"universal:init-v2","bundle":"pinned","atros":"pinned"}';
 function fixture() {
@@ -11,6 +11,7 @@ function fixture() {
     readState: vi.fn(async () => ({ ...state })),
     runtimeReady: vi.fn(async () => { events.push('probe-runtime'); return runtimeReady; }),
     atrosReady: vi.fn(async () => { events.push('probe-atros'); return atrosReady; }),
+    canInstall: vi.fn(async () => true),
     installRuntime: vi.fn(async () => { events.push('install-runtime'); runtimeReady = true; }),
     installAtros: vi.fn(async () => { events.push('install-atros'); atrosReady = true; }),
     writeReadyMarker: vi.fn(async (value: string) => { events.push('ready-marker'); state.readyMarker = value; }),
@@ -49,6 +50,7 @@ describe('replay-safe Pi sandbox initialization', () => {
       const f = fixture();
       f.state[field] = true;
       await expect(initialize(f.deps)).rejects.toThrow('refusing installation or network widening');
+      await expect(initialize(f.deps)).rejects.toBeInstanceOf(StalePiSandboxError);
       expect(f.deps.installRuntime).not.toHaveBeenCalled();
       expect(f.deps.installAtros).not.toHaveBeenCalled();
       expect(f.deps.writeReadyMarker).not.toHaveBeenCalled();
@@ -56,6 +58,22 @@ describe('replay-safe Pi sandbox initialization', () => {
       expect(f.deps.writeDataPhaseMarker).not.toHaveBeenCalled();
     },
   );
+
+  it('asks for a fresh VM when a clean VM needs installing but its network is sealed', async () => {
+    const f = fixture();
+    f.deps.canInstall.mockResolvedValue(false);
+    await expect(initialize(f.deps)).rejects.toBeInstanceOf(StalePiSandboxError);
+    expect(f.deps.installRuntime).not.toHaveBeenCalled();
+    expect(f.deps.installAtros).not.toHaveBeenCalled();
+    expect(f.deps.sealNetwork).not.toHaveBeenCalled();
+  });
+
+  it('does not probe the network when nothing needs installing', async () => {
+    const f = fixture();
+    f.ready();
+    await initialize(f.deps);
+    expect(f.deps.canInstall).not.toHaveBeenCalled();
+  });
 
   it('prepared replay only probes readiness and refreshes the restricted broker policy', async () => {
     const f = fixture();
