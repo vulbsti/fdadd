@@ -76,12 +76,14 @@ export async function preparePiWorkspace(runId: string) {
   const loaded = await loadPiFiles(authority);
   const runtimeFiles = await readPiRuntimeFiles();
   const bundle = piRuntimeBundleHash(runtimeFiles);
+  let created = false;
   const open = () => Sandbox.getOrCreate({
     name: piSandboxName(authority, bundle), timeout: SANDBOX_TIMEOUT_MS, persistent: false, ...sandboxSource(),
+    onCreate: async () => { created = true; },
   });
   const sandbox = await open();
   try {
-    return await preparePiSandbox(sandbox, { runId, authority, loaded, runtimeFiles, bundle });
+    return await preparePiSandbox(sandbox, { runId, authority, loaded, runtimeFiles, bundle, fresh: () => created });
   } catch (error) {
     if (!(error instanceof StalePiSandboxError)) throw error;
     // A VM that stopped while idle comes back without its files but keeps the
@@ -89,13 +91,16 @@ export async function preparePiWorkspace(runId: string) {
     // files and the conversation are restored from durable storage.
     console.warn(`Replacing Pi sandbox ${sandbox.name}: ${error.message}`);
     await sandbox.delete({ deleteOrphanSnapshots: true });
-    return preparePiSandbox(await open(), { runId, authority, loaded, runtimeFiles, bundle });
+    created = false;
+    return preparePiSandbox(await open(), { runId, authority, loaded, runtimeFiles, bundle, fresh: () => created });
   }
 }
 
-async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, runtimeFiles, bundle }: {
+async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, runtimeFiles, bundle, fresh }: {
   runId: string; authority: PiAuthority; loaded: Awaited<ReturnType<typeof loadPiFiles>>;
   runtimeFiles: Awaited<ReturnType<typeof readPiRuntimeFiles>>; bundle: string;
+  /** Created by this invocation, so its network is still open. */
+  fresh: () => boolean;
 }) {
   await sandbox.extendTimeout(RUN_TIMEOUT_EXTENSION_MS).catch(() => {
     // Plan limits can refuse an extension; the run deadline still fits the base timeout.
@@ -162,8 +167,10 @@ async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, ru
       runtimeReady: async () => (await sandbox.runCommand('node', ['--input-type=module', '-e', runtimeProbe])).exitCode === 0,
       atrosReady: async () => (await sandbox.runCommand('bash', ['-lc',
         `test -f '/tmp/atros-ready-${ATROS_ENGINE_VERSION.replace(/[^a-zA-Z0-9]/g, '-')}' && /tmp/atros-venv/bin/atros --version >/dev/null 2>&1`])).exitCode === 0,
-      canInstall: async () => (await sandbox.runCommand('node', ['-e',
-        "fetch('https://registry.npmjs.org/', { signal: AbortSignal.timeout(8000) }).then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"])).exitCode === 0,
+      // Only a reused VM can have a sealed network. Ask npm itself, so the
+      // check takes the same network path as the install.
+      canInstall: async () => fresh() || (await sandbox.runCommand('npm', ['ping', '--fetch-timeout=8000', '--fetch-retries=0'],
+        { timeoutMs: 20_000 })).exitCode === 0,
       installRuntime: async () => {
         await assertCleanForInstallation();
         await sandbox.writeFiles(runtimeFiles);
