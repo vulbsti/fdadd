@@ -19,7 +19,9 @@ const api = async (path, init = {}) => {
 };
 
 const { envs } = await api(`/v10/projects/${projectId}/env?decrypt=true`);
-const productionValue = (key) => envs.find((env) => env.key === key && env.target?.includes('production'))?.value?.trim() || null;
+// A key can have several entries; the most recently updated production one wins.
+const productionValue = (key) => envs.filter((env) => env.key === key && env.target?.includes('production'))
+  .sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))[0]?.value?.trim() || null;
 const current = productionValue('PI_BASE_SNAPSHOT_ID');
 const previous = productionValue('PI_BASE_SNAPSHOT_PREVIOUS_ID');
 
