@@ -8,8 +8,12 @@ import { createEventQueue, createLoopGuard, needsWrapUp, planCheckpointFiles, sh
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const config = JSON.parse(await readFile(process.argv[2], 'utf8'));
+// The VM and its logs are gone soon after a run, so the reason is kept next to
+// the exit code for the workflow to report.
+const recordFailure = (message) => writeFile(`${config.stateDirectory}/runs/${config.runId}.error`, String(message).slice(0, 500)).catch(() => {});
 async function startupFailure(error) {
   console.error(`Pi runner failed: ${error?.message ?? 'unknown error'}`);
+  await recordFailure(`Pi runner failed: ${error?.message ?? 'unknown error'}`);
   await writeFile(`${config.stateDirectory}/runs/${config.runId}.exit`, '1').catch(() => {});
   process.exit(1);
 }
@@ -284,7 +288,10 @@ try {
     await checkpointQueue;
   }
   if (stopReason) throw new Error(stopReason);
-  if (!lastAssistant || ['error', 'aborted', 'length', 'toolUse'].includes(lastAssistant.stopReason)) throw new Error('Pi stopped without a complete final answer.');
+  if (!lastAssistant || ['error', 'aborted', 'length', 'toolUse'].includes(lastAssistant.stopReason)) {
+    const detail = [lastAssistant?.stopReason ?? 'no reply', lastAssistant?.errorMessage].filter(Boolean).join(': ');
+    throw new Error(`Pi stopped without a complete final answer (${detail}).`);
+  }
   const answer = (lastAssistant.content ?? []).filter((item) => item.type === 'text').map((item) => item.text).join('\n').trim();
   if (!answer) throw new Error('Pi returned no final answer.');
   await mkdir(`${config.workspace}/outputs/${config.runId}`, { recursive: true });
@@ -296,6 +303,7 @@ try {
   await checkpointQueue.catch(() => {});
   await checkpoint().catch(() => {});
   console.error(`Pi workspace stopped: ${error.message}`);
+  await recordFailure(`Pi workspace stopped: ${error.message}`);
   exitCode = 1;
 } finally {
   clearInterval(flushTimer);
