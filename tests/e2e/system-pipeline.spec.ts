@@ -90,13 +90,13 @@ async function waitForRun(admin: SupabaseClient, runId: string, timeout = 600_00
     return result.data.status;
   }, { timeout, intervals: [1_000, 2_000, 4_000] }).toMatch(/^(waiting_for_user|complete|failed)$/);
   const result = await admin.from('astro_agent_runs')
-    .select('status,output_message_id,error_code').eq('id', runId).single();
+    .select('status,output_message_id,error_code,error_message').eq('id', runId).single();
   if (result.error || !result.data) throw result.error ?? new Error(`Run ${runId} has no terminal receipt.`);
   if (result.data.status === 'failed') {
     const steps = await admin.from('astro_agent_run_steps')
       .select('ordinal,kind,status,tool_name,output_summary,refs,cache_hit')
       .eq('run_id', runId).order('ordinal', { ascending: true });
-    throw new Error(`Agent run failed (${result.data.error_code ?? 'unknown'}): ${JSON.stringify(steps.data ?? [])}`);
+    throw new Error(`Agent run failed (${result.data.error_code ?? 'unknown'}): ${result.data.error_message ?? 'no message stored'}\nSteps: ${JSON.stringify(steps.data ?? [])}`);
   }
   expect(result.data.output_message_id).toBeTruthy();
   return result.data as RunResult;

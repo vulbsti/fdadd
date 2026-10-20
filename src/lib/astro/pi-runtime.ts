@@ -39,9 +39,11 @@ const READY_MARKER = `${STATE}/install-ready.json`;
 const DATA_PHASE_MARKER = `${STATE}/private-data-phase`;
 const PREPARATION_LOCK = `${STATE}/preparation.lock`;
 // A per-person VM stays warm between messages. Each run tops up its lifetime;
-// an idle VM expires on its own and is rebuilt from durable storage.
-const SANDBOX_TIMEOUT_MS = 45 * 60 * 1000;
-const RUN_TIMEOUT_EXTENSION_MS = 20 * 60 * 1000;
+// an idle VM expires on its own and is rebuilt from durable storage. The base
+// covers one run's 15-minute deadline plus setup, so a VM idles for minutes,
+// not the plan's 45-minute maximum.
+const SANDBOX_TIMEOUT_MS = 20 * 60 * 1000;
+const RUN_TIMEOUT_EXTENSION_MS = 15 * 60 * 1000;
 
 export async function readPiRuntimeFiles() {
   return Promise.all(PI_RUNTIME_ASSETS.map(async (name) => ({
@@ -355,8 +357,19 @@ export async function pollPiWorkspace(input: Awaited<ReturnType<typeof preparePi
     crashed = (await sandbox.readFileToBuffer({ path: `${STATE}/runs/${authority.runId}.exit` })) !== null;
   }
   if (exited || crashed || Date.now() >= authority.expiresAt - 10 * 60 * 1000) {
-    console.error('[pi-workspace] runner stopped', { runId: authority.runId, cursor: nextCursor });
-    throw new Error('Pi workspace paused or failed; its latest durable checkpoint is retained.');
+    const reason = exited || crashed ? await readPiRunnerFailure(input.sandboxName, authority.runId) : 'run deadline reached';
+    console.error('[pi-workspace] runner stopped', { runId: authority.runId, cursor: nextCursor, reason });
+    throw new Error(`Pi workspace paused or failed (${reason ?? 'no reason recorded'}); its latest durable checkpoint is retained.`);
   }
   return { done: false, cursor: nextCursor, exited };
+}
+
+/** The runner's own failure reason; its logs disappear when the VM stops. */
+async function readPiRunnerFailure(sandboxName: string, runId: string) {
+  try {
+    const sandbox = await Sandbox.get({ name: sandboxName });
+    return (await sandbox.readFileToBuffer({ path: `${STATE}/runs/${runId}.error` }))?.toString('utf8').slice(0, 200) ?? null;
+  } catch {
+    return null;
+  }
 }
