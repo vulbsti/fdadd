@@ -36,7 +36,12 @@ export async function GET(request: NextRequest) {
     console.error('[auth/callback] no code', { error: params.get('error'), code: params.get('error_code'), description: params.get('error_description') });
   }
 
+  // Email confirmation, password reset and Supabase's own Google flow all land
+  // here. A link opened in another browser (e.g. Gmail's in-app one) lacks the
+  // PKCE cookie, so the exchange fails even though Supabase already confirmed
+  // the email.
+  const recovery = redirectTo.pathname === '/auth/update-password';
   redirectTo.pathname = '/auth/error';
-  redirectTo.searchParams.set('reason', 'oauth_callback_failed');
+  redirectTo.searchParams.set('reason', recovery ? 'recovery_link_failed' : 'callback_failed');
   return noStoreRedirect(redirectTo);
 }

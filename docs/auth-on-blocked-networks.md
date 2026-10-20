@@ -25,9 +25,14 @@ What keeps sign-in working there:
 2. **Vercel** > Project > Settings > Environment Variables (Production, and
    Preview if wanted): set `GOOGLE_SIGNIN_CLIENT_ID` and
    `GOOGLE_SIGNIN_CLIENT_SECRET` to that client's ID and secret, then redeploy.
+   `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` are the Google Drive connector's
+   and are not read by sign-in.
    If you use a different client, add its ID to Supabase > Authentication >
    Providers > Google > Client IDs.
-3. **Supabase** > Authentication > Email Templates:
+3. **Supabase** > Authentication > Email Templates (needs step 4 first on the
+   Free plan). Paste `supabase/templates/confirmation.html` and
+   `supabase/templates/recovery.html`, with subjects "Confirm your email at
+   Aidoraa" and "Reset your Aidoraa password". Their links:
    - Confirm signup: link to
      `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/astrologer`
    - Reset password: link to
@@ -41,7 +46,8 @@ What keeps sign-in working there:
    host, port, user and password of a mail service allowed to send for
    aidoraa.com (for example Resend's free tier: verify the domain with the DNS
    records it gives, then host `smtp.resend.com`, port 465, user `resend`,
-   password = an API key). Zoho's free plan has no SMTP access.
+   password = an API key). Zoho's free plan has no SMTP access. Then raise
+   Authentication > Rate Limits > emails per hour (2 with the built-in mailer).
 
 If sign-in fails, Vercel's function logs for `/auth/callback` and
 `/auth/google/callback` record the reason Supabase or Google gave.
