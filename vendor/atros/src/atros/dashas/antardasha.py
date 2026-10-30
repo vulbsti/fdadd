@@ -174,7 +174,7 @@ def find_current_antardasha(
     check_date = as_of_date or date.today()
 
     for period in antardashas:
-        if period.start_date <= check_date <= period.end_date:
+        if period.start_date <= check_date < period.end_date:
             return period
 
     return None

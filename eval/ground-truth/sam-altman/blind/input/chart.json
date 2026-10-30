@@ -1,0 +1,1543 @@
+{
+ "note": "Natal chart (Lahiri sidereal, whole-sign houses, true node, Vimshottari). Identity, birth date and place removed on purpose; all timing is given as age in years.",
+ "chart": {
+  "lagna_chart": {
+   "ascendant": {
+    "house": 1,
+    "sign": "Aries",
+    "sign_index": 0,
+    "degree": 6.9318113719322625,
+    "lord": "Mars"
+   },
+   "planets": [
+    {
+     "planet": "Sun",
+     "sign": "Aries",
+     "sign_index": 0,
+     "degree": 8.611815238786315,
+     "absolute_degree": 8.611815238786315,
+     "nakshatra": "Ashwini",
+     "nakshatra_index": 0,
+     "pada": 3,
+     "house": 1,
+     "dignity": "Exalted",
+     "retrograde": false,
+     "nakshatra_lord": "Ketu"
+    },
+    {
+     "planet": "Moon",
+     "sign": "Taurus",
+     "sign_index": 1,
+     "degree": 2.8718136950050805,
+     "absolute_degree": 32.87181369500508,
+     "nakshatra": "Krittika",
+     "nakshatra_index": 2,
+     "pada": 2,
+     "house": 2,
+     "dignity": "Exalted",
+     "retrograde": false,
+     "nakshatra_lord": "Sun"
+    },
+    {
+     "planet": "Mercury",
+     "sign": "Pisces",
+     "sign_index": 11,
+     "degree": 14.207485410663935,
+     "absolute_degree": 344.20748541066393,
+     "nakshatra": "Uttara Bhadrapada",
+     "nakshatra_index": 25,
+     "pada": 4,
+     "house": 12,
+     "dignity": "Debilitated",
+     "retrograde": false,
+     "nakshatra_lord": "Saturn"
+    },
+    {
+     "planet": "Venus",
+     "sign": "Pisces",
+     "sign_index": 11,
+     "degree": 12.482422181190259,
+     "absolute_degree": 342.48242218119026,
+     "nakshatra": "Uttara Bhadrapada",
+     "nakshatra_index": 25,
+     "pada": 3,
+     "house": 12,
+     "dignity": "Exalted",
+     "retrograde": true,
+     "nakshatra_lord": "Saturn"
+    },
+    {
+     "planet": "Mars",
+     "sign": "Taurus",
+     "sign_index": 1,
+     "degree": 3.6146354053878795,
+     "absolute_degree": 33.61463540538788,
+     "nakshatra": "Krittika",
+     "nakshatra_index": 2,
+     "pada": 3,
+     "house": 2,
+     "dignity": "Neutral",
+     "retrograde": false,
+     "nakshatra_lord": "Sun"
+    },
+    {
+     "planet": "Jupiter",
+     "sign": "Capricorn",
+     "sign_index": 9,
+     "degree": 20.47310226507409,
+     "absolute_degree": 290.4731022650741,
+     "nakshatra": "Shravana",
+     "nakshatra_index": 21,
+     "pada": 4,
+     "house": 10,
+     "dignity": "Debilitated",
+     "retrograde": false,
+     "nakshatra_lord": "Moon"
+    },
+    {
+     "planet": "Saturn",
+     "sign": "Scorpio",
+     "sign_index": 7,
+     "degree": 2.8469518976069708,
+     "absolute_degree": 212.84695189760697,
+     "nakshatra": "Vishakha",
+     "nakshatra_index": 15,
+     "pada": 4,
+     "house": 8,
+     "dignity": "Enemy",
+     "retrograde": true,
+     "nakshatra_lord": "Jupiter"
+    },
+    {
+     "planet": "Rahu",
+     "sign": "Aries",
+     "sign_index": 0,
+     "degree": 24.50508293797021,
+     "absolute_degree": 24.50508293797021,
+     "nakshatra": "Bharani",
+     "nakshatra_index": 1,
+     "pada": 4,
+     "house": 1,
+     "dignity": null,
+     "retrograde": false,
+     "nakshatra_lord": "Venus"
+    },
+    {
+     "planet": "Ketu",
+     "sign": "Libra",
+     "sign_index": 6,
+     "degree": 24.5050829379702,
+     "absolute_degree": 204.5050829379702,
+     "nakshatra": "Vishakha",
+     "nakshatra_index": 15,
+     "pada": 2,
+     "house": 7,
+     "dignity": null,
+     "retrograde": true,
+     "nakshatra_lord": "Jupiter"
+    }
+   ],
+   "houses": [
+    {
+     "house": 1,
+     "sign": "Aries",
+     "sign_index": 0,
+     "degree": 6.9318113719322625,
+     "lord": "Mars"
+    },
+    {
+     "house": 2,
+     "sign": "Taurus",
+     "sign_index": 1,
+     "degree": 0.0,
+     "lord": "Venus"
+    },
+    {
+     "house": 3,
+     "sign": "Gemini",
+     "sign_index": 2,
+     "degree": 0.0,
+     "lord": "Mercury"
+    },
+    {
+     "house": 4,
+     "sign": "Cancer",
+     "sign_index": 3,
+     "degree": 0.0,
+     "lord": "Moon"
+    },
+    {
+     "house": 5,
+     "sign": "Leo",
+     "sign_index": 4,
+     "degree": 0.0,
+     "lord": "Sun"
+    },
+    {
+     "house": 6,
+     "sign": "Virgo",
+     "sign_index": 5,
+     "degree": 0.0,
+     "lord": "Mercury"
+    },
+    {
+     "house": 7,
+     "sign": "Libra",
+     "sign_index": 6,
+     "degree": 0.0,
+     "lord": "Venus"
+    },
+    {
+     "house": 8,
+     "sign": "Scorpio",
+     "sign_index": 7,
+     "degree": 0.0,
+     "lord": "Mars"
+    },
+    {
+     "house": 9,
+     "sign": "Sagittarius",
+     "sign_index": 8,
+     "degree": 0.0,
+     "lord": "Jupiter"
+    },
+    {
+     "house": 10,
+     "sign": "Capricorn",
+     "sign_index": 9,
+     "degree": 0.0,
+     "lord": "Saturn"
+    },
+    {
+     "house": 11,
+     "sign": "Aquarius",
+     "sign_index": 10,
+     "degree": 0.0,
+     "lord": "Saturn"
+    },
+    {
+     "house": 12,
+     "sign": "Pisces",
+     "sign_index": 11,
+     "degree": 0.0,
+     "lord": "Jupiter"
+    }
+   ],
+   "ayanamsa": 23.647913100406704,
+   "ayanamsa_name": "LAHIRI"
+  },
+  "divisional_charts": {
+   "D2": {
+    "chart_type": "D2",
+    "name": "Hora",
+    "description": "Wealth and prosperity",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Leo",
+      "sign_index": 4
+     },
+     {
+      "planet": "Moon",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Venus",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Mars",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Leo",
+      "sign_index": 4
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Cancer",
+      "sign_index": 3
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Leo",
+     "sign_index": 4
+    }
+   },
+   "D3": {
+    "chart_type": "D3",
+    "name": "Drekkana",
+    "description": "Siblings and courage",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Aries",
+      "sign_index": 0
+     },
+     {
+      "planet": "Moon",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Venus",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Mars",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Virgo",
+      "sign_index": 5
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Scorpio",
+      "sign_index": 7
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Sagittarius",
+      "sign_index": 8
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Gemini",
+      "sign_index": 2
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Aries",
+     "sign_index": 0
+    }
+   },
+   "D4": {
+    "chart_type": "D4",
+    "name": "Chaturthamsa",
+    "description": "Property and fortune",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Moon",
+      "sign": "Leo",
+      "sign_index": 4
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Libra",
+      "sign_index": 6
+     },
+     {
+      "planet": "Venus",
+      "sign": "Libra",
+      "sign_index": 6
+     },
+     {
+      "planet": "Mars",
+      "sign": "Leo",
+      "sign_index": 4
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Pisces",
+      "sign_index": 11
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Aquarius",
+      "sign_index": 10
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Capricorn",
+      "sign_index": 9
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Aries",
+     "sign_index": 0
+    }
+   },
+   "D7": {
+    "chart_type": "D7",
+    "name": "Saptamsa",
+    "description": "Children and progeny",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Gemini",
+      "sign_index": 2
+     },
+     {
+      "planet": "Moon",
+      "sign": "Scorpio",
+      "sign_index": 7
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Sagittarius",
+      "sign_index": 8
+     },
+     {
+      "planet": "Venus",
+      "sign": "Scorpio",
+      "sign_index": 7
+     },
+     {
+      "planet": "Mars",
+      "sign": "Scorpio",
+      "sign_index": 7
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Scorpio",
+      "sign_index": 7
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Virgo",
+      "sign_index": 5
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Pisces",
+      "sign_index": 11
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Taurus",
+     "sign_index": 1
+    }
+   },
+   "D9": {
+    "chart_type": "D9",
+    "name": "Navamsa",
+    "description": "Spouse, dharma, and soul",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Gemini",
+      "sign_index": 2
+     },
+     {
+      "planet": "Moon",
+      "sign": "Capricorn",
+      "sign_index": 9
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Scorpio",
+      "sign_index": 7
+     },
+     {
+      "planet": "Venus",
+      "sign": "Libra",
+      "sign_index": 6
+     },
+     {
+      "planet": "Mars",
+      "sign": "Aquarius",
+      "sign_index": 10
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Scorpio",
+      "sign_index": 7
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Taurus",
+      "sign_index": 1
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Gemini",
+     "sign_index": 2
+    }
+   },
+   "D10": {
+    "chart_type": "D10",
+    "name": "Dasamsa",
+    "description": "Career and profession",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Gemini",
+      "sign_index": 2
+     },
+     {
+      "planet": "Moon",
+      "sign": "Capricorn",
+      "sign_index": 9
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Pisces",
+      "sign_index": 11
+     },
+     {
+      "planet": "Venus",
+      "sign": "Pisces",
+      "sign_index": 11
+     },
+     {
+      "planet": "Mars",
+      "sign": "Aquarius",
+      "sign_index": 10
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Pisces",
+      "sign_index": 11
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Sagittarius",
+      "sign_index": 8
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Gemini",
+      "sign_index": 2
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Gemini",
+     "sign_index": 2
+    }
+   },
+   "D12": {
+    "chart_type": "D12",
+    "name": "Dwadasamsa",
+    "description": "Parents",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Moon",
+      "sign": "Gemini",
+      "sign_index": 2
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Leo",
+      "sign_index": 4
+     },
+     {
+      "planet": "Venus",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Mars",
+      "sign": "Gemini",
+      "sign_index": 2
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Virgo",
+      "sign_index": 5
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Sagittarius",
+      "sign_index": 8
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Capricorn",
+      "sign_index": 9
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Cancer",
+      "sign_index": 3
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Gemini",
+     "sign_index": 2
+    }
+   },
+   "D30": {
+    "chart_type": "D30",
+    "name": "Trimsamsa",
+    "description": "Misfortune and difficulties",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Capricorn",
+      "sign_index": 9
+     },
+     {
+      "planet": "Moon",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Sagittarius",
+      "sign_index": 8
+     },
+     {
+      "planet": "Venus",
+      "sign": "Sagittarius",
+      "sign_index": 8
+     },
+     {
+      "planet": "Mars",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Capricorn",
+      "sign_index": 9
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Gemini",
+      "sign_index": 2
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Gemini",
+      "sign_index": 2
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Capricorn",
+     "sign_index": 9
+    }
+   },
+   "D60": {
+    "chart_type": "D60",
+    "name": "Shashtiamsa",
+    "description": "Past karma",
+    "positions": [
+     {
+      "planet": "Sun",
+      "sign": "Virgo",
+      "sign_index": 5
+     },
+     {
+      "planet": "Moon",
+      "sign": "Libra",
+      "sign_index": 6
+     },
+     {
+      "planet": "Mercury",
+      "sign": "Cancer",
+      "sign_index": 3
+     },
+     {
+      "planet": "Venus",
+      "sign": "Pisces",
+      "sign_index": 11
+     },
+     {
+      "planet": "Mars",
+      "sign": "Sagittarius",
+      "sign_index": 8
+     },
+     {
+      "planet": "Jupiter",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Saturn",
+      "sign": "Aries",
+      "sign_index": 0
+     },
+     {
+      "planet": "Rahu",
+      "sign": "Taurus",
+      "sign_index": 1
+     },
+     {
+      "planet": "Ketu",
+      "sign": "Scorpio",
+      "sign_index": 7
+     }
+    ],
+    "ascendant": {
+     "planet": "Ascendant",
+     "sign": "Taurus",
+     "sign_index": 1
+    }
+   }
+  },
+  "yogas": [
+   {
+    "name": "Amala Yoga",
+    "type": "Career",
+    "planets_involved": [
+     "Jupiter"
+    ],
+    "houses_involved": [
+     10
+    ],
+    "description": "Only benefics (Jupiter) occupy the 10th house, forming Amala Yoga. This gives a virtuous career, good reputation, and lasting fame.",
+    "strength": 85.0
+   },
+   {
+    "name": "Viparita Raja Yoga (Harsha)",
+    "type": "Viparita Raja",
+    "planets_involved": [
+     "Mercury"
+    ],
+    "houses_involved": [
+     6,
+     12
+    ],
+    "description": "Lord of the 6th house (Mercury) is placed in the 12th house (another dusthana), forming Harsha Viparita Raja Yoga. This turns adversity into unexpected gains and protection.",
+    "strength": 75.0
+   },
+   {
+    "name": "Raja Yoga (4-1 lords conjunction)",
+    "type": "Raja",
+    "planets_involved": [
+     "Moon",
+     "Mars"
+    ],
+    "houses_involved": [
+     4,
+     1,
+     2
+    ],
+    "description": "Moon (lord of house 4) and Mars (lord of house 1) are conjunct in Taurus (house 2), forming Raja Yoga. This indicates success, authority, and recognition.",
+    "strength": 70.0
+   },
+   {
+    "name": "Daridra Yoga",
+    "type": "Affliction",
+    "planets_involved": [
+     "Saturn"
+    ],
+    "houses_involved": [
+     11,
+     8
+    ],
+    "description": "Lord of the 11th house (Saturn) is placed in the 8th house (dusthana), forming Daridra Yoga. This may cause difficulties in accumulating gains.",
+    "strength": 70.0
+   },
+   {
+    "name": "Chandra-Mangal Yoga",
+    "type": "Dhana",
+    "planets_involved": [
+     "Moon",
+     "Mars"
+    ],
+    "houses_involved": [
+     2
+    ],
+    "description": "Moon and Mars are conjunct in Taurus (house 2), forming Chandra-Mangal Yoga. This gives wealth through enterprise and courage.",
+    "strength": 60.0
+   },
+   {
+    "name": "Neecha Bhanga Raja Yoga",
+    "type": "Raja",
+    "planets_involved": [
+     "Mercury"
+    ],
+    "houses_involved": [
+     12
+    ],
+    "description": "Mercury's debilitation in Pisces (house 12) is cancelled: Conjunct with exalted Venus; Dispositor Jupiter is in Kendra (house 10). This transforms weakness into strength.",
+    "strength": 50.0
+   },
+   {
+    "name": "Grahan Yoga",
+    "type": "Affliction",
+    "planets_involved": [
+     "Sun",
+     "Rahu"
+    ],
+    "houses_involved": [
+     1
+    ],
+    "description": "Sun and Rahu are conjunct in Aries (15.9 degrees apart), forming Grahan Yoga. This eclipse combination may affect the significations of Sun.",
+    "strength": 50.0
+   },
+   {
+    "name": "Kemadruma Yoga",
+    "type": "Kemadruma",
+    "planets_involved": [
+     "Moon"
+    ],
+    "houses_involved": [
+     2
+    ],
+    "description": "Moon in house 2 has no eligible planet in 2nd or 12th house, indicating Kemadruma Yoga. However, partial cancellation applies: Mars in Kendra (house 2) from Moon; Saturn in Kendra (house 8) from Moon.",
+    "strength": 30.0
+   }
+  ],
+  "planetary_relationships": [
+   {
+    "planet1": "Sun",
+    "planet2": "Moon",
+    "natural": "friend",
+    "temporary": "friend",
+    "compound": "best_friend"
+   },
+   {
+    "planet1": "Sun",
+    "planet2": "Mercury",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Sun",
+    "planet2": "Venus",
+    "natural": "enemy",
+    "temporary": "friend",
+    "compound": "neutral"
+   },
+   {
+    "planet1": "Sun",
+    "planet2": "Mars",
+    "natural": "friend",
+    "temporary": "friend",
+    "compound": "best_friend"
+   },
+   {
+    "planet1": "Sun",
+    "planet2": "Jupiter",
+    "natural": "friend",
+    "temporary": "friend",
+    "compound": "best_friend"
+   },
+   {
+    "planet1": "Sun",
+    "planet2": "Saturn",
+    "natural": "enemy",
+    "temporary": "enemy",
+    "compound": "bitter_enemy"
+   },
+   {
+    "planet1": "Sun",
+    "planet2": "Rahu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Sun",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Moon",
+    "planet2": "Mercury",
+    "natural": "friend",
+    "temporary": "friend",
+    "compound": "best_friend"
+   },
+   {
+    "planet1": "Moon",
+    "planet2": "Venus",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Moon",
+    "planet2": "Mars",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Moon",
+    "planet2": "Jupiter",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Moon",
+    "planet2": "Saturn",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Moon",
+    "planet2": "Rahu",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Moon",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Mercury",
+    "planet2": "Venus",
+    "natural": "friend",
+    "temporary": "enemy",
+    "compound": "neutral"
+   },
+   {
+    "planet1": "Mercury",
+    "planet2": "Mars",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Mercury",
+    "planet2": "Jupiter",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Mercury",
+    "planet2": "Saturn",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Mercury",
+    "planet2": "Rahu",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Mercury",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Venus",
+    "planet2": "Mars",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Venus",
+    "planet2": "Jupiter",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Venus",
+    "planet2": "Saturn",
+    "natural": "friend",
+    "temporary": "enemy",
+    "compound": "neutral"
+   },
+   {
+    "planet1": "Venus",
+    "planet2": "Rahu",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Venus",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Mars",
+    "planet2": "Jupiter",
+    "natural": "friend",
+    "temporary": "enemy",
+    "compound": "neutral"
+   },
+   {
+    "planet1": "Mars",
+    "planet2": "Saturn",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Mars",
+    "planet2": "Rahu",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Mars",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Jupiter",
+    "planet2": "Saturn",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Jupiter",
+    "planet2": "Rahu",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Jupiter",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Saturn",
+    "planet2": "Rahu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   },
+   {
+    "planet1": "Saturn",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "friend",
+    "compound": "friend"
+   },
+   {
+    "planet1": "Rahu",
+    "planet2": "Ketu",
+    "natural": "neutral",
+    "temporary": "enemy",
+    "compound": "enemy"
+   }
+  ],
+  "aspects": [
+   {
+    "aspecting_planet": "Sun",
+    "aspected_planet": "Ketu",
+    "aspecting_sign_index": 0,
+    "aspected_sign_index": 6,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   },
+   {
+    "aspecting_planet": "Moon",
+    "aspected_planet": "Saturn",
+    "aspecting_sign_index": 1,
+    "aspected_sign_index": 7,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   },
+   {
+    "aspecting_planet": "Mars",
+    "aspected_planet": "Saturn",
+    "aspecting_sign_index": 1,
+    "aspected_sign_index": 7,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   },
+   {
+    "aspecting_planet": "Jupiter",
+    "aspected_planet": "Moon",
+    "aspecting_sign_index": 9,
+    "aspected_sign_index": 1,
+    "house_distance": 5,
+    "strength": 100.0,
+    "is_special": true
+   },
+   {
+    "aspecting_planet": "Jupiter",
+    "aspected_planet": "Mars",
+    "aspecting_sign_index": 9,
+    "aspected_sign_index": 1,
+    "house_distance": 5,
+    "strength": 100.0,
+    "is_special": true
+   },
+   {
+    "aspecting_planet": "Saturn",
+    "aspected_planet": "Moon",
+    "aspecting_sign_index": 7,
+    "aspected_sign_index": 1,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   },
+   {
+    "aspecting_planet": "Saturn",
+    "aspected_planet": "Mars",
+    "aspecting_sign_index": 7,
+    "aspected_sign_index": 1,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   },
+   {
+    "aspecting_planet": "Saturn",
+    "aspected_planet": "Jupiter",
+    "aspecting_sign_index": 7,
+    "aspected_sign_index": 9,
+    "house_distance": 3,
+    "strength": 100.0,
+    "is_special": true
+   },
+   {
+    "aspecting_planet": "Rahu",
+    "aspected_planet": "Ketu",
+    "aspecting_sign_index": 0,
+    "aspected_sign_index": 6,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   },
+   {
+    "aspecting_planet": "Ketu",
+    "aspected_planet": "Sun",
+    "aspecting_sign_index": 6,
+    "aspected_sign_index": 0,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   },
+   {
+    "aspecting_planet": "Ketu",
+    "aspected_planet": "Rahu",
+    "aspecting_sign_index": 6,
+    "aspected_sign_index": 0,
+    "house_distance": 7,
+    "strength": 100.0,
+    "is_special": false
+   }
+  ],
+  "combustion": [
+   {
+    "planet": "Moon",
+    "is_combust": false,
+    "distance_from_sun": 24.259998456218767,
+    "threshold": 12.0
+   },
+   {
+    "planet": "Mars",
+    "is_combust": false,
+    "distance_from_sun": 25.002820166601566,
+    "threshold": 17.0
+   },
+   {
+    "planet": "Mercury",
+    "is_combust": false,
+    "distance_from_sun": 24.4043298281224,
+    "threshold": 14.0
+   },
+   {
+    "planet": "Jupiter",
+    "is_combust": false,
+    "distance_from_sun": 78.13871297371225,
+    "threshold": 11.0
+   },
+   {
+    "planet": "Venus",
+    "is_combust": false,
+    "distance_from_sun": 26.129393057596076,
+    "threshold": 8.0
+   },
+   {
+    "planet": "Saturn",
+    "is_combust": false,
+    "distance_from_sun": 155.76486334117934,
+    "threshold": 0.0
+   }
+  ],
+  "panchanga": {
+   "tithi_number": 3,
+   "tithi_name": "Shukla Tritiya",
+   "paksha": "Shukla",
+   "nithya_yoga_number": 4,
+   "nithya_yoga_name": "Saubhagya",
+   "karana_number": 5,
+   "karana_name": "Taitila",
+   "vara": "Monday",
+   "vara_lord": "Moon",
+   "nakshatra": "Krittika",
+   "nakshatra_lord": "Sun"
+  },
+  "bhava_chalit": {
+   "ascendant_abs": 6.9318113719322625,
+   "house_cusps": [
+    351.9318,
+    21.9318,
+    51.9318,
+    81.9318,
+    111.9318,
+    141.9318,
+    171.9318,
+    201.9318,
+    231.9318,
+    261.9318,
+    291.9318,
+    321.9318
+   ],
+   "positions": [
+    {
+     "planet": "Sun",
+     "rashi_house": 1,
+     "bhava_house": 1,
+     "has_shifted": false
+    },
+    {
+     "planet": "Moon",
+     "rashi_house": 2,
+     "bhava_house": 2,
+     "has_shifted": false
+    },
+    {
+     "planet": "Mercury",
+     "rashi_house": 12,
+     "bhava_house": 12,
+     "has_shifted": false
+    },
+    {
+     "planet": "Venus",
+     "rashi_house": 12,
+     "bhava_house": 12,
+     "has_shifted": false
+    },
+    {
+     "planet": "Mars",
+     "rashi_house": 2,
+     "bhava_house": 2,
+     "has_shifted": false
+    },
+    {
+     "planet": "Jupiter",
+     "rashi_house": 10,
+     "bhava_house": 10,
+     "has_shifted": false
+    },
+    {
+     "planet": "Saturn",
+     "rashi_house": 8,
+     "bhava_house": 8,
+     "has_shifted": false
+    },
+    {
+     "planet": "Rahu",
+     "rashi_house": 1,
+     "bhava_house": 2,
+     "has_shifted": true
+    },
+    {
+     "planet": "Ketu",
+     "rashi_house": 7,
+     "bhava_house": 8,
+     "has_shifted": true
+    }
+   ]
+  },
+  "ashtakavarga": {
+   "bav": {
+    "Sun": [
+     1,
+     5,
+     4,
+     5,
+     4,
+     4,
+     2,
+     5,
+     4,
+     4,
+     7,
+     3
+    ],
+    "Moon": [
+     2,
+     3,
+     5,
+     5,
+     1,
+     6,
+     5,
+     4,
+     3,
+     7,
+     4,
+     4
+    ],
+    "Mars": [
+     1,
+     3,
+     5,
+     3,
+     5,
+     3,
+     3,
+     3,
+     2,
+     4,
+     5,
+     2
+    ],
+    "Mercury": [
+     2,
+     5,
+     5,
+     4,
+     6,
+     3,
+     2,
+     6,
+     6,
+     4,
+     6,
+     5
+    ],
+    "Jupiter": [
+     6,
+     3,
+     4,
+     5,
+     5,
+     2,
+     4,
+     6,
+     5,
+     7,
+     4,
+     5
+    ],
+    "Venus": [
+     4,
+     5,
+     4,
+     6,
+     5,
+     4,
+     3,
+     5,
+     3,
+     5,
+     3,
+     5
+    ],
+    "Saturn": [
+     4,
+     2,
+     2,
+     4,
+     2,
+     3,
+     4,
+     3,
+     2,
+     5,
+     5,
+     3
+    ]
+   },
+   "sav": [
+    20,
+    26,
+    29,
+    32,
+    28,
+    25,
+    23,
+    32,
+    25,
+    36,
+    34,
+    27
+   ]
+  },
+  "shadbala": [
+   {
+    "planet": "Sun",
+    "sthana_bala": 194.54,
+    "dig_bala": 30.0,
+    "kaala_bala": 30.0,
+    "cheshta_bala": 30.0,
+    "naisargika_bala": 60.0,
+    "drig_bala": -15.0,
+    "total_virupas": 329.54,
+    "total_rupas": 5.49,
+    "is_strong": false,
+    "minimum_required": 6.5
+   },
+   {
+    "planet": "Moon",
+    "sthana_bala": 149.96,
+    "dig_bala": 40.0,
+    "kaala_bala": 45.0,
+    "cheshta_bala": 30.0,
+    "naisargika_bala": 51.43,
+    "drig_bala": 0.0,
+    "total_virupas": 316.39,
+    "total_rupas": 5.27,
+    "is_strong": false,
+    "minimum_required": 6.0
+   },
+   {
+    "planet": "Mercury",
+    "sthana_bala": 17.14,
+    "dig_bala": 50.0,
+    "kaala_bala": 60.0,
+    "cheshta_bala": 30.0,
+    "naisargika_bala": 25.71,
+    "drig_bala": 0.0,
+    "total_virupas": 182.85,
+    "total_rupas": 3.05,
+    "is_strong": false,
+    "minimum_required": 7.0
+   },
+   {
+    "planet": "Venus",
+    "sthana_bala": 130.16,
+    "dig_bala": 20.0,
+    "kaala_bala": 60.0,
+    "cheshta_bala": 60.0,
+    "naisargika_bala": 42.86,
+    "drig_bala": 0.0,
+    "total_virupas": 313.02,
+    "total_rupas": 5.22,
+    "is_strong": false,
+    "minimum_required": 5.5
+   },
+   {
+    "planet": "Mars",
+    "sthana_bala": 95.63,
+    "dig_bala": 20.0,
+    "kaala_bala": 0.0,
+    "cheshta_bala": 30.0,
+    "naisargika_bala": 17.14,
+    "drig_bala": 0.0,
+    "total_virupas": 162.77,
+    "total_rupas": 2.71,
+    "is_strong": false,
+    "minimum_required": 5.0
+   },
+   {
+    "planet": "Jupiter",
+    "sthana_bala": 67.03,
+    "dig_bala": 30.0,
+    "kaala_bala": 60.0,
+    "cheshta_bala": 30.0,
+    "naisargika_bala": 34.29,
+    "drig_bala": -15.0,
+    "total_virupas": 206.32,
+    "total_rupas": 3.44,
+    "is_strong": false,
+    "minimum_required": 6.5
+   },
+   {
+    "planet": "Saturn",
+    "sthana_bala": 89.47,
+    "dig_bala": 50.0,
+    "kaala_bala": 0.0,
+    "cheshta_bala": 60.0,
+    "naisargika_bala": 8.57,
+    "drig_bala": -13.0,
+    "total_virupas": 195.04,
+    "total_rupas": 3.25,
+    "is_strong": false,
+    "minimum_required": 5.0
+   }
+  ],
+  "dasha_summary": {
+   "birth_nakshatra": "Krittika",
+   "nakshatra_lord": "Sun",
+   "balance_at_birth": 3.2076838372477146
+  }
+ }
+}

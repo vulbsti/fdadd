@@ -1,0 +1,479 @@
+[
+  {
+    "id": "tr-01",
+    "trait": "Force of will / effectiveness",
+    "description": "Mentors describe him from his teens as unusually effective at getting what he wants; Graham calls him 'extremely effective' and a person of 'force of will'.",
+    "evidence": [
+      "ev-022",
+      "ev-024",
+      "ev-029",
+      "ev-026",
+      "ev-040",
+      "SamA_v1/profiles/15_character_profile.md:5",
+      "SamA_v1/profiles/15_character_profile.md:7",
+      "SamA_v1/profiles/15_character_profile.md:61"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2006,
+    "contested": false,
+    "notes": "Graham (2006-2014), Thiel (2016) and Andreessen. Mostly from beneficiaries of his favor network; discount for halo."
+  },
+  {
+    "id": "tr-02",
+    "trait": "Fundraising and deal-closing",
+    "description": "Closes outsized deals, often before a product justifies them: carrier deals for Loopt, a $1B nonprofit pledge, Microsoft billions, Stargate. Friends and critics agree on this.",
+    "evidence": [
+      "ev-019",
+      "ev-068",
+      "ev-081",
+      "ev-131",
+      "ev-138",
+      "ev-159",
+      "ev-096",
+      "SamA_v2/raw/04_personality_management.md:104",
+      "SamA_v2/raw/04_personality_management.md:119",
+      "SamA_v2/profiles/character_profile.md:53"
+    ],
+    "witnesses": 4,
+    "firstSeen": 2005,
+    "contested": false,
+    "notes": "Witnesses: Shear, Chesky, Nadella, the documented round record. No source disputes it."
+  },
+  {
+    "id": "tr-03",
+    "trait": "Ambition escalation",
+    "description": "Pushes founders and himself to 'add a zero' and frames projects as civilization-scale (AGI for all, fusion, universal identity).",
+    "evidence": [
+      "ev-051",
+      "ev-077",
+      "ev-062",
+      "ev-131",
+      "ev-050",
+      "SamA_v2/raw/04_personality_management.md:106",
+      "SamA_v2/profiles/character_profile.md:52",
+      "SamA_v2/profiles/character_profile.md:76"
+    ],
+    "witnesses": 4,
+    "firstSeen": 2009,
+    "contested": false,
+    "notes": "Chesky (M to B), Varden Labs, Andreessen ('ambition up 10x'), Graham ('make the whole future')."
+  },
+  {
+    "id": "tr-04",
+    "trait": "Coalition and favor-bank building",
+    "description": "Builds wide networks of people who owe him or depend on a shared project, then activates them under pressure, as in the Nov 2023 staff letter and Microsoft offer.",
+    "evidence": [
+      "ev-018",
+      "ev-037",
+      "ev-095",
+      "ev-096",
+      "ev-097",
+      "SamA_v2/raw/04_personality_management.md:105",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:107",
+      "SamA_v1/profiles/15_character_profile.md:83"
+    ],
+    "witnesses": 4,
+    "firstSeen": 2005,
+    "contested": true,
+    "notes": "Same behavior read positively by allies and as board capture by critics (McCauley, Toner). The ouster audit frames it as conditional coalition management, not proof of planned dependence."
+  },
+  {
+    "id": "tr-05",
+    "trait": "Inconsistent candor across audiences",
+    "description": "Several named insiders say he told different people different things or withheld information from the board. The board fired him for not being 'consistently candid'.",
+    "evidence": [
+      "ev-094",
+      "ev-112",
+      "ev-165",
+      "ev-161",
+      "ev-091",
+      "SamA_v2/profiles/character_profile.md:72",
+      "SamA_v2/raw/04_personality_management.md:114",
+      "SamA_v1/profiles/15_character_profile.md:11",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:120"
+    ],
+    "witnesses": 4,
+    "firstSeen": 2022,
+    "contested": true,
+    "notes": "Toner (2024, on record), Murati and McCauley (2026 testimony, press-reported), Sutskever memo (reported). Unadjudicated; WilmerHale found conduct did not mandate removal. Toner's Loopt-era claims are quarantined."
+  },
+  {
+    "id": "tr-06",
+    "trait": "Conflict avoidance, then abrupt ruptures",
+    "description": "Avoids direct confrontation and defers hard calls, then makes sudden clean breaks; he admits conflict-aversion 'caused great pain'.",
+    "evidence": [
+      "ev-162",
+      "ev-091",
+      "ev-064",
+      "ev-158",
+      "SamA_v2/profiles/character_profile.md:73",
+      "SamA_v2/raw/04_personality_management.md:115",
+      "SamA_v1/profiles/15_character_profile.md:99"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2016,
+    "contested": false,
+    "notes": "Self-admission (2026) and Toner (2024), plus Murati (2026, reported). 2026 counterpoint: 'very happy to fire people quickly'."
+  },
+  {
+    "id": "tr-07",
+    "trait": "Composure under attack",
+    "description": "Shows little public distress in crises: terse warm posts during the firing, measured Senate testimony, a reflective rather than vengeful response to the 2026 attack.",
+    "evidence": [
+      "ev-094",
+      "ev-095",
+      "ev-085",
+      "ev-163",
+      "ev-162",
+      "ev-103",
+      "SamA_v2/profiles/character_profile.md:42",
+      "SamA_v1/profiles/15_character_profile.md:41",
+      "SamA_v1/profiles/15_character_profile.md:142"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2023,
+    "contested": false,
+    "notes": "This is displayed composure only; see 'Contained private anxiety'."
+  },
+  {
+    "id": "tr-08",
+    "trait": "Contained private anxiety",
+    "description": "Privately anxious: his mother describes 'cyber-chondria' and stress kept inside; he calls his past self 'very anxious, unhappy' and reports poor sleep since ChatGPT.",
+    "evidence": [
+      "ev-056",
+      "ev-121",
+      "ev-128",
+      "SamA_v2/profiles/character_profile.md:46",
+      "SamA_v1/raw/08_family_private_life.md:134"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2016,
+    "contested": false,
+    "notes": "Mother (2016), himself (2024 podcast), himself (2025 sleep remark, snippet-level)."
+  },
+  {
+    "id": "tr-09",
+    "trait": "Optimist-survivalist duality",
+    "description": "Accelerates AI and techno-optimism publicly while preparing for catastrophe (prepper stockpile, doom quotes, the 2026 slowdown).",
+    "evidence": [
+      "ev-056",
+      "ev-087",
+      "ev-085",
+      "ev-145",
+      "ev-175",
+      "SamA_v1/profiles/15_character_profile.md:94",
+      "SamA_v1/profiles/15_character_profile.md:102"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2015,
+    "contested": false,
+    "notes": "Thiel ('optimist yet a survivalist'), his own 2015-2016 quotes, his own 2023-2026 statements."
+  },
+  {
+    "id": "tr-10",
+    "trait": "Extreme work intensity",
+    "description": "Works at a punishing pace from his teens: scurvy at 19, 'strapped to a time bomb' tempo, relentless list-driven productivity.",
+    "evidence": [
+      "ev-017",
+      "ev-018",
+      "ev-128",
+      "ev-067",
+      "SamA_v1/profiles/15_character_profile.md:8",
+      "SamA_v1/profiles/15_character_profile.md:33",
+      "SamA_v1/profiles/15_character_profile.md:105"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2005,
+    "contested": false,
+    "notes": "New Yorker 2016 observer, his productivity essay, 2025-26 interview snippets."
+  },
+  {
+    "id": "tr-11",
+    "trait": "Self-admitted weak people management",
+    "description": "Says management was his 'chief weakness' at Loopt and avoids one-on-ones; colleagues describe chaos and impatience with the ineffective.",
+    "evidence": [
+      "ev-032",
+      "ev-165",
+      "SamA_v1/profiles/15_character_profile.md:60",
+      "SamA_v1/profiles/15_character_profile.md:63",
+      "SamA_v2/raw/04_personality_management.md:117"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2012,
+    "contested": false,
+    "notes": "Self (2016), Murati written feedback (2022 exhibit), BI anonymous staff (2023)."
+  },
+  {
+    "id": "tr-12",
+    "trait": "Accessible listener",
+    "description": "Keeps open lines to staff and founders (open Slack, personal number, drop-in office hours) and is called the 'Michael Jordan of listening'.",
+    "evidence": [
+      "ev-040",
+      "ev-096",
+      "SamA_v2/raw/04_personality_management.md:116",
+      "SamA_v2/profiles/character_profile.md:74"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2014,
+    "contested": false,
+    "notes": "YC founders (2016), BI staff (2023), Coogan via Bloomberg (2024). Mostly beneficiaries."
+  },
+  {
+    "id": "tr-13",
+    "trait": "Terse, aphoristic communication",
+    "description": "Writes in short lowercase posts and directives ('Buy the computers') and uses numbered essays as his main self-narrative.",
+    "evidence": [
+      "ev-020",
+      "ev-047",
+      "ev-063",
+      "ev-129",
+      "ev-095",
+      "SamA_v1/profiles/15_character_profile.md:26",
+      "SamA_v2/raw/04_personality_management.md:123",
+      "SamA_v1/profiles/15_character_profile.md:104"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2006,
+    "contested": false,
+    "notes": "Constant style across about two decades of X/HN/blog records."
+  },
+  {
+    "id": "tr-14",
+    "trait": "Very high risk appetite",
+    "description": "Takes large personal bets: dropping out at 19, $375M into fusion, 'all my liquid net worth' into Helion and Retro, $500B infrastructure.",
+    "evidence": [
+      "ev-016",
+      "ev-077",
+      "ev-073",
+      "ev-065",
+      "ev-131",
+      "SamA_v2/profiles/character_profile.md:49"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2005,
+    "contested": false,
+    "notes": "Documented actions, not testimony; counted as independent dated decisions."
+  },
+  {
+    "id": "tr-15",
+    "trait": "Board learns late (governance bypass)",
+    "description": "Critics say he launched or committed to things before overseers knew: ChatGPT on Twitter, Startup Fund ownership, Helion deals, YC Research despite partners.",
+    "evidence": [
+      "ev-080",
+      "ev-112",
+      "ev-165",
+      "ev-050",
+      "SamA_v2/raw/04_personality_management.md:120",
+      "SamA_v2/raw/04_personality_management.md:133"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2015,
+    "contested": true,
+    "notes": "Toner (2024), Zilis (2026, press-reported), Levy via New Yorker 2016 on YC Research. Unadjudicated."
+  },
+  {
+    "id": "tr-16",
+    "trait": "Loved below, distrusted above",
+    "description": "Staff rallied to him in very large numbers while board members and senior peers broke with him.",
+    "evidence": [
+      "ev-096",
+      "ev-094",
+      "ev-109",
+      "ev-122",
+      "ev-170",
+      "SamA_v2/profiles/character_profile.md:80",
+      "SamA_v2/profiles/character_profile.md:83"
+    ],
+    "witnesses": 4,
+    "firstSeen": 2023,
+    "contested": false,
+    "notes": "The ouster audit cautions that signatures reflect incentives and outside options, not just trust."
+  },
+  {
+    "id": "tr-17",
+    "trait": "Concede the process, not personal fault",
+    "description": "Under pressure he makes quick procedural concessions (pause Sky, release NDAs, restore GPT-4o, 'he's right') while admitting little personal wrongdoing.",
+    "evidence": [
+      "ev-025",
+      "ev-107",
+      "ev-111",
+      "ev-109",
+      "ev-147",
+      "SamA_v1/profiles/15_character_profile.md:52",
+      "SamA_v1/profiles/15_character_profile.md:53",
+      "SamA_v1/profiles/15_character_profile.md:142"
+    ],
+    "witnesses": 4,
+    "firstSeen": 2008,
+    "contested": false,
+    "notes": "The 2025 'Reflections' and 2026 blog are partial exceptions that do admit personal failures."
+  },
+  {
+    "id": "tr-18",
+    "trait": "Narrative control through own channels",
+    "description": "Answers attacks with his own dated documents and posts (Musk email dumps, the Sky timeline, essays) rather than in interviews.",
+    "evidence": [
+      "ev-103",
+      "ev-107",
+      "ev-129",
+      "ev-162",
+      "SamA_v1/profiles/15_character_profile.md:100"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2023,
+    "contested": false,
+    "notes": "Based on OpenAI and Altman publications; interpretation is the profile's synthesis."
+  },
+  {
+    "id": "tr-19",
+    "trait": "Comes back stronger after exits",
+    "description": "Each exit leads to a bigger role: Loopt sale to YC presidency, YC to OpenAI CEO, firing to return with a friendlier board.",
+    "evidence": [
+      "ev-036",
+      "ev-040",
+      "ev-064",
+      "ev-065",
+      "ev-094",
+      "ev-097",
+      "ev-105",
+      "SamA_v2/timeline/08_master_timeline.md:239"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2012,
+    "contested": false,
+    "notes": "Pattern over three episodes; the YC exit's framing is contested."
+  },
+  {
+    "id": "tr-20",
+    "trait": "Distribution-of-abundance worldview",
+    "description": "Wants to spread AI's gains widely (basic income, American Equity Fund, Worldcoin, 'no one should have the ring') while pursuing concentrated scale.",
+    "evidence": [
+      "ev-052",
+      "ev-074",
+      "ev-089",
+      "ev-117",
+      "ev-110",
+      "ev-162",
+      "SamA_v2/profiles/character_profile.md:87",
+      "SamA_v2/profiles/character_profile.md:90"
+    ],
+    "witnesses": 4,
+    "firstSeen": 2016,
+    "contested": false,
+    "notes": "Own essays across 2016-2026, plus the funded study and Giving Pledge."
+  },
+  {
+    "id": "tr-21",
+    "trait": "Small, durable inner circle",
+    "description": "Relies on a few long-standing allies: Graham, Brockman, Thiel, brothers Jack and Max, cousin Serralta, and Chesky and Lehane in 2023.",
+    "evidence": [
+      "ev-018",
+      "ev-037",
+      "ev-095",
+      "ev-061",
+      "SamA_v1/profiles/15_character_profile.md:107",
+      "SamA_v1/profiles/15_character_profile.md:128"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2005,
+    "contested": false,
+    "notes": "No retrieved roster beyond these nodes; Graham relationship later cooled."
+  },
+  {
+    "id": "tr-22",
+    "trait": "Political repositioning",
+    "description": "Shifts political alignment pragmatically: Democratic donor, then $1M to Trump's inauguration and a White House Stargate launch, then 'politically homeless'.",
+    "evidence": [
+      "ev-071",
+      "ev-127",
+      "ev-131",
+      "ev-146",
+      "ev-158",
+      "SamA_v1/timeline/14_master_timeline.md:736"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2017,
+    "contested": false,
+    "notes": "Donations VERIFIED; staff dissent REPORTED. No 2026 midterm donations."
+  },
+  {
+    "id": "tr-23",
+    "trait": "Alleged retaliation against critics",
+    "description": "Critics say people who crossed him faced consequences (the push to remove Toner, freezing out Murati, subpoenas to critic nonprofits).",
+    "evidence": [
+      "ev-091",
+      "ev-112",
+      "ev-151",
+      "ev-165",
+      "SamA_v2/raw/04_personality_management.md:121",
+      "SamA_v1/profiles/15_character_profile.md:62"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2023,
+    "contested": true,
+    "notes": "Toner (on record), McCauley (2026, press-reported), Hao (anonymous). One-sided and unproven."
+  },
+  {
+    "id": "tr-24",
+    "trait": "Persuasive charm",
+    "description": "Reads the room and persuades quickly ('Jedi mind tricks', 'king of the cannibals'), calibrating his message to each audience.",
+    "evidence": [
+      "ev-026",
+      "ev-029",
+      "ev-085",
+      "ev-086",
+      "SamA_v1/profiles/15_character_profile.md:101",
+      "sam_A_3d_v2/research/ouster_audit_2026_10_03/AUDIT.md:113"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2008,
+    "contested": false,
+    "notes": "Graham (2008-2009), an unnamed tech executive (New Yorker 2026), testimony coverage. The skill is uncontested; its use is contested."
+  },
+  {
+    "id": "tr-25",
+    "trait": "Strategic ambiguity",
+    "description": "Signals without committing in ways that are hard to pin down: the 'her' post, 'no equity in OpenAI', a co-drafted tweet during the crisis.",
+    "evidence": [
+      "ev-107",
+      "ev-085",
+      "ev-096",
+      "SamA_v1/profiles/15_character_profile.md:98"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2023,
+    "contested": true,
+    "notes": "Readings of intent are contested; the posts themselves are VERIFIED."
+  },
+  {
+    "id": "tr-26",
+    "trait": "Public pro-regulation, private resistance",
+    "description": "Calls for AI licensing in public while OpenAI opposed specific bills (SB 1047) and threatened to leave the EU.",
+    "evidence": [
+      "ev-085",
+      "ev-086",
+      "SamA_v1/profiles/15_character_profile.md:91"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2023,
+    "contested": true,
+    "notes": "Ex-employee SB 1047 letter (VERIFIED document); UCL remarks and walk-back."
+  },
+  {
+    "id": "tr-27",
+    "trait": "Guarded private life",
+    "description": "Keeps his relationship and family largely private: the relationship 'fairly under wraps', a private-Instagram wedding, the child's name undisclosed.",
+    "evidence": [
+      "ev-101",
+      "ev-135",
+      "ev-104",
+      "ev-088",
+      "SamA_v1/raw/08_family_private_life.md:98",
+      "SamA_v1/raw/08_family_private_life.md:112"
+    ],
+    "witnesses": 3,
+    "firstSeen": 2016,
+    "contested": false,
+    "notes": "BI via Advocate (2024), NBC (2024), absence of name across 2025-26 sources."
+  }
+]

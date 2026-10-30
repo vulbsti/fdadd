@@ -1,0 +1,295 @@
+{
+  "case": "sam-altman",
+  "variant": "named",
+  "asOf": "2022-06-30",
+  "at": "2026-10-15T20:10:30.501Z",
+  "modelCalls": 38,
+  "results": [
+    {
+      "id": "q-work-next-years",
+      "ask": "What will the next few years bring for my work? I want to know what to focus on.",
+      "exitCode": 0,
+      "seconds": 85,
+      "question": null,
+      "tools": [
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "find",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "bash",
+        "read",
+        "grep",
+        "grep",
+        "read",
+        "bash"
+      ]
+    },
+    {
+      "id": "q-rough-patch",
+      "ask": "Is there a hard stretch coming? Where should I be careful?",
+      "exitCode": 0,
+      "seconds": 85,
+      "question": {
+        "prompt": "Which part feels most like the rough patch right now? I’m asking because the timing points to several possible pressure channels, but your lived experience tells me which one is actually active.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "OpenAI / work, funding, or public responsibility",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "Too many commitments; stress or sleep/body strain",
+            "kind": "answer"
+          },
+          {
+            "id": "option-3",
+            "label": "Oliver, family, or another close relationship",
+            "kind": "answer"
+          },
+          {
+            "id": "option-4",
+            "label": "None yet—I’m asking ahead of time, not because something is wrong now",
+            "kind": "control"
+          }
+        ]
+      },
+      "tools": [
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ls",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ls",
+        "ls",
+        "find",
+        "find",
+        "bash",
+        "grep",
+        "read",
+        "bash",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ask_person"
+      ]
+    },
+    {
+      "id": "q-personal-life",
+      "ask": "What about my personal life over the next few years, my partner and my family?",
+      "exitCode": 0,
+      "seconds": 145,
+      "question": {
+        "prompt": "Which part of your personal life is most live for you right now? I’m asking because the guidance changes depending on whether this is about making a shared future with Oliver, caring for your family of origin, or a concrete family-planning choice.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "Making more space for Oliver and building a shared future",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "My mom and brothers, and spending time with them",
+            "kind": "answer"
+          },
+          {
+            "id": "option-3",
+            "label": "The distance with Annie",
+            "kind": "answer"
+          },
+          {
+            "id": "option-4",
+            "label": "A concrete decision about children or what family we want",
+            "kind": "answer"
+          },
+          {
+            "id": "option-5",
+            "label": "None of those—things feel steady; I was asking generally",
+            "kind": "control"
+          }
+        ]
+      },
+      "tools": [
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "find",
+        "read",
+        "grep",
+        "grep",
+        "read",
+        "read",
+        "ls",
+        "ls",
+        "ls",
+        "bash",
+        "read",
+        "read",
+        "read",
+        "read",
+        "bash",
+        "bash",
+        "bash",
+        "read",
+        "ask_person"
+      ]
+    },
+    {
+      "id": "q-dasha-now",
+      "ask": "Which dasha am I in right now, and when does it change?",
+      "exitCode": 0,
+      "seconds": 14,
+      "question": null,
+      "tools": [
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "person_state"
+      ]
+    },
+    {
+      "id": "q-why-so-far",
+      "ask": "Looking back, why has my life gone the way it has so far?",
+      "exitCode": 0,
+      "seconds": 85,
+      "question": null,
+      "tools": [
+        "read",
+        "read",
+        "read",
+        "read",
+        "person_state",
+        "read",
+        "read",
+        "read",
+        "find",
+        "find",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ls",
+        "ls",
+        "read",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "read"
+      ]
+    },
+    {
+      "id": "q-what-holds-me-back",
+      "ask": "What am I really like, and what tends to hold me back?",
+      "exitCode": 0,
+      "seconds": 60,
+      "question": {
+        "prompt": "When you feel most stuck, what is usually the bigger cause? I’m asking because the remedy differs: cutting commitments is not the same as making room for what you have been carrying emotionally.",
+        "responseKind": "single_choice",
+        "allowFreeText": true,
+        "options": [
+          {
+            "id": "option-1",
+            "label": "I say yes to too many consequential opportunities, and my attention fragments.",
+            "kind": "answer"
+          },
+          {
+            "id": "option-2",
+            "label": "I keep myself busy and capable instead of sitting with grief, uncertainty, or personal needs.",
+            "kind": "answer"
+          },
+          {
+            "id": "option-3",
+            "label": "Neither fits; I can focus and face feelings, and something else is the main blocker.",
+            "kind": "control"
+          }
+        ]
+      },
+      "tools": [
+        "read",
+        "read",
+        "read",
+        "read",
+        "person_state",
+        "ls",
+        "read",
+        "read",
+        "read",
+        "grep",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "ask_person"
+      ]
+    }
+  ]
+}

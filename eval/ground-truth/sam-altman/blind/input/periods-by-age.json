@@ -1,0 +1,2799 @@
+{
+"antardashas": [
+{
+"md": "Sun",
+"ad": "Jupiter",
+"fromAge": 0,
+"toAge": 0.06
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"fromAge": 0.06,
+"toAge": 1.01
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"fromAge": 1.01,
+"toAge": 1.86
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"fromAge": 1.86,
+"toAge": 2.21
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"fromAge": 2.21,
+"toAge": 3.21
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"fromAge": 3.21,
+"toAge": 4.04
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"fromAge": 4.04,
+"toAge": 4.62
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"fromAge": 4.62,
+"toAge": 6.12
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"fromAge": 6.12,
+"toAge": 7.46
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"fromAge": 7.46,
+"toAge": 9.04
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"fromAge": 9.04,
+"toAge": 10.46
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"fromAge": 10.46,
+"toAge": 11.04
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"fromAge": 11.04,
+"toAge": 12.71
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"fromAge": 12.71,
+"toAge": 13.21
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"fromAge": 13.21,
+"toAge": 13.62
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"fromAge": 13.62,
+"toAge": 14.67
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"fromAge": 14.67,
+"toAge": 15.6
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"fromAge": 15.6,
+"toAge": 16.71
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"fromAge": 16.71,
+"toAge": 17.7
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"fromAge": 17.7,
+"toAge": 18.11
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"fromAge": 18.11,
+"toAge": 19.27
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"fromAge": 19.27,
+"toAge": 19.62
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"fromAge": 19.62,
+"toAge": 20.21
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"fromAge": 20.21,
+"toAge": 22.91
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"fromAge": 22.91,
+"toAge": 25.31
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"fromAge": 25.31,
+"toAge": 28.16
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"fromAge": 28.16,
+"toAge": 30.71
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"fromAge": 30.71,
+"toAge": 31.76
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"fromAge": 31.76,
+"toAge": 34.76
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"fromAge": 34.76,
+"toAge": 35.66
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"fromAge": 35.66,
+"toAge": 37.16
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"fromAge": 37.16,
+"toAge": 38.21
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"fromAge": 38.21,
+"toAge": 40.34
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"fromAge": 40.34,
+"toAge": 42.87
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"fromAge": 42.87,
+"toAge": 45.14
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"fromAge": 45.14,
+"toAge": 46.07
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"fromAge": 46.07,
+"toAge": 48.74
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"fromAge": 48.74,
+"toAge": 49.54
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"fromAge": 49.54,
+"toAge": 50.87
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"fromAge": 50.87,
+"toAge": 51.81
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"fromAge": 51.81,
+"toAge": 54.21
+},
+{
+"md": "Saturn",
+"ad": "Saturn",
+"fromAge": 54.21,
+"toAge": 57.22
+}
+],
+"pratyantardashas": [
+{
+"md": "Sun",
+"ad": "Jupiter",
+"pd": "Rahu",
+"fromAge": 0,
+"toAge": 0.06
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Saturn",
+"fromAge": 0.06,
+"toAge": 0.21
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Mercury",
+"fromAge": 0.21,
+"toAge": 0.34
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Ketu",
+"fromAge": 0.34,
+"toAge": 0.4
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Venus",
+"fromAge": 0.4,
+"toAge": 0.56
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Sun",
+"fromAge": 0.56,
+"toAge": 0.61
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Moon",
+"fromAge": 0.61,
+"toAge": 0.68
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Mars",
+"fromAge": 0.68,
+"toAge": 0.74
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Rahu",
+"fromAge": 0.74,
+"toAge": 0.88
+},
+{
+"md": "Sun",
+"ad": "Saturn",
+"pd": "Jupiter",
+"fromAge": 0.88,
+"toAge": 1.01
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Mercury",
+"fromAge": 1.01,
+"toAge": 1.13
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Ketu",
+"fromAge": 1.13,
+"toAge": 1.18
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Venus",
+"fromAge": 1.18,
+"toAge": 1.32
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Sun",
+"fromAge": 1.32,
+"toAge": 1.36
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Moon",
+"fromAge": 1.36,
+"toAge": 1.43
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Mars",
+"fromAge": 1.43,
+"toAge": 1.48
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Rahu",
+"fromAge": 1.48,
+"toAge": 1.61
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Jupiter",
+"fromAge": 1.61,
+"toAge": 1.72
+},
+{
+"md": "Sun",
+"ad": "Mercury",
+"pd": "Saturn",
+"fromAge": 1.72,
+"toAge": 1.86
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Ketu",
+"fromAge": 1.86,
+"toAge": 1.88
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Venus",
+"fromAge": 1.88,
+"toAge": 1.94
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Sun",
+"fromAge": 1.94,
+"toAge": 1.95
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Moon",
+"fromAge": 1.95,
+"toAge": 1.98
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Mars",
+"fromAge": 1.98,
+"toAge": 2.0
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Rahu",
+"fromAge": 2.0,
+"toAge": 2.06
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Jupiter",
+"fromAge": 2.06,
+"toAge": 2.11
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Saturn",
+"fromAge": 2.11,
+"toAge": 2.16
+},
+{
+"md": "Sun",
+"ad": "Ketu",
+"pd": "Mercury",
+"fromAge": 2.16,
+"toAge": 2.21
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Venus",
+"fromAge": 2.21,
+"toAge": 2.38
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Sun",
+"fromAge": 2.38,
+"toAge": 2.43
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Moon",
+"fromAge": 2.43,
+"toAge": 2.51
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Mars",
+"fromAge": 2.51,
+"toAge": 2.57
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Rahu",
+"fromAge": 2.57,
+"toAge": 2.72
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Jupiter",
+"fromAge": 2.72,
+"toAge": 2.85
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Saturn",
+"fromAge": 2.85,
+"toAge": 3.01
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Mercury",
+"fromAge": 3.01,
+"toAge": 3.15
+},
+{
+"md": "Sun",
+"ad": "Venus",
+"pd": "Ketu",
+"fromAge": 3.15,
+"toAge": 3.21
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Moon",
+"fromAge": 3.21,
+"toAge": 3.28
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Mars",
+"fromAge": 3.28,
+"toAge": 3.33
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Rahu",
+"fromAge": 3.33,
+"toAge": 3.45
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Jupiter",
+"fromAge": 3.45,
+"toAge": 3.56
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Saturn",
+"fromAge": 3.56,
+"toAge": 3.69
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Mercury",
+"fromAge": 3.69,
+"toAge": 3.81
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Ketu",
+"fromAge": 3.81,
+"toAge": 3.86
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Venus",
+"fromAge": 3.86,
+"toAge": 4.0
+},
+{
+"md": "Moon",
+"ad": "Moon",
+"pd": "Sun",
+"fromAge": 4.0,
+"toAge": 4.04
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Mars",
+"fromAge": 4.04,
+"toAge": 4.07
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Rahu",
+"fromAge": 4.07,
+"toAge": 4.16
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Jupiter",
+"fromAge": 4.16,
+"toAge": 4.24
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Saturn",
+"fromAge": 4.24,
+"toAge": 4.33
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Mercury",
+"fromAge": 4.33,
+"toAge": 4.42
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Ketu",
+"fromAge": 4.42,
+"toAge": 4.45
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Venus",
+"fromAge": 4.45,
+"toAge": 4.55
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Sun",
+"fromAge": 4.55,
+"toAge": 4.57
+},
+{
+"md": "Moon",
+"ad": "Mars",
+"pd": "Moon",
+"fromAge": 4.57,
+"toAge": 4.62
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Rahu",
+"fromAge": 4.62,
+"toAge": 4.85
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Jupiter",
+"fromAge": 4.85,
+"toAge": 5.05
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Saturn",
+"fromAge": 5.05,
+"toAge": 5.29
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Mercury",
+"fromAge": 5.29,
+"toAge": 5.5
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Ketu",
+"fromAge": 5.5,
+"toAge": 5.59
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Venus",
+"fromAge": 5.59,
+"toAge": 5.84
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Sun",
+"fromAge": 5.84,
+"toAge": 5.91
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Moon",
+"fromAge": 5.91,
+"toAge": 6.04
+},
+{
+"md": "Moon",
+"ad": "Rahu",
+"pd": "Mars",
+"fromAge": 6.04,
+"toAge": 6.12
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Jupiter",
+"fromAge": 6.12,
+"toAge": 6.3
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Saturn",
+"fromAge": 6.3,
+"toAge": 6.51
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Mercury",
+"fromAge": 6.51,
+"toAge": 6.7
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Ketu",
+"fromAge": 6.7,
+"toAge": 6.78
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Venus",
+"fromAge": 6.78,
+"toAge": 7.0
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Sun",
+"fromAge": 7.0,
+"toAge": 7.07
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Moon",
+"fromAge": 7.07,
+"toAge": 7.18
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Mars",
+"fromAge": 7.18,
+"toAge": 7.26
+},
+{
+"md": "Moon",
+"ad": "Jupiter",
+"pd": "Rahu",
+"fromAge": 7.26,
+"toAge": 7.46
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Saturn",
+"fromAge": 7.46,
+"toAge": 7.71
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Mercury",
+"fromAge": 7.71,
+"toAge": 7.93
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Ketu",
+"fromAge": 7.93,
+"toAge": 8.02
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Venus",
+"fromAge": 8.02,
+"toAge": 8.29
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Sun",
+"fromAge": 8.29,
+"toAge": 8.37
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Moon",
+"fromAge": 8.37,
+"toAge": 8.5
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Mars",
+"fromAge": 8.5,
+"toAge": 8.59
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Rahu",
+"fromAge": 8.59,
+"toAge": 8.83
+},
+{
+"md": "Moon",
+"ad": "Saturn",
+"pd": "Jupiter",
+"fromAge": 8.83,
+"toAge": 9.04
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Mercury",
+"fromAge": 9.04,
+"toAge": 9.24
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Ketu",
+"fromAge": 9.24,
+"toAge": 9.33
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Venus",
+"fromAge": 9.33,
+"toAge": 9.56
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Sun",
+"fromAge": 9.56,
+"toAge": 9.63
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Moon",
+"fromAge": 9.63,
+"toAge": 9.75
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Mars",
+"fromAge": 9.75,
+"toAge": 9.83
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Rahu",
+"fromAge": 9.83,
+"toAge": 10.05
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Jupiter",
+"fromAge": 10.05,
+"toAge": 10.23
+},
+{
+"md": "Moon",
+"ad": "Mercury",
+"pd": "Saturn",
+"fromAge": 10.23,
+"toAge": 10.46
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Ketu",
+"fromAge": 10.46,
+"toAge": 10.49
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Venus",
+"fromAge": 10.49,
+"toAge": 10.59
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Sun",
+"fromAge": 10.59,
+"toAge": 10.62
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Moon",
+"fromAge": 10.62,
+"toAge": 10.67
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Mars",
+"fromAge": 10.67,
+"toAge": 10.7
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Rahu",
+"fromAge": 10.7,
+"toAge": 10.79
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Jupiter",
+"fromAge": 10.79,
+"toAge": 10.87
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Saturn",
+"fromAge": 10.87,
+"toAge": 10.96
+},
+{
+"md": "Moon",
+"ad": "Ketu",
+"pd": "Mercury",
+"fromAge": 10.96,
+"toAge": 11.04
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Venus",
+"fromAge": 11.04,
+"toAge": 11.32
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Sun",
+"fromAge": 11.32,
+"toAge": 11.4
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Moon",
+"fromAge": 11.4,
+"toAge": 11.54
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Mars",
+"fromAge": 11.54,
+"toAge": 11.64
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Rahu",
+"fromAge": 11.64,
+"toAge": 11.89
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Jupiter",
+"fromAge": 11.89,
+"toAge": 12.11
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Saturn",
+"fromAge": 12.11,
+"toAge": 12.37
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Mercury",
+"fromAge": 12.37,
+"toAge": 12.61
+},
+{
+"md": "Moon",
+"ad": "Venus",
+"pd": "Ketu",
+"fromAge": 12.61,
+"toAge": 12.71
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Sun",
+"fromAge": 12.71,
+"toAge": 12.73
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Moon",
+"fromAge": 12.73,
+"toAge": 12.77
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Mars",
+"fromAge": 12.77,
+"toAge": 12.8
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Rahu",
+"fromAge": 12.8,
+"toAge": 12.88
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Jupiter",
+"fromAge": 12.88,
+"toAge": 12.94
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Saturn",
+"fromAge": 12.94,
+"toAge": 13.02
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Mercury",
+"fromAge": 13.02,
+"toAge": 13.1
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Ketu",
+"fromAge": 13.1,
+"toAge": 13.13
+},
+{
+"md": "Moon",
+"ad": "Sun",
+"pd": "Venus",
+"fromAge": 13.13,
+"toAge": 13.21
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Mars",
+"fromAge": 13.21,
+"toAge": 13.23
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Rahu",
+"fromAge": 13.23,
+"toAge": 13.29
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Jupiter",
+"fromAge": 13.29,
+"toAge": 13.35
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Saturn",
+"fromAge": 13.35,
+"toAge": 13.41
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Mercury",
+"fromAge": 13.41,
+"toAge": 13.47
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Ketu",
+"fromAge": 13.47,
+"toAge": 13.49
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Venus",
+"fromAge": 13.49,
+"toAge": 13.56
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Sun",
+"fromAge": 13.56,
+"toAge": 13.58
+},
+{
+"md": "Mars",
+"ad": "Mars",
+"pd": "Moon",
+"fromAge": 13.58,
+"toAge": 13.62
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Rahu",
+"fromAge": 13.62,
+"toAge": 13.77
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Jupiter",
+"fromAge": 13.77,
+"toAge": 13.91
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Saturn",
+"fromAge": 13.91,
+"toAge": 14.08
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Mercury",
+"fromAge": 14.08,
+"toAge": 14.23
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Ketu",
+"fromAge": 14.23,
+"toAge": 14.29
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Venus",
+"fromAge": 14.29,
+"toAge": 14.46
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Sun",
+"fromAge": 14.46,
+"toAge": 14.52
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Moon",
+"fromAge": 14.52,
+"toAge": 14.61
+},
+{
+"md": "Mars",
+"ad": "Rahu",
+"pd": "Mars",
+"fromAge": 14.61,
+"toAge": 14.67
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Jupiter",
+"fromAge": 14.67,
+"toAge": 14.79
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Saturn",
+"fromAge": 14.79,
+"toAge": 14.94
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Mercury",
+"fromAge": 14.94,
+"toAge": 15.07
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Ketu",
+"fromAge": 15.07,
+"toAge": 15.13
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Venus",
+"fromAge": 15.13,
+"toAge": 15.28
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Sun",
+"fromAge": 15.28,
+"toAge": 15.33
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Moon",
+"fromAge": 15.33,
+"toAge": 15.41
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Mars",
+"fromAge": 15.41,
+"toAge": 15.46
+},
+{
+"md": "Mars",
+"ad": "Jupiter",
+"pd": "Rahu",
+"fromAge": 15.46,
+"toAge": 15.6
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Saturn",
+"fromAge": 15.6,
+"toAge": 15.78
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Mercury",
+"fromAge": 15.78,
+"toAge": 15.93
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Ketu",
+"fromAge": 15.93,
+"toAge": 16.0
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Venus",
+"fromAge": 16.0,
+"toAge": 16.18
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Sun",
+"fromAge": 16.18,
+"toAge": 16.24
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Moon",
+"fromAge": 16.24,
+"toAge": 16.33
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Mars",
+"fromAge": 16.33,
+"toAge": 16.39
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Rahu",
+"fromAge": 16.39,
+"toAge": 16.56
+},
+{
+"md": "Mars",
+"ad": "Saturn",
+"pd": "Jupiter",
+"fromAge": 16.56,
+"toAge": 16.71
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Mercury",
+"fromAge": 16.71,
+"toAge": 16.85
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Ketu",
+"fromAge": 16.85,
+"toAge": 16.91
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Venus",
+"fromAge": 16.91,
+"toAge": 17.07
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Sun",
+"fromAge": 17.07,
+"toAge": 17.12
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Moon",
+"fromAge": 17.12,
+"toAge": 17.2
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Mars",
+"fromAge": 17.2,
+"toAge": 17.26
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Rahu",
+"fromAge": 17.26,
+"toAge": 17.41
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Jupiter",
+"fromAge": 17.41,
+"toAge": 17.54
+},
+{
+"md": "Mars",
+"ad": "Mercury",
+"pd": "Saturn",
+"fromAge": 17.54,
+"toAge": 17.7
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Ketu",
+"fromAge": 17.7,
+"toAge": 17.72
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Venus",
+"fromAge": 17.72,
+"toAge": 17.79
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Sun",
+"fromAge": 17.79,
+"toAge": 17.81
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Moon",
+"fromAge": 17.81,
+"toAge": 17.85
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Mars",
+"fromAge": 17.85,
+"toAge": 17.87
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Rahu",
+"fromAge": 17.87,
+"toAge": 17.93
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Jupiter",
+"fromAge": 17.93,
+"toAge": 17.98
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Saturn",
+"fromAge": 17.98,
+"toAge": 18.05
+},
+{
+"md": "Mars",
+"ad": "Ketu",
+"pd": "Mercury",
+"fromAge": 18.05,
+"toAge": 18.11
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Venus",
+"fromAge": 18.11,
+"toAge": 18.3
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Sun",
+"fromAge": 18.3,
+"toAge": 18.36
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Moon",
+"fromAge": 18.36,
+"toAge": 18.46
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Mars",
+"fromAge": 18.46,
+"toAge": 18.53
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Rahu",
+"fromAge": 18.53,
+"toAge": 18.7
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Jupiter",
+"fromAge": 18.7,
+"toAge": 18.86
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Saturn",
+"fromAge": 18.86,
+"toAge": 19.04
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Mercury",
+"fromAge": 19.04,
+"toAge": 19.21
+},
+{
+"md": "Mars",
+"ad": "Venus",
+"pd": "Ketu",
+"fromAge": 19.21,
+"toAge": 19.27
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Sun",
+"fromAge": 19.27,
+"toAge": 19.29
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Moon",
+"fromAge": 19.29,
+"toAge": 19.32
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Mars",
+"fromAge": 19.32,
+"toAge": 19.34
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Rahu",
+"fromAge": 19.34,
+"toAge": 19.39
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Jupiter",
+"fromAge": 19.39,
+"toAge": 19.44
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Saturn",
+"fromAge": 19.44,
+"toAge": 19.5
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Mercury",
+"fromAge": 19.5,
+"toAge": 19.55
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Ketu",
+"fromAge": 19.55,
+"toAge": 19.57
+},
+{
+"md": "Mars",
+"ad": "Sun",
+"pd": "Venus",
+"fromAge": 19.57,
+"toAge": 19.62
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Moon",
+"fromAge": 19.62,
+"toAge": 19.67
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Mars",
+"fromAge": 19.67,
+"toAge": 19.71
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Rahu",
+"fromAge": 19.71,
+"toAge": 19.79
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Jupiter",
+"fromAge": 19.79,
+"toAge": 19.87
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Saturn",
+"fromAge": 19.87,
+"toAge": 19.96
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Mercury",
+"fromAge": 19.96,
+"toAge": 20.05
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Ketu",
+"fromAge": 20.05,
+"toAge": 20.08
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Venus",
+"fromAge": 20.08,
+"toAge": 20.18
+},
+{
+"md": "Mars",
+"ad": "Moon",
+"pd": "Sun",
+"fromAge": 20.18,
+"toAge": 20.21
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Rahu",
+"fromAge": 20.21,
+"toAge": 20.61
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Jupiter",
+"fromAge": 20.61,
+"toAge": 20.97
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Saturn",
+"fromAge": 20.97,
+"toAge": 21.4
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Mercury",
+"fromAge": 21.4,
+"toAge": 21.78
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Ketu",
+"fromAge": 21.78,
+"toAge": 21.94
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Venus",
+"fromAge": 21.94,
+"toAge": 22.39
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Sun",
+"fromAge": 22.39,
+"toAge": 22.52
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Moon",
+"fromAge": 22.52,
+"toAge": 22.75
+},
+{
+"md": "Rahu",
+"ad": "Rahu",
+"pd": "Mars",
+"fromAge": 22.75,
+"toAge": 22.91
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Jupiter",
+"fromAge": 22.91,
+"toAge": 23.23
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Saturn",
+"fromAge": 23.23,
+"toAge": 23.61
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Mercury",
+"fromAge": 23.61,
+"toAge": 23.95
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Ketu",
+"fromAge": 23.95,
+"toAge": 24.09
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Venus",
+"fromAge": 24.09,
+"toAge": 24.49
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Sun",
+"fromAge": 24.49,
+"toAge": 24.61
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Moon",
+"fromAge": 24.61,
+"toAge": 24.81
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Mars",
+"fromAge": 24.81,
+"toAge": 24.95
+},
+{
+"md": "Rahu",
+"ad": "Jupiter",
+"pd": "Rahu",
+"fromAge": 24.95,
+"toAge": 25.31
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Saturn",
+"fromAge": 25.31,
+"toAge": 25.76
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Mercury",
+"fromAge": 25.76,
+"toAge": 26.16
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Ketu",
+"fromAge": 26.16,
+"toAge": 26.33
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Venus",
+"fromAge": 26.33,
+"toAge": 26.81
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Sun",
+"fromAge": 26.81,
+"toAge": 26.95
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Moon",
+"fromAge": 26.95,
+"toAge": 27.18
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Mars",
+"fromAge": 27.18,
+"toAge": 27.35
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Rahu",
+"fromAge": 27.35,
+"toAge": 27.78
+},
+{
+"md": "Rahu",
+"ad": "Saturn",
+"pd": "Jupiter",
+"fromAge": 27.78,
+"toAge": 28.16
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Mercury",
+"fromAge": 28.16,
+"toAge": 28.52
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Ketu",
+"fromAge": 28.52,
+"toAge": 28.67
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Venus",
+"fromAge": 28.67,
+"toAge": 29.09
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Sun",
+"fromAge": 29.09,
+"toAge": 29.22
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Moon",
+"fromAge": 29.22,
+"toAge": 29.43
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Mars",
+"fromAge": 29.43,
+"toAge": 29.58
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Rahu",
+"fromAge": 29.58,
+"toAge": 29.96
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Jupiter",
+"fromAge": 29.96,
+"toAge": 30.31
+},
+{
+"md": "Rahu",
+"ad": "Mercury",
+"pd": "Saturn",
+"fromAge": 30.31,
+"toAge": 30.71
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Ketu",
+"fromAge": 30.71,
+"toAge": 30.77
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Venus",
+"fromAge": 30.77,
+"toAge": 30.94
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Sun",
+"fromAge": 30.94,
+"toAge": 31.0
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Moon",
+"fromAge": 31.0,
+"toAge": 31.08
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Mars",
+"fromAge": 31.08,
+"toAge": 31.15
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Rahu",
+"fromAge": 31.15,
+"toAge": 31.3
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Jupiter",
+"fromAge": 31.3,
+"toAge": 31.44
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Saturn",
+"fromAge": 31.44,
+"toAge": 31.61
+},
+{
+"md": "Rahu",
+"ad": "Ketu",
+"pd": "Mercury",
+"fromAge": 31.61,
+"toAge": 31.76
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Venus",
+"fromAge": 31.76,
+"toAge": 32.26
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Sun",
+"fromAge": 32.26,
+"toAge": 32.41
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Moon",
+"fromAge": 32.41,
+"toAge": 32.66
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Mars",
+"fromAge": 32.66,
+"toAge": 32.83
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Rahu",
+"fromAge": 32.83,
+"toAge": 33.28
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Jupiter",
+"fromAge": 33.28,
+"toAge": 33.68
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Saturn",
+"fromAge": 33.68,
+"toAge": 34.16
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Mercury",
+"fromAge": 34.16,
+"toAge": 34.58
+},
+{
+"md": "Rahu",
+"ad": "Venus",
+"pd": "Ketu",
+"fromAge": 34.58,
+"toAge": 34.76
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Sun",
+"fromAge": 34.76,
+"toAge": 34.8
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Moon",
+"fromAge": 34.8,
+"toAge": 34.88
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Mars",
+"fromAge": 34.88,
+"toAge": 34.93
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Rahu",
+"fromAge": 34.93,
+"toAge": 35.06
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Jupiter",
+"fromAge": 35.06,
+"toAge": 35.18
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Saturn",
+"fromAge": 35.18,
+"toAge": 35.33
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Mercury",
+"fromAge": 35.33,
+"toAge": 35.46
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Ketu",
+"fromAge": 35.46,
+"toAge": 35.51
+},
+{
+"md": "Rahu",
+"ad": "Sun",
+"pd": "Venus",
+"fromAge": 35.51,
+"toAge": 35.66
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Moon",
+"fromAge": 35.66,
+"toAge": 35.78
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Mars",
+"fromAge": 35.78,
+"toAge": 35.87
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Rahu",
+"fromAge": 35.87,
+"toAge": 36.1
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Jupiter",
+"fromAge": 36.1,
+"toAge": 36.3
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Saturn",
+"fromAge": 36.3,
+"toAge": 36.53
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Mercury",
+"fromAge": 36.53,
+"toAge": 36.74
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Ketu",
+"fromAge": 36.74,
+"toAge": 36.83
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Venus",
+"fromAge": 36.83,
+"toAge": 37.08
+},
+{
+"md": "Rahu",
+"ad": "Moon",
+"pd": "Sun",
+"fromAge": 37.08,
+"toAge": 37.16
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Mars",
+"fromAge": 37.16,
+"toAge": 37.22
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Rahu",
+"fromAge": 37.22,
+"toAge": 37.38
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Jupiter",
+"fromAge": 37.38,
+"toAge": 37.52
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Saturn",
+"fromAge": 37.52,
+"toAge": 37.68
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Mercury",
+"fromAge": 37.68,
+"toAge": 37.83
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Ketu",
+"fromAge": 37.83,
+"toAge": 37.89
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Venus",
+"fromAge": 37.89,
+"toAge": 38.07
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Sun",
+"fromAge": 38.07,
+"toAge": 38.12
+},
+{
+"md": "Rahu",
+"ad": "Mars",
+"pd": "Moon",
+"fromAge": 38.12,
+"toAge": 38.21
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Jupiter",
+"fromAge": 38.21,
+"toAge": 38.49
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Saturn",
+"fromAge": 38.49,
+"toAge": 38.83
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Mercury",
+"fromAge": 38.83,
+"toAge": 39.13
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Ketu",
+"fromAge": 39.13,
+"toAge": 39.26
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Venus",
+"fromAge": 39.26,
+"toAge": 39.61
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Sun",
+"fromAge": 39.61,
+"toAge": 39.72
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Moon",
+"fromAge": 39.72,
+"toAge": 39.9
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Mars",
+"fromAge": 39.9,
+"toAge": 40.02
+},
+{
+"md": "Jupiter",
+"ad": "Jupiter",
+"pd": "Rahu",
+"fromAge": 40.02,
+"toAge": 40.34
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Saturn",
+"fromAge": 40.34,
+"toAge": 40.74
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Mercury",
+"fromAge": 40.74,
+"toAge": 41.1
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Ketu",
+"fromAge": 41.1,
+"toAge": 41.25
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Venus",
+"fromAge": 41.25,
+"toAge": 41.67
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Sun",
+"fromAge": 41.67,
+"toAge": 41.8
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Moon",
+"fromAge": 41.8,
+"toAge": 42.01
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Mars",
+"fromAge": 42.01,
+"toAge": 42.16
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Rahu",
+"fromAge": 42.16,
+"toAge": 42.54
+},
+{
+"md": "Jupiter",
+"ad": "Saturn",
+"pd": "Jupiter",
+"fromAge": 42.54,
+"toAge": 42.87
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Mercury",
+"fromAge": 42.87,
+"toAge": 43.2
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Ketu",
+"fromAge": 43.2,
+"toAge": 43.33
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Venus",
+"fromAge": 43.33,
+"toAge": 43.7
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Sun",
+"fromAge": 43.7,
+"toAge": 43.82
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Moon",
+"fromAge": 43.82,
+"toAge": 44.01
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Mars",
+"fromAge": 44.01,
+"toAge": 44.14
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Rahu",
+"fromAge": 44.14,
+"toAge": 44.48
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Jupiter",
+"fromAge": 44.48,
+"toAge": 44.78
+},
+{
+"md": "Jupiter",
+"ad": "Mercury",
+"pd": "Saturn",
+"fromAge": 44.78,
+"toAge": 45.14
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Ketu",
+"fromAge": 45.14,
+"toAge": 45.19
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Venus",
+"fromAge": 45.19,
+"toAge": 45.35
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Sun",
+"fromAge": 45.35,
+"toAge": 45.4
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Moon",
+"fromAge": 45.4,
+"toAge": 45.47
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Mars",
+"fromAge": 45.47,
+"toAge": 45.53
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Rahu",
+"fromAge": 45.53,
+"toAge": 45.67
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Jupiter",
+"fromAge": 45.67,
+"toAge": 45.79
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Saturn",
+"fromAge": 45.79,
+"toAge": 45.94
+},
+{
+"md": "Jupiter",
+"ad": "Ketu",
+"pd": "Mercury",
+"fromAge": 45.94,
+"toAge": 46.07
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Venus",
+"fromAge": 46.07,
+"toAge": 46.52
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Sun",
+"fromAge": 46.52,
+"toAge": 46.65
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Moon",
+"fromAge": 46.65,
+"toAge": 46.87
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Mars",
+"fromAge": 46.87,
+"toAge": 47.03
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Rahu",
+"fromAge": 47.03,
+"toAge": 47.43
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Jupiter",
+"fromAge": 47.43,
+"toAge": 47.78
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Saturn",
+"fromAge": 47.78,
+"toAge": 48.21
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Mercury",
+"fromAge": 48.21,
+"toAge": 48.58
+},
+{
+"md": "Jupiter",
+"ad": "Venus",
+"pd": "Ketu",
+"fromAge": 48.58,
+"toAge": 48.74
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Sun",
+"fromAge": 48.74,
+"toAge": 48.78
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Moon",
+"fromAge": 48.78,
+"toAge": 48.85
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Mars",
+"fromAge": 48.85,
+"toAge": 48.89
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Rahu",
+"fromAge": 48.89,
+"toAge": 49.01
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Jupiter",
+"fromAge": 49.01,
+"toAge": 49.12
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Saturn",
+"fromAge": 49.12,
+"toAge": 49.25
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Mercury",
+"fromAge": 49.25,
+"toAge": 49.36
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Ketu",
+"fromAge": 49.36,
+"toAge": 49.41
+},
+{
+"md": "Jupiter",
+"ad": "Sun",
+"pd": "Venus",
+"fromAge": 49.41,
+"toAge": 49.54
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Moon",
+"fromAge": 49.54,
+"toAge": 49.65
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Mars",
+"fromAge": 49.65,
+"toAge": 49.73
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Rahu",
+"fromAge": 49.73,
+"toAge": 49.93
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Jupiter",
+"fromAge": 49.93,
+"toAge": 50.11
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Saturn",
+"fromAge": 50.11,
+"toAge": 50.32
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Mercury",
+"fromAge": 50.32,
+"toAge": 50.51
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Ketu",
+"fromAge": 50.51,
+"toAge": 50.58
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Venus",
+"fromAge": 50.58,
+"toAge": 50.81
+},
+{
+"md": "Jupiter",
+"ad": "Moon",
+"pd": "Sun",
+"fromAge": 50.81,
+"toAge": 50.87
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Mars",
+"fromAge": 50.87,
+"toAge": 50.93
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Rahu",
+"fromAge": 50.93,
+"toAge": 51.07
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Jupiter",
+"fromAge": 51.07,
+"toAge": 51.19
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Saturn",
+"fromAge": 51.19,
+"toAge": 51.34
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Mercury",
+"fromAge": 51.34,
+"toAge": 51.47
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Ketu",
+"fromAge": 51.47,
+"toAge": 51.53
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Venus",
+"fromAge": 51.53,
+"toAge": 51.68
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Sun",
+"fromAge": 51.68,
+"toAge": 51.73
+},
+{
+"md": "Jupiter",
+"ad": "Mars",
+"pd": "Moon",
+"fromAge": 51.73,
+"toAge": 51.81
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Rahu",
+"fromAge": 51.81,
+"toAge": 52.17
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Jupiter",
+"fromAge": 52.17,
+"toAge": 52.48
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Saturn",
+"fromAge": 52.48,
+"toAge": 52.87
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Mercury",
+"fromAge": 52.87,
+"toAge": 53.21
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Ketu",
+"fromAge": 53.21,
+"toAge": 53.35
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Venus",
+"fromAge": 53.35,
+"toAge": 53.75
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Sun",
+"fromAge": 53.75,
+"toAge": 53.87
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Moon",
+"fromAge": 53.87,
+"toAge": 54.07
+},
+{
+"md": "Jupiter",
+"ad": "Rahu",
+"pd": "Mars",
+"fromAge": 54.07,
+"toAge": 54.21
+},
+{
+"md": "Saturn",
+"ad": "Saturn",
+"pd": "Saturn",
+"fromAge": 54.21,
+"toAge": 54.68
+},
+{
+"md": "Saturn",
+"ad": "Saturn",
+"pd": "Mercury",
+"fromAge": 54.68,
+"toAge": 55.11
+}
+]
+}

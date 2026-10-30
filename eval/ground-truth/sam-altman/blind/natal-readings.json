@@ -1,0 +1,507 @@
+[
+ {
+  "id": "nr-01",
+  "factor": "Aries lagna (6.9 deg) with exalted Sun and Rahu in the 1st",
+  "classicalBasis": "Lagna lord Mars is placed in the 2nd. Sun, the 5th (trikona) lord, is exalted in the lagna, which is both a kendra and a trikona, so it forms a raja yoga on the self. Rahu (Bharani) sits in the same sign about 16 deg from the Sun (Grahan yoga). Lagna SAV is only 20 bindus, the weakest house in the chart.",
+  "candidates": [
+   {
+    "id": "nr-01a",
+    "reading": "A forceful, self-directed, highly ambitious personality who wants to lead rather than follow; drawn to unconventional, new or foreign arenas; strong self-belief that others read as ego.",
+    "domains": [
+     "mind-worldview",
+     "career",
+     "reputation"
+    ],
+    "testableBy": "A life of leading or founding things, visible public persona, and repeated choices of the new or untested over a conventional track."
+   },
+   {
+    "id": "nr-01b",
+    "reading": "The ambition outruns the body and the inner steadiness: the person is outwardly brilliant but has recurring stress, head, eye or blood-pressure issues and identity crises, because lagna SAV is low and the Sun is eclipsed by Rahu.",
+    "domains": [
+     "health",
+     "mind-worldview"
+    ],
+    "testableBy": "Recurring health episodes (head, eyes, BP, fevers) or periods of self-doubt and image crises, especially in Rahu and Sun sub-periods."
+   },
+   {
+    "id": "nr-01c",
+    "reading": "The Rahu-Sun lagna gives a controversial or polarising public image: admired by some and attacked by others, with authority figures (father, government, bosses) as a recurring friction point.",
+    "domains": [
+     "reputation",
+     "conflict-legal",
+     "family"
+    ],
+    "testableBy": "Public controversy, clashes with authority or the father, or a reputation that splits opinion."
+   }
+  ],
+  "priorFavourite": "nr-01a",
+  "confidence": "high"
+ },
+ {
+  "id": "nr-02",
+  "factor": "Lagna lord Mars in the 2nd (Taurus), conjunct exalted Moon within 1 deg; Mars is also the 8th lord",
+  "classicalBasis": "Lagna lord in the 2nd ties self-effort to money, speech and family. Mars-Moon conjunction is Chandra-Mangala yoga (wealth through enterprise). As 8th lord, Mars brings sudden events, other people's money and upheavals into the 2nd. Jupiter aspects the pair (5th aspect) and Saturn aspects it by opposition from the 8th. Mars has weak shadbala (2.71 rupas).",
+  "candidates": [
+   {
+    "id": "nr-02a",
+    "reading": "Earns through own initiative and deal-making; wealth comes in surges, with sharp gains and sharp losses, and money is a lifelong preoccupation.",
+    "domains": [
+     "money",
+     "career"
+    ],
+    "testableBy": "A self-made financial path with visible boom and bust cycles rather than steady salary growth."
+   },
+   {
+    "id": "nr-02b",
+    "reading": "Speech is blunt, sharp or combative; family life in the birth home carries tension or a disruption (Mars as 8th lord in the 2nd, Saturn aspecting).",
+    "domains": [
+     "family",
+     "conflict-legal"
+    ],
+    "testableBy": "A reputation for sharp words, family disputes, or a break or upheaval in the early family."
+   },
+   {
+    "id": "nr-02c",
+    "reading": "Wealth through other people's money (investors, inheritance, a spouse, insurance or finance) because the 8th lord sits in the 2nd.",
+    "domains": [
+     "money",
+     "partnership"
+    ],
+    "testableBy": "Large financial events tied to investors, inheritance, loans or a partner's resources."
+   }
+  ],
+  "priorFavourite": "nr-02a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-03",
+  "factor": "Exalted Moon in Krittika in the 2nd, 4th lord, aspected by Saturn from the 8th; Kemadruma flagged",
+  "classicalBasis": "The Moon is exalted, rules the 4th and joins the lagna lord, which forms a raja yoga by kendra-lord and lagna-lord association. Saturn's full 7th-house aspect gives a serious, worried or melancholic tone. Kemadruma (no planet in the 2nd or 12th from the Moon, counting neither Sun nor Rahu) is largely cancelled by the conjunction with Mars and by Saturn in a kendra from the Moon. Krittika, ruled by the Sun, is sharp and critical.",
+  "candidates": [
+   {
+    "id": "nr-03a",
+    "reading": "Emotionally resilient and stubborn, with a strong attachment to home, comfort and security; the mother is a strong, supportive figure.",
+    "domains": [
+     "family",
+     "home",
+     "mind-worldview"
+    ],
+    "testableBy": "A close bond with the mother, love of property and comfort, and steadiness under pressure."
+   },
+   {
+    "id": "nr-03b",
+    "reading": "Outwardly steady but inwardly anxious and lonely, with a Saturn-Moon heaviness that comes out as periods of isolation or low mood, especially during sade sati (about 13-20 and 42-50).",
+    "domains": [
+     "mind-worldview",
+     "health"
+    ],
+    "testableBy": "Reported periods of isolation, depression or burnout clustered in the sade sati windows."
+   },
+   {
+    "id": "nr-03c",
+    "reading": "Owns property or a home base early, and real estate or fixed assets form a meaningful part of the wealth (4th lord exalted in the 2nd).",
+    "domains": [
+     "home",
+     "money"
+    ],
+    "testableBy": "Property purchases, especially in Moon sub-periods (about 35.7-37.2 and 49.5-50.9)."
+   }
+  ],
+  "priorFavourite": "nr-03a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-04",
+  "factor": "Debilitated Mercury (3rd/6th lord) with exalted retrograde Venus (2nd/7th lord) in Pisces, 12th house, Uttara Bhadrapada",
+  "classicalBasis": "Mercury is debilitated, but the debilitation is cancelled (neecha bhanga) by conjunction with exalted Venus and by its dispositor Jupiter sitting in a kendra (the 10th). The 6th lord in the 12th forms Harsha Viparita Raja Yoga. Mercury is in Scorpio in D9 (weak) and in Pisces again in D10 (debilitated, but in the 10th of D10 with Jupiter in own sign and Venus exalted). Its shadbala is very weak (3.05 rupas).",
+  "candidates": [
+   {
+    "id": "nr-04a",
+    "reading": "The mind is intuitive and imaginative rather than detail-oriented; the person may struggle with conventional schooling or exams but does well at big-picture synthesis, persuasion and creative work.",
+    "domains": [
+     "education",
+     "mind-worldview"
+    ],
+    "testableBy": "Uneven or unconventional academic record, with strengths in vision and storytelling rather than rote or technical detail."
+   },
+   {
+    "id": "nr-04b",
+    "reading": "Enemies, debts and competitors defeat themselves (Harsha VRY): the person comes out ahead from lawsuits, rivals and crises, often in foreign or behind-the-scenes settings.",
+    "domains": [
+     "conflict-legal",
+     "career"
+    ],
+    "testableBy": "Disputes or competitive battles that end unexpectedly in the person's favour, especially in Mercury sub-periods (about 28-31 and 43-45)."
+   },
+   {
+    "id": "nr-04c",
+    "reading": "Communication or contract errors and sibling estrangement (3rd lord debilitated in the 12th) cause real losses; paperwork and legal fine print are a recurring weak point.",
+    "domains": [
+     "conflict-legal",
+     "family",
+     "money"
+    ],
+    "testableBy": "Losses from contracts or documents, distance from siblings, and legal trouble in Mercury periods."
+   }
+  ],
+  "priorFavourite": "nr-04b",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-05",
+  "factor": "Exalted retrograde Venus, 2nd and 7th lord, in the 12th (Pisces); own sign Libra in D9",
+  "classicalBasis": "The lord of the 7th and 2nd is exalted in the 12th, the house of foreign lands, bed pleasures and expenditure. It is retrograde. In D9 Venus is in its own sign Libra, in the 5th from the Gemini navamsa lagna, which supports the spouse. Ketu occupies the natal 7th, and the 7th house has a weak SAV of 23.",
+  "candidates": [
+   {
+    "id": "nr-05a",
+    "reading": "The spouse is refined, artistic or from a foreign or very different background; the marriage involves living abroad or physical distance, and is supportive though not conventional.",
+    "domains": [
+     "partnership"
+    ],
+    "testableBy": "A spouse of foreign or culturally distant origin, or the marriage tied to relocation."
+   },
+   {
+    "id": "nr-05b",
+    "reading": "Marriage is delayed or happens more than once; the first serious partnership ends (Ketu in the 7th, retrograde 7th lord in the 12th, weak 7th SAV). A more stable bond comes later, in the 30s.",
+    "domains": [
+     "partnership",
+     "conflict-legal"
+    ],
+    "testableBy": "Late marriage (after 30), a divorce, or a long-term relationship breakdown."
+   },
+   {
+    "id": "nr-05c",
+    "reading": "Spends lavishly on comfort, travel, art and luxury; money flows out as easily as it comes (2nd lord in the 12th).",
+    "domains": [
+     "money",
+     "home"
+    ],
+    "testableBy": "A pattern of high spending or luxury consumption, with money held in or spent abroad."
+   }
+  ],
+  "priorFavourite": "nr-05a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-06",
+  "factor": "Debilitated Jupiter (9th/12th lord) in the 10th, Capricorn, Shravana; aspected by Saturn",
+  "classicalBasis": "Jupiter is debilitated in the 10th, but several cancellations apply. Its dispositor Saturn is in a kendra from the Moon. Mars, which is exalted in Capricorn, is conjunct the Moon, so it is in a kendra from the Moon. Jupiter is exalted in D9 (Cancer) and in its own sign in D10 (Pisces, the 10th of D10). The 9th lord in the 10th is a dharma-karma link, and Amala yoga applies (only a benefic in the 10th from the lagna). SAV of the 10th is 36, the highest in the chart. Saturn's 3rd aspect presses on it.",
+  "candidates": [
+   {
+    "id": "nr-06a",
+    "reading": "Strong neecha bhanga raja yoga: an early phase of compromised or unorthodox career ethics or credentials, followed by a major rise to prestige, especially in the Jupiter mahadasha (38-54). The person ends up as a respected authority, advisor, investor or patron.",
+    "domains": [
+     "career",
+     "reputation",
+     "network-mentors"
+    ],
+    "testableBy": "Career standing clearly higher after about 38 than before, with institutional respect and advisory or board roles."
+   },
+   {
+    "id": "nr-06b",
+    "reading": "The career is in law, finance, education, policy or other institutional work, guided by mentors and older patrons (Jupiter as the 9th lord in the 10th).",
+    "domains": [
+     "career",
+     "network-mentors"
+    ],
+    "testableBy": "Important mentors or sponsors, and a career inside institutions or advisory work."
+   },
+   {
+    "id": "nr-06c",
+    "reading": "The debilitation shows as ethical or reputational stains in the career, with accusations of bending rules, especially when Saturn transits over it (about 34.8-37) or during Jupiter-Saturn (40-43).",
+    "domains": [
+     "reputation",
+     "conflict-legal"
+    ],
+    "testableBy": "Scandal, regulatory trouble or public criticism of conduct in those windows."
+   }
+  ],
+  "priorFavourite": "nr-06a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-07",
+  "factor": "Retrograde Saturn (10th/11th lord) in the 8th, Scorpio, Vishakha; Daridra yoga flagged",
+  "classicalBasis": "The 10th and 11th lord sits in a dusthana (the 8th) in an enemy sign and is retrograde. That gives obstacles to gains, career built on hidden, research, crisis or other people's resources, and longevity. Saturn aspects the 10th (Jupiter), the 2nd (Moon-Mars) and the 5th. Daridra yoga is real but softened: 11th SAV is high at 34, and Saturn is in a kendra from the Moon.",
+  "candidates": [
+   {
+    "id": "nr-07a",
+    "reading": "The career runs through transformation, crisis, research, technology, finance, insurance or investigation; the person thrives in turnaround or high-risk situations rather than stable roles.",
+    "domains": [
+     "career",
+     "money"
+    ],
+    "testableBy": "A work history built on high-risk, deep-tech, finance or turnaround ventures."
+   },
+   {
+    "id": "nr-07b",
+    "reading": "Gains are delayed and arrive through other people's capital, inheritance or sudden windfalls; there is at least one serious financial crisis or near-ruin before lasting wealth.",
+    "domains": [
+     "money"
+    ],
+    "testableBy": "A documented financial crisis, bankruptcy-like event or major loss, usually in a Saturn-linked window (Rahu-Saturn 25-28, Jupiter-Saturn 40-43, or sade sati 42-50)."
+   },
+   {
+    "id": "nr-07c",
+    "reading": "Long life, with chronic but manageable health issues (lower back, reproductive or excretory system, joints), and a serious-minded outlook from youth.",
+    "domains": [
+     "health"
+    ],
+    "testableBy": "Chronic conditions of that kind that appear after 40."
+   }
+  ],
+  "priorFavourite": "nr-07a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-08",
+  "factor": "Rahu in the 1st (Bharani) and Ketu in the 7th (Libra, Vishakha); the nodes shift to the 2nd/8th in bhava chalit",
+  "classicalBasis": "Rahu in the lagna amplifies ambition, foreignness and unconventional self-making. Its dispositor Mars sits with the exalted Moon. Ketu in the 7th gives detachment from or disruption in partnerships. In bhava chalit the nodes move to the 2nd/8th axis, which adds money volatility. The Rahu mahadasha (20.2-38.2) is the main shaping period of adult life.",
+  "candidates": [
+   {
+    "id": "nr-08a",
+    "reading": "The Rahu mahadasha (20-38) brings a meteoric, unconventional rise: a new venture, a foreign base, technology or media, with fast visibility, risk-taking and some notoriety.",
+    "domains": [
+     "career",
+     "reputation",
+     "money"
+    ],
+    "testableBy": "Visible career take-off between about 21 and 35, involving foreign links or new and disruptive fields."
+   },
+   {
+    "id": "nr-08b",
+    "reading": "Partners, business co-founders and spouses come and go; key partnerships are unstable or end abruptly (Ketu in the 7th).",
+    "domains": [
+     "partnership",
+     "conflict-legal"
+    ],
+    "testableBy": "At least one high-stakes partnership or marriage that ends, especially around 30-32 (Rahu-Ketu, Saturn transiting the 7th from the Moon)."
+   },
+   {
+    "id": "nr-08c",
+    "reading": "Rahu in the lagna gives restless reinvention, so the person changes identity, country or field several times rather than following one arc.",
+    "domains": [
+     "mind-worldview",
+     "home"
+    ],
+    "testableBy": "Several relocations or complete career pivots."
+   }
+  ],
+  "priorFavourite": "nr-08a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-09",
+  "factor": "D9 (navamsa): Gemini lagna, Sun in the D9 lagna, Jupiter and Saturn in Cancer, Venus own sign, Mercury and Rahu in Scorpio",
+  "classicalBasis": "Exalted Jupiter in D9 confirms the neecha bhanga of the rasi Jupiter. Sun in the D9 lagna strengthens the core self and authority. The D9 lagna lord Mercury is in the 6th with Rahu, which suggests service, competition and conflict as the dharma path. Moon is in Capricorn (the D9 8th). The D9 7th, Sagittarius, is empty and its lord Jupiter is exalted in the D9 2nd.",
+  "candidates": [
+   {
+    "id": "nr-09a",
+    "reading": "The inner strength increases with age: the second half of life (after 36-38) is stronger than the first, which supports the Jupiter mahadasha delivering.",
+    "domains": [
+     "career",
+     "reputation"
+    ],
+    "testableBy": "Life outcomes clearly improving in the late 30s and 40s."
+   },
+   {
+    "id": "nr-09b",
+    "reading": "The spouse is wise, cultured or well-placed (D9 7th lord Jupiter exalted, Venus in own sign), so the marriage itself is a source of support despite Ketu in the rasi 7th.",
+    "domains": [
+     "partnership"
+    ],
+    "testableBy": "A spouse with status or a supportive role in the person's success."
+   },
+   {
+    "id": "nr-09c",
+    "reading": "D9 lagna lord in the 6th with Rahu: a lifelong fighter, constantly in competitive or adversarial situations, including lawsuits.",
+    "domains": [
+     "conflict-legal"
+    ],
+    "testableBy": "Recurrent litigation or adversarial battles."
+   }
+  ],
+  "priorFavourite": "nr-09a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-10",
+  "factor": "D10 (dasamsa): Gemini lagna, with Mercury, Venus and Jupiter in Pisces (the D10 10th); Sun and Ketu in the D10 lagna; Saturn in Cancer; Moon in Capricorn",
+  "classicalBasis": "The 10th of D10 holds Jupiter in its own sign, Venus exalted and the D10 lagna lord Mercury (debilitated, but cancelled by Jupiter and Venus there). This is a very strong professional signature. Sun in the D10 lagna gives authority in the work persona, and Ketu there gives an unusual or detached professional style.",
+  "candidates": [
+   {
+    "id": "nr-10a",
+    "reading": "A high-achievement career with real public standing, leading or founding organisations; the strongest career pointer in the chart.",
+    "domains": [
+     "career",
+     "reputation"
+    ],
+    "testableBy": "Senior leadership, founder or head-of-institution roles."
+   },
+   {
+    "id": "nr-10b",
+    "reading": "The career is in finance, advisory, creative or media, or knowledge industries (Jupiter, Venus and Mercury combined), rather than manual or military work.",
+    "domains": [
+     "career"
+    ],
+    "testableBy": "The sector of work matches one of those."
+   },
+   {
+    "id": "nr-10c",
+    "reading": "Several parallel professional roles at once (Mercury with several planets in the D10 10th): investor plus operator plus public voice.",
+    "domains": [
+     "career",
+     "network-mentors"
+    ],
+    "testableBy": "Holding several board, advisory or company roles at the same time."
+   }
+  ],
+  "priorFavourite": "nr-10a",
+  "confidence": "high"
+ },
+ {
+  "id": "nr-11",
+  "factor": "Yoga list check: Amala, Harsha VRY, 4-1 raja yoga, Chandra-Mangala, Daridra, Neecha Bhanga (Mercury), Grahan, Kemadruma",
+  "classicalBasis": "Self-check. Amala holds (Jupiter alone in the 10th), though a debilitated benefic dilutes it. Harsha VRY holds. The 4th-1st lord conjunction holds. Chandra-Mangala holds and is tight (0.7 deg). Daridra holds technically, but high 11th SAV offsets it. Mercury NBRY holds. Jupiter also qualifies for NBRY, which the software list misses (D9 exalted, Mars conjunct Moon, Saturn in a kendra from the Moon). Grahan is loose (16 deg). Kemadruma is mostly cancelled. Not formed: Gaja Kesari (Jupiter is 9th from the Moon), Malavya (Venus is not in a kendra), Budha-Aditya. A 5th-lord-in-lagna raja yoga is added (Sun).",
+  "candidates": [
+   {
+    "id": "nr-11a",
+    "reading": "The chart is a raja-yoga chart, with three exalted planets and two cancelled debilitations, so the overall verdict is high attainment with dramatic swings.",
+    "domains": [
+     "career",
+     "reputation",
+     "money"
+    ],
+    "testableBy": "A life clearly above average in status and wealth, with notable reversals along the way."
+   },
+   {
+    "id": "nr-11b",
+    "reading": "The yogas are strong but the shadbala is uniformly weak (no planet meets its minimum), so the promise only partly materialises: notable but not exceptional achievement.",
+    "domains": [
+     "career",
+     "money"
+    ],
+    "testableBy": "A solid upper-middle professional outcome without wide public prominence."
+   }
+  ],
+  "priorFavourite": "nr-11a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-12",
+  "factor": "Shadbala and ashtakavarga overview",
+  "classicalBasis": "No planet reaches its shadbala minimum; Sun (5.49), Moon (5.27) and Venus (5.22) are the strongest and Mars (2.71) the weakest. SAV peaks in the 10th (36), 11th (34), 4th (32) and 8th (32), and is lowest in the 1st (20) and 7th (23).",
+  "candidates": [
+   {
+    "id": "nr-12a",
+    "reading": "Career (10th) and gains (11th) are the best-supported houses, while body and self (1st) and partnership (7th) are the weakest, so the person succeeds professionally at the cost of health and relationships.",
+    "domains": [
+     "career",
+     "money",
+     "health",
+     "partnership"
+    ],
+    "testableBy": "Strong career and income, with recurrent health and relationship strain."
+   },
+   {
+    "id": "nr-12b",
+    "reading": "High 8th SAV gives benefit from sudden events and other people's money, and research or occult interests.",
+    "domains": [
+     "money",
+     "mind-worldview"
+    ],
+    "testableBy": "Windfalls, investor money or interest in hidden subjects."
+   }
+  ],
+  "priorFavourite": "nr-12a",
+  "confidence": "medium"
+ },
+ {
+  "id": "nr-13",
+  "factor": "5th house and children: Leo empty, lord Sun exalted in the lagna, Saturn's 10th aspect on the 5th; D7 lagna Taurus with four planets in Scorpio (D7 7th)",
+  "classicalBasis": "A strong 5th lord promises children and intelligence. Saturn's aspect delays them. Clustering in the D7 7th points to the spouse's role in progeny.",
+  "candidates": [
+   {
+    "id": "nr-13a",
+    "reading": "Children come after 30, likely 1-3 of them; the person takes pride in them.",
+    "domains": [
+     "family"
+    ],
+    "testableBy": "First child after 30."
+   },
+   {
+    "id": "nr-13b",
+    "reading": "Speculation and investment (5th) is a major lifetime theme, done boldly (5th lord in the lagna with Rahu).",
+    "domains": [
+     "money"
+    ],
+    "testableBy": "Active investing or speculative ventures."
+   }
+  ],
+  "priorFavourite": "nr-13a",
+  "confidence": "low"
+ },
+ {
+  "id": "nr-14",
+  "factor": "Father and 9th: 9th lord Jupiter debilitated in the 10th (NB); Sun, the karaka, exalted but with Rahu",
+  "classicalBasis": "A debilitated 9th lord gives a father of modest means or a strained bond, cancelled and lifted later. Sun with Rahu gives friction with or distance from the father.",
+  "candidates": [
+   {
+    "id": "nr-14a",
+    "reading": "The father is ambitious or influential but the relationship is complicated, distant or argumentative.",
+    "domains": [
+     "family"
+    ],
+    "testableBy": "Reports of tension with or distance from the father."
+   },
+   {
+    "id": "nr-14b",
+    "reading": "The family's fortune rises during the person's childhood (the father prospers), helped by an exalted Sun and Moon.",
+    "domains": [
+     "family",
+     "money"
+    ],
+    "testableBy": "Family status rising during the first decade."
+   }
+  ],
+  "priorFavourite": "nr-14a",
+  "confidence": "low"
+ },
+ {
+  "id": "nr-15",
+  "factor": "Life arc (Vimshottari sequence Sun, Moon, Mars, Rahu, Jupiter, Saturn, read with slow transits)",
+  "classicalBasis": "Moon MD (3-13) has an exalted Moon, which supports a protected childhood. Mars MD (13-20) coincides with the first sade sati (Saturn in Aries/Taurus/Gemini about 13-20), so adolescence is pressured and combative. Rahu MD (20-38) has Rahu in the lagna, which brings ambition and foreign or new fields, with the Rahu-Saturn, Saturn-return and Rahu-Ketu stretch (25-32) as the low point. Rahu-Sun and Saturn transiting the 10th (34.8-37) bring visibility. Jupiter MD (38-54) is when the NBRY delivers prestige, but the second sade sati (42-50) brings a mid-40s crisis. Saturn MD (54+) has Saturn as the 10th/11th lord in the 8th.",
+  "candidates": [
+   {
+    "id": "nr-15a",
+    "reading": "Rise in the 20s, a turbulent late 20s to early 30s with a setback around 26-31, a clear peak from about 34-42, a significant crisis from 42-47 (sade sati and the Jupiter-Mercury and Jupiter-Ketu sub-periods), and partial recovery and elder-statesman status from 46-54.",
+    "domains": [
+     "career",
+     "reputation",
+     "money"
+    ],
+    "testableBy": "The big career milestones cluster at 21-24 and 34-41, and the biggest setback falls at 42-47."
+   },
+   {
+    "id": "nr-15b",
+    "reading": "Early meteor: the peak comes within Rahu (about 22-30), followed by a long plateau in Jupiter MD dominated by advisory, philanthropic or teaching roles rather than new peaks.",
+    "domains": [
+     "career",
+     "reputation"
+    ],
+    "testableBy": "The most famous or largest achievement comes before 30."
+   },
+   {
+    "id": "nr-15c",
+    "reading": "Late bloomer: the 20s and early 30s are a struggle, and the real rise begins only with Jupiter MD at 38 and continues into the 50s.",
+    "domains": [
+     "career",
+     "money"
+    ],
+    "testableBy": "Nothing remarkable before 35, and the main achievements after 38."
+   }
+  ],
+  "priorFavourite": "nr-15a",
+  "confidence": "medium"
+ }
+]

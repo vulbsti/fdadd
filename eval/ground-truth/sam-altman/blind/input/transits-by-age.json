@@ -1,0 +1,1065 @@
+{
+ "convention": "Lahiri sidereal, true node, sign at 12:00 UT daily",
+ "natal": {
+  "lagna": "Aries",
+  "moon": "Taurus"
+ },
+ "slowTransitsByAge": {
+  "Jupiter": [
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": -0.3,
+    "toAge": -0.28
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": -0.28,
+    "toAge": 0.76
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 0.76,
+    "toAge": 1.79
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 1.79,
+    "toAge": 2.15
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 2.15,
+    "toAge": 2.51
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 2.51,
+    "toAge": 2.78
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 2.78,
+    "toAge": 3.16
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 3.16,
+    "toAge": 4.19
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 4.19,
+    "toAge": 5.25
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 5.25,
+    "toAge": 6.31
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 6.31,
+    "toAge": 7.39
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 7.39,
+    "toAge": 8.48
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 8.48,
+    "toAge": 9.56
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 9.56,
+    "toAge": 10.63
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 10.63,
+    "toAge": 11.68
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 11.68,
+    "toAge": 12.71
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 12.71,
+    "toAge": 13.09
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 13.09,
+    "toAge": 13.39
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 13.39,
+    "toAge": 13.73
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 13.73,
+    "toAge": 14.09
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 14.09,
+    "toAge": 15.12
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 15.12,
+    "toAge": 16.15
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 16.15,
+    "toAge": 17.2
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 17.2,
+    "toAge": 18.27
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 18.27,
+    "toAge": 19.35
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 19.35,
+    "toAge": 20.44
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 20.44,
+    "toAge": 21.52
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 21.52,
+    "toAge": 22.58
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 22.58,
+    "toAge": 23.64
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 23.64,
+    "toAge": 24.03
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 24.03,
+    "toAge": 24.27
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 24.27,
+    "toAge": 24.66
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 24.66,
+    "toAge": 25.03
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 25.03,
+    "toAge": 25.53
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 25.53,
+    "toAge": 25.62
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 25.62,
+    "toAge": 26.04
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 26.04,
+    "toAge": 27.07
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 27.07,
+    "toAge": 28.11
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 28.11,
+    "toAge": 29.16
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 29.16,
+    "toAge": 30.23
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 30.23,
+    "toAge": 31.31
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 31.31,
+    "toAge": 32.39
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 32.39,
+    "toAge": 33.47
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 33.47,
+    "toAge": 33.94
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 33.94,
+    "toAge": 34.0
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 34.0,
+    "toAge": 34.54
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 34.54,
+    "toAge": 34.94
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 34.94,
+    "toAge": 35.19
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 35.19,
+    "toAge": 35.58
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 35.58,
+    "toAge": 35.96
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 35.96,
+    "toAge": 36.4
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 36.4,
+    "toAge": 36.58
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 36.58,
+    "toAge": 36.97
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 36.97,
+    "toAge": 38.0
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 38.0,
+    "toAge": 39.03
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 39.03,
+    "toAge": 40.06
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 40.06,
+    "toAge": 40.49
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 40.49,
+    "toAge": 40.62
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 40.62,
+    "toAge": 41.11
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 41.11,
+    "toAge": 41.52
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 41.52,
+    "toAge": 41.76
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 41.76,
+    "toAge": 42.18
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 42.18,
+    "toAge": 42.6
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 42.6,
+    "toAge": 42.86
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 42.86,
+    "toAge": 43.26
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 43.26,
+    "toAge": 43.68
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 43.68,
+    "toAge": 43.93
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 43.93,
+    "toAge": 44.34
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 44.34,
+    "toAge": 44.76
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 44.76,
+    "toAge": 45.02
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 45.02,
+    "toAge": 45.42
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 45.42,
+    "toAge": null
+   }
+  ],
+  "Saturn": [
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": -0.3,
+    "toAge": 0.11
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 0.11,
+    "toAge": 0.41
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 0.41,
+    "toAge": 2.65
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 2.65,
+    "toAge": 4.91
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 4.91,
+    "toAge": 5.16
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 5.16,
+    "toAge": 5.65
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 5.65,
+    "toAge": 7.87
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 7.87,
+    "toAge": 8.48
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 8.48,
+    "toAge": 8.55
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 8.55,
+    "toAge": 10.11
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 10.11,
+    "toAge": 10.3
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 10.3,
+    "toAge": 10.82
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 10.82,
+    "toAge": 12.99
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 12.99,
+    "toAge": 15.13
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 15.13,
+    "toAge": 17.25
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 17.25,
+    "toAge": 17.71
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 17.71,
+    "toAge": 17.96
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 17.96,
+    "toAge": 19.38
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 19.38,
+    "toAge": 19.73
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 19.73,
+    "toAge": 20.09
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 20.09,
+    "toAge": 21.53
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 21.53,
+    "toAge": 21.72
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 21.72,
+    "toAge": 22.23
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 22.23,
+    "toAge": 24.39
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 24.39,
+    "toAge": 26.57
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 26.57,
+    "toAge": 27.07
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 27.07,
+    "toAge": 27.29
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 27.29,
+    "toAge": 29.53
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 29.53,
+    "toAge": 31.77
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 31.77,
+    "toAge": 32.16
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 32.16,
+    "toAge": 32.51
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 32.51,
+    "toAge": 34.76
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 34.76,
+    "toAge": 37.02
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 37.02,
+    "toAge": 37.22
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 37.22,
+    "toAge": 37.74
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 37.74,
+    "toAge": 39.94
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 39.94,
+    "toAge": 42.11
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 42.11,
+    "toAge": 42.49
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 42.49,
+    "toAge": 42.84
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 42.84,
+    "toAge": 44.3
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 44.3,
+    "toAge": 44.45
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 44.45,
+    "toAge": 44.99
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 44.99,
+    "toAge": null
+   }
+  ],
+  "Rahu": [
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": -0.3,
+    "toAge": -0.21
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": -0.21,
+    "toAge": 1.29
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 1.29,
+    "toAge": 2.78
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 2.78,
+    "toAge": 4.49
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 4.49,
+    "toAge": 5.97
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 5.97,
+    "toAge": 7.47
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 7.47,
+    "toAge": 9.05
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 9.05,
+    "toAge": 9.05
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 9.05,
+    "toAge": 9.1
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 9.1,
+    "toAge": 9.12
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 9.12,
+    "toAge": 9.13
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 9.13,
+    "toAge": 10.67
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 10.67,
+    "toAge": 12.16
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 12.16,
+    "toAge": 13.66
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 13.66,
+    "toAge": 15.36
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 15.36,
+    "toAge": 16.85
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 16.85,
+    "toAge": 18.35
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 18.35,
+    "toAge": 19.84
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 19.84,
+    "toAge": 21.55
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 21.55,
+    "toAge": 23.04
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 23.04,
+    "toAge": 24.53
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 24.53,
+    "toAge": 26.03
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 26.03,
+    "toAge": 27.73
+   },
+   {
+    "sign": "Libra",
+    "houseFromLagna": 7,
+    "houseFromMoon": 6,
+    "fromAge": 27.73,
+    "toAge": 29.23
+   },
+   {
+    "sign": "Virgo",
+    "houseFromLagna": 6,
+    "houseFromMoon": 5,
+    "fromAge": 29.23,
+    "toAge": 30.72
+   },
+   {
+    "sign": "Leo",
+    "houseFromLagna": 5,
+    "houseFromMoon": 4,
+    "fromAge": 30.72,
+    "toAge": 32.38
+   },
+   {
+    "sign": "Cancer",
+    "houseFromLagna": 4,
+    "houseFromMoon": 3,
+    "fromAge": 32.38,
+    "toAge": 33.92
+   },
+   {
+    "sign": "Gemini",
+    "houseFromLagna": 3,
+    "houseFromMoon": 2,
+    "fromAge": 33.92,
+    "toAge": 35.41
+   },
+   {
+    "sign": "Taurus",
+    "houseFromLagna": 2,
+    "houseFromMoon": 1,
+    "fromAge": 35.41,
+    "toAge": 36.9
+   },
+   {
+    "sign": "Aries",
+    "houseFromLagna": 1,
+    "houseFromMoon": 12,
+    "fromAge": 36.9,
+    "toAge": 38.6
+   },
+   {
+    "sign": "Pisces",
+    "houseFromLagna": 12,
+    "houseFromMoon": 11,
+    "fromAge": 38.6,
+    "toAge": 40.1
+   },
+   {
+    "sign": "Aquarius",
+    "houseFromLagna": 11,
+    "houseFromMoon": 10,
+    "fromAge": 40.1,
+    "toAge": 41.6
+   },
+   {
+    "sign": "Capricorn",
+    "houseFromLagna": 10,
+    "houseFromMoon": 9,
+    "fromAge": 41.6,
+    "toAge": 43.09
+   },
+   {
+    "sign": "Sagittarius",
+    "houseFromLagna": 9,
+    "houseFromMoon": 8,
+    "fromAge": 43.09,
+    "toAge": 44.79
+   },
+   {
+    "sign": "Scorpio",
+    "houseFromLagna": 8,
+    "houseFromMoon": 7,
+    "fromAge": 44.79,
+    "toAge": null
+   }
+  ]
+ }
+}

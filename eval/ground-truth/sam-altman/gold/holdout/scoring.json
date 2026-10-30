@@ -1,0 +1,1206 @@
+{
+ "scope": "Sealed holdout predictions (54) for 2022-07..2026-06 scored against life-events.json set=holdout, date <= 2026-06-30. Event list: magnitude >= 3 (50 events).",
+ "rules": "hit = domain + direction + window overlap (+-3 months allowed at window edges). Pratyantar-level calls that match only through the edge allowance are scored partial, because rule-12 claims days-to-weeks precision. false-alarm = a specific claimed development that did not happen. Null calls ('nothing happens') that held are hits but flagged nullCall.",
+ "contamination": "The predictor disclosed that it recognised the person (SEAL.txt, METHOD.md). It states it did not knowingly use post-2022-06 knowledge, but several hits are more specific than the rules justify (p-16, p-25, p-32, p-37, p-42, p-43, p-52). Treat all numbers as an upper bound on the chart method.",
+ "predictions": [
+  {
+   "id": "p-01",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-080",
+    "ev-084"
+   ],
+   "why": "'moves from quiet building toward a visible public product or launch before mid-2023' - the conversational product launched 2022-11-30 (ev-080) and the next model 2023-03-14 (ev-084); stayed in the top role. Magnitude under-called (3 vs actual 5).",
+   "nullCall": false
+  },
+  {
+   "id": "p-02",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-081"
+   ],
+   "why": "'a big outside investment or strategic partnership (nine-figure or larger)' - multibillion strategic investment announced 2023-01-23 (ev-081).",
+   "nullCall": false
+  },
+  {
+   "id": "p-03",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-082"
+   ],
+   "why": "'a sharp, public dispute ... ex-partner, co-founder' fought in public, no court loss - former co-founder turns publicly hostile Feb-Mar 2023 (ev-082).",
+   "nullCall": false
+  },
+  {
+   "id": "p-04",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-080",
+    "ev-085",
+    "ev-086"
+   ],
+   "why": "Visibility rises sharply and polarises - global figure after ev-080, Senate testimony (ev-085), heads-of-state tour with rebukes and walk-backs (ev-086, mixed).",
+   "nullCall": false
+  },
+  {
+   "id": "p-05",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-088"
+   ],
+   "why": "No break-up: correct. But 'the relationship stays private and largely out of the record' is broken by the first public appearance as a couple at a state dinner on 2023-06-22 (ev-088), inside the window.",
+   "nullCall": false
+  },
+  {
+   "id": "p-06",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-130"
+   ],
+   "why": "Null call: no reconciliation on record in the window; non-resolution confirmed later by the Jan 2025 lawsuit (ev-130). Hedged 'may resurface' did not occur and is not counted. Low information.",
+   "nullCall": true
+  },
+  {
+   "id": "p-07",
+   "verdict": "hit",
+   "eventIds": [],
+   "why": "Null call: no illness or hospitalisation on record in the window. Low information (rule-07).",
+   "nullCall": true
+  },
+  {
+   "id": "p-08",
+   "verdict": "hit",
+   "eventIds": [],
+   "why": "Null call: no property event on record in the window (the record does capture property events in other years: ev-116, ev-134, ev-149).",
+   "nullCall": true
+  },
+  {
+   "id": "p-09",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-083",
+    "ev-085",
+    "ev-087"
+   ],
+   "why": "Speaks publicly on societal effects and risks tied to the institution: AGI strategy post (ev-083, Feb 2023), Senate testimony on oversight (ev-085), extinction-risk statement (ev-087).",
+   "nullCall": false
+  },
+  {
+   "id": "p-10",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-081"
+   ],
+   "why": "'The main strategic partner/patron relationship deepens into a larger commitment' - the strategic partner's multiyear multibillion investment (ev-081). Same event as p-02/p-15 (double-counted).",
+   "nullCall": false
+  },
+  {
+   "id": "p-11",
+   "verdict": "hit",
+   "eventIds": [],
+   "why": "Null call: no formal study on record.",
+   "nullCall": true
+  },
+  {
+   "id": "p-12",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-080"
+   ],
+   "why": "Nothing on record inside Sept-Oct 2022. The nearest milestone (product launch ev-080, 2022-11-30) falls 1 month after the window, inside the +3-month edge allowance but outside the days-to-weeks precision rule-12 claims for Jupiter pratyantars. Partial, not hit.",
+   "nullCall": false
+  },
+  {
+   "id": "p-13",
+   "verdict": "false-alarm",
+   "eventIds": [
+    "ev-080"
+   ],
+   "why": "'Late 2022 brings a forced pressure point (a competitor move, a market shock ... or a restructuring)' - no forced pressure point is on record. The Nov-Dec 2022 Saturn pratyantar instead held the self-initiated product launch (ev-080), the biggest positive event of the span.",
+   "nullCall": false
+  },
+  {
+   "id": "p-14",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-081"
+   ],
+   "why": "'A major announcement, launch or expanded partnership that puts his institution at the centre of its field' - multibillion partnership expansion 2023-01-23 (ev-081), five days after Saturn entered the 11th.",
+   "nullCall": false
+  },
+  {
+   "id": "p-15",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-081"
+   ],
+   "why": "'A very large capital commitment ... announced or closed in roughly Jan-Mar 2023' - ev-081 (2023-01-23).",
+   "nullCall": false
+  },
+  {
+   "id": "p-16",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-085",
+    "ev-086"
+   ],
+   "why": "'High-level public appearances and engagement with establishment/institutional figures (policy, government ...)' Mar-May 2023 - Senate testimony 2023-05-16 (ev-085), one day before the pratyantar ends; heads-of-state tour from 2023-05-22 (ev-086). Highly specific: contamination risk.",
+   "nullCall": false
+  },
+  {
+   "id": "p-17",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-094",
+    "ev-095",
+    "ev-096",
+    "ev-097"
+   ],
+   "why": "'A break in how he holds his role (... a confrontation over control ...) after which his standing is higher' inside Jan 2023-Jan 2024 - removed by the board 2023-11-17 and restored 2023-11-21/29 (ev-094..097), 4.5 months after the MD seam.",
+   "nullCall": false
+  },
+  {
+   "id": "p-18",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-085",
+    "ev-086",
+    "ev-098"
+   ],
+   "why": "Treated as an authority figure by governments by end-2023 - Senate (ev-085), heads-of-state tour (ev-086), magazine CEO of the Year (ev-098).",
+   "nullCall": false
+  },
+  {
+   "id": "p-19",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-088",
+    "ev-090"
+   ],
+   "why": "'A family or home theme ... comes up; turbulence on the sibling front more likely' - a partnership/home theme appeared (public couple ev-088 in the window; plans for children and the ranch home ev-090, Sept 2023, inside the edge allowance); no sibling turbulence.",
+   "nullCall": false
+  },
+  {
+   "id": "p-20",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-097",
+    "ev-105",
+    "ev-123",
+    "ev-131",
+    "ev-138",
+    "ev-143"
+   ],
+   "why": "Remains head at 2025-08 with expanded authority (restored ev-097, rejoins board ev-105); institution at the top of its industry (ev-123, ev-131, ev-138, ev-143). The AD also held a magnitude-5 removal (ev-094), covered by p-32, not by this statement.",
+   "nullCall": false
+  },
+  {
+   "id": "p-21",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-123",
+    "ev-138"
+   ],
+   "why": "'The ventures he controls raise their largest-ever sums (multi-billion scale)' - $6.6B (ev-123) and $40B (ev-138). The personal-wealth clause is unverified in the record (ev-122 notes he denies an equity grant).",
+   "nullCall": false
+  },
+  {
+   "id": "p-22",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-094",
+    "ev-108",
+    "ev-118",
+    "ev-122",
+    "ev-131",
+    "ev-138"
+   ],
+   "why": "Board relationship breaks (ev-094), co-founders/leaders leave (ev-108, ev-118, ev-122) while larger sponsors arrive (ev-131, ev-138).",
+   "nullCall": false
+  },
+  {
+   "id": "p-23",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-103",
+    "ev-105",
+    "ev-119",
+    "ev-133"
+   ],
+   "why": "Legal/governance challenges from a former co-founder (ev-103, ev-119, ev-133) and a governance review that clears him (ev-105); holds position.",
+   "nullCall": false
+  },
+  {
+   "id": "p-24",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-098",
+    "ev-131",
+    "ev-111",
+    "ev-112",
+    "ev-142"
+   ],
+   "why": "Stature peaks with government-level attention (ev-098, ev-131) 'alongside persistent criticism of his trustworthiness' (ev-111, ev-112, ev-142).",
+   "nullCall": false
+  },
+  {
+   "id": "p-25",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-090",
+    "ev-101"
+   ],
+   "why": "'A commitment step such as marriage ... most plausibly mid-2023 to mid-2024' - marriage Jan 2024 (ev-101, magnitude 5). Magnitude under-called (3). Contradicts the spirit of rule-06 and is very specific: strongest contamination flag in the set.",
+   "nullCall": false
+  },
+  {
+   "id": "p-26",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-129",
+    "ev-135",
+    "ev-130"
+   ],
+   "why": "'Family expansion becomes possible in this AD' - expecting (ev-129), son born 2025-02-22 (ev-135). 'Sibling estrangement stays unresolved' true but under-states a federal lawsuit (ev-130). 'Non-conventional route' is not verifiable from the record. Magnitude under-called.",
+   "nullCall": false
+  },
+  {
+   "id": "p-27",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-134"
+   ],
+   "why": "'A property change ... especially Jan-Mar 2025' - affiliate buys adjacent lots 2025-02-19 (ev-134). Negative home event ev-116 (defect suit, Jul 2024) not foreseen.",
+   "nullCall": false
+  },
+  {
+   "id": "p-28",
+   "verdict": "hit",
+   "eventIds": [],
+   "why": "Null call: no serious health event on record (ev-121 and ev-128 are self-reported mood/sleep remarks, magnitude 2).",
+   "nullCall": true
+  },
+  {
+   "id": "p-29",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-106",
+    "ev-120",
+    "ev-129",
+    "ev-145"
+   ],
+   "why": "Essays framed around the institution do appear (ev-120, ev-129, ev-145) but the record rates every one magnitude <=2; 'reach their widest audience ever' (magnitude 4) is not evidenced.",
+   "nullCall": false
+  },
+  {
+   "id": "p-30",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-092"
+   ],
+   "why": "Null call with a matching rider: no degree; 'at most honorary or ceremonial academic recognition' - school alumni award (ev-092).",
+   "nullCall": true
+  },
+  {
+   "id": "p-31",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-089",
+    "ev-093"
+   ],
+   "why": "'A major new product release or an expanded partnership commitment' Jul-Oct 2023 - a chaired venture's token/network launched 2023-07-24 (ev-089) but drew immediate regulatory backlash (mixed, magnitude 3); the developer conference (ev-093, magnitude 2) falls 2.5 weeks after the window. No magnitude-4 milestone.",
+   "nullCall": false
+  },
+  {
+   "id": "p-32",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-091",
+    "ev-094",
+    "ev-095",
+    "ev-096",
+    "ev-097",
+    "ev-105"
+   ],
+   "why": "'Between late Oct 2023 and Feb 2024 a governance or control confrontation hits him (board ...), which resolves within months into him in a stronger position' - board friction Oct 2023 (ev-091), removal 2023-11-17 (ev-094), restoration (ev-097), cleared and back on the board 2024-03-08 (ev-105). Exact; contamination risk.",
+   "nullCall": false
+  },
+  {
+   "id": "p-33",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-096",
+    "ev-097"
+   ],
+   "why": "Board composition changes in the same window - new initial board (ev-097), key co-leader quits and returns (ev-094/ev-096).",
+   "nullCall": false
+  },
+  {
+   "id": "p-34",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-105",
+    "ev-115",
+    "ev-107",
+    "ev-111",
+    "ev-112"
+   ],
+   "why": "Rejoins the board (ev-105, Mar 2024) and a platform-integration deal (ev-115, Jun 10) fit 'momentum restored', but the window is dominated by reputational damage (ev-107, ev-111, ev-112) and no 'major career/product elevation' of magnitude 4 beyond the board return.",
+   "nullCall": false
+  },
+  {
+   "id": "p-35",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-108",
+    "ev-109",
+    "ev-118"
+   ],
+   "why": "'Senior people around him depart' in Jun 9-Jul 24 2024 - none inside the window; departures fall just before (ev-108, ev-109, mid-May) and just after (ev-118, Aug). Matches only via the edge allowance; pratyantar precision missed.",
+   "nullCall": false
+  },
+  {
+   "id": "p-36",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-123"
+   ],
+   "why": "'The largest capital raise yet for the institution he leads' Jul-Dec 2024 - $6.6B round 2024-10-02 (ev-123, magnitude 3). Not the largest commitment yet (ev-081 was larger) and no evidence of 'lifting his financial position'. Domain/direction/window right; magnitude 5 and 'largest yet' over-claimed.",
+   "nullCall": false
+  },
+  {
+   "id": "p-37",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-122",
+    "ev-126"
+   ],
+   "why": "'His institution restructures its governance or corporate form, and senior departures accompany the change' - departures accompanying the conversion push (ev-122, 2024-09-25) and the conversion proposal (ev-126, Dec 2024) are in the window, but the restructure itself only completes in Oct 2025 (ev-152).",
+   "nullCall": false
+  },
+  {
+   "id": "p-38",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-130",
+    "ev-134",
+    "ev-135",
+    "ev-137"
+   ],
+   "why": "'A family milestone, a home change, or a renewed public family dispute' Jan-Mar 2025 - all three: sibling suit 2025-01-06 (ev-130, 3 days before the pratyantar), lots bought 2025-02-19 (ev-134), son born 2025-02-22 (ev-135), counterclaims 2025-03-07 (ev-137). Broad three-way hedge; magnitude under-called (3 vs 5).",
+   "nullCall": false
+  },
+  {
+   "id": "p-39",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-139",
+    "ev-137"
+   ],
+   "why": "'An open conflict escalates (a lawsuit or public clash with a former partner ...)' Mar 15-Apr 29 2025 - countersuit against the former co-founder 2025-04-09 (ev-139); counterclaims vs sibling 8 days before (ev-137).",
+   "nullCall": false
+  },
+  {
+   "id": "p-40",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-141",
+    "ev-142",
+    "ev-143",
+    "ev-144",
+    "ev-147"
+   ],
+   "why": "Turbulence and controversy while scale grows, Apr-Aug 2025 - critical biographies (ev-142), forced retreat on control (ev-141), rival poaching (ev-144), launch backlash (ev-147), alongside a large acquisition (ev-143).",
+   "nullCall": false
+  },
+  {
+   "id": "p-41",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-152"
+   ],
+   "why": "'A new corporate/governance structure ... after which his role is larger' - restructuring completed 2025-10-28 (ev-152).",
+   "nullCall": false
+  },
+  {
+   "id": "p-42",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-150",
+    "ev-159"
+   ],
+   "why": "'Huge long-term spending/infrastructure commitments ... alongside public doubt about whether they are sustainable' - compute megadeals with critics warning of circular financing (ev-150), $122B raise (ev-159). Specific: contamination risk.",
+   "nullCall": false
+  },
+  {
+   "id": "p-43",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-161",
+    "ev-165",
+    "ev-170"
+   ],
+   "why": "'Accusations about his conduct, honesty ... (media investigations, testimony, or allegations)' - trust exposé 2026-04-06 (ev-161), trial testimony on his management (ev-165), a rival's trust remark (ev-170). Specific: contamination risk.",
+   "nullCall": false
+  },
+  {
+   "id": "p-44",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-148",
+    "ev-153",
+    "ev-157",
+    "ev-160",
+    "ev-165",
+    "ev-166",
+    "ev-167",
+    "ev-168"
+   ],
+   "why": "Lawsuits proceed (ev-148, ev-153, ev-166, ev-168), trial (ev-165) won (ev-167); not removed.",
+   "nullCall": false
+  },
+  {
+   "id": "p-45",
+   "verdict": "hit",
+   "eventIds": [],
+   "why": "Null call: no break-up on record.",
+   "nullCall": true
+  },
+  {
+   "id": "p-46",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-160",
+    "ev-162",
+    "ev-163",
+    "ev-164"
+   ],
+   "why": "'The sibling dispute may continue in legal or public form' - yes (ev-160). But 'any family news is private-life news, not a crisis' fails: the family home was firebombed and shot at in April 2026 (ev-163, ev-164) and he posted a family photo calling for de-escalation (ev-162).",
+   "nullCall": false
+  },
+  {
+   "id": "p-47",
+   "verdict": "miss",
+   "eventIds": [
+    "ev-149",
+    "ev-163",
+    "ev-164"
+   ],
+   "why": "'A home/property move or significant purchase is plausible ... Oct-Dec 2025 or from June 2026' - no purchase or move on record; the estate listing for sale (ev-149, Sept 2025) is an outflow, and the dominant home events were attacks on the residence in April 2026 (ev-163, ev-164) - opposite direction.",
+   "nullCall": false
+  },
+  {
+   "id": "p-48",
+   "verdict": "hit",
+   "eventIds": [],
+   "why": "Null call: no health event; the April 2026 attacks are tagged health but he was unhurt (ev-163, ev-164).",
+   "nullCall": true
+  },
+  {
+   "id": "p-49",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-150",
+    "ev-152",
+    "ev-154"
+   ],
+   "why": "New partners added (ev-150, ev-154) and the long-standing partner's position is reset to a fixed stake in the restructuring (ev-152); the record does not state that the tie became 'looser, more arms-length'.",
+   "nullCall": false
+  },
+  {
+   "id": "p-50",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-150",
+    "ev-158",
+    "ev-162"
+   ],
+   "why": "'Now more defensive' fits the public self-criticism and de-escalation post (ev-162) and the bubble remark (ev-150); the 'abundance/benefit vision ... policy-focused' advocacy is not directly on record in the window.",
+   "nullCall": false
+  },
+  {
+   "id": "p-51",
+   "verdict": "hit",
+   "eventIds": [],
+   "why": "Null call: no education change on record.",
+   "nullCall": true
+  },
+  {
+   "id": "p-52",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-152"
+   ],
+   "why": "'A reorganisation or formal recapitalisation of his main institution completes, net upward' Aug 2025-Jan 2026 - completed 2025-10-28 (ev-152). Exact.",
+   "nullCall": false
+  },
+  {
+   "id": "p-53",
+   "verdict": "hit",
+   "eventIds": [
+    "ev-156",
+    "ev-158",
+    "ev-159"
+   ],
+   "why": "'New launches, deals or role expansion' Jan-May 2026 - ads product (ev-156, 2 days before), defence deal (ev-158), $122B raise (ev-159). Same window held the heaviest reputational damage (ev-157, ev-161, ev-163).",
+   "nullCall": false
+  },
+  {
+   "id": "p-54",
+   "verdict": "partial",
+   "eventIds": [
+    "ev-158"
+   ],
+   "why": "'Senior departures or a step back from one of his side roles' May-Jun 2026 - nothing on record in the window; senior staff left after the defence deal (ev-158, 2026-02-28), within the -3-month edge only. Window partly tested (the pratyantar runs to 2026-07-22).",
+   "nullCall": false
+  }
+ ],
+ "events": [
+  {
+   "eventId": "ev-080",
+   "date": "2022-11-30",
+   "magnitude": 5,
+   "anticipatedBy": [
+    "p-01",
+    "p-04",
+    "p-12"
+   ],
+   "verdict": "anticipated",
+   "why": "AD-level launch call p-01 and visibility call p-04 cover it (magnitude under-called); p-12 misses by 1 month; the Saturn-pratyantar call p-13 read the same weeks as a setback."
+  },
+  {
+   "eventId": "ev-081",
+   "date": "2023-01-23",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-02",
+    "p-10",
+    "p-14",
+    "p-15"
+   ],
+   "verdict": "anticipated",
+   "why": "Named at AD and pratyantar level (Mercury pratyantar, Saturn into the 11th)."
+  },
+  {
+   "eventId": "ev-082",
+   "date": "2023-02-17",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-03"
+   ],
+   "verdict": "anticipated",
+   "why": "Public dispute with a former co-founder, fought in public."
+  },
+  {
+   "eventId": "ev-084",
+   "date": "2023-03-14",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-01"
+   ],
+   "verdict": "anticipated",
+   "why": "Public product launch before mid-2023."
+  },
+  {
+   "eventId": "ev-085",
+   "date": "2023-05-16",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-16",
+    "p-18",
+    "p-09",
+    "p-04"
+   ],
+   "verdict": "anticipated",
+   "why": "Government-level appearance inside the Venus pratyantar."
+  },
+  {
+   "eventId": "ev-086",
+   "date": "2023-05-22",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-16",
+    "p-18",
+    "p-04"
+   ],
+   "verdict": "anticipated",
+   "why": "Engagement with heads of state, polarising."
+  },
+  {
+   "eventId": "ev-089",
+   "date": "2023-07-24",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-31"
+   ],
+   "verdict": "partial",
+   "why": "Product launch fits the Jupiter pratyantar call but the regulatory backlash (mixed) was not foreseen."
+  },
+  {
+   "eventId": "ev-091",
+   "date": "2023-10",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-32"
+   ],
+   "verdict": "anticipated",
+   "why": "Opening of the governance confrontation (Oct 2023, edge of the Saturn pratyantar)."
+  },
+  {
+   "eventId": "ev-094",
+   "date": "2023-11-17",
+   "magnitude": 5,
+   "anticipatedBy": [
+    "p-17",
+    "p-32",
+    "p-22"
+   ],
+   "verdict": "anticipated",
+   "why": "Seam and Saturn-pratyantar calls; timing and outcome both right."
+  },
+  {
+   "eventId": "ev-095",
+   "date": "2023-11-18",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-32",
+    "p-33"
+   ],
+   "verdict": "anticipated",
+   "why": "Part of the confrontation and its negotiation."
+  },
+  {
+   "eventId": "ev-096",
+   "date": "2023-11-20",
+   "magnitude": 5,
+   "anticipatedBy": [
+    "p-32",
+    "p-33",
+    "p-22"
+   ],
+   "verdict": "anticipated",
+   "why": "Patron backing and staff revolt resolve the confrontation upward."
+  },
+  {
+   "eventId": "ev-097",
+   "date": "2023-11-21",
+   "magnitude": 5,
+   "anticipatedBy": [
+    "p-17",
+    "p-32",
+    "p-33"
+   ],
+   "verdict": "anticipated",
+   "why": "'Resolves within months into him in a stronger position'."
+  },
+  {
+   "eventId": "ev-098",
+   "date": "2023-12-06",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-18",
+    "p-24"
+   ],
+   "verdict": "anticipated",
+   "why": "Authority/statesman framing by end-2023."
+  },
+  {
+   "eventId": "ev-101",
+   "date": "2024-01",
+   "magnitude": 5,
+   "anticipatedBy": [
+    "p-25"
+   ],
+   "verdict": "anticipated",
+   "why": "Marriage named and windowed (mid-2023 to mid-2024); magnitude under-called (3 vs 5)."
+  },
+  {
+   "eventId": "ev-103",
+   "date": "2024-02-29",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-23",
+    "p-22"
+   ],
+   "verdict": "anticipated",
+   "why": "AD-level legal challenge from a former co-founder."
+  },
+  {
+   "eventId": "ev-105",
+   "date": "2024-03-08",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-32",
+    "p-34",
+    "p-23"
+   ],
+   "verdict": "anticipated",
+   "why": "Resolution into a stronger position; board return in the Mercury pratyantar."
+  },
+  {
+   "eventId": "ev-107",
+   "date": "2024-05-13",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-24"
+   ],
+   "verdict": "partial",
+   "why": "Only the AD-level 'persistent criticism' call covers it; the Mercury pratyantar was read as a rise."
+  },
+  {
+   "eventId": "ev-108",
+   "date": "2024-05-14",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-22",
+    "p-35"
+   ],
+   "verdict": "anticipated",
+   "why": "Co-founder relationship ends (p-22); p-35's window misses by 4 weeks."
+  },
+  {
+   "eventId": "ev-109",
+   "date": "2024-05-17",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-35",
+    "p-24"
+   ],
+   "verdict": "partial",
+   "why": "Senior departure with safety criticism, 3 weeks before the Ketu-pratyantar window."
+  },
+  {
+   "eventId": "ev-110",
+   "date": "2024-05-18",
+   "magnitude": 3,
+   "anticipatedBy": [],
+   "verdict": "missed",
+   "why": "No prediction of a philanthropic pledge."
+  },
+  {
+   "eventId": "ev-111",
+   "date": "2024-05-18",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-24"
+   ],
+   "verdict": "anticipated",
+   "why": "Explicit 'criticism of his trustworthiness' (AD level)."
+  },
+  {
+   "eventId": "ev-112",
+   "date": "2024-05-28",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-24"
+   ],
+   "verdict": "anticipated",
+   "why": "Explicit 'criticism of his trustworthiness' (AD level)."
+  },
+  {
+   "eventId": "ev-119",
+   "date": "2024-08-05",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-23"
+   ],
+   "verdict": "anticipated",
+   "why": "AD-level dispute with a former co-founder."
+  },
+  {
+   "eventId": "ev-122",
+   "date": "2024-09-25",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-37",
+    "p-22"
+   ],
+   "verdict": "anticipated",
+   "why": "'Senior departures accompany the change' in the Venus pratyantar."
+  },
+  {
+   "eventId": "ev-123",
+   "date": "2024-10-02",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-21",
+    "p-36"
+   ],
+   "verdict": "anticipated",
+   "why": "Raise in the Venus pratyantar (scale over-claimed in p-36)."
+  },
+  {
+   "eventId": "ev-127",
+   "date": "2024-12-13",
+   "magnitude": 3,
+   "anticipatedBy": [],
+   "verdict": "missed",
+   "why": "No prediction of a political donation or courting of the incoming administration; the Sun pratyantar (2024-12-01 to 2025-01-09) was not read."
+  },
+  {
+   "eventId": "ev-130",
+   "date": "2025-01-06",
+   "magnitude": 5,
+   "anticipatedBy": [
+    "p-38",
+    "p-26"
+   ],
+   "verdict": "partial",
+   "why": "'A renewed public family dispute' was one of three hedged options in a magnitude-3 call 3 days later; a magnitude-5 federal suit by a sibling was not anticipated at its scale."
+  },
+  {
+   "eventId": "ev-131",
+   "date": "2025-01-21",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-22",
+    "p-24",
+    "p-20"
+   ],
+   "verdict": "anticipated",
+   "why": "New larger sponsors and government-level attention (AD level)."
+  },
+  {
+   "eventId": "ev-133",
+   "date": "2025-02-10",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-23"
+   ],
+   "verdict": "anticipated",
+   "why": "AD-level challenge from a former co-founder."
+  },
+  {
+   "eventId": "ev-135",
+   "date": "2025-02-22",
+   "magnitude": 5,
+   "anticipatedBy": [
+    "p-26",
+    "p-38"
+   ],
+   "verdict": "anticipated",
+   "why": "Family expansion in the AD, timed to the Moon pratyantar; magnitude under-called (3 vs 5)."
+  },
+  {
+   "eventId": "ev-137",
+   "date": "2025-03-07",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-38",
+    "p-39"
+   ],
+   "verdict": "anticipated",
+   "why": "Renewed public family dispute; escalation at the Mars-pratyantar edge."
+  },
+  {
+   "eventId": "ev-138",
+   "date": "2025-03-31",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-21"
+   ],
+   "verdict": "anticipated",
+   "why": "Largest-ever raise (AD level)."
+  },
+  {
+   "eventId": "ev-141",
+   "date": "2025-05-05",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-40",
+    "p-23"
+   ],
+   "verdict": "partial",
+   "why": "Fits 'turbulence and controversy' but a retreat on the restructuring was not foreseen (p-37 implied restructuring went ahead)."
+  },
+  {
+   "eventId": "ev-142",
+   "date": "2025-05-15",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-24",
+    "p-40"
+   ],
+   "verdict": "anticipated",
+   "why": "Trustworthiness criticism in the Rahu-pratyantar controversy window."
+  },
+  {
+   "eventId": "ev-143",
+   "date": "2025-05-21",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-20",
+    "p-40"
+   ],
+   "verdict": "anticipated",
+   "why": "AD-level career rise; 'scale keeps growing'."
+  },
+  {
+   "eventId": "ev-147",
+   "date": "2025-08-07",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-40"
+   ],
+   "verdict": "anticipated",
+   "why": "Controversy around the institution, Aug 2025."
+  },
+  {
+   "eventId": "ev-148",
+   "date": "2025-08-26",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-44"
+   ],
+   "verdict": "anticipated",
+   "why": "Lawsuits involving the institution proceed."
+  },
+  {
+   "eventId": "ev-150",
+   "date": "2025-09-22",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-42",
+    "p-49"
+   ],
+   "verdict": "anticipated",
+   "why": "Huge infrastructure commitments with sustainability doubts; new partners."
+  },
+  {
+   "eventId": "ev-152",
+   "date": "2025-10-28",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-41",
+    "p-52",
+    "p-49"
+   ],
+   "verdict": "anticipated",
+   "why": "Restructuring completes in the Saturn pratyantar."
+  },
+  {
+   "eventId": "ev-157",
+   "date": "2026-02-20",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-43",
+    "p-44"
+   ],
+   "verdict": "anticipated",
+   "why": "Reputational scrutiny and suits in the Jupiter-Saturn AD; the specific product-harm scandal was not foreseen."
+  },
+  {
+   "eventId": "ev-158",
+   "date": "2026-02-28",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-53"
+   ],
+   "verdict": "anticipated",
+   "why": "New deal in the Mercury pratyantar."
+  },
+  {
+   "eventId": "ev-159",
+   "date": "2026-03",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-42",
+    "p-53"
+   ],
+   "verdict": "anticipated",
+   "why": "Very large capital commitment."
+  },
+  {
+   "eventId": "ev-160",
+   "date": "2026-03-20",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-46",
+    "p-44"
+   ],
+   "verdict": "anticipated",
+   "why": "'The sibling dispute may continue in legal ... form'."
+  },
+  {
+   "eventId": "ev-161",
+   "date": "2026-04-06",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-43"
+   ],
+   "verdict": "anticipated",
+   "why": "'Media investigations ... about his conduct, honesty'."
+  },
+  {
+   "eventId": "ev-163",
+   "date": "2026-04-10",
+   "magnitude": 4,
+   "anticipatedBy": [],
+   "verdict": "contradicted",
+   "why": "p-47 forecast a home purchase/move and p-46 'not a crisis'; the home was firebombed."
+  },
+  {
+   "eventId": "ev-164",
+   "date": "2026-04-12",
+   "magnitude": 4,
+   "anticipatedBy": [],
+   "verdict": "contradicted",
+   "why": "Same as ev-163, two days later."
+  },
+  {
+   "eventId": "ev-165",
+   "date": "2026-04-27",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-44",
+    "p-43"
+   ],
+   "verdict": "anticipated",
+   "why": "Legal pressure proceeds; testimony on his conduct."
+  },
+  {
+   "eventId": "ev-167",
+   "date": "2026-05-18",
+   "magnitude": 4,
+   "anticipatedBy": [
+    "p-44",
+    "p-23"
+   ],
+   "verdict": "anticipated",
+   "why": "'Not removed'; adversaries undone (nr-04b)."
+  },
+  {
+   "eventId": "ev-168",
+   "date": "2026-06-01",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-44"
+   ],
+   "verdict": "anticipated",
+   "why": "Legal pressure from a regulator-level actor."
+  },
+  {
+   "eventId": "ev-169",
+   "date": "2026-06-08",
+   "magnitude": 3,
+   "anticipatedBy": [
+    "p-42"
+   ],
+   "verdict": "partial",
+   "why": "Only the AD-level capital call covers an IPO filing; the Ketu pratyantar call (p-54) pointed to withdrawal."
+  }
+ ],
+ "metrics": {
+  "predictions": {
+   "n": 54,
+   "hit": {
+    "count": 39,
+    "pct": 72.2
+   },
+   "partial": {
+    "count": 13,
+    "pct": 24.1
+   },
+   "miss": {
+    "count": 1,
+    "pct": 1.9
+   },
+   "false-alarm": {
+    "count": 1,
+    "pct": 1.9
+   },
+   "untestable": {
+    "count": 0,
+    "pct": 0.0
+   }
+  },
+  "predictionsExcludingNullCalls": {
+   "n": 45,
+   "note": "Excludes 9 \"nothing happens\" calls (health, education, no break-up, no property, unresolved sibling rift).",
+   "hit": {
+    "count": 30,
+    "pct": 66.7
+   },
+   "partial": {
+    "count": 13,
+    "pct": 28.9
+   },
+   "miss": {
+    "count": 1,
+    "pct": 2.2
+   },
+   "false-alarm": {
+    "count": 1,
+    "pct": 2.2
+   },
+   "untestable": {
+    "count": 0,
+    "pct": 0.0
+   }
+  },
+  "eventsMagnitude3plus": {
+   "n": 50,
+   "anticipated": {
+    "count": 40,
+    "pct": 80.0
+   },
+   "partial": {
+    "count": 6,
+    "pct": 12.0
+   },
+   "missed": {
+    "count": 2,
+    "pct": 4.0
+   },
+   "contradicted": {
+    "count": 2,
+    "pct": 4.0
+   }
+  },
+  "eventsMagnitude4plus": {
+   "n": 23,
+   "anticipated": {
+    "count": 20,
+    "pct": 87.0
+   },
+   "partial": {
+    "count": 1,
+    "pct": 4.3
+   },
+   "missed": {
+    "count": 0,
+    "pct": 0.0
+   },
+   "contradicted": {
+    "count": 2,
+    "pct": 8.7
+   }
+  },
+  "eventsMagnitude5": {
+   "n": 7,
+   "anticipated": {
+    "count": 6,
+    "pct": 85.7
+   },
+   "partial": {
+    "count": 1,
+    "pct": 14.3
+   },
+   "missed": {
+    "count": 0,
+    "pct": 0.0
+   },
+   "contradicted": {
+    "count": 0,
+    "pct": 0.0
+   }
+  },
+  "pratyantarLevelPredictions": {
+   "n": 19,
+   "hit": 10,
+   "partial": 8,
+   "miss": 0,
+   "false-alarm": 1
+  }
+ }
+}
