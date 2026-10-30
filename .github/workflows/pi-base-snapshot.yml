@@ -14,6 +14,7 @@ on:
       - src/lib/astro/pi-initialization.ts
       - src/lib/astro/atros-commands.ts
       - scripts/build-pi-base-snapshot.mts
+      - scripts/rotate-pi-base-snapshot.mjs
   workflow_dispatch:
 
 concurrency:
@@ -43,12 +44,9 @@ jobs:
           id="$(tail -n 1 snapshot.out | jq -r '.PI_BASE_SNAPSHOT_ID')"
           if [[ ! "$id" =~ ^snap_[A-Za-z0-9_-]+$ ]]; then echo "No snapshot ID in the build output." >&2; exit 1; fi
           echo "id=$id" >> "$GITHUB_OUTPUT"
-      - name: Set PI_BASE_SNAPSHOT_ID on Preview and Production
+      - name: Point Preview and Production at it and delete the one before last
         env:
           SNAPSHOT_ID: ${{ steps.build.outputs.id }}
         run: |
-          body="$(jq -n --arg value "$SNAPSHOT_ID" '{key: "PI_BASE_SNAPSHOT_ID", value: $value, type: "encrypted", target: ["preview", "production"]}')"
-          curl --fail-with-body -sS -X POST \
-            "https://api.vercel.com/v10/projects/$VERCEL_PROJECT_ID/env?upsert=true&teamId=$VERCEL_ORG_ID" \
-            -H "Authorization: Bearer $VERCEL_TOKEN" -H 'Content-Type: application/json' -d "$body" > /dev/null
-          echo "PI_BASE_SNAPSHOT_ID=$SNAPSHOT_ID is set on Preview and Production; it applies from the next deploy." >> "$GITHUB_STEP_SUMMARY"
+          set -o pipefail
+          node scripts/rotate-pi-base-snapshot.mjs "$SNAPSHOT_ID" | tee -a "$GITHUB_STEP_SUMMARY"

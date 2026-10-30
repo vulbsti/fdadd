@@ -144,6 +144,7 @@ const TEMPLATE_NAME = 'atros-template';
 const SETUP_MARKER = `/tmp/atros-ready-${ATROS_ENGINE_VERSION.replace(/[^a-zA-Z0-9]/g, '-')}`;
 const SETUP_LOCK = `${SETUP_MARKER}.lock`;
 const SANDBOX_TIMEOUT_MS = 15 * 60 * 1000;
+const ATROS_SNAPSHOT_RETENTION = { count: 4 };
 
 let sharedSandbox: Sandbox | null = null;
 
@@ -286,7 +287,15 @@ async function getAtrosSandbox(): Promise<Sandbox> {
     sharedSandbox = await Sandbox.getOrCreate({
       name: TEMPLATE_NAME,
       timeout: SANDBOX_TIMEOUT_MS,
+      keepLastSnapshots: ATROS_SNAPSHOT_RETENTION,
     });
+    // Creation options don't reach an existing sandbox. Each stop saves a ~1 GB
+    // snapshot, and Hobby allows 15 GB of snapshots in total.
+    if (sharedSandbox.keepLastSnapshots?.count !== ATROS_SNAPSHOT_RETENTION.count) {
+      await sharedSandbox.update({ keepLastSnapshots: ATROS_SNAPSHOT_RETENTION }).catch((error) => {
+        console.warn('[atros] could not set snapshot retention', error instanceof Error ? error.message : error);
+      });
+    }
   } catch {
     // Keep a no-snapshot fallback for Hobby accounts that cannot create or
     // resume the named sandbox. The shared path above avoids forks entirely.
