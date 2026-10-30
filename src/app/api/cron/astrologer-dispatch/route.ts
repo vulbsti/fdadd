@@ -9,6 +9,7 @@ import { sweepAstrologerDispatches } from '@/lib/astro/run-dispatch';
 import { sweepPersonConsolidationOutbox } from '@/lib/person-model/consolidation-dispatch';
 import { sweepIdleReflections } from '@/lib/astro/reflection-dispatch';
 import { retryAccountDeletionCleanups } from '@/lib/app/account-deletion';
+import { sweepPiCheckpointRetention } from '@/lib/astro/pi-retention';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const [answers, learning, reflection, deletedAccounts] = await Promise.all([
+  const [answers, learning, reflection, deletedAccounts, checkpoints] = await Promise.all([
     sweepAstrologerDispatches({ max: 10 }),
     sweepPersonConsolidationOutbox({ max: 10 }),
     sweepIdleReflections(),
@@ -49,6 +50,11 @@ export async function GET(request: Request) {
       console.error('[account-deletion] sweep failed', { message: error instanceof Error ? error.message : 'unknown' });
       return null;
     }),
+    // Superseded chat checkpoints; the newest one per chat and every message stay.
+    sweepPiCheckpointRetention(createAdminClient()).catch((error) => {
+      console.error('[pi-retention] sweep failed', { message: error instanceof Error ? error.message : 'unknown' });
+      return null;
+    }),
   ]);
-  return NextResponse.json({ answers, learning, reflection, deletedAccounts });
+  return NextResponse.json({ answers, learning, reflection, deletedAccounts, checkpoints });
 }
