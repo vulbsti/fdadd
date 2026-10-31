@@ -35,7 +35,7 @@ Until every setting below exists, `/beta` shows the old manual steps.
 ## One-time setup
 
 1. **Cloud Identity Free.** Sign up at https://workspace.google.com/signup/gcpidentity/welcome
-   with the aidoraa.com domain and verify it with the TXT record Google gives
+   with your domain (we used laplacianmind.com) and verify it with the TXT record Google gives
    you. You don't need to change MX, because the group never has to receive mail.
 2. **Allow outside members.** Admin console > Apps > Google Workspace > Groups
    for Business > Sharing settings: turn on "Group owners can allow external
@@ -55,7 +55,7 @@ Until every setting below exists, `/beta` shows the old manual steps.
    "In production", or only listed test users can sign in. Email-only sign-in
    doesn't need Google's review.
 7. **Vercel (Production).**
-   - `BETA_TESTERS_GROUP=testers@aidoraa.com`
+   - `BETA_TESTERS_GROUP=beta@laplacianmind.com`
    - `BETA_GROUPS_SERVICE_ACCOUNT_JSON=<key JSON or base64 of it>`. Leave it unset
      to reuse `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`.
 8. **Play Console.** Testing > Closed testing > the track > Testers: add
