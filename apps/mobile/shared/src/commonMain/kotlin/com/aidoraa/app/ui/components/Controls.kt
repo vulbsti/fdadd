@@ -38,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
@@ -47,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -109,6 +109,14 @@ fun Modifier.tap(label: String? = null, enabled: Boolean = true, onClick: () -> 
         onClick = onClick,
     )
 
+/**
+ * Fades a disabled control as a whole. Always one graphics layer, whatever the state:
+ * Modifier.alpha(1f) adds no layer, so toggling it changed the modifier chain and left
+ * the clipped background undrawn (the Sign in button lost its gold once enabled).
+ */
+fun Modifier.dimmed(enabled: Boolean, faded: Float): Modifier =
+    graphicsLayer { alpha = if (enabled) 1f else faded }
+
 private val goldBrush = Brush.linearGradient(listOf(Palette.GoldSoft, Palette.Gold), start = Offset.Zero, end = Offset(400f, 300f))
 
 @Composable
@@ -116,9 +124,9 @@ fun PrimaryButton(text: String, modifier: Modifier = Modifier, enabled: Boolean 
     Box(
         modifier
             .fillMaxWidth()
+            .dimmed(enabled, 0.4f)
             .clip(Pill)
             .background(goldBrush)
-            .alpha(if (enabled) 1f else 0.4f)
             .tap(text, enabled && !busy, onClick)
             .padding(vertical = 16.dp),
         contentAlignment = Alignment.Center,
@@ -131,7 +139,7 @@ fun PrimaryButton(text: String, modifier: Modifier = Modifier, enabled: Boolean 
 @Composable
 fun LightButton(text: String, modifier: Modifier = Modifier, leading: (@Composable () -> Unit)? = null, enabled: Boolean = true, onClick: () -> Unit) {
     Row(
-        modifier.fillMaxWidth().clip(Pill).background(Palette.Paper).alpha(if (enabled) 1f else 0.5f)
+        modifier.fillMaxWidth().dimmed(enabled, 0.5f).clip(Pill).background(Palette.Paper)
             .tap(text, enabled, onClick).padding(vertical = 15.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -144,7 +152,7 @@ fun LightButton(text: String, modifier: Modifier = Modifier, leading: (@Composab
 @Composable
 fun GlassButton(text: String, modifier: Modifier = Modifier, enabled: Boolean = true, color: Color = Palette.Ink, onClick: () -> Unit) {
     Box(
-        modifier.fillMaxWidth().glass(Pill).alpha(if (enabled) 1f else 0.5f).tap(text, enabled, onClick).padding(vertical = 15.dp),
+        modifier.fillMaxWidth().dimmed(enabled, 0.5f).glass(Pill).tap(text, enabled, onClick).padding(vertical = 15.dp),
         contentAlignment = Alignment.Center,
     ) { T(text, Type.body(15.sp, color, FontWeight.Medium)) }
 }
@@ -152,7 +160,7 @@ fun GlassButton(text: String, modifier: Modifier = Modifier, enabled: Boolean = 
 @Composable
 fun DangerButton(text: String, modifier: Modifier = Modifier, enabled: Boolean = true, busy: Boolean = false, onClick: () -> Unit) {
     Box(
-        modifier.fillMaxWidth().clip(Pill).background(Palette.Danger).alpha(if (enabled) 1f else 0.35f)
+        modifier.fillMaxWidth().dimmed(enabled, 0.35f).clip(Pill).background(Palette.Danger)
             .tap(text, enabled && !busy, onClick).padding(vertical = 15.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -175,9 +183,8 @@ fun TextLink(text: String, modifier: Modifier = Modifier, color: Color = Palette
 @Composable
 fun SmallButton(text: String, modifier: Modifier = Modifier, on: Boolean = false, enabled: Boolean = true, onClick: () -> Unit) {
     Box(
-        modifier.clip(Pill).background(Color(0x12FFFFFF))
+        modifier.dimmed(enabled, 0.5f).clip(Pill).background(Color(0x12FFFFFF))
             .border(1.dp, if (on) Palette.Ok.copy(alpha = 0.4f) else Palette.Edge, Pill)
-            .alpha(if (enabled) 1f else 0.5f)
             .tap(text, enabled, onClick).padding(horizontal = 13.dp, vertical = 7.dp),
     ) { T(text, Type.body(13.sp, if (on) Palette.Ok else Palette.Ink)) }
 }
