@@ -19,6 +19,19 @@ fill a group on our own domain, run by Cloud Identity Free (no cost).
 
 Until every setting below exists, `/beta` shows the old manual steps.
 
+## Current setup (2026-10-31)
+
+- Cloud Identity Free org "Laplacia Labs" on **laplacianmind.com** (no paid
+  subscription). `testers@laplacianmind.com` is the admin *user*; the group is
+  **`beta@laplacianmind.com`** ("Aidoraa testers").
+- Service account `aidoraa-beta-groups@level-studio-509811-a3.iam.gserviceaccount.com`
+  in Cloud project "Aidoraa", with the Groups Admin role. Key kept on the
+  owner's machine, not in the repo.
+- `/beta/callback` redirect URI is on both OAuth clients ("Aidoraa Web" and
+  "Aidoraa Drive Import"); the site uses `GOOGLE_CLIENT_ID`.
+- Vercel Production has `BETA_TESTERS_GROUP` and `BETA_GROUPS_SERVICE_ACCOUNT_JSON`.
+- Tested: the API adds a gmail.com account to the group (200).
+
 ## One-time setup
 
 1. **Cloud Identity Free.** Sign up at https://workspace.google.com/signup/gcpidentity/welcome
@@ -28,7 +41,7 @@ Until every setting below exists, `/beta` shows the old manual steps.
    for Business > Sharing settings: turn on "Group owners can allow external
    members".
 3. **Create the group.** Admin console > Directory > Groups > Create group:
-   `testers@aidoraa.com`. In its Access settings turn on "Allow members outside
+   `beta@<domain>`. In its Access settings turn on "Allow members outside
    your organization". Set "Who can join" to "Only invited users".
 4. **Service account.** In the Google Cloud project that has the Play billing
    service account (or any project), enable the **Cloud Identity API**. Reuse
@@ -46,7 +59,7 @@ Until every setting below exists, `/beta` shows the old manual steps.
    - `BETA_GROUPS_SERVICE_ACCOUNT_JSON=<key JSON or base64 of it>`. Leave it unset
      to reuse `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`.
 8. **Play Console.** Testing > Closed testing > the track > Testers: add
-   `testers@aidoraa.com` as another Google Group. Keep `aidoraa-testers@googlegroups.com`
+   `beta@<domain>` as another Google Group. Keep `aidoraa-testers@googlegroups.com`
    so people who already joined stay in.
 9. **Check it.** Open `/beta` on a phone and tap Become a tester. Confirm that the
    account appears in the group's member list and that Play's opt-in page
