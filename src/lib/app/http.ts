@@ -25,7 +25,6 @@ export interface AppRequestContext {
   userId: string;
   /** The user's own client: row level security applies. */
   client: SupabaseClient;
-  /** The Bearer token, when the request used one. */
   accessToken: string | null;
 }
 

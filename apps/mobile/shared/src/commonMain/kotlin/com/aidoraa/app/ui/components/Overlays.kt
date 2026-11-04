@@ -84,7 +84,6 @@ fun BoxScope.Sheet(visible: Boolean, onDismiss: () -> Unit, content: @Composable
     }
 }
 
-/** Short messages that slide in under the status bar. */
 @Composable
 fun BoxScope.ToastHost(messages: Flow<String>) {
     var current by remember { mutableStateOf<String?>(null) }
@@ -113,7 +112,6 @@ fun BoxScope.ToastHost(messages: Flow<String>) {
     }
 }
 
-/** A sheet-like card in the middle of the screen for blocking messages. */
 @Composable
 fun CenterNotice(content: @Composable ColumnScope.() -> Unit) {
     Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(24.dp), contentAlignment = Alignment.Center) {
@@ -121,7 +119,6 @@ fun CenterNotice(content: @Composable ColumnScope.() -> Unit) {
     }
 }
 
-/** Top bar with a round glass back button. */
 @Composable
 fun BackBar(onBack: () -> Unit, trailing: @Composable () -> Unit = {}) {
     Row(

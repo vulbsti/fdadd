@@ -6,7 +6,6 @@ import { requireOwnedPerson } from '@/lib/imports/http';
 export const runtime = 'nodejs';
 const GOOGLE_STATE_COOKIE = 'aidoraa_google_oauth';
 
-/** Send the person to Google's consent screen; they come back to the imports page. */
 export async function GET(request: Request) {
   const personId = new URL(request.url).searchParams.get('personId') ?? '';
   if (!/^[0-9a-f-]{36}$/i.test(personId)) return NextResponse.json({ code: 'invalid_request', message: 'Missing person.' }, { status: 400 });

@@ -1,12 +1,5 @@
 'use client';
 
-/**
- * Persisted astrologer chat surface. Consumes the astrologer contracts only —
- * no FashionDaddy mock types. Messages render by canonical UUID; focused
- * questions render above the composer; operational errors get a separate
- * surface and never become AI bubbles.
- */
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

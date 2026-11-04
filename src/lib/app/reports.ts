@@ -16,7 +16,6 @@ export const REPORT_LIMITS = [
   { windowMs: 24 * 60 * 60 * 1000, max: 50 },
 ] as const;
 
-/** Whether one more report fits, given the times of this person's reports in the last day. */
 export function reportAllowed(recent: string[], now = new Date()): boolean {
   return REPORT_LIMITS.every(({ windowMs, max }) =>
     recent.filter((at) => now.getTime() - Date.parse(at) < windowMs).length < max);

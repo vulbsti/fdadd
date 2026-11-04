@@ -17,93 +17,60 @@
 
 @layer base {
   :root {
-    /* Warm Cream/Beige Background */
     --background: 40 30% 97%;
-    /* Dark Muted Brown/Charcoal Foreground */
     --foreground: 30 15% 15%;
-    /* Slightly Off-White Cards */
     --card: 40 30% 99%;
     --card-foreground: 30 15% 15%;
-    /* Popover same as card */
     --popover: 40 30% 99%;
     --popover-foreground: 30 15% 15%;
-    /* Primary: Deep Navy */
     --primary: 220 35% 30%;
-    /* Primary Foreground: Warm Light Cream */
     --primary-foreground: 40 50% 95%;
-    /* Secondary: Soft Beige/Light Taupe */
     --secondary: 35 25% 94%;
-    --secondary-foreground: 30 15% 30%; /* Darker Taupe/Brown */
-    /* Muted: Same as secondary */
+    --secondary-foreground: 30 15% 30%;
     --muted: 35 25% 94%;
-    /* Muted Foreground: Medium Grey/Taupe */
     --muted-foreground: 30 10% 55%;
-    /* Accent: Lighter version of secondary */
     --accent: 35 25% 96%;
-    /* Accent Foreground: Same as secondary-foreground */
     --accent-foreground: 30 15% 30%;
-    /* Destructive: Keep standard or adjust slightly if needed */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    /* Border: Soft Grey/Beige border */
     --border: 35 20% 90%;
-    /* Input: Same as border */
     --input: 35 20% 90%;
-    /* Ring: Primary color */
     --ring: 220 35% 30%;
     --radius: 0.5rem;
 
-    /* Chart colors - Adjust to fit the new palette */
-    --chart-1: 220 40% 50%; /* Navy variant */
-    --chart-2: 35 30% 60%;  /* Beige variant */
-    --chart-3: 140 25% 45%; /* Muted Green variant (if needed) */
-    --chart-4: 0 30% 50%;   /* Muted Burgundy variant (if needed) */
-    --chart-5: 30 20% 70%;  /* Lighter Taupe variant */
+    --chart-1: 220 40% 50%;
+    --chart-2: 35 30% 60%;
+    --chart-3: 140 25% 45%;
+    --chart-4: 0 30% 50%;
+    --chart-5: 30 20% 70%;
   }
 
   .dark {
-    /* Background: Very Dark Navy/Charcoal */
     --background: 220 20% 12%;
-    /* Foreground: Warm Off-White/Light Beige */
     --foreground: 40 30% 90%;
-    /* Card: Slightly lighter dark shade */
     --card: 220 20% 15%;
     --card-foreground: 40 30% 90%;
-    /* Popover: same as card */
     --popover: 220 20% 15%;
     --popover-foreground: 40 30% 90%;
-    /* Primary: Muted Gold/Ochre */
     --primary: 40 60% 60%;
-    /* Primary Foreground: Dark Background color */
     --primary-foreground: 220 20% 12%;
-     /* Secondary: Dark Grey/Brown */
     --secondary: 220 15% 25%;
-    /* Secondary Foreground: Light Grey/Beige */
     --secondary-foreground: 40 20% 80%;
-     /* Muted: Similar to secondary */
     --muted: 220 15% 25%;
-    /* Muted Foreground: Medium Grey */
     --muted-foreground: 220 10% 55%;
-    /* Accent: Darker Grey */
     --accent: 220 15% 20%;
-    /* Accent Foreground: Lighter text */
     --accent-foreground: 40 30% 90%;
-    /* Destructive: Adjust for dark mode */
     --destructive: 0 62.8% 50.6%;
     --destructive-foreground: 0 0% 98%;
-    /* Border: Medium Dark Grey */
     --border: 220 15% 30%;
-    /* Input: Same as border */
     --input: 220 15% 30%;
-     /* Ring: Primary color (Muted Gold) */
     --ring: 40 60% 60%;
 
-    /* Chart colors - Adjust for dark mode */
-    --chart-1: 40 70% 70%;  /* Gold variant */
-    --chart-2: 220 30% 60%; /* Navy variant (lighter) */
-    --chart-3: 140 30% 55%; /* Muted Green variant (lighter) */
-    --chart-4: 0 40% 60%;   /* Muted Burgundy variant (lighter) */
-    --chart-5: 40 20% 75%;  /* Lighter Beige variant */
+    --chart-1: 40 70% 70%;
+    --chart-2: 220 30% 60%;
+    --chart-3: 140 30% 55%;
+    --chart-4: 0 40% 60%;
+    --chart-5: 40 20% 75%;
   }
 }
 
@@ -122,10 +89,8 @@
 
 @layer base {
   :root {
-    /* Deep-space panel: derived from --primary navy, darkened for hero canvases */
     --voyage: 220 40% 13%;
     --voyage-foreground: 40 50% 95%;
-    /* Muted gold accent — same hue family as the beige neutrals */
     --gold: 38 55% 52%;
     --gold-bright: 40 70% 68%;
 
@@ -147,7 +112,6 @@
 }
 
 
-/* ---- Motion foundation ---- */
 .reveal {
   opacity: 0;
   transform: translateY(28px);
@@ -233,7 +197,6 @@
   background-color: hsl(var(--gold) / 0.35);
 }
 
-/* Slim warm scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }

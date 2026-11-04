@@ -247,7 +247,6 @@ async function loadTheoryOfMind(admin: SupabaseClient, authority: PiAuthority) {
   return String(result.data.content);
 }
 
-/** The latest checkpoint of a run with the address of its stored archive. */
 export async function readPiCheckpointRecord(authority: PiAuthority): Promise<{ checkpoint: PiCheckpoint; objectPath: string; digest: string } | null> {
   const admin = createAdminClient();
   const receipt = await admin.from('pi_workspace_checkpoints').select('object_path,digest,mode_epoch,privacy_epoch,birth_revision')
@@ -350,10 +349,8 @@ export async function readPiRecovery(authority: PiAuthority) {
   return record ? { ...record, sameRun: false } : null;
 }
 
-// ---------------------------------------------------------------------------
 // Content-addressed file blobs. Checkpoints reference files by digest, so an
 // unchanged calculation or report is uploaded once per person, not per event.
-// ---------------------------------------------------------------------------
 
 export const PI_DIGEST = /^[a-f0-9]{64}$/;
 
@@ -394,9 +391,7 @@ export async function resolvePiCheckpointFiles(authority: Pick<PiAuthority, 'use
     : file));
 }
 
-// ---------------------------------------------------------------------------
 // Live run events: small rows the runner streams while it works.
-// ---------------------------------------------------------------------------
 
 export async function recordPiRunEvents(authority: PiAuthority, events: PiLiveEvent[]) {
   if (!events.length) return;
@@ -435,13 +430,10 @@ export async function hasFinalPiCheckpoint(authority: PiAuthority): Promise<bool
   return result.data !== null;
 }
 
-// ---------------------------------------------------------------------------
 // Memory proposals: queued as candidates, never applied to accepted facts.
-// ---------------------------------------------------------------------------
 
 const UUID_PATTERN = /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/gi;
 
-/** Split referenced IDs into known person sources and unknown references. */
 export function classifyProposalSources(content: string, knownSourceIds: Set<string>) {
   const referenced = [...new Set((content.match(UUID_PATTERN) ?? []).map((id) => id.toLowerCase()))];
   return {

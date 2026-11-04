@@ -57,8 +57,6 @@ function finishItem(item: Omit<ImportedItem, 'startedAt' | 'endedAt'> & Partial<
   };
 }
 
-// --- ChatGPT ---------------------------------------------------------------
-
 function isChatGpt(data: unknown): data is JsonObject[] {
   return Array.isArray(data) && data.length > 0 && data.every(isObject)
     && data.some((conv) => isObject(conv.mapping) && !mappingHasFragments(conv.mapping));
@@ -155,8 +153,6 @@ function parseDeepSeekConversation(conv: JsonObject): ImportedItem | null {
   return finishItem({ externalId: id, kind: 'conversation', title: str(conv.title) ?? 'DeepSeek conversation', messages, body: null,
     sourceUrl: null, startedAt: toIso(conv.inserted_at), endedAt: toIso(conv.updated_at) });
 }
-
-// --- Claude ------------------------------------------------------------------
 
 function isClaude(data: unknown): data is JsonObject[] {
   return Array.isArray(data) && data.length > 0 && data.every(isObject) && data.some((conv) => Array.isArray(conv.chat_messages));
@@ -435,8 +431,6 @@ export function parseTranscript(text: string, title: string, assistantName: stri
   if (messages.length < 2 || !roles.has('user') || !roles.has('assistant')) return null;
   return finishItem({ externalId: digest(text), kind: 'conversation', title, messages, body: null, sourceUrl: null });
 }
-
-// --- Entry point ---------------------------------------------------------------
 
 const ASSISTANT_NAMES: Record<ImportProvider, string> = {
   chatgpt: 'ChatGPT', claude: 'Claude', grok: 'Grok', gemini: 'Gemini', deepseek: 'DeepSeek', meta_ai: 'Meta AI', other: 'Assistant', notion: 'Notion', google_drive: 'Google Drive', google_keep: 'Google Keep',

@@ -1,7 +1,6 @@
 import type { AstrologerMessage, StartRunResponse } from '@/lib/astro/contracts';
 import { PersonReadProjectionSchema } from '@/lib/person-model/projection-contract';
 
-/** Use the read-model contract, not a separately invented presentation enum. */
 export function personalOnlyFromModel(value: unknown): boolean | null {
   const result = PersonReadProjectionSchema.pick({ mode: true }).safeParse(value);
   return result.success ? result.data.mode === 'personal' : null;

@@ -78,7 +78,6 @@ export function planCheckpointFiles(files, uploaded, inlineLimit = 2048) {
   return { entries, toUpload: [...toUpload].map(([digest, bytes]) => ({ digest, bytes })) };
 }
 
-/** Checkpoint at the end of the run, and at most once per interval otherwise. */
 export function shouldCheckpoint(trigger, lastCheckpointAt, now, minIntervalMs = 45_000) {
   if (trigger === 'final' || trigger === 'exit') return true;
   if (trigger === 'agent_end') return true;

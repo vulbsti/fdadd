@@ -43,7 +43,6 @@ export function googlePlayConfig(env: Record<string, string | undefined> = proce
 
 const base64url = (value: string | Buffer) => Buffer.from(value).toString('base64url');
 
-/** A signed RS256 assertion for the OAuth JWT bearer flow. */
 export function serviceAccountAssertion(config: GooglePlayConfig, nowSeconds = Math.floor(Date.now() / 1000)): string {
   const header = base64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
   const claims = base64url(JSON.stringify({
@@ -127,8 +126,6 @@ export async function cancelGoogleSubscription(config: GooglePlayConfig, product
   await publisherFetch(config, `/purchases/subscriptions/${encodeURIComponent(productId)}/tokens/${encodeURIComponent(purchaseToken)}:cancel`,
     { method: 'POST' });
 }
-
-// --- Pure mapping -------------------------------------------------------------
 
 const STATE_MAP: Record<string, SubscriptionStatus> = {
   SUBSCRIPTION_STATE_ACTIVE: 'active',

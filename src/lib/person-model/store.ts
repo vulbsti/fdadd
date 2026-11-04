@@ -410,7 +410,6 @@ export class PersonStore {
     return view;
   }
 
-  /** Record the concrete correction command supported by the P2 SQL contract. */
   async recordCorrection(rawInput: RecordPersonCorrectionInput): Promise<PersonCorrectionReceipt> {
     const { userClient } = this.requireRequestScope();
     const input = RecordPersonCorrectionInputSchema.parse(rawInput);

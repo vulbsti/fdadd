@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { BETA_CALLBACK_PATH, BETA_STATE_COOKIE, betaAuthorizeUrl, betaSignupConfig, newBetaState } from '@/lib/beta/testers';
 
-/** "Become a tester": sign in with Google so we know which account to add. */
 export async function GET(request: NextRequest) {
   const config = betaSignupConfig();
   if (!config) {

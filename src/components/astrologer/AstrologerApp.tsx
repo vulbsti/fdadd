@@ -51,7 +51,6 @@ const AstrologerApp: React.FC = () => {
         .then((r) => (r.ok ? r.json() : { profiles: [] }))
         .then((d: { profiles: ProfileSummary[] }) => setProfiles(d.profiles))
         .catch(() => setProfiles([])),
-      // Existing async fetch helper updates state only after the response settles.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       loadSummaries(),
     ])
@@ -85,8 +84,6 @@ const AstrologerApp: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Legacy detail loader synchronously clears stale errors before fetching.
-    // P1 replaces this state path with route-backed run hydration.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (selectedId) void loadDetail(selectedId);
   }, [selectedId, loadDetail]);
@@ -125,7 +122,6 @@ const AstrologerApp: React.FC = () => {
 
   return (
     <div className="relative flex h-[calc(100vh-12rem)] max-h-[800px] w-full flex-col overflow-hidden rounded-lg border bg-card shadow-lg md:flex-row">
-      {/* Sidebar */}
       <div
         className={cn(
           'h-52 w-full shrink-0 flex-col border-b transition-all md:h-auto md:w-64 md:border-r md:border-b-0',
@@ -168,7 +164,6 @@ const AstrologerApp: React.FC = () => {
         </div>
       </div>
 
-      {/* Main */}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {!isSidebarOpen ? (
           <div className="border-b p-2">

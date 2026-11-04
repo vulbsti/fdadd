@@ -26,7 +26,6 @@ import com.aidoraa.app.resources.newsreader_regular
 import dev.chrisbanes.haze.HazeState
 import org.jetbrains.compose.resources.Font
 
-/** The "glass night" palette from the approved prototype. */
 object Palette {
     val Sky = Color(0xFF0B1222)
     val Sky2 = Color(0xFF16213D)
@@ -49,7 +48,6 @@ object Palette {
 @Immutable
 data class AppFonts(val display: FontFamily, val body: FontFamily)
 
-/** Rendering choices for this device: live blur, motion, and the shared blur source. */
 @Immutable
 data class Effects(
     val liveBlur: Boolean,
@@ -80,7 +78,6 @@ fun AidoraaTheme(fonts: AppFonts, effects: Effects, content: @Composable () -> U
     CompositionLocalProvider(LocalFonts provides fonts, LocalEffects provides effects, content = content)
 }
 
-/** Text styles, read from the current fonts. */
 object Type {
     @Composable fun body(size: TextUnit = 15.sp, color: Color = Palette.Ink, weight: FontWeight = FontWeight.Normal) =
         TextStyle(fontFamily = LocalFonts.current.body, fontSize = size, color = color, fontWeight = weight, lineHeight = size * 1.45f)

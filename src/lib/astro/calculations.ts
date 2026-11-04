@@ -61,7 +61,6 @@ export function wholeSignHouse(signIndex: number, ascendantIndex: number) {
   return ((signIndex - ascendantIndex + 12) % 12) + 1;
 }
 
-/** Houses (whole-sign) whose sign this planet rules. */
 export function ruledHouses(planet: string, ascendantIndex: number) {
   return SIGN_LORDS.flatMap((lord, sign) => lord === planet ? [wholeSignHouse(sign, ascendantIndex)] : []).sort((a, b) => a - b);
 }
@@ -208,7 +207,6 @@ export function transitsMarkdown(transits: TransitSnapshot[], ascendantIndex: nu
   return `${lines.join('\n')}\n`;
 }
 
-/** Workspace files for the astrology folder, or none when astrology is off. */
 export function astrologyWorkspaceFiles(calc: ProfileCalculations, today: string, profile: { timeSource?: string | null; timeConfidence?: string | null }) {
   const ascIndex = Number((calc.chart as Loose).lagna_chart?.ascendant?.sign_index);
   return [

@@ -11,20 +11,12 @@ import kotlinx.serialization.json.JsonObject
  * a tolerant default, so a server that adds or omits a field never breaks a screen.
  */
 
-// ---------------------------------------------------------------------------
-// Errors
-// ---------------------------------------------------------------------------
-
 @Serializable
 data class ApiErrorBody(
     val code: String = "internal",
     val message: String = "",
     val minSupportedVersion: String? = null,
 )
-
-// ---------------------------------------------------------------------------
-// /api/app/v1
-// ---------------------------------------------------------------------------
 
 @Serializable
 data class BootstrapDto(
@@ -128,10 +120,6 @@ data class DeleteAccountResponse(
     val pendingCleanup: List<String> = emptyList(),
     val googlePlayRenewalStopped: Boolean? = null,
 )
-
-// ---------------------------------------------------------------------------
-// /api/astrologer: people, projections, sessions, chat
-// ---------------------------------------------------------------------------
 
 @Serializable
 data class CreatePersonRequest(val name: String, val idempotencyKey: String)
@@ -335,13 +323,8 @@ data class RunErrorDto(val code: String = "internal", val message: String = "", 
 @Serializable
 data class LiveLocationDto(val url: String = "", val token: String = "")
 
-/** A frame of the edge live stream. */
 @Serializable
 data class LiveFrameDto(val seq: Long? = null, val kind: String? = null, val segment: Int? = null, val text: String? = null)
-
-// ---------------------------------------------------------------------------
-// Imports and connectors
-// ---------------------------------------------------------------------------
 
 @Serializable
 data class ImportsOverviewDto(
@@ -412,10 +395,6 @@ data class NotionImportRequest(val importId: String?, val pageIds: List<String>)
 
 @Serializable
 data class NotionImportResponse(val importId: String = "", val skipped: List<String> = emptyList())
-
-// ---------------------------------------------------------------------------
-// Connector URLs and reports
-// ---------------------------------------------------------------------------
 
 @Serializable
 data class PersonRequest(val personId: String)

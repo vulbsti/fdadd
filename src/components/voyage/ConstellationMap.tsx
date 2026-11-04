@@ -69,7 +69,6 @@ export default function ConstellationMap() {
     const world = new THREE.Group();
     scene.add(world);
 
-    // ---- Stars ---------------------------------------------------------------
     const starGeo = new THREE.SphereGeometry(0.085, 24, 24);
     const meshes: THREE.Mesh[] = [];
     const materials: THREE.MeshStandardMaterial[] = [];
@@ -97,7 +96,6 @@ export default function ConstellationMap() {
       materials.push(mat);
     });
 
-    // ---- Links -----------------------------------------------------------------
     const linePositions: number[] = [];
     LINKS.forEach(([a, b]) => {
       linePositions.push(...STARS[a].position, ...STARS[b].position);
@@ -132,7 +130,6 @@ export default function ConstellationMap() {
     });
     world.add(new THREE.Points(dustGeo, dustMat));
 
-    // ---- HTML labels -------------------------------------------------------------
     const labelEls = STARS.map((star) => {
       const el = document.createElement('span');
       el.textContent = star.name.toUpperCase();
@@ -150,7 +147,6 @@ export default function ConstellationMap() {
       return el;
     });
 
-    // ---- Interaction ----------------------------------------------------------------
     const pointer = { x: 0, y: 0 };
     const smooth = { x: 0, y: 0 };
     const ndc = new THREE.Vector2();
@@ -179,7 +175,6 @@ export default function ConstellationMap() {
     };
     mount.addEventListener('pointerleave', onPointerLeave);
 
-    // ---- Resize / lifecycle ------------------------------------------------------------
     const resizeObserver = new ResizeObserver(() => {
       width = mount.clientWidth || 1;
       height = mount.clientHeight || 320;
@@ -195,7 +190,6 @@ export default function ConstellationMap() {
     });
     intersection.observe(mount);
 
-    // ---- Frame loop ----------------------------------------------------------------------
     const clock = new THREE.Clock();
     let rafId = 0;
     const projected = new THREE.Vector3();
@@ -218,7 +212,6 @@ export default function ConstellationMap() {
         const targetEmissive = isHovered ? 1.6 : STARS[i].status === 'live' ? 0.85 : 0.12;
         mat.emissiveIntensity += (targetEmissive - mat.emissiveIntensity) * 0.12;
 
-        // Project to screen space for the HTML label.
         projected.copy(mesh.position).applyMatrix4(world.matrixWorld).project(camera);
         const el = labelEls[i];
         el.style.left = `${((projected.x + 1) / 2) * width}px`;
@@ -247,7 +240,6 @@ export default function ConstellationMap() {
       tick();
     }
 
-    // ---- Teardown ---------------------------------------------------------------------------
     return () => {
       cancelAnimationFrame(rafId);
       mount.removeEventListener('pointermove', onPointerMove);

@@ -6,11 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 export default function ContactForm() {
-  // Placeholder submit handler
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     alert("Contact form submission is not implemented yet.");
-    // In a real app, you'd collect form data and send it to an API endpoint
   };
 
   return (

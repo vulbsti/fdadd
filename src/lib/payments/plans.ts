@@ -61,13 +61,11 @@ export function getMembershipPlan(id: PlanId): MembershipPlan {
   return MEMBERSHIP_PLANS.find((plan) => plan.id === id)!;
 }
 
-/** The paid plan a Google Play base plan sells, or null for one we do not sell. */
 export function planForGoogleBasePlan(productId: string | null | undefined, basePlanId: string | null | undefined): MembershipPlan | null {
   if (!productId || !basePlanId) return null;
   return MEMBERSHIP_PLANS.find((plan) => plan.googlePlay?.productId === productId && plan.googlePlay.basePlanId === basePlanId) ?? null;
 }
 
-/** The catalog as the app's plans screen shows it. */
 export function plansForApp() {
   return MEMBERSHIP_PLANS.map((plan) => ({
     id: plan.id, name: plan.name, priceUsdMonthly: plan.priceUsdMonthly, promise: plan.promise,

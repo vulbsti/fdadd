@@ -1,6 +1,5 @@
 import type { AstrologerRunEvent } from '@/lib/astro/contracts';
 
-/** One frame of the edge stream: the runner's live event as it was posted. */
 interface LiveFrame { seq?: number; kind?: string; segment?: number; text?: string | null }
 
 /** Split complete SSE frames off the front of a buffer; returns the remainder. */

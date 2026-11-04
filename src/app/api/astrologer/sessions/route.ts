@@ -49,7 +49,6 @@ function toSummary(row: Record<string, unknown>): AstrologerSessionSummary {
   });
 }
 
-/** List the caller's astrologer sessions, newest server activity first. */
 export async function GET() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return unconfigured();
   const auth = await requireAuth();

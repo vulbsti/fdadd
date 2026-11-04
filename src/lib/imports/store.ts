@@ -257,8 +257,6 @@ export async function sweepImportBodies(admin: SupabaseClient, scope: OwnerScope
   }
 }
 
-// --- Workspace --------------------------------------------------------------
-
 /** Cheap fingerprint of what is imported, so an unchanged imports/ folder is not rewritten every turn. */
 export async function importedSignature(admin: SupabaseClient, scope: OwnerScope) {
   const hash = createHash('sha256');

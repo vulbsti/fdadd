@@ -29,7 +29,6 @@ import io.ktor.utils.io.readLine
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 
-/** A failed API call, with the server's `{code, message}`. */
 class ApiException(val status: Int, val code: String, override val message: String) : Exception(message) {
     val isUnauthenticated: Boolean get() = status == 401
     val isQuotaExceeded: Boolean get() = status == 429 || code == "quota_exceeded"
@@ -137,8 +136,6 @@ class ApiClient(
     suspend inline fun <reified T> patch(path: String, body: Any? = null): T = raw(HttpMethod.Patch, path, body).body()
     suspend inline fun <reified T> delete(path: String, body: Any? = null): T = raw(HttpMethod.Delete, path, body).body()
 
-    // -- app v1 -------------------------------------------------------------
-
     suspend fun bootstrap(): BootstrapDto = get("/api/app/v1/bootstrap")
     suspend fun plans(): PlansResponseDto = get("/api/app/v1/plans", authenticated = false)
     suspend fun saveHomeLayout(layout: List<PanelSlotDto>?): HomeLayoutResponse = put("/api/app/v1/home-layout", HomeLayoutRequest(layout))
@@ -146,8 +143,6 @@ class ApiClient(
     suspend fun verifyGooglePurchase(request: GoogleVerifyRequest): PlanEnvelopeDto = post("/api/app/v1/billing/google/verify", request)
     suspend fun exportAccount(): ByteArray = raw(HttpMethod.Get, "/api/app/v1/account/export").readRawBytes()
     suspend fun deleteAccount(): DeleteAccountResponse = delete("/api/app/v1/account", DeleteAccountRequest())
-
-    // -- people and projections ----------------------------------------------
 
     suspend fun createPerson(name: String, idempotencyKey: String): CreatePersonResponse =
         post("/api/astrologer/profiles", CreatePersonRequest(name, idempotencyKey))
@@ -164,8 +159,6 @@ class ApiClient(
         get("/api/astrologer/profiles/${personId.seg()}/views/${view.seg()}")
 
     suspend fun model(personId: String): PersonModelDto = get("/api/astrologer/profiles/${personId.seg()}/model")
-
-    // -- conversations ---------------------------------------------------------
 
     suspend fun sessions(): List<SessionSummaryDto> = get<SessionsResponse>("/api/astrologer/sessions").sessions
     suspend fun createSession(personId: String): CreateSessionResponse = post("/api/astrologer/sessions", CreateSessionRequest(profileId = personId))
@@ -218,8 +211,6 @@ class ApiClient(
             onLine(line)
         }
     }
-
-    // -- imports -------------------------------------------------------------
 
     private fun importsBase(personId: String) = "/api/astrologer/profiles/${personId.seg()}/imports"
 

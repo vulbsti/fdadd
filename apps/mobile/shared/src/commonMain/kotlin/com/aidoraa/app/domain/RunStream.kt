@@ -55,7 +55,6 @@ object RunStream {
         var count = 0
         var index = 0
         while (index < target.length) {
-            // skip whitespace, then a word
             while (index < target.length && target[index].isWhitespace()) index++
             if (index >= target.length) break
             while (index < target.length && !target[index].isWhitespace()) index++

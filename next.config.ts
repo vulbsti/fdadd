@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '');
     return supabaseUrl ? [{ source: '/sb/:path*', destination: `${supabaseUrl}/:path*` }] : [];
   },
-  output: 'standalone', // Recommended for Vercel and similar environments
+  output: 'standalone',
   // Atros is loaded with fs.readdir at runtime, so Next's static tracer cannot
   // discover the vendored Python package without an explicit include.
   outputFileTracingIncludes: {

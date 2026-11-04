@@ -1,5 +1,3 @@
-/** Owned profile summaries for the New Reading profile chooser. */
-
 import { NextResponse } from 'next/server';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
 import { ProfileSummarySchema, type ProfileSummary } from '@/lib/astro/contracts';

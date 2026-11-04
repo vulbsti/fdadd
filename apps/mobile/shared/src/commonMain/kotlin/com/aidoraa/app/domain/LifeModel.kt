@@ -11,7 +11,6 @@ import kotlinx.serialization.json.contentOrNull
 
 enum class Stage { Past, Now, Coming }
 
-/** One stop on the Life map path. */
 data class ChapterItem(
     val id: String,
     val period: String?,
@@ -142,7 +141,6 @@ object LifeModelBuilder {
         )
     }
 
-    /** Recent conversations for one person, newest first. */
     fun recent(sessions: List<SessionSummaryDto>, personId: String?): List<SessionSummaryDto> =
         sessions.filter { personId == null || it.profileId == null || it.profileId == personId }
             .sortedByDescending { it.updatedAt }

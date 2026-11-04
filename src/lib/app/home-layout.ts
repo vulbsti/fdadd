@@ -12,7 +12,6 @@ export const HomePanelSchema = z.object({
 export const HomeLayoutSchema = z.array(HomePanelSchema).max(MAX_HOME_PANELS);
 export type HomeLayout = z.infer<typeof HomeLayoutSchema>;
 
-/** `{ layout: [...] }` saves a layout; `{ layout: null }` goes back to the default. */
 export const HomeLayoutRequestSchema = z.object({ layout: HomeLayoutSchema.nullable() }).strict();
 
 /** A stored layout, or null when there is none or it no longer fits the known panels. */

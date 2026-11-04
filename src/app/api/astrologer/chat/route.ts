@@ -1,9 +1,3 @@
-/**
- * Durable chat: idempotent run start via `begin_astro_agent_run`, Workflow
- * start + CAS-attach, immediate 202. No synchronous model loop, no
- * read-modify-upsert quota handling.
- */
-
 import { NextResponse } from 'next/server';
 import { after } from 'next/server';
 import { z } from 'zod';

@@ -1,7 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-// These tools expose actual files, not an excerpt-only imitation of a filesystem.
 export async function workspacePath(root, relative, writing = false) {
   if (typeof relative !== 'string' || !relative || relative.includes('\0') || path.isAbsolute(relative)
     || relative.split(/[\\/]/).includes('..') || relative.includes('\\')) throw new Error('Invalid workspace-relative path.');

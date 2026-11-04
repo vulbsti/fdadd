@@ -58,7 +58,6 @@ function namedArgs(birth: BirthDataInput): string[] {
   return args;
 }
 
-/** `atros chart --output json ...` — frozen chart facts. */
 export function chartArgs(birth: BirthDataInput): string[] {
   return ['chart', ...namedArgs(birth), '--output', 'json'];
 }
@@ -83,7 +82,6 @@ export function currentArgs(birth: BirthDataInput): string[] {
   return ['current', ...baseArgs(birth)];
 }
 
-/** `atros timeline --from --to --level --output json ...` */
 export function timelineArgs(
   birth: BirthDataInput,
   from: string,
@@ -107,13 +105,11 @@ export function timelineArgs(
   ];
 }
 
-/** `atros transit --as-of --output json ...` */
 export function transitArgs(birth: BirthDataInput, asOf: string): string[] {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(asOf)) throw new Error('asOf must be YYYY-MM-DD');
   return ['transit', ...baseArgs(birth), '--as-of', asOf, '--output', 'json'];
 }
 
-/** `atros sensitivity --output json ...` */
 export function sensitivityArgs(birth: BirthDataInput, offsets?: number[]): string[] {
   const args = ['sensitivity', ...namedArgs(birth)];
   if (offsets !== undefined) {
@@ -325,7 +321,6 @@ export type AtrosCommandExecutor = (
   timeoutMs: number,
 ) => Promise<AtrosCommandResult>;
 
-/** Interpret and retry an Atros command independently of Sandbox transport. */
 export async function executeAtrosWithRetry(
   argv: string[],
   timeoutMs: number,

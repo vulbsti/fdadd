@@ -51,7 +51,6 @@ export default function VoyageCanvas({ onReady }: Props) {
     camera.position.set(0, 2.2, 7.5);
     camera.lookAt(0, 0, 0);
 
-    // ---- Galaxy particle field -------------------------------------------
     // Three spiral arms; density falls off radially and vertically so the
     // disc reads as a galaxy rather than a flat plate.
     const COUNT = reducedMotion ? 2500 : 7000;
@@ -121,7 +120,6 @@ export default function VoyageCanvas({ onReady }: Props) {
     const dust = new THREE.Points(dustGeo, dustMat);
     scene.add(dust);
 
-    // ---- The core self ------------------------------------------------------
     const coreGroup = new THREE.Group();
 
     const outerGeo = new THREE.IcosahedronGeometry(1.05, 1);
@@ -146,7 +144,6 @@ export default function VoyageCanvas({ onReady }: Props) {
     coreGroup.scale.setScalar(0.85);
     scene.add(coreGroup);
 
-    // ---- Interaction state --------------------------------------------------
     const pointer = { x: 0, y: 0 };
     const smoothPointer = { x: 0, y: 0 };
     let scrollProgress = 0; // 0 at hero top → 1 as hero scrolls away
@@ -165,7 +162,6 @@ export default function VoyageCanvas({ onReady }: Props) {
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    // ---- Resize / visibility ------------------------------------------------
     const resizeObserver = new ResizeObserver(() => {
       height = mount.clientHeight || 1;
       camera.aspect = width / height;
@@ -188,7 +184,6 @@ export default function VoyageCanvas({ onReady }: Props) {
     };
     document.addEventListener('visibilitychange', onVisibility);
 
-    // ---- Frame loop -----------------------------------------------------------
     const clock = new THREE.Clock();
     let rafId = 0;
 
@@ -210,10 +205,9 @@ export default function VoyageCanvas({ onReady }: Props) {
       coreGroup.rotation.y = elapsed * 0.18;
       coreGroup.rotation.x = Math.sin(elapsed * 0.24) * 0.22 + smoothPointer.y * 0.15;
 
-      // Breath: slow inhale/exhale of the core.
       const breath = 1 + Math.sin(elapsed * 0.9) * 0.06;
       outer.scale.setScalar(breath);
-      inner.scale.setScalar(2 - breath); // counter-pulse
+      inner.scale.setScalar(2 - breath);
 
       dust.rotation.y = -elapsed * 0.012;
 
@@ -241,7 +235,6 @@ export default function VoyageCanvas({ onReady }: Props) {
       tick();
     }
 
-    // ---- Teardown -------------------------------------------------------------
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener('pointermove', onPointerMove);

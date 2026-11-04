@@ -30,7 +30,6 @@ export async function reflectOtherSessionsBestEffort(scope: { profileId: string;
   }
 }
 
-/** Scheduled sweep: conversations quiet for the idle period. */
 export async function sweepIdleReflections(limit = 25) {
   const sessions = await pending({ idleMinutes: IDLE_MINUTES, limit });
   for (const sessionId of sessions) await start(theoryOfMindReflectionWorkflow, [sessionId, IDLE_MINUTES]);

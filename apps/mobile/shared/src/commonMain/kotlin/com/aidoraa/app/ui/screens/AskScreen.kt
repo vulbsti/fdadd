@@ -417,7 +417,6 @@ fun ConversationsScreen(app: AppController) {
     }
 }
 
-/** A one-line preview without markdown symbols (headings, bold, bullets). */
 internal fun plainPreview(text: String, max: Int = 80): String =
     markdownToAnnotated(text).text.replace(Regex("\\s+"), " ").trim().take(max)
 

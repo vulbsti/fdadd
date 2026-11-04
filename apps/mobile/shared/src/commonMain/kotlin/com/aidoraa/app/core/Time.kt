@@ -3,25 +3,19 @@ package com.aidoraa.app.core
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-/** Wall clock in milliseconds since the epoch. */
 expect fun nowMillis(): Long
 
-/** The local hour of the day, 0 to 23. */
 expect fun localHour(): Int
 
-/** The local calendar year, such as 2026. */
 expect fun localYear(): Int
 
-/** The local weekday name, such as "Tuesday". */
 expect fun localWeekdayName(): String
 
-/** An ISO-8601 timestamp to epoch milliseconds, or null when it cannot be read. */
 expect fun parseIsoMillis(iso: String): Long?
 
 /** A short local date such as "12 Nov" (or "12 Nov 2024" outside this year). */
 expect fun formatShortDate(epochMillis: Long): String
 
-/** Lowercase hex SHA-256 of the UTF-8 bytes of [input]. */
 expect fun sha256Hex(input: String): String
 
 @OptIn(ExperimentalUuidApi::class)

@@ -1,5 +1,3 @@
-/** Session detail: persisted messages, latest run, opaque keyset cursor. */
-
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { errorResponse, requireAuth, unconfigured } from '@/lib/astro/api-helpers';
