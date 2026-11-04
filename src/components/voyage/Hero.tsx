@@ -57,7 +57,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll invitation */}
       <div className="rise-in rise-in-d3 absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-center">
         <p className="mb-3 text-[10px] uppercase tracking-[0.4em] text-voyage-foreground/50">
           Scroll

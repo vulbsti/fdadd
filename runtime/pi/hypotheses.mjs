@@ -31,7 +31,6 @@ function seams(timeline) {
   return out;
 }
 
-/** Markdown comparison of the saved chart against a hypothesis. */
 export function compareHypothesis({ label, reason, saved, candidate, savedTimeline, candidateTimeline, savedBirth, candidateBirth }) {
   const a = placements(saved);
   const b = placements(candidate);

@@ -77,10 +77,6 @@ function normalizeDbError(error: { code?: string; message?: string }): AgentStor
   }
   return new AgentStoreError('internal', error.message ?? 'database error', error.message);
 }
-/**
- * Returns query data or throws a normalized AgentStoreError. Named for its
- * contract: every Supabase result passes through it, no error is swallowed.
- */
 function unwrapQuery<T>(result: {
   data: T | null;
   error: { code?: string; message?: string } | null;
@@ -88,8 +84,6 @@ function unwrapQuery<T>(result: {
   if (result.error) throw normalizeDbError(result.error);
   return result.data as T;
 }
-
-// ---------------------------------------------------------------------------
 
 export interface RunRow {
   id: string;
@@ -127,10 +121,6 @@ function toMessage(row: Record<string, unknown>): AstrologerMessage {
     runId: row.run_id ?? null,
   });
 }
-
-// ---------------------------------------------------------------------------
-// Store
-// ---------------------------------------------------------------------------
 
 export interface BeginIntakeResult {
   profileId: string;
@@ -186,7 +176,6 @@ export class AgentStore {
   ) {}
 
 
-  /** Service-role client accessor for callers needing raw queries. */
   get adminClient(): SupabaseClient {
     return this.adminRequired();
   }
@@ -197,8 +186,6 @@ export class AgentStore {
     }
     return this.admin;
   }
-
-  // -- User-entry RPCs ------------------------------------------------------
 
   async beginProfileIntake(birth: BirthInput, clientRequestId: string): Promise<BeginIntakeResult> {
     const { data, error } = await this.user.rpc('begin_astro_profile_intake', {
@@ -265,8 +252,6 @@ export class AgentStore {
     return data as unknown as { workflowRunId: string; won: boolean };
   }
 
-  // -- Service-only durable dispatch ---------------------------------------
-
   async claimRunDispatch(runId: string | null = null, leaseSeconds = 60): Promise<DispatchClaim | null> {
     const { data, error } = await this.adminRequired().rpc('worker_claim_astro_run_dispatch', {
       p_run_id: runId,
@@ -314,8 +299,6 @@ export class AgentStore {
     if (error) throw normalizeDbError(error);
     return data as unknown as DispatchCompletion;
   }
-
-  // -- Run reads ------------------------------------------------------------
 
   async getRun(runId: string): Promise<RunRow> {
     const row = unwrapQuery(
@@ -429,8 +412,6 @@ export class AgentStore {
     }
     return { messages: messages.reverse(), nextCursor };
   }
-
-  // -- Worker RPCs (service role) -------------------------------------------
 
   async workerCheckpoint(input: {
     runId: string;

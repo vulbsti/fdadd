@@ -46,7 +46,6 @@ data class ImportsUiState(
     val notionCursor: String? = null,
 )
 
-/** Imports and connections for the active person. */
 class ImportsController(private val app: AppController) {
     private val _state = MutableStateFlow(ImportsUiState())
     val state: StateFlow<ImportsUiState> = _state.asStateFlow()

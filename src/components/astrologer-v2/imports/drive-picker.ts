@@ -21,7 +21,6 @@ function loadPickerScript() {
   });
 }
 
-/** Google's own picker: whatever the person picks is shared with Aidoraa, and nothing else. */
 export async function pickDriveFiles(config: { accessToken: string; apiKey: string; appId: string }) {
   await loadPickerScript();
   const picker = window.google!.picker;

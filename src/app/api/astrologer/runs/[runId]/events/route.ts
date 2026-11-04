@@ -24,7 +24,6 @@ interface WorkflowChunk {
   index?: number;
 }
 
-/** Map a raw Workflow stream chunk to a typed run event, or null to skip. */
 function chunkToEvent(chunk: WorkflowChunk, runId: string): AstrologerRunEvent | null {
   const payload = (chunk.payload ?? {}) as Record<string, unknown>;
   const type = typeof payload.type === 'string' ? payload.type : chunk.type;
@@ -63,7 +62,6 @@ function sseFrame(id: number, event: AstrologerRunEvent): Uint8Array {
   );
 }
 
-/** Synthesize a terminal event from durable Supabase state. */
 async function synthesizeTerminal(
   store: import('@/lib/astro/agent-store').AgentStore,
   runId: string,

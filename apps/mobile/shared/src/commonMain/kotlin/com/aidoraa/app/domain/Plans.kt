@@ -9,7 +9,6 @@ const val PLAY_PACKAGE = "com.aidoraa.app"
 const val MANAGE_SUBSCRIPTION_URL =
     "https://play.google.com/store/account/subscriptions?sku=$PLAY_PRODUCT_ID&package=$PLAY_PACKAGE"
 
-/** One plan as the plans screen shows it. */
 data class PlanOption(
     val id: String,
     val name: String,
@@ -69,7 +68,6 @@ object Plans {
             }
     }
 
-    /** The plan a base plan sells, if any. */
     fun planForBasePlan(options: List<PlanOption>, basePlanId: String?): PlanOption? =
         options.firstOrNull { basePlanId != null && it.basePlanId == basePlanId }
 
@@ -90,7 +88,6 @@ object Plans {
     fun usageLine(plan: PlanSummaryDto): String =
         if (plan.questionsLimit > 0) "${plan.questionsUsed} of ${plan.questionsLimit} questions used this month" else ""
 
-    /** Plain messages for the verify route's error codes. */
     fun verifyErrorMessage(code: String, fallback: String): String = when (code) {
         "unconfigured" -> "Google Play purchases aren't switched on yet. Please try again later."
         "purchase_account_mismatch" -> "This purchase belongs to a different Aidoraa account. Sign in with that account to use it."

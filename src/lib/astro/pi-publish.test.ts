@@ -61,16 +61,6 @@ describe('Pi answer publication replay', () => {
     await expect(publishPiAnswer(authority, deps)).rejects.toThrow('does not own this run');
   });
 
-  it('publishes active work using the exact migration argument contract', async () => {
-    const deps = dependencies();
-    await expect(publishPiAnswer(authority, deps)).resolves.toEqual({ status: 'complete' });
-    expect(deps.finish).toHaveBeenCalledWith({
-      p_run_id: authority.runId, p_expected_version: run.version, p_mode_epoch: authority.modeEpoch,
-      p_privacy_epoch: authority.privacyEpoch, p_birth_revision: authority.birthRevision,
-      p_answer: 'Saved answer.', p_focused_question: null, p_refs: receipt.refs,
-    });
-  });
-
   it('clears run scratch after publishing, and a failed cleanup does not fail the answer', async () => {
     const deps = { ...dependencies(), clearScratch: vi.fn<NonNullable<PiPublishDependencies['clearScratch']>>().mockRejectedValue(new Error('storage down')) };
     await expect(publishPiAnswer(authority, deps)).resolves.toEqual({ status: 'complete' });

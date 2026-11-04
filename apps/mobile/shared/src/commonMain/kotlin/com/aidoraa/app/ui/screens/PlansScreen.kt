@@ -80,7 +80,6 @@ fun PlansScreen(app: AppController) {
             if (current.questionsLimit > 0) T("You're on ${current.name}. ${Plans.usageLine(current)}.", Type.body(13.sp, Palette.Ink3).copy(textAlign = TextAlign.Center), Modifier.padding(top = 6.dp))
         }
 
-        // Pill switcher with a sliding thumb.
         BoxWithConstraints(Modifier.padding(top = 22.dp, bottom = 16.dp).fillMaxWidth().glass(Pill).padding(5.dp)) {
             val count = options.size.coerceAtLeast(1)
             val segment = maxWidth / count

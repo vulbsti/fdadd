@@ -411,7 +411,6 @@ private fun PanelBody(id: PanelId, life: LifeModel, sessions: LifeModelSessions)
     }
 }
 
-/** A gentle rising arc with the dated chapters as points and "now" in gold. */
 @Composable
 private fun LifeArc(life: LifeModel) {
     val points = life.arc

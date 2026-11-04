@@ -23,14 +23,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-/** Who is signed in, as the app needs to know it. */
 sealed interface AuthState {
     data object Loading : AuthState
     data object SignedOut : AuthState
     data class SignedIn(val userId: String, val email: String?) : AuthState
 }
 
-/** Keeps the Supabase session in the platform's encrypted store. */
 private class SecureSessionManager(private val store: SecureStore) : SessionManager {
     override suspend fun saveSession(session: UserSession) {
         store.put(KEY, AppJson.encodeToString(UserSession.serializer(), session))

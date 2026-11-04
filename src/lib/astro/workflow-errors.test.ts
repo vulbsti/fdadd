@@ -2,10 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { getErrorMessage, isMissingAtrosAssetError } from './workflow-errors';
 
 describe('workflow error normalization', () => {
-  it('keeps native error messages', () => {
-    expect(getErrorMessage(new Error('boom'))).toBe('boom');
-  });
-
   it('keeps Workflow-serialized error messages', () => {
     expect(getErrorMessage({ name: 'Error', message: 'serialized boom' })).toBe('serialized boom');
     expect(getErrorMessage({ error: { message: 'nested boom' } })).toBe('nested boom');

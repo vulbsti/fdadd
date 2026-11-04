@@ -90,7 +90,6 @@ export async function googleConnection(admin: SupabaseClient, userId: string) {
   return row.data ? { email: (row.data.account_email as string) ?? null, connectedAt: String(row.data.connected_at) } : null;
 }
 
-/** A current access token, refreshed when it is about to expire. */
 export async function googleAccessToken(admin: SupabaseClient, userId: string) {
   const row = await admin.from('user_connector_accounts').select('access_token,refresh_token,token_expires_at')
     .eq('user_id', userId).eq('provider', 'google').maybeSingle();

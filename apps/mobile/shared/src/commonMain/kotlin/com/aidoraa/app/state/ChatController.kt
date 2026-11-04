@@ -75,7 +75,6 @@ class ChatController(private val app: AppController) {
         _draft.value = ""
     }
 
-    /** A fresh conversation, optionally with a prefilled message. */
     fun startNew(prefill: String? = null) {
         reset()
         if (prefill != null) _draft.value = prefill

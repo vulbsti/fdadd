@@ -262,7 +262,6 @@ fun Spinner(color: Color = Palette.GoldSoft, size: Dp = 22.dp, modifier: Modifie
     }
 }
 
-/** A glass list group with an eyebrow, as on the You screen. */
 @Composable
 fun Group(title: String?, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     Column(modifier.padding(top = 18.dp)) {
@@ -310,7 +309,6 @@ fun SettingsRow(
 fun StillLearning(text: String = "Aidoraa is still learning this", modifier: Modifier = Modifier) =
     T(text, Type.body(13.5.sp, Palette.Ink3), modifier)
 
-/** A thin progress bar in gold. */
 @Composable
 fun ProgressBar(fraction: Float, modifier: Modifier = Modifier) {
     Box(modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(4.dp)).background(Color(0x1FFFFFFF))) {
@@ -319,7 +317,6 @@ fun ProgressBar(fraction: Float, modifier: Modifier = Modifier) {
     }
 }
 
-/** The gold constellation "A" mark. */
 @Composable
 fun BrandMark(size: Dp = 64.dp, modifier: Modifier = Modifier) {
     Canvas(modifier.size(size)) {

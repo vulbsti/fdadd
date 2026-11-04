@@ -1,6 +1,4 @@
-// Define basic types that work across platforms
 declare namespace Blog {
-  // Blog data interfaces
   interface Post {
     id: string;
     title: string;
@@ -11,7 +9,6 @@ declare namespace Blog {
     imageUrl?: string;
   }
   
-  // Feed data interface
   interface FeedItem {
     id: string;
     title: string;
@@ -22,8 +19,7 @@ declare namespace Blog {
   }
 }
 
-// Define custom page props globally or in a specific namespace
-declare global { // Or use a custom namespace like `namespace MyApp { ... }`
+declare global {
     interface CommonPageProps {
         params: any;
         searchParams?: any;

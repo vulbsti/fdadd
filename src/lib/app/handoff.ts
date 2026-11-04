@@ -58,7 +58,6 @@ export async function endHandoff(admin: SupabaseClient, kind: HandoffKind, token
   if (TOKEN.test(token)) await admin.from('app_handoff_tickets').delete().eq('token_hash', hashToken(token)).eq('kind', kind);
 }
 
-/** Whether the person is still one of the user's active people. */
 export async function ownsActivePerson(admin: SupabaseClient, userId: string, personId: string) {
   const { data, error } = await admin.from('astro_profiles').select('id')
     .eq('id', personId).eq('user_id', userId).eq('person_status', 'active').maybeSingle();

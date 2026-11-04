@@ -1,12 +1,5 @@
 'use client';
 
-/**
- * Birth intake form. Structured inputs: birth-place autocomplete (server
- * geocoding fills lat/lng/timezone), calendar date picker, native time
- * picker, and a bounded time-source select. Submit is unchanged:
- * POST /api/astrologer/sessions with {mode:'new_profile', clientRequestId, birth}.
- */
-
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';

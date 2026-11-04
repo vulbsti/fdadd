@@ -33,7 +33,6 @@ const BELIEFS = [
 export default function MissionPage() {
   return (
     <div className="flex flex-col">
-      {/* ---- Statement -------------------------------------------------------------- */}
       <section className="relative overflow-hidden bg-voyage py-24 md:py-32">
         <div
           className="pointer-events-none absolute inset-0 opacity-60"
@@ -54,7 +53,6 @@ export default function MissionPage() {
       </section>
 
       <article className="container mx-auto max-w-2xl px-4 py-16 md:py-24">
-        {/* ---- Why -------------------------------------------------------------------- */}
         <Reveal>
           <h2 className="text-xs font-semibold uppercase tracking-[0.4em] text-gold">Why</h2>
           <div className="mt-4 space-y-5 text-lg leading-relaxed text-muted-foreground">
@@ -75,7 +73,6 @@ export default function MissionPage() {
           </div>
         </Reveal>
 
-        {/* ---- What we are building ------------------------------------------------------ */}
         <Reveal>
           <h2 className="mt-16 text-xs font-semibold uppercase tracking-[0.4em] text-gold">
             What we are building
@@ -96,7 +93,6 @@ export default function MissionPage() {
           </div>
         </Reveal>
 
-        {/* ---- Beliefs -------------------------------------------------------------------- */}
         <Reveal>
           <h2 className="mb-6 mt-16 text-xs font-semibold uppercase tracking-[0.4em] text-gold">
             What we believe
@@ -112,7 +108,6 @@ export default function MissionPage() {
         </Reveal>
       </article>
 
-      {/* ---- Closing -------------------------------------------------------------------- */}
       <section className="bg-voyage py-20 md:py-28">
         <div className="container mx-auto max-w-3xl px-4 text-center">
           <Reveal>

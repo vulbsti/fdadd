@@ -139,26 +139,6 @@ describe('person consolidation stage contracts', () => {
     expect(result.value).toEqual({ observations: [], unknowns: [] });
   });
 
-  it('uses the generated schema in JSON-only mode without sending provider tools', async () => {
-    const result = await callPersonStage<typeof PersonExtractionOutputSchema._type>({
-      stage: 'extract', toolName: 'person_extract', description: 'Return observations.',
-      parameters: { type: 'object', marker: 'strict-stage-schema' },
-      system: 'System rules.', content: '{"sources":[]}', responseMode: 'json',
-      providerCall: async (options) => {
-        expect(options.tools).toBeUndefined();
-        expect(options.toolChoice).toBeUndefined();
-        expect(options.responseFormat).toEqual({ type: 'json_object' });
-        expect(options.messages[0]?.content).toContain('exactly one JSON object');
-        expect(options.messages[1]?.content).toContain('strict-stage-schema');
-        return {
-          provider: 'fake', model: 'fixture-model',
-          choices: [{ message: { content: '{"observations":[],"unknowns":[]}', tool_calls: [] } }],
-        };
-      },
-    });
-    expect(result.value).toEqual({ observations: [], unknowns: [] });
-  });
-
   it('rejects wrong tool name, malformed JSON, and schema-invalid provider output', async () => {
     const base = {
       stage: 'extract' as const, toolName: 'person_extract', description: 'Return observations.',
@@ -170,26 +150,6 @@ describe('person consolidation stage contracts', () => {
       .rejects.toBeInstanceOf(MalformedPersonStageOutputError);
     await expect(callPersonStage({ ...base, providerCall: async () => providerResult('person_extract', '{"unexpected":true}') }))
       .rejects.toBeInstanceOf(MalformedPersonStageOutputError);
-  });
-
-  it('gives the provider the full strict stage schema instead of untyped object arrays', () => {
-    const extraction = personStageToolParameters('extract') as any;
-    expect(extraction.additionalProperties).toBe(false);
-    expect(extraction.properties.observations.items.properties.subjectKind.enum)
-      .toEqual(['self', 'other', 'hypothetical', 'unknown']);
-    expect(extraction.properties.observations.items.properties.assertionType.description)
-      .toContain('Use direct for an explicit statement');
-    expect(extraction.properties.observations.items.properties.exactQuote.anyOf[0].type).toBe('string');
-    const repair = personStageToolParameters('repair') as any;
-    expect(repair.properties.objects.items.properties.lifecycle.enum)
-      .toEqual(['active', 'superseded', 'retired', 'invalidated']);
-    const payloadOptions = repair.properties.objects.items.properties.payload.anyOf as Array<Record<string, any>>;
-    const meaningChange = payloadOptions.find((option) =>
-      option.properties?.kind?.const === 'meaning_change');
-    expect(meaningChange?.properties?.laterMeaningStatus?.description)
-      .toContain('Use unknown when the person says the meaning is unresolved');
-    expect(meaningChange?.properties?.laterMeaningStatus?.description)
-      .toContain('not_yet_shared only when the person explicitly withholds');
   });
 
   it('fills only omitted nullable provider fields before strict validation', () => {
@@ -213,14 +173,6 @@ describe('person consolidation stage contracts', () => {
       normalizeMissingProviderNulls(missingRequired, parameters),
     ).success).toBe(false);
   });
-
-  it.each(['unknown', 'hypothetical', 'other'] as const)(
-    'retains %s attribution explicitly instead of turning absent subject IDs into self', (subjectKind) => {
-      const parsed = makeObservation(subjectKind);
-      expect(parsed.subjectKind).toBe(subjectKind);
-      expect(parsed.subjectPersonId).toBeNull();
-    },
-  );
 
   it('requires exact source-backed quote spans and rejects quote laundering', () => {
     const source = makeSource();

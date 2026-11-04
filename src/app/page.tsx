@@ -83,7 +83,6 @@ export default function Home() {
     <div className="flex flex-col">
       <Hero />
 
-      {/* ---- Why ------------------------------------------------------------------- */}
       <section className="container mx-auto px-4 py-16 md:py-24">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
@@ -105,7 +104,6 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ---- Lenses ------------------------------------------------------------------- */}
       <section id="lenses" className="scroll-mt-16 bg-secondary/50 py-16 md:py-24">
         <div className="container mx-auto px-4">
           <Reveal>
@@ -145,7 +143,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---- The product ------------------------------------------------------------------ */}
       <section className="container mx-auto px-4 py-16 md:py-24">
         <Reveal>
           <p className="text-center text-xs font-semibold uppercase tracking-[0.4em] text-gold">
@@ -174,7 +171,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---- How it begins ------------------------------------------------------------------ */}
       <section className="bg-secondary/50 py-16 md:py-24">
         <div className="container mx-auto px-4">
           <Reveal>
@@ -199,7 +195,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---- Closing ------------------------------------------------------------------------- */}
       <section className="relative overflow-hidden bg-voyage py-24 md:py-32">
         <div
           className="pointer-events-none absolute inset-0 opacity-60"

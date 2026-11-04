@@ -1,4 +1,3 @@
-/** Extract messages from native and Workflow-serialized errors. */
 export function getErrorMessage(error: unknown, fallback = 'internal error'): string {
   if (typeof error === 'string' && error.trim()) return error;
   if (error instanceof Error && error.message) return error.message;

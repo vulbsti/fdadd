@@ -32,7 +32,6 @@ import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicInteger
 
-/** Android side of everything the shared UI needs from the device. */
 class AndroidPlatformServices(private val context: Context, googleWebClientId: String) : PlatformServices {
     private var activityRef = WeakReference<ComponentActivity>(null)
     private val requestCounter = AtomicInteger()

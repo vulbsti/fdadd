@@ -18,9 +18,6 @@
 
 # next.js
 /.next/
-/.next-recovery/
-/.next-system-proof/
-/.next-p2-visual/
 /out/
 
 # production

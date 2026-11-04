@@ -61,7 +61,6 @@ async function cleanUp(admin: SupabaseClient, userId: string, step: ObjectCleanu
   if (keys.length) await objects.remove(keys);
 }
 
-/** Remove the person's stored files; returns the steps that failed. */
 export async function removeUserObjects(admin: SupabaseClient, userId: string, steps = OBJECT_CLEANUPS): Promise<ObjectCleanup[]> {
   const failed: ObjectCleanup[] = [];
   await Promise.all(steps.map((step) => cleanUp(admin, userId, step).catch((error) => {

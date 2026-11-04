@@ -6,7 +6,6 @@ import { countQuestionsThisMonth, isMissingSchema, planSummary, readSubscription
 
 export const runtime = 'nodejs';
 
-/** Everything the app needs on launch, in one round trip. */
 export async function GET(request: Request) {
   const context = await requireAppUser(request);
   if (context instanceof NextResponse) return context;

@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -63,21 +62,19 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
         <Link href="/" className="flex items-baseline gap-1 font-serif text-2xl font-bold text-primary">
           aidoraa
           <span className="text-sm text-gold" aria-hidden="true">✦</span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center space-x-8 md:flex"> {/* Increased space */}
+        <nav className="hidden items-center space-x-8 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
                 "relative text-sm font-medium text-muted-foreground transition-colors duration-300 ease-in-out hover:text-foreground",
-                "after:absolute after:bottom-[-2px] after:left-0 after:h-[1px] after:w-0 after:bg-gold after:transition-all after:duration-300 after:ease-in-out hover:after:w-full" // Underline animation
+                "after:absolute after:bottom-[-2px] after:left-0 after:h-[1px] after:w-0 after:bg-gold after:transition-all after:duration-300 after:ease-in-out hover:after:w-full"
               )}
             >
               {link.label}
@@ -85,7 +82,6 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Auth Buttons & Mobile Menu Trigger */}
         <div className="flex items-center gap-2">
           {loading ? (
              <div className="h-8 w-20 animate-pulse rounded-md bg-muted"></div>
@@ -116,7 +112,6 @@ export default function Header() {
             </div>
           )}
 
-          {/* Mobile Menu Button */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
@@ -134,7 +129,7 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="block rounded-md px-2 py-1 text-lg font-medium text-foreground hover:bg-accent" // Kept mobile simple
+                    className="block rounded-md px-2 py-1 text-lg font-medium text-foreground hover:bg-accent"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.label}

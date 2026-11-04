@@ -8,10 +8,6 @@
 
 import { z } from 'zod';
 
-// ---------------------------------------------------------------------------
-// Primitives
-// ---------------------------------------------------------------------------
-
 export const uuidSchema = z.string().uuid();
 export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 export const isoTimeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
@@ -38,10 +34,6 @@ export const ApiErrorDtoSchema = z.object({
 });
 export type ApiErrorDto = z.infer<typeof ApiErrorDtoSchema>;
 
-// ---------------------------------------------------------------------------
-// Birth input / profile
-// ---------------------------------------------------------------------------
-
 export const BirthInputSchema = z.object({
   name: z.string().min(1).max(200),
   date: isoDateSchema,
@@ -64,10 +56,6 @@ export const ProfileSummarySchema = z.object({
   createdAt: z.string(),
 });
 export type ProfileSummary = z.infer<typeof ProfileSummarySchema>;
-
-// ---------------------------------------------------------------------------
-// Messages / sessions
-// ---------------------------------------------------------------------------
 
 export const AstrologerMessageSchema = z.object({
   id: z.string().uuid(),
@@ -158,10 +146,6 @@ export const AstrologerSessionDetailSchema = z.object({
 });
 export type AstrologerSessionDetail = z.infer<typeof AstrologerSessionDetailSchema>;
 
-// ---------------------------------------------------------------------------
-// Session checkpoint
-// ---------------------------------------------------------------------------
-
 export const RunCheckpointSchema = z.object({
   currentGoal: z.string().max(1000).default(''),
   planStepIndex: z.number().int().min(0).default(0),
@@ -174,10 +158,6 @@ export const RunCheckpointSchema = z.object({
   contextVersion: z.number().int().min(0).default(0),
 });
 export type RunCheckpoint = z.infer<typeof RunCheckpointSchema>;
-
-// ---------------------------------------------------------------------------
-// Workflow stream events (SSE transport shape)
-// ---------------------------------------------------------------------------
 
 export const RunEventName = [
   'run.started',
@@ -210,10 +190,6 @@ export const AstrologerRunEventSchema = z.object({
   seq: z.number().int().nonnegative().optional(),
 });
 export type AstrologerRunEvent = z.infer<typeof AstrologerRunEventSchema>;
-
-// ---------------------------------------------------------------------------
-// API DTOs
-// ---------------------------------------------------------------------------
 
 export const StartRunResponseSchema = z.object({
   runId: z.string().uuid(),

@@ -88,13 +88,10 @@ class AppController(
     var api: ApiClient = liveApi
         private set
 
-    /** Whether the sample-data demo can be opened (debug builds). */
     val demoAvailable: Boolean get() = demoEngine != null
 
-    /** True while the app shows sample data instead of an account. */
     val demo: Boolean get() = auth.demoMode
 
-    /** Opens the app on bundled sample data, without an account or the network. */
     fun startDemo() {
         val engine = demoEngine ?: return
         api = ApiClient(config, auth::accessToken, { message -> _phase.value = AppPhase.UpdateRequired(message) }, engine())
@@ -125,7 +122,6 @@ class AppController(
     private val _toasts = MutableSharedFlow<String>(extraBufferCapacity = 4, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val toasts: SharedFlow<String> = _toasts
 
-    // Navigation
     private val _tab = MutableStateFlow(Tab.Now)
     val tab: StateFlow<Tab> = _tab.asStateFlow()
     private val _stack = MutableStateFlow<List<Route>>(emptyList())
@@ -157,8 +153,6 @@ class AppController(
     }
 
     fun toast(message: String) { _toasts.tryEmit(message) }
-
-    // -- navigation ------------------------------------------------------------
 
     private val backHandlers = ArrayList<() -> Boolean>()
     fun addBackHandler(handler: () -> Boolean) { backHandlers += handler }
@@ -211,8 +205,6 @@ class AppController(
         cache.setPref("reduceEffects", if (value) "1" else null)
     }
 
-    // -- session lifecycle -------------------------------------------------------
-
     private var signedInUser: String? = null
 
     private fun onSignedOut() {
@@ -234,7 +226,6 @@ class AppController(
         if (signedInUser == userId && _phase.value != AppPhase.Loading && _phase.value != AppPhase.SignedOut) return
         signedInUser = userId
         cache.userId = userId
-        // Open from cache immediately.
         val cached = cache.read("bootstrap", BootstrapDto.serializer())
         val cachedLayout = PanelLayout.decode(cache.readString("layout"))
         if (cachedLayout != null) _layout.value = cachedLayout
@@ -328,7 +319,6 @@ class AppController(
         cache.write("bootstrap", BootstrapDto.serializer(), updated)
     }
 
-    /** After the first-run flow creates a person. */
     fun personCreated(id: String) {
         cache.writeString("personId", id)
         refresh()
@@ -339,8 +329,6 @@ class AppController(
         _tab.value = Tab.Now
         refresh()
     }
-
-    // -- life model ------------------------------------------------------------------
 
     fun loadLife(personId: String = _personId.value ?: "", useCache: Boolean = true) {
         if (personId.isEmpty()) return
@@ -393,8 +381,6 @@ class AppController(
         }
     }
 
-    // -- home layout -------------------------------------------------------------------
-
     fun setLayout(layout: List<PanelSlot>) {
         if (layout == _layout.value) return
         _layout.value = layout
@@ -427,8 +413,6 @@ class AppController(
         }
     }
 
-    // -- account -------------------------------------------------------------------------
-
     fun signOut(everywhere: Boolean = false) {
         scope.launch {
             val wasDemo = demo
@@ -438,7 +422,6 @@ class AppController(
         }
     }
 
-    /** After the account is deleted on the server. */
     fun accountDeleted() {
         scope.launch {
             cache.clearAll()

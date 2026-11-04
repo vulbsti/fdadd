@@ -146,7 +146,6 @@ fun SignInScreen(app: AppController) {
     }
 }
 
-/** Google's "G", drawn with its four brand colors. */
 @Composable
 private fun GoogleG() {
     Canvas(Modifier.size(18.dp)) {

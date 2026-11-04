@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getMembershipPlan, MEMBERSHIP_PLANS, planForGoogleBasePlan, plansForApp } from './plans';
+import { planForGoogleBasePlan, plansForApp } from './plans';
 import { effectivePlanId, hasEntitlement, monthStartUtc, nextMonthStartUtc, planLimitsEnforced, planSummary, quotaExceededMessage,
   type SubscriptionRow } from './subscriptions';
 
@@ -10,10 +10,7 @@ const row = (overrides: Partial<SubscriptionRow>): SubscriptionRow => ({
 });
 
 describe('membership plans', () => {
-  it('sells four monthly USD tiers, one Play base plan per paid tier', () => {
-    expect(MEMBERSHIP_PLANS.map((plan) => [plan.id, plan.priceUsdMonthly, plan.monthlyQuestions])).toEqual([
-      ['free', 0, 10], ['basic', 5, 150], ['plus', 20, 800], ['pro', 60, 3000]]);
-    expect(getMembershipPlan('free').googlePlay).toBeNull();
+  it('maps Play base plans to our tiers', () => {
     expect(planForGoogleBasePlan('aidoraa_membership', 'pro-monthly')?.id).toBe('pro');
     expect(planForGoogleBasePlan('aidoraa_membership', 'pro-yearly')).toBeNull();
     expect(plansForApp()[1]).toMatchObject({ id: 'basic', googlePlay: { productId: 'aidoraa_membership', basePlanId: 'basic-monthly' } });

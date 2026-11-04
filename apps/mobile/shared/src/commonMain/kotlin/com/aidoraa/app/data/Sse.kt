@@ -1,6 +1,5 @@
 package com.aidoraa.app.data
 
-/** One server-sent event. */
 data class SseEvent(val id: String?, val event: String, val data: String)
 
 /**

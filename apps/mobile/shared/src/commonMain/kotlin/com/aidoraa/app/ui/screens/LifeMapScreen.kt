@@ -106,7 +106,6 @@ private fun Stop(chapter: ChapterItem, app: AppController) {
     val reduce = LocalEffects.current.reduceMotion
     val isNow = chapter.stage == Stage.Now
     Box(Modifier.padding(bottom = 14.dp).alpha(if (chapter.stage == Stage.Coming) 0.72f else 1f)) {
-        // The dot on the path.
         Box(
             Modifier.offset(x = (-27).dp, y = 20.dp).size(14.dp)
                 .drawBehind { if (isNow) drawCircle(Color(0x33D8A94F), size.minDimension / 2 + 6.dp.toPx(), Offset(size.width / 2, size.height / 2)) }

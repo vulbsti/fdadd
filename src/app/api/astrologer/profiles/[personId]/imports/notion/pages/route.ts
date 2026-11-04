@@ -4,7 +4,6 @@ import { importErrorResponse, json, requireOwnedPerson } from '@/lib/imports/htt
 
 export const runtime = 'nodejs';
 
-/** Pages the person shared with the Aidoraa integration, newest edits first. */
 export async function GET(request: Request, { params }: { params: Promise<{ personId: string }> }) {
   const owned = await requireOwnedPerson((await params).personId);
   if (owned instanceof NextResponse) return owned;

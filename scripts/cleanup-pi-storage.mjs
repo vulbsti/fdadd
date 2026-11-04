@@ -11,7 +11,6 @@
 import { execFileSync } from 'node:child_process';
 import https from 'node:https';
 
-/** Decide what to remove from the bucket listing and the receipts. Pure, so it can be reasoned about. */
 export function planCleanup({ objects, receipts, activeRuns }) {
   const latest = new Map();
   for (const receipt of receipts) {

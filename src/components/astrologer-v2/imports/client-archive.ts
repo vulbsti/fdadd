@@ -41,7 +41,6 @@ async function extractTextEntries(file: File) {
   return entries;
 }
 
-/** Build the upload: the text entries of any ZIPs plus loose JSON, text and Markdown files. */
 export async function buildUpload(files: File[], pasted: string | null) {
   const entries: Record<string, Uint8Array> = {};
   for (const [index, file] of files.entries()) {

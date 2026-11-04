@@ -181,7 +181,6 @@ export async function locatePiRestore(authority: PiAuthority) {
   return { key: recovery.objectPath, digest: recovery.digest, sameRun: recovery.sameRun };
 }
 
-/** Store an uploaded transfer as a person-scoped, content-addressed file blob. */
 export async function commitPiBlob(authority: PiAuthority, input: PiTransferManifest) {
   const manifest = parseManifest(input);
   const bytes = await assemblePiTransfer(authority, manifest);

@@ -112,7 +112,7 @@ internal class DemoBackend {
         AppJson.decodeFromString(serializer, body.toByteArray().decodeToString())
 
     private suspend fun MockRequestHandleScope.route(request: HttpRequestData): HttpResponseData {
-        delay(150) // feels like a network
+        delay(150)
         val path = request.url.encodedPath.removeSuffix("/")
         val method = request.method
         val parts = path.split('/').filter { it.isNotEmpty() }
@@ -192,7 +192,6 @@ internal class DemoBackend {
         return ok(StartRunResponse.serializer(), StartRunResponse(runId, body.clientMessageId, "active", "/api/astrologer/runs/$runId/events"), HttpStatusCode.Accepted)
     }
 
-    /** Streams a canned answer as server-sent events, a few words at a time. */
     private fun MockRequestHandleScope.events(runId: String): HttpResponseData {
         val (sessionId, question) = runs[runId] ?: return respond("", HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "text/event-stream"))
         val answer = answerFor(question)

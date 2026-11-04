@@ -2,13 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   toChatCompletionsToolChoice,
   parseChatCompletionPayload,
-  resolveProviderTemperature,
   fromAnthropicOutput,
   toAnthropicMessages,
   toAnthropicToolChoice,
   toAnthropicTools,
   usesAnthropicMessages,
-  usesResponsesAPI,
   toResponsesInput,
   toResponsesToolChoice,
   resolveProviderTimeoutMs,
@@ -72,14 +70,6 @@ describe('OpenCode/Pi tool protocol compatibility', () => {
     if (parsed.success) expect(parsed.data.choices[0]?.message.tool_calls).toEqual([]);
   });
 
-  it('honors the Go Kimi K2.7 fixed-temperature contract', () => {
-    expect(resolveProviderTemperature('opencode-go', 'gpt-6-luna', 0)).toBeUndefined();
-    expect(resolveProviderTemperature('opencode-go', 'muse-spark-1.3-contributor', 0)).toBeUndefined();
-    expect(resolveProviderTemperature('opencode-go', 'kimi-k2.7-code', 0)).toBe(1);
-    expect(resolveProviderTemperature('opencode-go', 'kimi-k3', 0)).toBe(0);
-    expect(resolveProviderTemperature('openrouter', 'kimi-k2.7-code', 0)).toBe(0);
-  });
-
   it('routes Qwen through Anthropic messages and translates tools both ways', () => {
     expect(usesAnthropicMessages('qwen3.8-flash')).toBe(true);
     expect(usesAnthropicMessages('kimi-k3')).toBe(false);
@@ -115,13 +105,6 @@ describe('OpenCode/Pi tool protocol compatibility', () => {
         name: 'person_extract', arguments: '{"observations":[]}',
       } }],
     } }] });
-  });
-
-  it('routes the prototype Luna model and Muse fallback through Responses', () => {
-    expect(usesResponsesAPI('gpt-6-luna')).toBe(true);
-    expect(usesResponsesAPI('muse-spark-1.3-contributor')).toBe(true);
-    expect(usesResponsesAPI('glm-5.3-flash')).toBe(false);
-    expect(usesResponsesAPI('qwen3.8-flash')).toBe(false);
   });
 
   it('serializes tool calls and results as a continued Responses transcript', () => {

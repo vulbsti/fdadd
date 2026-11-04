@@ -9,7 +9,6 @@ export const maxDuration = 60;
 
 const PAGE = 1000;
 
-/** Every row of a query, a page at a time. */
 async function allRows(read: (from: number, to: number) => PromiseLike<{ data: unknown[] | null; error: { code?: string } | null }>) {
   const rows: unknown[] = [];
   for (let from = 0; ; from += PAGE) {

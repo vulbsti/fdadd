@@ -1,10 +1,9 @@
 /**
- * Model provider for the astrologer agent loop.
+ * Model provider for server-side structured jobs (person consolidation, session reflection).
  *
  * Primary: OpenCode Go (`https://opencode.ai/zen/go/v1`, `gpt-6-luna`).
  * Luna and Muse are served over the Responses API (`/responses`), so the Go
- * path translates to/from the neutral Chat Completions shape and the agent
- * loop stays unchanged. Key resolution: `OPENCODE_API_KEY`, then
+ * path translates to/from the neutral Chat Completions shape. Key resolution: `OPENCODE_API_KEY`, then
  * `OPENGO_API`, then `OPENROUTER_API_KEY` (OpenRouter Chat Completions fallback).
  * Model override: `ASTROLOGER_MODEL`, then `OPENROUTER_MODEL`.
  */
@@ -62,7 +61,6 @@ export interface ChatCompletionOptions {
   reasoningEffort?: 'low' | 'medium' | 'high';
   /** Forwarded as `x-opencode-session` so Go can route + cache per conversation. */
   sessionId?: string;
-  /** Bounded fetch timeout in milliseconds. */
   timeoutMs?: number;
 }
 
@@ -84,8 +82,7 @@ interface ResolvedProvider {
 
 /**
  * Resolve a server-controlled compatible endpoint without permitting URL
- * credentials or non-HTTP transports. Besides self-hosted gateways, this is
- * the seam used by the local fault proxy in the provider recovery E2E.
+ * credentials or non-HTTP transports.
  */
 export function resolveProviderBaseUrl(configured: string | undefined, fallback: string): string {
   const candidate = configured?.trim() || fallback;
@@ -262,7 +259,6 @@ export function fromAnthropicOutput(response: AnthropicMessagesResponse): ChatCo
   return { choices: [{ message: { content: text || null, tool_calls: toolCalls } }] };
 }
 
-/** Map the neutral ToolChoice to each provider's wire shape. */
 export function toResponsesToolChoice(providerName: string, choice: ToolChoice): unknown {
   // OpenCode Go's Responses endpoint currently accepts only the automatic
   // mode. Pi/OMP leave this field unset, which has the same behavior. Keep

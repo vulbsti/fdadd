@@ -35,7 +35,6 @@ export type PlaceResult = z.infer<typeof ResultSchema>;
 const FETCH_TIMEOUT_MS = 6_000;
 const MIN_QUERY_LENGTH = 2;
 
-/** Map one Open-Meteo result to a stable display candidate. */
 function toResult(place: OpenMeteoPlace, index: number): PlaceResult[number] | null {
   const timezone = place.timezone || '';
   if (!timezone) return null;

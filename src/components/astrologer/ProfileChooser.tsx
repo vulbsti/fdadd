@@ -1,11 +1,5 @@
 'use client';
 
-/**
- * New Reading profile chooser: an owned ready profile or "Add a new person".
- * Selecting an existing person creates a fresh session on the same
- * profile/person map; a new person renders the birth intake form.
- */
-
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';

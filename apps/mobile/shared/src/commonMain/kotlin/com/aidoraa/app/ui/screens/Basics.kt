@@ -36,7 +36,6 @@ import com.aidoraa.app.ui.theme.Palette
 import com.aidoraa.app.ui.theme.Type
 import com.aidoraa.app.ui.theme.emphasised
 
-/** A scrolling screen on the sky, clear of the status bar and the tab bar. */
 @Composable
 fun ScrollScreen(
     scroll: ScrollState = rememberScrollState(),
@@ -54,7 +53,6 @@ fun ScrollScreen(
     }
 }
 
-/** A pushed screen with a back button. */
 @Composable
 fun PushedScreen(content: @Composable ColumnScope.() -> Unit) {
     val app = LocalApp.current
@@ -98,7 +96,6 @@ fun LoadFailedScreen(message: String, onRetry: () -> Unit, onSignOut: () -> Unit
     }
 }
 
-/** Full-width content column helper for forms on the sky. */
 @Composable
 fun FormColumn(bottomAligned: Boolean = true, content: @Composable ColumnScope.() -> Unit) {
     androidx.compose.foundation.layout.BoxWithConstraints(
