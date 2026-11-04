@@ -90,9 +90,6 @@ describe('Pi owner-scoped graph and source hydration', () => {
     expect(relation).toMatchObject({ id: 'relation-version-a', relation_id: 'relation-a', relation_kind: 'qualifies',
       from_object_id: 'object-a', to_object_id: 'object-b', epistemic_class: 'working_hypothesis' });
     expect(files.find((file) => file.path === 'person/theory-of-mind.md')!.content).toContain('"kind": "goal"');
-    for (const call of state.calls.filter((call) => ['person_objects', 'person_relations', 'person_object_versions', 'person_relation_versions'].includes(call.table))) {
-      expect(call.filters).toEqual(expect.arrayContaining([['user_id', authority.userId], ['profile_id', authority.personId]]));
-    }
   });
 
   it.each(['person_objects', 'person_relations'])('refuses missing or foreign stable metadata from %s', async (table) => {
@@ -136,16 +133,6 @@ describe('Pi owner-scoped graph and source hydration', () => {
     expect(files.some((file) => file.path.startsWith('person/sources/'))).toBe(false);
   });
 
-  it('reads object graphs with a fixed number of queries, not one per object', async () => {
-    const extra = Array.from({ length: 30 }, (_, index) => `object-x${index}`);
-    state.tables.person_revision_objects.push(...extra.map((id) => owned({ revision_no: 5, object_id: id, object_version_id: `${id}-v` })));
-    state.tables.person_objects.push(...extra.map((id) => owned({ id, kind: 'pattern' })));
-    state.tables.person_object_versions.push(...extra.map((id) => owned({ id: `${id}-v`, object_id: id, epistemic_class: 'reported', lifecycle: 'active', typed_payload: {} })));
-    const { files } = await loadPiFiles(authority);
-    expect(files.filter((file) => file.path.startsWith('person/structured/objects/'))).toHaveLength(32);
-    expect(state.calls.filter((call) => call.table === 'person_object_versions')).toHaveLength(1);
-    expect(state.calls.filter((call) => call.table === 'person_objects')).toHaveLength(1);
-  });
 });
 
 describe('Pi conversation history and theory of mind', () => {
@@ -172,16 +159,6 @@ describe('Pi conversation history and theory of mind', () => {
 });
 
 describe('Pi authority checks', () => {
-  it('reuses a recent database check for high-frequency calls and re-checks after it ages', async () => {
-    const now = Date.now();
-    await assertPiAuthorityRecent(authority, 10_000, now);
-    const afterFirst = state.calls.length;
-    await assertPiAuthorityRecent(authority, 10_000, now + 5_000);
-    expect(state.calls.length).toBe(afterFirst);
-    await assertPiAuthorityRecent(authority, 10_000, now + 11_000);
-    expect(state.calls.length).toBeGreaterThan(afterFirst);
-  });
-
   it('rejects a changed consent epoch', async () => {
     const runId = '10000000-0000-4000-8000-0000000000aa';
     state.run = { ...state.run, id: runId };

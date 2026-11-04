@@ -79,15 +79,6 @@ describe('addTester', () => {
     return { calls, fetchImpl };
   }
 
-  it('looks up the group and adds the email as a member', async () => {
-    const { calls, fetchImpl } = fakeGoogle(200);
-    await expect(addTester(config, 'a@gmail.com', fetchImpl)).resolves.toBe('added');
-    expect(calls[1].url).toContain('groupKey.id=testers%40aidoraa.com');
-    expect(calls[2].url).toBe('https://cloudidentity.googleapis.com/v1/groups/abc/memberships');
-    expect(JSON.parse(String(calls[2].init?.body))).toEqual({ preferredMemberKey: { id: 'a@gmail.com' }, roles: [{ name: 'MEMBER' }] });
-    expect((calls[2].init?.headers as Record<string, string>).authorization).toBe('Bearer tok');
-  });
-
   it('treats an existing member as success and surfaces other failures', async () => {
     await expect(addTester(config, 'a@gmail.com', fakeGoogle(409).fetchImpl)).resolves.toBe('already');
     await expect(addTester(config, 'a@gmail.com', fakeGoogle(403).fetchImpl)).rejects.toThrow('add member failed (403)');

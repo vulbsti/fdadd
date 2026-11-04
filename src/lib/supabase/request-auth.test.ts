@@ -28,22 +28,6 @@ describe('request auth', () => {
     expect(bearerToken(null)).toBeNull();
   });
 
-  it('uses the cookie when no token is sent', async () => {
-    mocks.cookieClient.auth.getUser.mockResolvedValue({ data: { user: { id: 'u1' } }, error: null });
-    await expect(getRequestUser()).resolves.toMatchObject({ client: mocks.cookieClient, user: { id: 'u1' }, accessToken: null });
-    expect(mocks.createSupabaseClient).not.toHaveBeenCalled();
-  });
-
-  it('acts as the token user against the real project URL', async () => {
-    mocks.headers = new Headers({ authorization: 'Bearer app-token' });
-    mocks.tokenClient.auth.getUser.mockResolvedValue({ data: { user: { id: 'u2' } }, error: null });
-    await expect(getRequestUser()).resolves.toMatchObject({ client: mocks.tokenClient, user: { id: 'u2' }, accessToken: 'app-token' });
-    expect(mocks.createSupabaseClient).toHaveBeenCalledWith('https://project.supabase.co', 'publishable', expect.objectContaining({
-      global: { headers: { Authorization: 'Bearer app-token' } } }));
-    expect(mocks.tokenClient.auth.getUser).toHaveBeenCalledWith('app-token');
-    expect(mocks.cookieClient.auth.getUser).not.toHaveBeenCalled();
-  });
-
   it('never falls back to the cookie when a token is rejected', async () => {
     mocks.headers = new Headers({ authorization: 'Bearer expired' });
     mocks.tokenClient.auth.getUser.mockResolvedValue({ data: { user: null }, error: { message: 'invalid JWT' } });

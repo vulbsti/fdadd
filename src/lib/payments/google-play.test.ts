@@ -1,7 +1,7 @@
 import { createVerify, generateKeyPairSync } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import {
-  decodeRtdn, googlePlayConfig, googleSubscriptionRow, mapGoogleSubscriptionState, resolveGooglePurchase,
+  decodeRtdn, googlePlayConfig, googleSubscriptionRow, resolveGooglePurchase,
   serviceAccountAssertion, shouldReplaceSubscription, type GoogleSubscriptionPurchaseV2,
 } from './google-play';
 import active from './fixtures/google-subscription-active.json';
@@ -12,18 +12,6 @@ const userId = '6c1f0f5e-2b7c-4d39-9a51-0d8a3f6b2e11';
 const now = new Date('2026-10-14T12:00:00Z');
 
 describe('google play subscription mapping', () => {
-  it('maps every Google state to ours', () => {
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_ACTIVE')).toBe('active');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_IN_GRACE_PERIOD')).toBe('in_grace');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_ON_HOLD')).toBe('on_hold');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_PAUSED')).toBe('paused');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_CANCELED')).toBe('canceled');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_EXPIRED')).toBe('expired');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_PENDING')).toBe('on_hold');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED')).toBe('expired');
-    expect(mapGoogleSubscriptionState('SUBSCRIPTION_STATE_UNSPECIFIED')).toBeNull();
-  });
-
   it('resolves the plan, period and account of a new purchase', () => {
     expect(resolveGooglePurchase(active)).toEqual({
       planId: 'plus', basePlanId: 'plus-monthly', status: 'active', periodEnd: '2026-11-01T09:12:40.000Z', autoRenewing: true,

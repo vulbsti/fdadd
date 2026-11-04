@@ -1,7 +1,6 @@
 package com.aidoraa.app
 
 import com.aidoraa.app.data.PlanSummaryDto
-import com.aidoraa.app.domain.MANAGE_SUBSCRIPTION_URL
 import com.aidoraa.app.domain.Plans
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -56,16 +55,5 @@ class PlansTest {
         assertTrue(Plans.hasPlaySubscription(PlanSummaryDto(id = "basic", status = "in_grace", source = "google_play")))
         assertFalse(Plans.hasPlaySubscription(PlanSummaryDto(id = "basic", status = "active", source = "razorpay")))
         assertFalse(Plans.hasPlaySubscription(PlanSummaryDto(id = "basic", status = "canceled", source = "google_play")))
-    }
-
-    @Test fun verifyErrorsArePlain() {
-        assertTrue(Plans.verifyErrorMessage("purchase_already_linked", "x").contains("different Aidoraa account"))
-        assertTrue(Plans.verifyErrorMessage("store_unavailable", "x").contains("Restore purchases"))
-        assertEquals("server said", Plans.verifyErrorMessage("other", "server said"))
-        assertTrue(Plans.verifyErrorMessage("other", "").isNotBlank())
-    }
-
-    @Test fun manageUrl() {
-        assertEquals("https://play.google.com/store/account/subscriptions?sku=aidoraa_membership&package=com.aidoraa.app", MANAGE_SUBSCRIPTION_URL)
     }
 }

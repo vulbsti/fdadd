@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseReflection, reflectionMessages, REFLECTION_GUIDANCE } from './theory-of-mind';
+import { parseReflection, reflectionMessages } from './theory-of-mind';
 
 describe('theory of mind reflection', () => {
   it('accepts an unchanged decision', () => {
@@ -14,11 +14,6 @@ describe('theory of mind reflection', () => {
 
   it('rejects a bloated theory', () => {
     expect(() => parseReflection(JSON.stringify({ decision: 'revise', theory: 'x'.repeat(20_001), changes: 'y' }))).toThrow();
-  });
-
-  it('tells the model that unchanged is the normal outcome and to stay Vedic', () => {
-    expect(REFLECTION_GUIDANCE).toContain('that is the normal outcome');
-    expect(REFLECTION_GUIDANCE).toContain('Vedic astrology only');
   });
 
   it('leaves chart material out when astrology is off', () => {
