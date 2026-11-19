@@ -1,6 +1,6 @@
 # Person model v3 — execution specification
 
-Date: September 20, 2026. Status: proposed implementation contract. Approved UI references: [v2 mockups](../../design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md). Supporting documents: [audit](CURRENT-STATE-AUDIT.md), [interaction contract](UI-BEHAVIOR-CONTRACT.md), [acceptance plan](ACCEPTANCE-PLAN.md).
+Date: September 20, 2026. Status: proposed implementation contract. Approved UI references: [v2 mockups](../../design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md). Supporting documents: [interaction contract](UI-BEHAVIOR-CONTRACT.md), [acceptance plan](ACCEPTANCE-PLAN.md).
 
 ## 1. Outcome and architectural decisions
 

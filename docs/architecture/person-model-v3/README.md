@@ -6,15 +6,10 @@ The approved visual direction is fixed. Build the four [v2 mockups](../../design
 
 Read in this order:
 
-1. [Current-state audit](CURRENT-STATE-AUDIT.md): verified code defects, live database observations, and which earlier design decisions need replacing.
-2. [Execution specification](EXECUTION-SPEC.md): data ownership, agent responsibilities, consolidation, suggestions, astrology isolation, imports, APIs, and work packages.
-3. [UI behavior contract](UI-BEHAVIOR-CONTRACT.md): every visible control, navigation, expanded states, and failure behavior.
-4. [Acceptance plan](ACCEPTANCE-PLAN.md): release-blocking product, reasoning, concurrency, privacy, and runtime checks.
-5. [Phased implementation plan](PHASED-IMPLEMENTATION-PLAN.md): dependency gates, feature-level E2E/visual/architecture proof, and agent handoff ledger.
-6. [P0 execution receipt](P0-EXECUTION-RECEIPT.md): local proof harness, current read-only run state, and open verification boundaries.
-7. [P1 progress receipt](P1-PROGRESS-RECEIPT.md): partial conversation fixes, verification results, and the remaining provider/dispatch gate.
-8. [P2 execution receipt](P2-EXECUTION-RECEIPT.md): accepted person/revision authority, staging/browser proof, and the boundary before learned consolidation.
-9. [P3 execution receipt](P3-EXECUTION-RECEIPT.md): source-led worker, real-provider browser evidence, staging schema receipt, and the remaining closure gates.
+1. [Execution specification](EXECUTION-SPEC.md): data ownership, agent responsibilities, consolidation, suggestions, astrology isolation, imports, APIs, and work packages.
+2. [UI behavior contract](UI-BEHAVIOR-CONTRACT.md): every visible control, navigation, expanded states, and failure behavior.
+3. [Acceptance plan](ACCEPTANCE-PLAN.md): release-blocking product, reasoning, concurrency, privacy, and runtime checks.
+4. [Phased implementation plan](PHASED-IMPLEMENTATION-PLAN.md): dependency gates, feature-level E2E/visual/architecture proof, and agent handoff ledger.
 
 The primary architecture is:
 
