@@ -1,69 +1,37 @@
 # Documentation index
 
-This index separates current implementation guidance from approved future
-design. The repository's source and test evidence remain authoritative when a
-document and the code disagree.
+The source and tests are authoritative when a document and the code disagree.
 
-## Use these first
+## Start here
 
 - [`VISION.md`](VISION.md) — the product goal, how the agents should reason,
   and the quality check for prompts, skills and answers. Read this first.
-- [`../README.md`](../README.md) — local development, current product
-  boundaries, checks, and deployment workflow.
+- [`../README.md`](../README.md) — local development, checks, and deployment.
+- [`architecture/person-model-v3/PI-WORKSPACE-RUNTIME.md`](architecture/person-model-v3/PI-WORKSPACE-RUNTIME.md)
+  — the Pi workspace on Vercel Sandbox, the only chat runtime.
 - [`operations/system-pipeline.md`](operations/system-pipeline.md) — local and
   hosted system-proof commands, private artifacts, and the manual migration
   gate.
-- [`qa/2026-09-26-pipeline-repair.md`](qa/2026-09-26-pipeline-repair.md) — observed
-  pipeline failures, repairs, hosted test evidence, and remaining acceptance.
-- [`architecture/person-model-v3/AGENT-HARNESS-AUDIT.md`](architecture/person-model-v3/AGENT-HARNESS-AUDIT.md)
-  — September 26 evidence-loss, rigid-loop, and stale-context audit; proposed
-  repairs and acceptance gates, not deployed fixes.
-- [`architecture/person-model-v3/PI-WORKSPACE-RUNTIME.md`](architecture/person-model-v3/PI-WORKSPACE-RUNTIME.md)
-  — filesystem-first Pi-on-Vercel replacement architecture and first E2E slice;
-  proposed, not deployed.
-- [`supabase-razorpay-setup.md`](supabase-razorpay-setup.md) — Supabase/Razorpay
-  configuration, callback URLs, environment variables,
-  verification cases, and rollout notes.
-- [`architecture/person-model-v3/README.md`](architecture/person-model-v3/README.md)
-  — the authoritative September 20, 2026 execution package for the proposed
-  life-understanding system.
-- [`architecture/person-model-v3/PHASED-IMPLEMENTATION-PLAN.md`](architecture/person-model-v3/PHASED-IMPLEMENTATION-PLAN.md)
-  — sequenced delivery gates and per-feature E2E, visual, and long-term-fit checks.
-- [`architecture/person-model-v3/P0-EXECUTION-RECEIPT.md`](architecture/person-model-v3/P0-EXECUTION-RECEIPT.md)
-  — the local baseline, harness results, and still-unverified external boundaries.
-- [`architecture/person-model-v3/P1-PROGRESS-RECEIPT.md`](architecture/person-model-v3/P1-PROGRESS-RECEIPT.md)
-  — accepted P1 reliability gate, isolated staging/deployed recovery proof, visual findings, and explicit P2 handoff limits.
-- [`architecture/person-model-v3/P2-EXECUTION-RECEIPT.md`](architecture/person-model-v3/P2-EXECUTION-RECEIPT.md)
-  — accepted P2 person/revision authority, staging and browser evidence, visual-infrastructure status, and explicit P3 boundary.
-- [`design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md`](design/astrologer-ui-mocks/2026-09-19/v2-life-map/README.md)
-  — the approved visual direction and the four retained reference images.
-- [`qa/2026-09-26-visual-comparison.md`](qa/2026-09-26-visual-comparison.md)
-  — P2 fixture screenshots at desktop, laptop, and mobile widths, with observed
-  differences from the approved references.
 
-## Status boundaries
+## Setup and operations
 
-The v3 person/revision authority and route-backed visual infrastructure now
-exist through P2. Source-led learning, suggestion generation, complete guided
-loops, imports/deletion, and release gates remain later phases. The P2 receipt
-separates revision-backed contract-fixture UI proof from learned-model proof.
+- [`supabase-razorpay-setup.md`](supabase-razorpay-setup.md) — Supabase and
+  Razorpay configuration, callback URLs, and environment variables.
+- [`auth-on-blocked-networks.md`](auth-on-blocked-networks.md) — sign-in on
+  networks that block `supabase.co`.
+- [`mobile-backend.md`](mobile-backend.md) — the server side of the native app.
+- [`operations/beta-testers.md`](operations/beta-testers.md) — the one-tap beta
+  signup for the Play closed test.
+- [`architecture/person-model-v3/IMPORTS.md`](architecture/person-model-v3/IMPORTS.md)
+  — chat imports and connectors.
+- [`architecture/person-model-v3/DB-HARNESS.md`](architecture/person-model-v3/DB-HARNESS.md)
+  and [`BROWSER-HARNESS.md`](architecture/person-model-v3/BROWSER-HARNESS.md)
+  — the local RLS and browser smoke checks.
 
-The current source has real Supabase authentication and payment routes, and the
-contact form is still a placeholder. The production workflow calls the P0 code/database/browser checks,
-requires a same-commit hosted staging journey, then compares production schema
-state before promotion. Those gates do not establish complete v3
-design or reasoning parity.
+## Person model design
 
-## Design references
-
-The four PNGs in [`design/astrologer-ui-mocks/2026-09-19/v2-life-map/`](design/astrologer-ui-mocks/2026-09-19/v2-life-map/)
-are approved visual references, not implemented screens or production seed
-content. `PROMPTS.md` retains the complete generation and refinement record.
-The earlier `01-chat.png` and `02-profile.png` concepts were superseded and
-are not part of the approved design set.
-
-## Historical records
-
-[`../logs/changes_logs.md`](../logs/changes_logs.md) is retained as a dated
-operational record. Its entries explain past Next.js blog fixes and should not
-be read as a current framework guide.
+[`architecture/person-model-v3/README.md`](architecture/person-model-v3/README.md)
+is the September 20, 2026 design for the person model, the life map and the
+other profile views. The four PNGs in
+[`design/astrologer-ui-mocks/2026-09-19/v2-life-map/`](design/astrologer-ui-mocks/2026-09-19/v2-life-map/)
+are its visual references, not implemented screens or seed content.
