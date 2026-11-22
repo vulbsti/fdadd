@@ -1,11 +1,8 @@
 # Pi workspace runtime on Vercel
 
-Date: 2026-09-26. Status: the real-provider isolated staging Preview journey
-passed in 13.4 minutes, including full calculation/session restore. See
-`../../qa/2026-09-26-pi-workspace-preview.md` for artifacts and remaining gates.
-Production continues to use the legacy runtime until a later explicit
-rollout. Implemented code, local checks, and unproven acceptance gates are
-separated below.
+Date: 2026-09-26. Status: since 2026-09-28 the Pi workspace is the only
+chat runtime, in staging and production; the legacy planner loop was removed.
+Mentions below of a "legacy" production loop describe the state before that.
 
 ## 2026-09-27 revision: one workspace per person
 
@@ -113,7 +110,8 @@ an isolated Vercel Sandbox**, operating on real Markdown, structured records,
 calculation artifacts, and persistent session files. The application owns
 identity, permissions, durable acceptance/publication, and the website. Pi owns
 the model/tool loop and context navigation. Do not recreate a second agent loop
-around Pi that restores the restrictions identified in `AGENT-HARNESS-AUDIT.md`.
+around Pi that brings back the old loop's restrictions (results cut to short
+prefixes, fixed step plans, stale context).
 
 The legacy production implementation is not this architecture: `atros-commands.ts`
 uses the shared `atros-template` sandbox only for calculations, while

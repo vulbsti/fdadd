@@ -38,10 +38,6 @@ warning disappeared; the artifact guard checked 8 deduplicated functions, and
 all 11 release-preflight tests passed. This was an isolated Preview packaging
 test, not a production promotion or another full person-model journey.
 
-On 2026-09-26, Preview candidate `4iadfmk9k` passed the complete hosted journey
-in 5.3 minutes. See [the repair receipt](../qa/2026-09-26-pipeline-repair.md)
-for the test boundaries, production status, and remaining acceptance work.
-
 ## Local system journey
 
 Start the disposable local Supabase stack and configure a real provider for the
