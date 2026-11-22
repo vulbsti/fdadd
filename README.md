@@ -72,7 +72,7 @@ and [BROWSER-HARNESS.md](docs/architecture/person-model-v3/BROWSER-HARNESS.md).
 
 ## Dev-time agent CLI
 
-`opencode.json` selects `opencode-go/muse-spark-1.3-contributor` for local
+`opencode.json` selects `opencode-go/gpt-6-luna` for local
 agent work. For example:
 
 ```bash
