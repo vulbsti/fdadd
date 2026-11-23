@@ -16,10 +16,10 @@ import { AgentStore, type RunRow } from '@/lib/astro/agent-store';
 import { ProviderError } from '@/lib/ai/provider';
 import type { AgentErrorCode, AstrologerRunEvent } from '@/lib/astro/contracts';
 import { getErrorMessage } from '@/lib/astro/workflow-errors';
-import type { PiAuthority } from '@/lib/astro/pi-authority';
-import { preparePiWorkspace, startPiWorkspace, pollPiWorkspace } from '@/lib/astro/pi-runtime';
+import { preparePiWorkspace, startPiWorkspace, pollPiWorkspace, recordPiTiming, readPiRunnerTiming, attachRunnerTiming } from '@/lib/astro/pi-runtime';
 import { publishPiAnswer } from '@/lib/astro/pi-publish';
 import { personRunModeFailure } from '@/lib/astro/run-mode';
+import type { PiAuthority } from '@/lib/astro/pi-authority';
 
 // ---------------------------------------------------------------------------
 // Durable steps
@@ -111,7 +111,18 @@ async function claimRunExecution(runId: string) {
   'use step';
   const { workflowRunId } = getWorkflowMetadata();
   const store = new AgentStore(createAdminClient(), createAdminClient());
-  return store.claimRunExecution(runId, workflowRunId);
+  const execution = await store.claimRunExecution(runId, workflowRunId);
+  // Each step is a durable round trip, so the opening events ride on this one.
+  if (execution.won) {
+    const writer = getWritable<RunEventChunk>().getWriter();
+    try {
+      await writer.write({ type: 'run.started', payload: { event: 'run.started', runId, phase: 'planning', status: 'active', summary: 'run started' } });
+      await writer.write({ type: 'phase.changed', payload: { event: 'phase.changed', runId, phase: 'analysis', status: 'active', summary: 'Opening your isolated Pi workspace' } });
+    } finally {
+      writer.releaseLock();
+    }
+  }
+  return execution;
 }
 
 /**
@@ -132,7 +143,6 @@ export async function astrologerRunWorkflow(runId: string) {
         workflowRunId: execution.workflowRunId,
       };
     }
-    await emit({ event: 'run.started', runId, phase: 'planning', status: 'active', summary: 'run started' });
     const result = await piWorkspaceWorkflowBody(runId, emit);
     // The Pi body either publishes a complete answer or throws; failures are
     // persisted and streamed by the catch block below.
@@ -176,21 +186,25 @@ export async function astrologerRunWorkflow(runId: string) {
   }
 }
 
+/**
+ * Prepare the workspace and start its runner in one durable step. A retry is
+ * safe: preparation of a prepared VM returns at once, and the runner start is
+ * guarded by a kernel lock and the final-checkpoint check.
+ */
 async function preparePiStep(runId: string) {
   'use step';
-  return preparePiWorkspace(runId);
-}
-
-async function startPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>) {
-  'use step';
-  await startPiWorkspace(input);
+  const prepared = await preparePiWorkspace(runId);
+  // Recorded before the runner starts, so nothing else is checkpointing the run.
+  await recordPiTiming(runId, 'prepared', prepared.timings);
+  await startPiWorkspace(prepared);
+  return prepared;
 }
 
 /** How long one poll step keeps forwarding live events before handing back to the workflow. */
 const POLL_STEP_MS = 20_000;
 const POLL_INTERVAL_MS = 800;
 
-async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number) {
+async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number, sawText: boolean) {
   'use step';
   const writer = getWritable<RunEventChunk>().getWriter();
   const write = async (event: AstrologerRunEvent) => { await writer.write({ type: event.event, payload: event }); };
@@ -201,10 +215,10 @@ async function pollPiStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>,
     // A retry of this step re-sends rows from `cursor`; readers skip by seq.
     // A killed runner cannot report its exit, so each step checks the VM once.
     const until = Date.now() + POLL_STEP_MS;
-    let progress = await pollPiWorkspace(input, cursor, write, { probeSandbox: true });
+    let progress = await pollPiWorkspace(input, cursor, write, { probeSandbox: true, sawText });
     while (!progress.done && Date.now() < until) {
       await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-      progress = await pollPiWorkspace(input, progress.cursor, write);
+      progress = await pollPiWorkspace(input, progress.cursor, write, { sawText: progress.sawText });
     }
     return progress;
   } finally {
@@ -217,19 +231,27 @@ async function publishPiStep(authority: PiAuthority) {
   return publishPiAnswer(authority);
 }
 
+/** Runs after the answer is out, so it never delays it. */
+async function recordRunnerTimingStep(input: Awaited<ReturnType<typeof preparePiWorkspace>>) {
+  'use step';
+  const runner = await readPiRunnerTiming(input);
+  if (runner) await attachRunnerTiming(input.authority.runId, runner);
+}
+
 async function piWorkspaceWorkflowBody(runId: string, emit: RunEventSink) {
-  await emit({ event: 'phase.changed', runId, phase: 'analysis', status: 'active', summary: 'Opening your isolated Pi workspace' });
   const prepared = await preparePiStep(runId);
-  await startPiStep(prepared);
   // Each poll step reads live events for a while itself. The per-person VM
   // is left running for the next message and expires when idle.
   let cursor = 0;
+  let sawText = false;
   for (;;) {
-    const progress = await pollPiStep(prepared, cursor);
+    const progress = await pollPiStep(prepared, cursor, sawText);
     cursor = progress.cursor;
+    sawText = progress.sawText;
     if (progress.done) break;
   }
   const result = await publishPiStep(prepared.authority);
   await emit({ event: 'answer.ready', runId, phase: 'responding', summary: 'Answer and workspace saved' });
+  await recordRunnerTimingStep(prepared);
   return result;
 }
