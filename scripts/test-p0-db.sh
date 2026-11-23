@@ -18,6 +18,7 @@ exec npm exec -- supabase test db --local \
   supabase/tests/p1_intake_dispatch.sql \
   supabase/tests/p2_job_rebase_requeue.sql \
   supabase/tests/p2_person_revision_authority.sql \
+  supabase/tests/p3_message_job_covers_gap.sql \
   supabase/tests/p3_person_consolidation_workflow.sql \
   supabase/tests/p3_typed_change_contiguous_range.sql \
   supabase/tests/pi_workspace.sql

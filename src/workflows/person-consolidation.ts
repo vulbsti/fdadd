@@ -38,7 +38,12 @@ import {
   PersonConsolidationStore,
   type PersonJobClaim,
 } from '@/lib/person-model/consolidation-store';
-import { isPersonLeaseLostError } from '@/lib/person-model/consolidation-errors';
+import {
+  describePersonFailure,
+  isPersonLeaseLostError,
+  shouldSkipAfterFinalFailure,
+  type PersonFailureDetails,
+} from '@/lib/person-model/consolidation-errors';
 
 const stageNames = {
   extract: 'extract_person_observations',
@@ -286,10 +291,16 @@ async function publishStep(claim: PersonJobClaim, candidateId: string, commitId:
   return new PersonConsolidationStore().publish(claim, candidateId, commitId);
 }
 
-async function failStep(claim: PersonJobClaim, stage: string, error: unknown) {
+async function failStep(claim: PersonJobClaim, stage: string, failure: PersonFailureDetails) {
   'use step';
-  await new PersonConsolidationStore().fail(claim, stage, error);
+  await new PersonConsolidationStore().fail(claim, stage, failure);
 }
+
+async function skipStep(claim: PersonJobClaim, stage: string, failure: PersonFailureDetails) {
+  'use step';
+  return new PersonConsolidationStore().skipSources(claim, stage, failure);
+}
+skipStep.maxRetries = 0;
 
 async function rebaseStep(claim: PersonJobClaim) {
   'use step';
@@ -463,8 +474,21 @@ async function consolidatePersonAttempt(jobId: string) {
       if (availableAt) return { status: 'retry_pending' as const, availableAt };
       return { status: 'requeued_or_cancelled' as const, rebase: rebased };
     }
+    const failure = describePersonFailure(error);
+    console.error('[person-consolidation] attempt failed', {
+      jobId, attempt: claim.attempt, stage: currentStage, code: failure.code, kind: failure.kind, message: failure.message,
+    });
+    if (claim.attempt >= claim.maxAttempts && shouldSkipAfterFinalFailure(failure)) {
+      try {
+        const published = await skipStep(claim, currentStage, failure);
+        return { status: 'skipped' as const, published };
+      } catch (skipError) {
+        // Record the original failure below; the next message's job retries these sources.
+        console.error('[person-consolidation] skip failed', { jobId, message: describePersonFailure(skipError).message });
+      }
+    }
     try {
-      await failStep(claim, currentStage, error);
+      await failStep(claim, currentStage, failure);
     } catch (failureError) {
       if (isPersonLeaseLostError(failureError)
         || (failureError instanceof Error && failureError.message.includes(LEASE_LOST_MESSAGE))) {
