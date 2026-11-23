@@ -11,6 +11,7 @@ import { loadImportFiles } from '@/lib/imports/store';
 import type { AstrologerRunEvent } from './contracts';
 import { PI_INITIALIZATION_PROTOCOL, preparePiInitialization, StalePiSandboxError, withPiPreparationLock } from './pi-initialization';
 import { edgeConfig, signEdgeRunToken } from '@/lib/edge/client';
+import { createPhaseTimer, type PhaseTimer } from './phase-timer';
 
 export const PI_RUNTIME_ASSETS = ['package.json', 'package-lock.json', 'runner.mjs', 'runner-state.mjs', 'extension.mjs', 'workspace-tools.mjs',
   'hypotheses.mjs', 'system-prompt.md', 'skills/person-context/SKILL.md', 'skills/chart-reading/SKILL.md', 'skills/rectify/SKILL.md',
@@ -74,18 +75,31 @@ function sandboxSource() {
 }
 
 export async function preparePiWorkspace(runId: string) {
-  const authority = await loadPiAuthority(runId);
-  const loaded = await loadPiFiles(authority);
-  const runtimeFiles = await readPiRuntimeFiles();
+  const timer = createPhaseTimer();
+  const [authority, runtimeFiles] = await Promise.all([
+    timer.measure('authorityMs', loadPiAuthority(runId)),
+    readPiRuntimeFiles(),
+  ]);
   const bundle = piRuntimeBundleHash(runtimeFiles);
   let created = false;
   const open = () => Sandbox.getOrCreate({
     name: piSandboxName(authority, bundle), timeout: SANDBOX_TIMEOUT_MS, persistent: false, ...sandboxSource(),
     onCreate: async () => { created = true; },
   });
-  const sandbox = await open();
+  // Opening (or creating) the VM writes nothing personal, so it overlaps the
+  // reads that build this person's workspace files.
+  const [loaded, sandbox] = await Promise.all([
+    timer.measure('loadFilesMs', loadPiFiles(authority)),
+    timer.measure('openSandboxMs', open()),
+  ]);
+  timer.resume();
+  let replaced = false;
+  const finish = (prepared: Awaited<ReturnType<typeof preparePiSandbox>>) => ({
+    ...prepared,
+    timings: { ...timer.result(), freshSandbox: created, replacedSandbox: replaced },
+  });
   try {
-    return await preparePiSandbox(sandbox, { runId, authority, loaded, runtimeFiles, bundle, fresh: () => created });
+    return finish(await preparePiSandbox(sandbox, { runId, authority, loaded, runtimeFiles, bundle, fresh: () => created, timer }));
   } catch (error) {
     if (!(error instanceof StalePiSandboxError)) throw error;
     // A VM that stopped while idle comes back without its files but keeps the
@@ -94,19 +108,28 @@ export async function preparePiWorkspace(runId: string) {
     console.warn(`Replacing Pi sandbox ${sandbox.name}: ${error.message}`);
     await sandbox.delete({ deleteOrphanSnapshots: true });
     created = false;
-    return preparePiSandbox(await open(), { runId, authority, loaded, runtimeFiles, bundle, fresh: () => created });
+    replaced = true;
+    const reopened = await timer.measure('openSandboxMs', open());
+    timer.resume();
+    return finish(await preparePiSandbox(reopened, { runId, authority, loaded, runtimeFiles, bundle, fresh: () => created, timer }));
   }
 }
 
-async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, runtimeFiles, bundle, fresh }: {
+/** Run a promise now, await it later; a rejection surfaces only where it is awaited. */
+function early<T>(promise: Promise<T>): Promise<T> {
+  promise.catch(() => {});
+  return promise;
+}
+
+async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, runtimeFiles, bundle, fresh, timer }: {
   runId: string; authority: PiAuthority; loaded: Awaited<ReturnType<typeof loadPiFiles>>;
   runtimeFiles: Awaited<ReturnType<typeof readPiRuntimeFiles>>; bundle: string;
   /** Created by this invocation, so its network is still open. */
   fresh: () => boolean;
+  timer: PhaseTimer;
 }) {
-  await sandbox.extendTimeout(RUN_TIMEOUT_EXTENSION_MS).catch(() => {
-    // Plan limits can refuse an extension; the run deadline still fits the base timeout.
-  });
+  // Plan limits can refuse an extension; the run deadline still fits the base timeout.
+  const extended = sandbox.extendTimeout(RUN_TIMEOUT_EXTENSION_MS).catch(() => {});
   // Serialized through config commit, not merely through readiness probing.
   // An abandoned lock fails closed after a bounded wait; never remove another
   // invocation's lock or widen networking to recover it.
@@ -121,6 +144,7 @@ async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, ru
       if (released.exitCode !== 0) throw new Error('Could not release Pi sandbox preparation lock.');
     },
   }, async () => {
+    timer.mark('lockMs');
     // Production deployment URLs are behind Vercel authentication; the sandbox
     // reaches the broker through the public production domain instead.
     const origin = process.env.PI_BROKER_ORIGIN
@@ -210,8 +234,20 @@ async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, ru
       },
     });
     await assertPiAuthority(authority);
+    timer.mark('initializeMs');
+    await extended;
     // A replay must not rewrite a live runner's files.
     if (initialized.alreadyPrepared) return { sandboxName: sandbox.name, configPath, authority };
+    // These reads do not depend on the workspace files written below.
+    const admin = createAdminClient();
+    const sessionDirectory = `${STATE}/sessions/${authority.sessionId}`;
+    const accepted = early((async () => {
+      const run = await new AgentStore(admin, admin).getRun(runId);
+      const message = await admin.from('astro_messages').select('content').eq('id', run.triggering_message_id).eq('user_id', authority.userId).single();
+      if (message.error || !message.data) throw new Error('Missing accepted user message.');
+      return message.data.content as string;
+    })());
+    const warmSessionCheck = early(sandbox.runCommand('bash', ['-lc', `ls '${sessionDirectory}'/*.jsonl >/dev/null 2>&1`]));
     if (!authority.astrologyEnabled) {
       // A shell can reach anything on disk, so a disabled person gets no engine
       // at all, not just a hidden tool. This VM identity never re-enables it.
@@ -221,19 +257,18 @@ async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, ru
     // Refresh only the generated canonical view; editable work and complete
     // calculation artifacts persist in the VM between messages.
     const canonical = CANONICAL_PATHS.map((relative) => `'${WORKSPACE}/${relative}'`).join(' ');
-    const reset = await sandbox.runCommand('bash', ['-lc', `chmod -R u+w ${canonical} 2>/dev/null; rm -rf ${canonical}`]);
-    if (reset.exitCode !== 0) throw new Error('Could not refresh canonical workspace files.');
-    await sandbox.writeFiles(loaded.files.map((file) => ({ path: `${WORKSPACE}/${file.path}`, content: file.content })));
-    // Canonical files are read-only to the agent: durable changes go through
-    // proposals and the session reflection, never through edits in the VM.
-    await sandbox.runCommand('bash', ['-lc', `mkdir -p '${WORKSPACE}/astrology/hypotheses' '${WORKSPACE}/work' '${WORKSPACE}/proposals'; chmod -R a-w ${canonical} 2>/dev/null; true`]);
-    await refreshImports(sandbox, authority, loaded.imports.signature);
-    const sessionDirectory = `${STATE}/sessions/${authority.sessionId}`;
-    const admin = createAdminClient();
-    const run = await new AgentStore(admin, admin).getRun(runId);
-    const message = await admin.from('astro_messages').select('content').eq('id', run.triggering_message_id).eq('user_id', authority.userId).single();
-    if (message.error || !message.data) throw new Error('Missing accepted user message.');
-    const warmSession = await sandbox.runCommand('bash', ['-lc', `ls '${sessionDirectory}'/*.jsonl >/dev/null 2>&1`]);
+    // Canonical files and imports live in separate folders, so they refresh together.
+    await Promise.all([(async () => {
+      const reset = await sandbox.runCommand('bash', ['-lc', `chmod -R u+w ${canonical} 2>/dev/null; rm -rf ${canonical}`]);
+      if (reset.exitCode !== 0) throw new Error('Could not refresh canonical workspace files.');
+      await sandbox.writeFiles(loaded.files.map((file) => ({ path: `${WORKSPACE}/${file.path}`, content: file.content })));
+      // Canonical files are read-only to the agent: durable changes go through
+      // proposals and the session reflection, never through edits in the VM.
+      await sandbox.runCommand('bash', ['-lc', `mkdir -p '${WORKSPACE}/astrology/hypotheses' '${WORKSPACE}/work' '${WORKSPACE}/proposals'; chmod -R a-w ${canonical} 2>/dev/null; true`]);
+    })(), refreshImports(sandbox, authority, loaded.imports.signature)]);
+    timer.mark('writeFilesMs');
+    const prompt = await accepted;
+    const warmSession = await warmSessionCheck;
     if (warmSession.exitCode !== 0) {
       // Cold VM (first message, expiry or crash): restore the latest completed
       // run of this chat from durable storage. A warm VM already has it.
@@ -256,15 +291,17 @@ async function preparePiSandbox(sandbox: Sandbox, { runId, authority, loaded, ru
           && (authority.astrologyEnabled || !file.path.startsWith('astrology/')));
         await sandbox.writeFiles(restorable.map((file) => ({ path: `${WORKSPACE}/${file.path}`, content: file.content })));
       }
+      timer.mark('restoreSessionMs');
     }
     await sandbox.writeFiles([{ path: configPath, content: JSON.stringify({
       runId, workspace: WORKSPACE, stateDirectory: STATE, sessionDirectory,
       broker: `${origin}/api/astrologer/pi`, astrologyEnabled: authority.astrologyEnabled,
       birth: loaded.birth, birthRevision: authority.birthRevision,
-      prompt: message.data.content, deadlineMs: 15 * 60 * 1000,
+      prompt, deadlineMs: 15 * 60 * 1000,
       today: loaded.today, historyFile: loaded.historyFile, conversation: loaded.conversation,
       edge: edge ? { origin: edge.origin, prefix: `${authority.userId}/${authority.personId}` } : null,
     }) }]);
+    timer.mark('configMs');
     return { sandboxName: sandbox.name, configPath, authority };
   });
 }
@@ -304,14 +341,34 @@ export async function startPiWorkspace(input: Awaited<ReturnType<typeof prepareP
   await sandbox.runCommand({ cmd: 'flock', args: ['-n', `${STATE}/runner.lock`, 'node', `${RUNTIME}/runner.mjs`, input.configPath], detached: true, timeoutMs: 16 * 60 * 1000 });
 }
 
-export interface PiPollProgress { done: boolean; cursor: number; exited: boolean }
+export interface PiPollProgress { done: boolean; cursor: number; exited: boolean; sawText: boolean }
+
+/**
+ * Store how long a part of the answer took, as a run step, so slow starts can
+ * be read from the database after Vercel's short log retention has passed.
+ * Timing never fails a run.
+ */
+export async function recordPiTiming(runId: string, key: string, timings: Record<string, number | boolean>) {
+  try {
+    const store = new AgentStore(createAdminClient(), createAdminClient());
+    const run = await store.getRun(runId);
+    const sinceRunStartMs = Date.now() - Date.parse(run.started_at);
+    console.log('[pi-timing]', JSON.stringify({ runId, key, sinceRunStartMs, ...timings }));
+    await store.workerCheckpoint({ runId, expectedVersion: run.version, step: {
+      stepKey: `pi:timing:${key}`, kind: 'checkpoint', status: 'succeeded', outputSummary: 'timing',
+      refs: { runtime: 'pi', type: 'timing', sinceRunStartMs, ...timings },
+    } });
+  } catch (error) {
+    console.warn('[pi-timing] not recorded', { runId, key, message: error instanceof Error ? error.message : String(error) });
+  }
+}
 
 /**
  * Forward new live events (tool lifecycle, coalesced text) to the run stream.
  * Reads small database rows; the checkpoint archive is never downloaded here.
  */
 export async function pollPiWorkspace(input: Awaited<ReturnType<typeof preparePiWorkspace>>, cursor: number,
-  emit: (event: AstrologerRunEvent) => Promise<void>, options: { probeSandbox?: boolean } = {}): Promise<PiPollProgress> {
+  emit: (event: AstrologerRunEvent) => Promise<void>, options: { probeSandbox?: boolean; sawText?: boolean } = {}): Promise<PiPollProgress> {
   const { authority } = input;
   // Polled about once a second; a check from the last few seconds is enough
   // here, and publication re-checks against the database.
@@ -349,7 +406,9 @@ export async function pollPiWorkspace(input: Awaited<ReturnType<typeof preparePi
   }
   await flushText();
   const nextCursor = events.at(-1)?.seq ?? cursor;
-  if (await hasFinalPiCheckpoint(authority)) return { done: true, cursor: nextCursor, exited };
+  const sawText = options.sawText === true || events.some((event) => event.kind === 'text_delta');
+  if (sawText && !options.sawText) await recordPiTiming(authority.runId, 'first-text', {});
+  if (await hasFinalPiCheckpoint(authority)) return { done: true, cursor: nextCursor, exited, sawText };
   let crashed = false;
   if (!exited && options.probeSandbox) {
     // A killed runner cannot report its exit; check the VM occasionally.
@@ -361,7 +420,44 @@ export async function pollPiWorkspace(input: Awaited<ReturnType<typeof preparePi
     console.error('[pi-workspace] runner stopped', { runId: authority.runId, cursor: nextCursor, reason });
     throw new Error(`Pi workspace paused or failed (${reason ?? 'no reason recorded'}); its latest durable checkpoint is retained.`);
   }
-  return { done: false, cursor: nextCursor, exited };
+  return { done: false, cursor: nextCursor, exited, sawText };
+}
+
+/**
+ * Add the runner's timings to the run's `prepared` timing row. The run is
+ * complete by then, so this cannot go through the active-run checkpoint.
+ */
+export async function attachRunnerTiming(runId: string, runner: Record<string, number>) {
+  try {
+    const admin = createAdminClient();
+    const run = await new AgentStore(admin, admin).getRun(runId);
+    const runStart = Date.parse(run.started_at);
+    const timings = { ...runner, ...(typeof runner.runnerStartedAt === 'number' ? { runnerStartedSinceRunStartMs: runner.runnerStartedAt - runStart } : {}) };
+    console.log('[pi-timing]', JSON.stringify({ runId, key: 'runner', ...timings }));
+    const row = await admin.from('astro_agent_run_steps').select('refs').eq('run_id', runId).eq('step_key', 'pi:timing:prepared').maybeSingle();
+    if (row.error || !row.data) return;
+    const refs = (row.data.refs ?? {}) as Record<string, unknown>;
+    const updated = await admin.from('astro_agent_run_steps').update({ refs: { ...refs, runner: timings } })
+      .eq('run_id', runId).eq('step_key', 'pi:timing:prepared');
+    if (updated.error) throw new Error(updated.error.message);
+  } catch (error) {
+    console.warn('[pi-timing] runner timing not recorded', { runId, message: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+/** The runner's own first-event timings (see runtime/pi/runner.mjs), when it wrote them. */
+export async function readPiRunnerTiming(input: { sandboxName: string; authority: PiAuthority }): Promise<Record<string, number> | null> {
+  try {
+    const sandbox = await Sandbox.get({ name: input.sandboxName });
+    const raw = await sandbox.readFileToBuffer({ path: `${STATE}/runs/${input.authority.runId}.timing.json` });
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw.toString('utf8'));
+    if (!parsed || typeof parsed !== 'object') return null;
+    return Object.fromEntries(Object.entries(parsed).filter((entry): entry is [string, number] =>
+      /^[a-zA-Z]{1,40}$/.test(entry[0]) && typeof entry[1] === 'number' && Number.isFinite(entry[1])).slice(0, 20));
+  } catch {
+    return null;
+  }
 }
 
 /** The runner's own failure reason; its logs disappear when the VM stops. */
