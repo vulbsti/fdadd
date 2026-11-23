@@ -9,6 +9,7 @@ import {
   PERSON_GUIDANCE_VERSION,
   PERSON_MODEL_POLICY_VERSION,
   PersonVerifierReceiptSchema,
+  materializeSkippedCandidate,
   type ConsolidationSnapshot,
   type ConsolidationSource,
   type CountercontextItem,
@@ -17,7 +18,7 @@ import {
   type MaterializedConsolidationCandidate,
 } from './consolidation';
 import { TimeRangeSchema } from './contracts';
-import { PERSON_LEASE_LOST_CODE, PersonLeaseLostError } from './consolidation-errors';
+import { PERSON_LEASE_LOST_CODE, PersonLeaseLostError, type PersonFailureDetails } from './consolidation-errors';
 import { assembleConsolidationSources, explicitExclusionObjectIds } from './consolidation-source';
 
 export interface PersonJobClaim {
@@ -31,6 +32,9 @@ export interface PersonJobClaim {
   modeEpoch: number;
   sourceFromSeq: number;
   sourceToSeq: number;
+  /** This claim's attempt number, counted from 1. */
+  attempt: number;
+  maxAttempts: number;
 }
 
 export interface PersonConsolidationContext {
@@ -55,7 +59,8 @@ function rows(value: unknown): Row[] {
 function must<T>(result: { data: T | null; error: { code?: string; message?: string } | null }): T {
   if (result.error) {
     if (result.error.code === PERSON_LEASE_LOST_CODE) throw new PersonLeaseLostError();
-    const error = new Error(`Person consolidation storage failed (${result.error.code ?? 'unknown'}).`);
+    const detail = result.error.message ? `: ${result.error.message.slice(0, 200)}` : '';
+    const error = new Error(`Person consolidation storage failed (${result.error.code ?? 'unknown'})${detail}`);
     (error as Error & { databaseCode?: string }).databaseCode = result.error.code;
     throw error;
   }
@@ -104,13 +109,17 @@ export class PersonConsolidationStore {
       modeEpoch: asNumber(claimed.modeEpoch),
       sourceFromSeq: asNumber(claimed.sourceFromSeq),
       sourceToSeq: asNumber(claimed.sourceToSeq),
+      attempt: 0,
+      maxAttempts: 0,
     };
-    const job = row(must(await this.admin.from('person_jobs').select('user_id,profile_id,state,lease_token,fence')
+    const job = row(must(await this.admin.from('person_jobs').select('user_id,profile_id,state,lease_token,fence,attempt_count,max_attempts')
       .eq('id', claim.jobId).eq('profile_id', claim.profileId).single()));
     if (job.state !== 'leased' || job.lease_token !== claim.leaseToken || asNumber(job.fence) !== claim.fence) {
       throw new Error('Person consolidation claim was superseded before context loading.');
     }
     claim.userId = text(job.user_id);
+    claim.attempt = asNumber(job.attempt_count);
+    claim.maxAttempts = asNumber(job.max_attempts);
     if (!claim.userId || job.profile_id !== claim.profileId) throw new Error('Person consolidation owner scope is invalid.');
     return claim;
   }
@@ -280,34 +289,60 @@ export class PersonConsolidationStore {
     }));
   }
 
-  async fail(claim: PersonJobClaim, stage: string, error: unknown): Promise<void> {
-    const serializedDatabaseCode = error instanceof Error
-      ? error.message.match(/storage failed \(([A-Z0-9]+)\)/i)?.[1] ?? null
-      : null;
-    const rawCode = error instanceof Error && 'code' in error && typeof error.code === 'string'
-      ? error.code : serializedDatabaseCode ? `database_${serializedDatabaseCode.toLowerCase()}` : 'consolidation_failed';
-    const code = /^[a-z0-9_.-]{1,80}$/i.test(rawCode) ? rawCode : 'consolidation_failed';
-    const dbCode = error instanceof Error && 'databaseCode' in error && typeof error.databaseCode === 'string'
-      ? error.databaseCode.slice(0, 20) : serializedDatabaseCode;
-    const status = error instanceof Error && 'status' in error && typeof error.status === 'number' ? error.status : null;
-    const failureKind = code.startsWith('malformed_stage_') || code.startsWith('explicit_change_') ? 'malformed_output'
-      : code === 'verification_exhausted' ? 'verification_exhausted'
-        : status === 429 ? 'quota'
-          : status === 408 || status === 504 ? 'timeout'
-            : status !== null ? 'provider'
-              : dbCode ? 'database' : 'unknown';
+  async fail(claim: PersonJobClaim, stage: string, failure: PersonFailureDetails): Promise<void> {
     must(await this.admin.rpc('person_fail_or_retry_job', {
       p_job_id: claim.jobId,
       p_lease_token: claim.leaseToken,
       p_fence: claim.fence,
       p_stage: stage,
-      p_failure_kind: failureKind,
+      p_failure_kind: failure.kind,
       p_retryable: true,
       p_needs_clarification: false,
-      p_error_code: code,
+      p_error_code: failure.code,
       p_safe_message: 'Your shared information could not be consolidated yet. It is still saved; retry later.',
-      p_diagnostic: { databaseCode: dbCode, providerStatus: status },
+      p_diagnostic: {
+        databaseCode: failure.databaseCode,
+        providerStatus: failure.providerStatus,
+        errorName: failure.name,
+        errorMessage: failure.message,
+      },
     }));
+  }
+
+  /**
+   * Publish a revision that keeps the current model unchanged and marks this
+   * job's sources as handled, so input that keeps failing for its own reasons
+   * cannot block every later update. The conversation itself is untouched and
+   * stays available to the astrologer.
+   */
+  async skipSources(claim: PersonJobClaim, stage: string, failure: PersonFailureDetails): Promise<unknown> {
+    await this.renew(claim);
+    await this.assertFresh(claim);
+    const context = await this.loadContext(claim);
+    const current = row(must(await this.admin.from('person_model_revisions').select('brief')
+      .eq('user_id', claim.userId).eq('profile_id', claim.profileId).eq('revision_no', claim.baseRevision).single()));
+    const summary = `Skipped after ${claim.attempt} failed attempts at ${stage} (${failure.code}).`;
+    await this.recordStage(claim, {
+      stageKey: `skip:${stage}`,
+      stage: 'publish',
+      state: 'skipped',
+      metrics: { attempt: claim.attempt },
+      safeSummary: `${summary} ${failure.name}: ${failure.message}`,
+      errorCode: failure.code,
+    });
+    await this.recordOutcomes(claim, context.sources.map((source) => ({
+      sourceId: source.sourceId,
+      outcome: source.inclusion === 'included' ? 'partial' : 'excluded',
+      code: source.inclusion === 'included' ? 'skipped_after_failures' : 'source_excluded',
+    })));
+    const candidate = materializeSkippedCandidate({
+      snapshot: context.snapshot,
+      sources: context.includedSources,
+      brief: typeof current.brief === 'string' ? current.brief : '',
+      decisionSummary: summary,
+    });
+    const candidateId = await this.stageCandidate(claim, candidate);
+    return this.publish(claim, candidateId, this.newCommitId());
   }
 
   async pendingRetryAt(jobId: string): Promise<string | null> {

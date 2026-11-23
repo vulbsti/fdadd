@@ -514,6 +514,33 @@ export function materializeConsolidationCandidate(input: {
 }
 
 /**
+ * A candidate that leaves the model exactly as it is (same members, brief and
+ * open conflicts) and only advances the processed watermark past sources that
+ * could not be consolidated.
+ */
+export function materializeSkippedCandidate(input: {
+  snapshot: ConsolidationSnapshot;
+  sources: ConsolidationSource[];
+  brief: string;
+  decisionSummary: string;
+}): MaterializedConsolidationCandidate {
+  return materializeConsolidationCandidate({
+    snapshot: input.snapshot,
+    plan: PersonCompositionPlanSchema.parse({
+      objects: [], relations: [], changedKeys: [], unresolvedQuestions: [],
+      brief: input.brief.slice(0, 12_000),
+      decisionSummary: input.decisionSummary.slice(0, 4_000),
+    }),
+    observations: [],
+    sources: input.sources,
+    sourceIds: input.sources.map((source) => source.sourceId),
+    verification: { findings: [], acceptedItemKeys: [], unresolvedQuestions: [] },
+    provider: null,
+    model: null,
+  });
+}
+
+/**
  * A change is resolved only when the verified plan actually represents it.
  * Object changes must touch their target, rejections must actually remove it
  * from active membership, and additive changes must use their source as

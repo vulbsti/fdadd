@@ -46,7 +46,7 @@ select public.person_enqueue_job(
   'rebuild', 1, 2) as rebuild_enqueue \gset
 select public.person_claim_job((select id from public.person_jobs where profile_id=(
   select id from public.astro_profiles where user_id=:'user_a'::uuid and name='P2 rebase')
-  and job_kind='source_consolidation' and source_from_seq=1), 300) as first_claim \gset
+  and job_kind='source_consolidation' and source_to_seq=1), 300) as first_claim \gset
 select public.person_claim_job((:'rebuild_enqueue'::jsonb->>'jobId')::uuid, 300) as stale_claim \gset
 select is((:'stale_claim'::jsonb->>'baseRevision')::bigint, 1::bigint,
   'overlapping job starts from the same base as the winning job');

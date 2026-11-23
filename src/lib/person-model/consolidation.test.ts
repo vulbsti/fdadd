@@ -11,6 +11,7 @@ import {
   PersonIdentifiedObservationSchema,
   PersonReconciliationOutputSchema,
   materializeConsolidationCandidate,
+  materializeSkippedCandidate,
   normalizeMissingProviderNulls,
   normalizeObservationSpans,
   personStageToolParameters,
@@ -369,6 +370,30 @@ describe('person consolidation stage contracts', () => {
       sourceId: ids.source,
       observationId: null,
     }));
+  });
+
+  it('skips sources without changing the current model', () => {
+    const versionId = '66666666-6666-4666-8666-666666666666';
+    const candidate = materializeSkippedCandidate({
+      snapshot: {
+        baseRevision: 3, privacyEpoch: 0, modeEpoch: 1, processedSourceSeq: 7,
+        objectMembers: [{
+          objectId: ids.object, versionId, versionNo: 1, kind: 'meaning_change', epistemicClass: 'reported',
+          lifecycle: 'active', payload: makePlan().objects[0]!.payload, effectiveTime: unknownTime, sourceIds: [], observationIds: [],
+        }],
+        relationMembers: [],
+        conflictIds: [],
+      },
+      sources: [makeSource()],
+      brief: 'Current brief.',
+      decisionSummary: 'Skipped after 5 failed attempts at verify (malformed_stage_output).',
+    });
+    expect(candidate.processedSourceSeq).toBe(7);
+    expect(candidate.observations).toEqual([]);
+    expect(candidate.objects).toEqual([]);
+    expect(candidate.publication.objectMembers).toEqual([{ objectId: ids.object, versionId }]);
+    expect(candidate.publication.brief).toBe('Current brief.');
+    expect(candidate.publication.changedIds).toEqual([]);
   });
 
   it('removes invalidated objects and their relations from the next revision', () => {
